@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { formatShortDate } from "@/lib/dateLabels";
 import { BUCKET } from "@/lib/patientFiles";
 import {
-  DOC_ACCEPT, DOC_MAX_BYTES, DOC_TITLE_MAX, canDeleteOwn, defaultTitle, docMime, docPath, formatBytes,
+  DOC_ACCEPT, DOC_MAX_BYTES, DOC_TITLE_MAX, canDeleteOwn, defaultTitle, docMime, docPath, formatBytes, localDay,
   type DocErrorKey, type DocFolder, type PatientDocument,
 } from "@/lib/patientDocuments";
 import {
@@ -107,14 +107,18 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     if (d.uploadedByRole === "patient" && !d.doctorOpenedAt) void load();
   }
 
-  async function act(p: Promise<{ ok: boolean; code?: DocErrorKey }>) {
+  // On success the list changes at once (apply) and reloads behind it: the
+  // list call can take seconds (53).
+  async function act(p: Promise<{ ok: boolean; code?: DocErrorKey }>, apply?: (ds: PatientDocument[]) => PatientDocument[]) {
     setBusy(true); setError("");
     const r = await p;
     setBusy(false);
     if (!r.ok) { setError(errText((r as { code: DocErrorKey }).code)); return false; }
-    await load();
+    if (apply) setDocs(apply);
+    void load();
     return true;
   }
+  const patchDoc = (id: string, change: Partial<PatientDocument>) => (ds: PatientDocument[]) => ds.map((x) => (x.id === id ? { ...x, ...change } : x));
 
   async function remove(d: PatientDocument) {
     if (canDeleteOwn(d)) {
@@ -124,7 +128,8 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
       setBusy(false);
       // The window closed in between: hide it instead.
       if (!r.ok) { setHiding(d); setReason(""); return; }
-      await load();
+      setDocs((ds) => ds.filter((x) => x.id !== d.id));
+      void load();
     } else {
       setHiding(d); setReason("");
     }
@@ -133,12 +138,13 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   async function confirmHide() {
     if (!hiding) return;
     if (!reason.trim()) { setError(tp("reasonRequired")); return; }
-    if (await act(hideDocument(hiding.storagePath, patientId, reason))) setHiding(null);
+    const h = hiding;
+    if (await act(hideDocument(h.storagePath, patientId, reason), patchDoc(h.id, { hidden: { at: new Date().toISOString(), byName: null, reason: reason.trim() } }))) setHiding(null);
   }
 
   async function saveRename() {
     if (!renaming || !renaming.title.trim()) return;
-    if (await act(renameDocument(renaming.id, renaming.title))) setRenaming(null);
+    if (await act(renameDocument(renaming.id, renaming.title), patchDoc(renaming.id, { title: renaming.title.trim() }))) setRenaming(null);
   }
 
   const visible = docs.filter((d) => !d.hidden);
@@ -214,7 +220,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
                         <p className="truncate text-sm font-semibold text-slate-800">{d.title}</p>
                       )}
                       <p className="text-xs text-slate-400">
-                        {formatShortDate(locale, d.createdAt.slice(0, 10))} · {formatBytes(d.sizeBytes)}
+                        {formatShortDate(locale, localDay(d.createdAt))} · {formatBytes(d.sizeBytes)}
                         {d.uploadedByRole === "patient" && <> · <span className="font-semibold text-amber-700">{t("uploadedByPatient")}</span></>}
                         {d.replaced && <> · {t("corrected")}</>}
                       </p>
@@ -227,14 +233,14 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
                   {!isArchived && renaming?.id !== d.id && (
                     <div className="flex flex-wrap items-center gap-2 text-xs">
                       {f.defaultKey !== "internal" && !d.replaced && (
-                        <button type="button" disabled={busy} onClick={() => void act(setDocumentShared(d.id, !d.shared))} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">
+                        <button type="button" disabled={busy} onClick={() => void act(setDocumentShared(d.id, !d.shared), patchDoc(d.id, { shared: !d.shared }))} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">
                           {d.shared ? t("hideFromPatient") : t("share")}
                         </button>
                       )}
                       <button type="button" disabled={busy} onClick={() => setRenaming({ id: d.id, title: d.title })} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">{t("settings.rename")}</button>
                       <label className="flex items-center gap-1 text-slate-500">
                         <span className="sr-only">{t("move")}</span>
-                        <select aria-label={t("move")} value="" disabled={busy} onChange={(e) => { if (e.target.value) void act(moveDocument(d.id, e.target.value)); }} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs">
+                        <select aria-label={t("move")} value="" disabled={busy} onChange={(e) => { const to = e.target.value; if (to) void act(moveDocument(d.id, to), patchDoc(d.id, { folderId: to, ...(isInternal(to) ? { shared: false } : {}) })); }} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs">
                           <option value="">{t("move")}</option>
                           {folders.filter((x) => x.id !== d.folderId).map((x) => <option key={x.id} value={x.id}>{folderName(x)}</option>)}
                         </select>
@@ -259,7 +265,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
               {removed.map((d) => (
                 <li key={d.id} className="text-xs text-slate-400">
                   <span className="font-semibold line-through">{d.title}</span>{" "}
-                  {tp("filesHiddenLine", { date: formatShortDate(locale, d.hidden!.at.slice(0, 10)), name: d.hidden!.byName ?? "—", reason: d.hidden!.reason })}
+                  {tp("filesHiddenLine", { date: formatShortDate(locale, localDay(d.hidden!.at)), name: d.hidden!.byName ?? "—", reason: d.hidden!.reason })}
                 </li>
               ))}
             </ul>

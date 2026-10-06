@@ -2111,6 +2111,8 @@
     "internalNote": "เอกสารในโฟลเดอร์นี้จะไม่ถูกแชร์",
     "hideFromPatient": "ซ่อนจากผู้ป่วย",
     "uploadedByPatient": "ผู้ป่วยส่งมา",
+    "sentByYou": "คุณเป็นผู้ส่ง",
+    "removedMark": "(ลบแล้ว)",
     "empty": "ยังไม่มีเอกสาร",
     "patientEmpty": "แพทย์ของคุณยังไม่ได้แชร์เอกสาร",
     "upload": "ส่งเอกสาร",

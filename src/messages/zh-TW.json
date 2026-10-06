@@ -2081,6 +2081,8 @@
     "internalNote": "此資料夾中的文件永不分享。",
     "hideFromPatient": "對病患隱藏",
     "uploadedByPatient": "病患傳送",
+    "sentByYou": "由您傳送",
+    "removedMark": "(已刪除)",
     "empty": "尚無文件。",
     "patientEmpty": "您的醫師尚未分享任何文件。",
     "upload": "傳送文件",
