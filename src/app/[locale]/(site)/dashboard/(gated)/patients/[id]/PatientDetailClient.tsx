@@ -7,7 +7,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
-import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -231,6 +231,15 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
     });
   }
 
+  // When, in the VIEWER's time zone and the reader's calendar (cf: system
+  // dates, one zone per page, as the documents list). The tab renders only
+  // after a click, in the browser, so this never differs from a server render.
+  const fmtWhen = new Intl.DateTimeFormat(dateLocale(locale), { dateStyle: "medium", timeStyle: "short" });
+  const whenLocal = (r: AccessLogRow) => {
+    const d = new Date(r.at);
+    return Number.isNaN(d.getTime()) ? r.when : plainSpaces(fmtWhen.format(d));
+  };
+
   const who = (r: AccessLogRow) =>
     r.actorRole === "patient" ? t("accessRolePatient")
       : `${r.actorName} · ${r.actorRole === "secretary" ? t("accessRoleSecretary") : t("accessRoleProfessional")}`;
@@ -281,7 +290,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
             <tbody>
               {rows.map((r, i) => (
                 <tr key={`${r.at}-${i}`} className="border-b border-slate-50 align-top">
-                  <td className="whitespace-nowrap py-2 pr-4 text-slate-500">{r.when}</td>
+                  <td className="whitespace-nowrap py-2 pr-4 text-slate-500">{whenLocal(r)}</td>
                   <td className="py-2 pr-4 text-slate-800">{who(r)}</td>
                   <td className="py-2 text-slate-600">{what(r)}</td>
                 </tr>
