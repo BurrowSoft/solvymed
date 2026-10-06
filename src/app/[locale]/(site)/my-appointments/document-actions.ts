@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { isUuid } from "@/lib/patientFiles";
 import { DOC_MAX_BYTES, DOC_TITLE_MAX, docErrorKey, type DocErrorKey, type DocMime } from "@/lib/patientDocuments";
+import { patientDocumentFn } from "@/lib/patientDocumentFn";
 
 // The patient's side of 1.8.0 A (migration 190, flag 'patient_documents'):
 // the documents their doctors share, and sending one. Read as the patient
@@ -24,18 +25,7 @@ async function patient() {
   return user ? supabase : null;
 }
 
-// The edge function's answer: { ok, ... } or { code } with a 4xx.
-async function fn<T>(supabase: NonNullable<Awaited<ReturnType<typeof patient>>>, body: Record<string, unknown>): Promise<{ ok: true; data: T } | { ok: false; code: string }> {
-  const { data, error } = await supabase.functions.invoke("patient-document", { body });
-  if (!error) return { ok: true, data: data as T };
-  let code = "failed";
-  try {
-    const ctx = (error as { context?: Response }).context;
-    const j = ctx ? await ctx.json() : null;
-    if (j && typeof j.code === "string") code = j.code;
-  } catch { /* not JSON */ }
-  return { ok: false, code };
-}
+const fn = patientDocumentFn;
 
 export async function loadMyDocumentDoctors(): Promise<DocDoctor[] | null> {
   const supabase = await patient();

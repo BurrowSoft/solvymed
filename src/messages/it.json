@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Agenda intelligente",
-    "h2": "1.000+ pazienti",
     "h3": "Cartelle cliniche",
-    "h4": "Ricette digitali",
-    "h5": "Pagamenti integrati",
+    "h4": "Prescrizioni in PDF",
+    "h5": "QR Pix e PromptPay",
     "h6": "Report dello studio"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Agenda Intelligente",
     "scheduling_desc": "Vista completa del calendario in modalità giornaliera, settimanale e mensile. Gestisci appuntamenti in presenza e online, blocca gli orari e ricevi promemoria automatici dei tuoi appuntamenti sul telefono.",
     "patients_title": "Gestione dei Pazienti",
-    "patients_desc": "Schede pazienti complete con dati personali, recapiti, storico degli appuntamenti e tag personalizzate. Cerca e filtra in tutta la tua base di pazienti.",
+    "patients_desc": "Schede paziente complete con dati personali, contatti e storico degli appuntamenti, più tag nell’app. Cerca in tutta la tua base di pazienti.",
     "records_title": "Cartelle Cliniche",
     "records_desc": "Note mediche su linea temporale con testo formattato. Documenta ogni sessione, segui l'evoluzione del paziente e allega esami e file — tutto archiviato in sicurezza.",
-    "prescriptions_title": "Ricette Digitali",
-    "prescriptions_desc": "Emetti ricette digitali in pochi secondi. Mantieni una libreria personale di farmaci, personalizza i modelli e inviali direttamente ai pazienti.",
-    "payments_title": "Pagamenti Integrati",
-    "payments_desc": "Incassa i pagamenti direttamente dall'app. Invia link di pagamento ai pazienti, gestisci le rate e monitora le sessioni pagate e in sospeso.",
-    "analytics_title": "Report e Analisi",
-    "analytics_desc": "Comprendi il tuo studio in un colpo d'occhio. Report di fatturato, statistiche sugli appuntamenti, crescita dei pazienti — dati chiari per uno studio migliore."
+    "prescriptions_title": "Prescrizioni in PDF",
+    "prescriptions_desc": "Scrivi le prescrizioni in pochi secondi, poi stampale o condividile in PDF.",
+    "payments_title": "Pagamenti Pix e PromptPay",
+    "payments_desc": "Ricevi con Pix o PromptPay, direttamente sul tuo conto, senza commissioni SolvyMed. Un QR di pagamento per ogni appuntamento, il monitoraggio delle sedute pagate e in sospeso e, nell’app in Brasile, un promemoria di pagamento via WhatsApp.",
+    "analytics_title": "Report",
+    "analytics_desc": "Nell’app vedi pazienti, appuntamenti per stato e incassi per periodo (questa settimana, questo mese, il mese scorso o sempre)."
   },
   "cta": {
     "heading": "Pronto a semplificare il tuo studio?",
@@ -942,7 +941,7 @@
     "planSubtitle": "Annulla quando vuoi. 15 giorni di prova gratuita.",
     "feature1": "Appuntamenti e pianificazione illimitati",
     "feature2": "Cartelle cliniche, ricette ed esami",
-    "feature3": "Report sui ricavi e monitoraggio pagamenti",
+    "feature3": "Incassi per periodo e monitoraggio dei pagamenti (nell’app)",
     "feature4": "Promemoria dei tuoi appuntamenti sul telefono",
     "feature5": "Accesso incluso per le tue segretarie",
     "payCard": "Abbonati con carta",
@@ -2095,6 +2094,7 @@
     "err": {
       "tooLarge": "Questo file supera i 20 MB.",
       "type": "Si possono inviare solo file PDF, JPG, PNG o HEIC.",
+      "cantShareType": "Questo file non può essere condiviso: solo PDF, JPG, PNG o HEIC.",
       "dailyLimit": "Puoi inviare fino a 10 documenti al giorno a questo medico. Riprova domani.",
       "patientFull": "Hai raggiunto il limite di 200 MB per questo medico.",
       "storageFull": "Lo spazio documenti di questo medico è pieno.",

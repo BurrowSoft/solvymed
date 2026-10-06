@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
-    "h2": "Hơn 1.000 bệnh nhân",
     "h3": "Hồ sơ lâm sàng",
-    "h4": "Đơn thuốc điện tử",
-    "h5": "Thanh toán tích hợp",
+    "h4": "Đơn thuốc PDF",
+    "h5": "QR Pix & PromptPay",
     "h6": "Báo cáo phòng khám"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Lịch Hẹn Thông Minh",
     "scheduling_desc": "Chế độ xem lịch đầy đủ theo ngày, tuần và tháng. Quản lý các cuộc hẹn trực tiếp và trực tuyến, chặn thời gian và nhận nhắc nhở tự động về lịch hẹn trên điện thoại.",
     "patients_title": "Quản Lý Bệnh Nhân",
-    "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ, lịch sử hẹn và thẻ tùy chỉnh. Tìm kiếm và lọc toàn bộ cơ sở bệnh nhân của bạn.",
+    "patients_desc": "Hồ sơ bệnh nhân đầy đủ với thông tin cá nhân, liên hệ và lịch sử hẹn, cùng thẻ phân loại trong ứng dụng. Tìm kiếm trong toàn bộ danh sách bệnh nhân.",
     "records_title": "Hồ Sơ Lâm Sàng",
     "records_desc": "Ghi chú y tế theo dòng thời gian với văn bản định dạng. Ghi lại từng buổi khám, theo dõi diễn tiến của bệnh nhân và đính kèm xét nghiệm và tệp — tất cả được lưu trữ an toàn.",
-    "prescriptions_title": "Đơn Thuốc Điện Tử",
-    "prescriptions_desc": "Phát hành đơn thuốc điện tử trong vài giây. Duy trì thư viện thuốc cá nhân, tùy chỉnh mẫu và gửi trực tiếp cho bệnh nhân.",
-    "payments_title": "Thanh Toán Tích Hợp",
-    "payments_desc": "Thu thanh toán trực tiếp qua ứng dụng. Gửi liên kết thanh toán cho bệnh nhân, quản lý các đợt trả góp và theo dõi các buổi đã thanh toán và chưa thanh toán.",
-    "analytics_title": "Báo Cáo & Phân Tích",
-    "analytics_desc": "Hiểu phòng khám của bạn trong nháy mắt. Báo cáo doanh thu, thống kê cuộc hẹn, tăng trưởng bệnh nhân — thông tin chi tiết rõ ràng để điều hành phòng khám tốt hơn."
+    "prescriptions_title": "Đơn thuốc PDF",
+    "prescriptions_desc": "Kê đơn trong vài giây, rồi in hoặc chia sẻ dưới dạng PDF.",
+    "payments_title": "Thanh toán Pix & PromptPay",
+    "payments_desc": "Nhận tiền qua Pix hoặc PromptPay, vào thẳng tài khoản của bạn, không mất phí SolvyMed. Mã QR thanh toán cho từng lịch hẹn, theo dõi buổi đã thanh toán và chưa thanh toán, và tại Brazil, nhắc thanh toán qua WhatsApp trong ứng dụng.",
+    "analytics_title": "Báo cáo",
+    "analytics_desc": "Trong ứng dụng, xem bệnh nhân, lịch hẹn theo trạng thái và doanh thu theo kỳ (tuần này, tháng này, tháng trước hoặc toàn bộ)."
   },
   "cta": {
     "heading": "Sẵn sàng đơn giản hóa phòng khám của bạn chưa?",
@@ -942,7 +941,7 @@
     "planSubtitle": "Hủy bất cứ lúc nào. Dùng thử miễn phí 15 ngày cho tài khoản mới.",
     "feature1": "Lịch hẹn và lịch trình không giới hạn",
     "feature2": "Hồ sơ bệnh nhân, đơn thuốc và xét nghiệm",
-    "feature3": "Báo cáo doanh thu và theo dõi thanh toán",
+    "feature3": "Doanh thu theo kỳ & theo dõi thanh toán (trong ứng dụng)",
     "feature4": "Nhắc lịch hẹn trên điện thoại của bạn",
     "feature5": "Quyền truy cập cho thư ký được tính gộp",
     "payCard": "Đăng ký bằng thẻ",
@@ -2095,6 +2094,7 @@
     "err": {
       "tooLarge": "Tệp này lớn hơn 20 MB.",
       "type": "Chỉ gửi được tệp PDF, JPG, PNG hoặc HEIC.",
+      "cantShareType": "Không thể chia sẻ tệp này: chỉ hỗ trợ PDF, JPG, PNG hoặc HEIC.",
       "dailyLimit": "Bạn có thể gửi tối đa 10 tài liệu mỗi ngày cho bác sĩ này. Hãy thử lại vào ngày mai.",
       "patientFull": "Bạn đã đạt giới hạn 200 MB cho bác sĩ này.",
       "storageFull": "Dung lượng tài liệu của bác sĩ này đã đầy.",

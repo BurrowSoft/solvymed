@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Agendamento inteligente",
-    "h2": "1.000+ pacientes",
     "h3": "Prontuários clínicos",
-    "h4": "Prescrições digitais",
-    "h5": "Pagamentos integrados",
+    "h4": "Receitas em PDF",
+    "h5": "Pix por QR Code",
     "h6": "Relatórios da clínica"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Agendamento Inteligente",
     "scheduling_desc": "Visualização completa da agenda em modos diário, semanal e mensal. Gerencie consultas presenciais e online, bloqueie horários e receba lembretes automáticos das suas consultas no celular.",
     "patients_title": "Gestão de Pacientes",
-    "patients_desc": "Fichas completas com dados pessoais, contato, histórico de consultas e tags personalizadas. Pesquise e filtre toda a sua base de pacientes.",
+    "patients_desc": "Fichas completas com dados pessoais, contato e histórico de consultas, além de tags no app. Pesquise toda a sua base de pacientes.",
     "records_title": "Prontuário Clínico",
     "records_desc": "Anotações médicas em linha do tempo com texto rico. Documente cada sessão, acompanhe a evolução do paciente e anexe exames e arquivos — tudo armazenado com segurança.",
-    "prescriptions_title": "Prescrições Digitais",
-    "prescriptions_desc": "Emita prescrições digitais em segundos. Mantenha uma biblioteca pessoal de medicamentos, personalize modelos e envie diretamente ao paciente.",
-    "payments_title": "Pagamentos Integrados",
-    "payments_desc": "Receba pagamentos diretamente pelo app. Envie links de pagamento, gerencie parcelamentos e acompanhe sessões pagas e pendentes.",
-    "analytics_title": "Relatórios e Análises",
-    "analytics_desc": "Entenda sua clínica de relance. Relatórios financeiros, estatísticas de consultas e crescimento de pacientes — dados claros para uma clínica melhor."
+    "prescriptions_title": "Receitas em PDF",
+    "prescriptions_desc": "Emita prescrições em segundos e imprima ou compartilhe em PDF.",
+    "payments_title": "Pagamentos por Pix",
+    "payments_desc": "Receba por Pix, direto na sua conta, sem taxas do SolvyMed. QR Code de pagamento para cada consulta, controle de sessões pagas e pendentes e, no app, lembrete de pagamento por WhatsApp.",
+    "analytics_title": "Relatórios",
+    "analytics_desc": "No app, veja pacientes, consultas por status e receita por período (esta semana, este mês, mês anterior ou todo o período), com filtro por tipo de convênio."
   },
   "cta": {
     "heading": "Pronto para simplificar sua clínica?",
@@ -942,7 +941,7 @@
     "planSubtitle": "Cancele quando quiser. 15 dias de teste grátis para novas contas.",
     "feature1": "Consultas e agendamentos ilimitados",
     "feature2": "Prontuários, receitas e exames",
-    "feature3": "Relatórios de receita e controle de pagamentos",
+    "feature3": "Receita por período e controle de pagamentos (no app)",
     "feature4": "Lembretes das suas consultas no celular",
     "feature5": "Acesso incluso para suas secretárias",
     "payCard": "Assinar com Cartão",
@@ -2095,6 +2094,7 @@
     "err": {
       "tooLarge": "Este arquivo tem mais de 20 MB.",
       "type": "Só é possível enviar PDF, JPG, PNG ou HEIC.",
+      "cantShareType": "Este arquivo não pode ser compartilhado: apenas PDF, JPG, PNG ou HEIC.",
       "dailyLimit": "Você pode enviar até 10 documentos por dia para este médico. Tente amanhã.",
       "patientFull": "Você atingiu o limite de 200 MB para este médico.",
       "storageFull": "O espaço de documentos deste médico está cheio.",

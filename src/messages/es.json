@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Agenda inteligente",
-    "h2": "1.000+ pacientes",
     "h3": "Historial clínico",
-    "h4": "Recetas digitales",
-    "h5": "Pagos integrados",
+    "h4": "Recetas en PDF",
+    "h5": "QR de Pix y PromptPay",
     "h6": "Informes de consulta"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Agenda Inteligente",
     "scheduling_desc": "Vista completa del calendario en modos diario, semanal y mensual. Gestiona citas presenciales y en línea, bloquea horarios y recibe recordatorios automáticos de tus citas en el móvil.",
     "patients_title": "Gestión de Pacientes",
-    "patients_desc": "Fichas completas con datos personales, contacto, historial de citas y etiquetas personalizadas. Busca y filtra toda tu base de pacientes.",
+    "patients_desc": "Fichas completas con datos personales, contacto e historial de citas, además de etiquetas en la app. Busca en toda tu base de pacientes.",
     "records_title": "Historial Clínico",
     "records_desc": "Notas médicas en línea de tiempo con texto enriquecido. Documenta cada sesión, sigue la evolución del paciente y adjunta exámenes y archivos — todo almacenado de forma segura.",
-    "prescriptions_title": "Recetas Digitales",
-    "prescriptions_desc": "Emite recetas digitales en segundos. Mantén una biblioteca personal de medicamentos, personaliza plantillas y envíalas directamente al paciente.",
-    "payments_title": "Pagos Integrados",
-    "payments_desc": "Cobra directamente desde la app. Envía enlaces de pago a los pacientes, gestiona cuotas y haz seguimiento de sesiones pagadas y pendientes.",
-    "analytics_title": "Informes y Analíticas",
-    "analytics_desc": "Entiende tu consulta de un vistazo. Informes de ingresos, estadísticas de citas y crecimiento de pacientes — datos claros para una clínica mejor."
+    "prescriptions_title": "Recetas en PDF",
+    "prescriptions_desc": "Emite recetas en segundos y luego imprímelas o compártelas en PDF.",
+    "payments_title": "Pagos por Pix y PromptPay",
+    "payments_desc": "Recibe por Pix o PromptPay, directo a tu cuenta, sin comisiones de SolvyMed. Un QR de pago para cada cita, control de sesiones pagadas y pendientes y, en la app en Brasil, un recordatorio de pago por WhatsApp.",
+    "analytics_title": "Informes",
+    "analytics_desc": "En la app, consulta pacientes, citas por estado e ingresos por período (esta semana, este mes, el mes pasado o todo el tiempo)."
   },
   "cta": {
     "heading": "¿Listo para simplificar tu consulta?",
@@ -942,7 +941,7 @@
     "planSubtitle": "Cancela cuando quieras. 15 días de prueba gratis.",
     "feature1": "Citas y agenda ilimitadas",
     "feature2": "Historiales, recetas y exámenes",
-    "feature3": "Informes de ingresos y seguimiento de pagos",
+    "feature3": "Ingresos por período y control de pagos (en la app)",
     "feature4": "Recordatorios de tus citas en el móvil",
     "feature5": "Acceso incluido para tus secretarias",
     "payCard": "Suscribirse con tarjeta",
@@ -2095,6 +2094,7 @@
     "err": {
       "tooLarge": "Este archivo supera los 20 MB.",
       "type": "Solo se pueden enviar archivos PDF, JPG, PNG o HEIC.",
+      "cantShareType": "Este archivo no se puede compartir: solo PDF, JPG, PNG o HEIC.",
       "dailyLimit": "Puedes enviar hasta 10 documentos al día a este médico. Inténtalo mañana.",
       "patientFull": "Has alcanzado el límite de 200 MB para este médico.",
       "storageFull": "El espacio de documentos de este médico está lleno.",

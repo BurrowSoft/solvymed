@@ -19,10 +19,9 @@
   },
   "highlights": {
     "h1": "Smart scheduling",
-    "h2": "1,000+ patients",
     "h3": "Clinical records",
-    "h4": "Digital prescriptions",
-    "h5": "Integrated payments",
+    "h4": "Prescriptions in PDF",
+    "h5": "Pix & PromptPay QR",
     "h6": "Practice reports"
   },
   "features": {
@@ -31,15 +30,15 @@
     "scheduling_title": "Smart Scheduling",
     "scheduling_desc": "Full calendar view with daily, weekly, and monthly modes. Manage in-person and online appointments, block time, and get automatic reminders of your appointments on your phone.",
     "patients_title": "Patient Management",
-    "patients_desc": "Complete patient profiles with personal data, contact info, appointment history, and custom tags. Search and filter across your entire patient base.",
+    "patients_desc": "Complete patient profiles with personal data, contact info and appointment history, plus tags in the app. Search your entire patient base.",
     "records_title": "Clinical Records",
     "records_desc": "Timeline-based medical notes with rich text. Document each session, track patient evolution, and attach exams and files — all securely stored.",
-    "prescriptions_title": "Digital Prescriptions",
-    "prescriptions_desc": "Issue digital prescriptions in seconds. Maintain a personal medication library, customize templates, and send directly to patients.",
-    "payments_title": "Integrated Payments",
-    "payments_desc": "Collect payments directly through the app. Send payment links to patients, manage installments, and track paid and pending sessions.",
-    "analytics_title": "Reports & Analytics",
-    "analytics_desc": "Understand your practice at a glance. Revenue reports, appointment stats, patient growth — clear insights to help you run a better clinic."
+    "prescriptions_title": "Prescriptions in PDF",
+    "prescriptions_desc": "Write prescriptions in seconds, then print them or share them as a PDF.",
+    "payments_title": "Pix & PromptPay Payments",
+    "payments_desc": "Receive by Pix or PromptPay, straight to your account, with no SolvyMed fees. A payment QR for each appointment, paid and pending tracking, and, in the app in Brazil, a WhatsApp payment reminder.",
+    "analytics_title": "Reports",
+    "analytics_desc": "In the app, see your patients, appointments by status and revenue by period (this week, this month, last month or all time), with a filter by insurance type."
   },
   "cta": {
     "heading": "Ready to simplify your practice?",
@@ -942,7 +941,7 @@
     "planSubtitle": "Cancel anytime. 15-day free trial for new accounts.",
     "feature1": "Unlimited appointments & scheduling",
     "feature2": "Patient records, prescriptions & exams",
-    "feature3": "Revenue reports & payment tracking",
+    "feature3": "Revenue by period & payment tracking (in the app)",
     "feature4": "Appointment reminders on your phone",
     "feature5": "Includes access for your secretaries",
     "payCard": "Subscribe with Card",
@@ -2125,6 +2124,7 @@
     "err": {
       "tooLarge": "This file is larger than 20 MB.",
       "type": "Only PDF, JPG, PNG or HEIC files can be sent.",
+      "cantShareType": "This file can't be shared: only PDF, JPG, PNG or HEIC.",
       "dailyLimit": "You can send up to 10 documents a day to this doctor. Try again tomorrow.",
       "patientFull": "You've reached the 200 MB limit for this doctor.",
       "storageFull": "This doctor's document storage is full.",
