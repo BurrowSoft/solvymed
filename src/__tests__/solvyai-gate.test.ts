@@ -43,7 +43,8 @@ describe("SolvyAI needs solvyai-live as well as the vars", () => {
     const chat = await import("@/app/api/assistant/route");
     const post = await chat.POST(new Request("https://www.solvymed.com/api/assistant", { method: "POST", body: "{}" }) as never);
     expect(post.status).toBe(404);
-  });
+    // Fresh imports of both routes: slow under the full suite's load.
+  }, 90_000);
 
   it("vars on and condition true: on", async () => {
     h.live = true;

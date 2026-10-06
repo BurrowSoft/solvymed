@@ -3,6 +3,7 @@ import { handleAssistant, type Deps } from "@/lib/assistant/server/handle";
 import { fakeModelClient, type ModelClient } from "@/lib/assistant/server/model";
 import { cachedSystem } from "@/lib/assistant/server/knowledge";
 import type { AnswerChunk } from "@/lib/assistant/types";
+import { conditionMet } from "@/lib/conditions";
 
 // /api/assistant's logic (docs/assistant-api.md §3) with a fake model and
 // fake database clients: the checks in order, the stream, and the usage
@@ -60,8 +61,8 @@ describe("/api/assistant: the checks, in the contract's order", () => {
     process.env.NEXT_PUBLIC_SOLVYAI_ENABLED = "1";
     expect(assistantApiEnabled()).toBe(false);
     process.env.SOLVYAI_API_ENABLED = "1";
-    // Not until solvyai-live too (cf, 8 Oct; false today): see solvyai-gate.test.ts.
-    expect(assistantApiEnabled()).toBe(false);
+    // And solvyai-live (cf, 8 Oct): see solvyai-gate.test.ts.
+    expect(assistantApiEnabled()).toBe(conditionMet("solvyai-live"));
     process.env.SOLVYAI_API_ENABLED = before;
     delete process.env.NEXT_PUBLIC_SOLVYAI_ENABLED;
   });

@@ -39,7 +39,10 @@
 // trimmed to what is true today: no DPO appointment, deadline or Thai
 // retention period promised). Mobile's accepting migration (197) for
 // ('privacy','2026-10-10') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-10";
+// 2026-10-12: SolvyAI live (solvyai-live): §5 Anthropic (USA) row, §6b and
+// Anthropic's retention in §6 (Vitor's "go SolvyAI", via cf). Mobile's
+// accepting migration (198) for ('privacy','2026-10-12') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-12";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
