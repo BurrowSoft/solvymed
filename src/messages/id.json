@@ -2199,6 +2199,7 @@
     "edit": "Ubah",
     "editTitle": "Ubah lokasi",
     "dayLocation": "Lokasi",
-    "bookingLine": "Lokasi: {name} · {address}"
+    "bookingLine": "Lokasi: {name} · {address}",
+    "primaryConfirm": "Hari kerja tanpa lokasi yang dipilih akan memakai {name}. Janji temu yang dipesan di suatu lokasi tetap di sana; yang tanpa lokasi akan menampilkan {name}."
   }
 }

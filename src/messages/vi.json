@@ -2199,6 +2199,7 @@
     "edit": "Sửa",
     "editTitle": "Sửa địa điểm",
     "dayLocation": "Địa điểm",
-    "bookingLine": "Địa điểm: {name} · {address}"
+    "bookingLine": "Địa điểm: {name} · {address}",
+    "primaryConfirm": "Các ngày làm việc chưa chọn địa điểm sẽ dùng {name}. Lịch hẹn đã đặt tại một địa điểm giữ nguyên; lịch hẹn không có địa điểm sẽ hiển thị {name}."
   }
 }
