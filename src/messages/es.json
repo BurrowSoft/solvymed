@@ -2201,5 +2201,15 @@
     "dayLocation": "Lugar",
     "bookingLine": "Lugar: {name} · {address}",
     "primaryConfirm": "Los días de atención sin lugar elegido pasarán a usar {name}. Las citas reservadas en un lugar siguen allí; las que no tienen lugar mostrarán {name}."
+  },
+  "brandCrop": {
+    "title": "Ajustar imagen",
+    "use": "Usar imagen",
+    "small": "Imagen pequeña: puede imprimirse borrosa.",
+    "hint": "Arrastra para mover. Usa el control o la rueda del ratón para acercar o alejar.",
+    "hintTouch": "Arrastra para mover. Usa dos dedos para acercar o alejar.",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "adjust": "Ajustar"
   }
 }

@@ -2201,5 +2201,15 @@
     "dayLocation": "Local",
     "bookingLine": "Local: {name} · {address}",
     "primaryConfirm": "Os dias de atendimento sem local escolhido passam a usar {name}. Consultas marcadas com um local continuam nele; as sem local passam a mostrar {name}."
+  },
+  "brandCrop": {
+    "title": "Ajustar imagem",
+    "use": "Usar imagem",
+    "small": "Imagem pequena: pode ficar sem nitidez na impressão.",
+    "hint": "Arraste para mover. Use o controle ou a roda do mouse para aproximar ou afastar.",
+    "hintTouch": "Arraste para mover. Use dois dedos para aproximar ou afastar.",
+    "zoomIn": "Aproximar",
+    "zoomOut": "Afastar",
+    "adjust": "Ajustar"
   }
 }
