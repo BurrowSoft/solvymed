@@ -28,6 +28,8 @@ import { BrandCard } from "./BrandCard";
 import { ColleaguesCard } from "./ColleaguesCard";
 import { RecordTemplatesCard } from "./RecordTemplatesCard";
 import { listRecordTemplates } from "./record-template-actions";
+import { serverFlag } from "@/lib/myDoctors";
+import { shownLocations, sortLocations } from "@/lib/locations";
 import { DocumentFoldersCard } from "./DocumentFoldersCard";
 import { documentsEnabled, loadFolders } from "../(gated)/patients/documents-actions";
 import { listColleagues } from "../colleague-actions";
@@ -154,6 +156,10 @@ export default async function SettingsPage({
     supabase.rpc("list_my_team"),
     supabase.rpc("get_effective_subscription", { p_user_id: user.id }),
   ]);
+  // 1.8.0 F (flag 'practice_locations'): a location per working day with 2+.
+  const practiceLocations = (await serverFlag(supabase, "practice_locations"))
+    ? shownLocations(sortLocations((await supabase.from("clinics").select("id, name, is_primary, position, created_at").eq("professional_id", user.id)).data ?? []), true)
+    : [];
   // Settings → Assinatura: no card if the plan can't be read. The portal
   // button only for a Stripe subscription (the route re-checks all of it).
   const effSub = subResult.error ? null : ((subResult.data?.[0] ?? null) as EffectiveSub | null);
@@ -321,7 +327,7 @@ export default async function SettingsPage({
           }}
         />
 
-        <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} country={practiceCountry} />
+        <WorkingHoursForm workingHours={prof.working_hours as WorkingHours | null} country={practiceCountry} locations={practiceLocations} />
 
         <SchedulingRulesForm maxConcurrent={(prof.max_concurrent_bookings as number | null) ?? null} />
 

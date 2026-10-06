@@ -2220,5 +2220,15 @@
     "ok": "ตกลง",
     "close": "ปิด",
     "failed": "บันทึกไม่สำเร็จ โปรดลองอีกครั้ง"
+  },
+  "locations": {
+    "title": "สถานที่ให้บริการ",
+    "primary": "หลัก",
+    "makePrimary": "ตั้งเป็นหลัก",
+    "deletePrimary": "โปรดตั้งสถานที่อื่นเป็นหลักก่อน",
+    "edit": "แก้ไข",
+    "editTitle": "แก้ไขสถานที่",
+    "dayLocation": "สถานที่",
+    "bookingLine": "สถานที่: {name} · {address}"
   }
 }

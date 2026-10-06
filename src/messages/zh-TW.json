@@ -2190,5 +2190,15 @@
     "ok": "確定",
     "close": "關閉",
     "failed": "無法儲存，請再試一次。"
+  },
+  "locations": {
+    "title": "診療地點",
+    "primary": "主要",
+    "makePrimary": "設為主要",
+    "deletePrimary": "請先將另一個地點設為主要。",
+    "edit": "編輯",
+    "editTitle": "編輯地點",
+    "dayLocation": "地點",
+    "bookingLine": "地點：{name} · {address}"
   }
 }

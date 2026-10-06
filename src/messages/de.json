@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Schließen",
     "failed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut."
+  },
+  "locations": {
+    "title": "Praxisstandorte",
+    "primary": "Hauptstandort",
+    "makePrimary": "Als Hauptstandort festlegen",
+    "deletePrimary": "Legen Sie zuerst einen anderen Standort als Hauptstandort fest.",
+    "edit": "Bearbeiten",
+    "editTitle": "Standort bearbeiten",
+    "dayLocation": "Standort",
+    "bookingLine": "Standort: {name} · {address}"
   }
 }

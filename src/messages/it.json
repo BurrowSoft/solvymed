@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Chiudi",
     "failed": "Impossibile salvare. Riprova."
+  },
+  "locations": {
+    "title": "Sedi dello studio",
+    "primary": "Principale",
+    "makePrimary": "Imposta come principale",
+    "deletePrimary": "Imposta prima un'altra sede come principale.",
+    "edit": "Modifica",
+    "editTitle": "Modifica sede",
+    "dayLocation": "Sede",
+    "bookingLine": "Sede: {name} · {address}"
   }
 }

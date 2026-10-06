@@ -2190,5 +2190,15 @@
     "ok": "确定",
     "close": "关闭",
     "failed": "无法保存，请重试。"
+  },
+  "locations": {
+    "title": "诊疗地点",
+    "primary": "主要",
+    "makePrimary": "设为主要",
+    "deletePrimary": "请先将另一个地点设为主要。",
+    "edit": "编辑",
+    "editTitle": "编辑地点",
+    "dayLocation": "地点",
+    "bookingLine": "地点：{name} · {address}"
   }
 }

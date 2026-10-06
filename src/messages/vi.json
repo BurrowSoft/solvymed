@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Đóng",
     "failed": "Không lưu được. Vui lòng thử lại."
+  },
+  "locations": {
+    "title": "Địa điểm khám",
+    "primary": "Chính",
+    "makePrimary": "Đặt làm chính",
+    "deletePrimary": "Hãy đặt một địa điểm khác làm chính trước.",
+    "edit": "Sửa",
+    "editTitle": "Sửa địa điểm",
+    "dayLocation": "Địa điểm",
+    "bookingLine": "Địa điểm: {name} · {address}"
   }
 }

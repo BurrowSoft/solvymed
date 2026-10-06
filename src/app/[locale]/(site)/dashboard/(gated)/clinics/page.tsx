@@ -4,6 +4,8 @@ import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { ClinicsClient } from "./ClinicsClient";
+import { serverFlag } from "@/lib/myDoctors";
+import { sortLocations } from "@/lib/locations";
 
 export default async function ClinicsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -15,14 +17,21 @@ export default async function ClinicsPage({ params }: { params: Promise<{ locale
   // else too). A secretary sees the clinic read-only in Settings.
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/settings`);
 
-  const { data: clinics } = await supabase
-    .from("clinics")
-    .select("id, name, address, city, state, country, phone, lat, lng")
-    .eq("professional_id", user.id)
-    .order("created_at", { ascending: false });
+  // 1.8.0 F (flag 'practice_locations'): the primary first, edit, make primary.
+  const locationsOn = await serverFlag(supabase, "practice_locations");
+  const { data: clinics } = locationsOn
+    ? await supabase
+        .from("clinics")
+        .select("id, name, address, city, state, country, phone, lat, lng, is_primary, position, created_at")
+        .eq("professional_id", user.id)
+    : await supabase
+        .from("clinics")
+        .select("id, name, address, city, state, country, phone, lat, lng")
+        .eq("professional_id", user.id)
+        .order("created_at", { ascending: false });
 
   // The phone example follows the practice country, never the UI language.
   const phoneExample = countryProfile(await getPracticeCountry(supabase, user.id, user.id)).examples.phone;
 
-  return <ClinicsClient clinics={clinics ?? []} phoneExample={phoneExample} />;
+  return <ClinicsClient clinics={locationsOn ? sortLocations(clinics ?? []) : clinics ?? []} phoneExample={phoneExample} locationsOn={locationsOn} />;
 }

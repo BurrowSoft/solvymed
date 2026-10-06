@@ -2190,5 +2190,15 @@
     "ok": "OK",
     "close": "Fechar",
     "failed": "Não foi possível salvar. Tente novamente."
+  },
+  "locations": {
+    "title": "Locais de atendimento",
+    "primary": "Principal",
+    "makePrimary": "Tornar principal",
+    "deletePrimary": "Defina outro local como principal antes.",
+    "edit": "Editar",
+    "editTitle": "Editar local",
+    "dayLocation": "Local",
+    "bookingLine": "Local: {name} · {address}"
   }
 }

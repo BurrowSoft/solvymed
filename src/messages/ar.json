@@ -2190,5 +2190,15 @@
     "ok": "حسنًا",
     "close": "إغلاق",
     "failed": "تعذّر الحفظ. يُرجى المحاولة مرة أخرى."
+  },
+  "locations": {
+    "title": "أماكن العيادة",
+    "primary": "الرئيسي",
+    "makePrimary": "تعيين كرئيسي",
+    "deletePrimary": "عيّن مكانًا آخر كرئيسي أولًا.",
+    "edit": "تعديل",
+    "editTitle": "تعديل المكان",
+    "dayLocation": "المكان",
+    "bookingLine": "المكان: {name} · {address}"
   }
 }
