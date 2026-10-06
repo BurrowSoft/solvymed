@@ -107,6 +107,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
 
   function invite(targetEmail: string) {
     setError("");
+    setSentTo("");
     setNotice("");
     setCreated(null);
     start(async () => {
@@ -133,6 +134,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function resendEmail(row: TeamRow) {
     if (!window.confirm(t("teamResendConfirm", { email: row.email }))) return;
     setError("");
+    setSentTo("");
     setNotice("");
     setCreated(null);
     start(async () => {
@@ -157,6 +159,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function revoke(id: string) {
     if (!window.confirm(t("teamRevokeConfirm"))) return;
     setError("");
+    setSentTo("");
     start(async () => {
       const result = await revokeSecretaryInvite(id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
@@ -167,6 +170,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function remove(row: TeamRow) {
     if (!window.confirm(t("teamRemoveConfirm", { name: row.name ?? row.email }))) return;
     setError("");
+    setSentTo("");
     start(async () => {
       const result = await removeSecretary(row.id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
