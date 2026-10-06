@@ -395,6 +395,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "Record templates (website, doctors only): Settings → \"Modelos de prontuário\" / \"Record templates\" → \"Criar do zero\" / \"Create from scratch\" (blank) or \"Começar por uma especialidade\" / \"Start from a specialty\" then a specialty (an editable copy of a preset, in the reader's language: Psiquiatria, Clínica geral, Cardiologia, Psicologia, Odontologia, Nutrição, Fisioterapia, Pediatria); each section has a title and an optional hint shown as the field's example; up to 50 templates of up to 30 sections. Writing a record (patient → Registros / Records → Novo Registro / New Record), \"Modelo\" / \"Template\" picks one, or \"Sem modelo\" / \"No template\" to write free text as before (the row shows only once the doctor has a template); empty sections are left out. Records already written keep their sections: editing or deleting a template changes nothing written. SolvyAI doesn't create templates or write records; it points to these screens.",
+      pending: ["record-templates-live"],
+    },
+    help: "C13",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-queue-on"],
     },

@@ -26,6 +26,8 @@ import { SubscriptionPanel } from "./SubscriptionPanel";
 import { FoundersCard } from "./FoundersCard";
 import { BrandCard } from "./BrandCard";
 import { ColleaguesCard } from "./ColleaguesCard";
+import { RecordTemplatesCard } from "./RecordTemplatesCard";
+import { listRecordTemplates } from "./record-template-actions";
 import { listColleagues } from "../colleague-actions";
 import { loadPracticeBrand, type BrandFieldsRow } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
@@ -229,6 +231,9 @@ export default async function SettingsPage({
     : null;
   const brandRow = (brandRowResult?.data ?? null) as BrandFieldsRow | null;
   const brandRowFailed = !!brandRowResult?.error;
+  // 1.8.0 D record templates (server flag 'record_templates'): no card while it's off.
+  const templates = await listRecordTemplates();
+  const showTemplates = templates.ok || templates.code === "failed";
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -272,6 +277,8 @@ export default async function SettingsPage({
         {liveFeatures.colleagues && !locked && colleagues && (
           <ColleaguesCard initial={colleagues.ok ? colleagues.rows : []} loadFailed={!colleagues.ok} />
         )}
+
+        {showTemplates && <RecordTemplatesCard initial={templates.ok ? templates.rows : []} loadFailed={!templates.ok} />}
 
         {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
 
