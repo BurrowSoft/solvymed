@@ -2092,6 +2092,7 @@
     "err": {
       "tooLarge": "File ini lebih dari 20 MB.",
       "type": "Hanya file PDF, JPG, PNG, atau HEIC yang dapat dikirim.",
+      "cantShareType": "File ini tidak dapat dibagikan: hanya PDF, JPG, PNG, atau HEIC.",
       "dailyLimit": "Anda dapat mengirim hingga 10 dokumen per hari ke dokter ini. Coba lagi besok.",
       "patientFull": "Anda telah mencapai batas 200 MB untuk dokter ini.",
       "storageFull": "Ruang dokumen dokter ini sudah penuh.",

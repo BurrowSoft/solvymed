@@ -2092,6 +2092,7 @@
     "err": {
       "tooLarge": "Questo file supera i 20 MB.",
       "type": "Si possono inviare solo file PDF, JPG, PNG o HEIC.",
+      "cantShareType": "Questo file non può essere condiviso: solo PDF, JPG, PNG o HEIC.",
       "dailyLimit": "Puoi inviare fino a 10 documenti al giorno a questo medico. Riprova domani.",
       "patientFull": "Hai raggiunto il limite di 200 MB per questo medico.",
       "storageFull": "Lo spazio documenti di questo medico è pieno.",

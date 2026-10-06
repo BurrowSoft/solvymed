@@ -2092,6 +2092,7 @@
     "err": {
       "tooLarge": "このファイルは 20 MB を超えています。",
       "type": "送信できるのは PDF、JPG、PNG、HEIC のみです。",
+      "cantShareType": "このファイルは共有できません。PDF、JPG、PNG、HEIC のみ対応しています。",
       "dailyLimit": "この医師には 1 日 10 件まで送信できます。明日もう一度お試しください。",
       "patientFull": "この医師への送信上限 200 MB に達しました。",
       "storageFull": "この医師の書類保存容量がいっぱいです。",

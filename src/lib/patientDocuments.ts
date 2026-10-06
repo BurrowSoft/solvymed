@@ -101,7 +101,7 @@ export function toDocument(r: Record<string, unknown>): PatientDocument {
 }
 
 // Server codes (190 + the edge function) → the docs.err keys the UI shows.
-export type DocErrorKey = "tooLarge" | "type" | "dailyLimit" | "patientFull" | "storageFull" | "ownStorageFull" | "noAccess" | "folderNotEmpty" | "maxFolders" | "invalidName" | "generic";
+export type DocErrorKey = "tooLarge" | "type" | "cantShareType" | "dailyLimit" | "patientFull" | "storageFull" | "ownStorageFull" | "noAccess" | "folderNotEmpty" | "maxFolders" | "invalidName" | "generic";
 export function docErrorKey(message: string | null | undefined, asDoctor = false): DocErrorKey {
   const m = message ?? "";
   if (m.includes("too_large")) return "tooLarge";

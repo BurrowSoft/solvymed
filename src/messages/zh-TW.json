@@ -2092,6 +2092,7 @@
     "err": {
       "tooLarge": "此檔案超過 20 MB。",
       "type": "只能傳送 PDF、JPG、PNG 或 HEIC 檔案。",
+      "cantShareType": "此檔案無法分享:僅支援 PDF、JPG、PNG 或 HEIC。",
       "dailyLimit": "每天最多可向這位醫師傳送 10 份文件。請明天再試。",
       "patientFull": "您已達到這位醫師的 200 MB 上限。",
       "storageFull": "這位醫師的文件儲存空間已滿。",
