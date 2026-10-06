@@ -1,3 +1,4 @@
+import { conditionMet } from "@/lib/conditions";
 import type { NextRequest } from "next/server";
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
@@ -33,6 +34,9 @@ export function assistantService(): SupabaseClient {
 
 // The server-only switch for /api/assistant (never a NEXT_PUBLIC_ value:
 // nothing a browser or the app sends can turn it on). Read per request.
+// AND solvyai-live (cf, 8 Oct): with the Production vars set ahead of the
+// go, no build may answer before the flip PR makes the privacy text, Help
+// and the App Map true. The app follows /api/assistant/usage, so it too.
 export function assistantApiEnabled(): boolean {
-  return process.env.SOLVYAI_API_ENABLED === "1";
+  return process.env.SOLVYAI_API_ENABLED === "1" && conditionMet("solvyai-live");
 }
