@@ -136,11 +136,11 @@
     "what": "Migration 173 is applied on production: close_my_account queues the 'practice closed' / 'appointment cancelled' notices server-side (patient_notice_outbox kinds practice_closed / closure_cancelled, clinic_name snapshot; professional_id NULL on those rows, CHECK-enforced) and patient-notify sends them. Reveals privacy §6g's closure line (with a PRIVACY_VERSION bump + mobile's accepting migration first); the web then drops api/account/close's own push sending."
   },
   "broadcast-live": {
-    "met": false,
+    "met": true,
     "what": "The doctor's broadcast (\"Enviar para Pacientes\" / \"Send to Patients\") is live on both platforms: enqueue_mass_message (171) + the blank-body check (172) applied, the app's broadcast through the server in a RELEASED build (1.6.0), liveFeatures.broadcast true on the website, and the 1.6.0 privacy text (§6g, the professional's general notices) live with its version bump. Gates Help P14 and the App Map's broadcast rule."
   },
   "receipt-amount-app-live": {
-    "met": false,
+    "met": true,
     "what": "App 1.6.0 with mobile #348 (no receipt without an amount: the Agenda's receipt action asks to set the amount first, \"Definir valor\" / \"Set amount\"; web #352 parity) is RELEASED on Google Play. Gates Help G5's app line and the App Map's app receipt-amount rule."
   },
   "whatsapp-auto-live": {
