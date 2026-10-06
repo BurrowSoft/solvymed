@@ -186,3 +186,15 @@ On a patient's page, **Refer a colleague** shows your colleagues: pick one and t
 **On the website:** In **Settings → My colleagues**, type the **Colleague's public code** and click **Add**. On the patient's page, **Refer a colleague** shows the message with **Copy message** and, when the patient has a phone and the clinic uses WhatsApp, **Send on WhatsApp** (opens your WhatsApp; nothing goes out until you send it).
 `open:settings`
 `requires:referrals-live`
+---
+## C14. Pastas de documentos / Document folders
+**pt-BR**
+Em **Configurações → Pastas de documentos**, organize as pastas da aba Documentos; elas valem para todos os seus pacientes. Em cada pasta: **Visível para os pacientes** e **Pacientes podem enviar documentos aqui**. Desligar **Visível para os pacientes** deixa de mostrar aos pacientes os documentos já compartilhados daquela pasta (você confirma antes, com o número de documentos); religar volta a mostrar esses mesmos documentos, sem notificação. **Documentos internos** nunca são compartilhados.
+Você pode **Renomear** e reordenar qualquer pasta, **Adicionar pasta** (até 30) e **Excluir pasta** que você criou, se estiver vazia; as pastas padrão não podem ser excluídas. Cada médico tem 5 GB para documentos; perto do limite, um aviso mostra quanto já foi usado.
+**en**
+In **Settings → Document folders**, organise the folders of the Documents tab; they apply to all your patients. On each folder: **Visible to patients** and **Patients can send documents here**. Turning **Visible to patients** off stops showing that folder's already-shared documents to patients (you confirm first, with the number of documents); turning it back on shows those same documents again, without a notification. **Internal documents** are never shared.
+You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delete folder** for one you created, if it is empty; the default folders can't be deleted. Each doctor has 5 GB for documents; near the limit, a notice shows how much is used.
+**No site:** Em **Configurações → Pastas de documentos**, as mesmas opções; as setas ↑ ↓ reordenam.
+**On the website:** In **Settings → Document folders**, the same options; the ↑ ↓ arrows reorder.
+`open:settings`
+`requires:patient-documents-live`

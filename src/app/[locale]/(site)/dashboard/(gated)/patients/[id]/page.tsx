@@ -16,6 +16,7 @@ import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
+import { serverFlag } from "@/lib/myDoctors";
 
 export default async function PatientDetailPage({
   params,
@@ -179,6 +180,7 @@ export default async function PatientDetailPage({
           hasAppointments={preview?.hasAppointments === true}
           accessLog={accessLog}
           timeZone={timeZone}
+          documentsOn={!isSecretary && (await serverFlag(supabase, "patient_documents"))}
           addressLive={conditionMet("patient-address-live")}
         />
       </div>

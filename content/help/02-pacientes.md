@@ -213,3 +213,19 @@ On **Home**, tap **Send to Patients** (doctor only): write a **Notification Titl
 **On the website:** On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in.
 `open:home`
 `requires:broadcast-live`
+---
+## P15. Documentos do paciente / Patient documents
+**pt-BR**
+A aba **Documentos** do paciente reúne exames, receitas, atestados e outros arquivos em pastas (as mesmas para todos os seus pacientes): **Comece aqui**, **Exames**, **Prescrições**, **Atestados e laudos**, **Termos** e **Documentos internos**. Ela substitui as abas Exames e Arquivos; os arquivos que já estavam lá aparecem em **Exames** ou em **Documentos internos**, sem compartilhar.
+Ao adicionar um arquivo (PDF, JPG, PNG ou HEIC, até 20 MB), dê um **Título**, escolha a pasta e decida se quer **Compartilhar com o paciente**. Um documento compartilhado aparece para o paciente no app enquanto ele estiver conectado a você; ele recebe uma notificação com o seu nome, nunca com o título. **Documentos internos** nunca são compartilhados.
+Em cada documento: **Abrir**, **Ocultar do paciente** (ou **Compartilhar com o paciente**), **Renomear**, **Mover para pasta** (mover para Documentos internos deixa de compartilhar) e **Remover**. Um arquivo que você enviou pode ser excluído nas primeiras 24 horas; depois disso, e para qualquer outro documento, **Remover** oculta com um motivo (também do paciente) e o documento fica guardado no prontuário.
+Documentos **Enviado pelo paciente** chegam nas pastas em que você permite envios (Exames, de início); você recebe uma notificação só com o nome do paciente. Só você vê os documentos do paciente; secretárias(os) não têm acesso. Cada abertura fica no registro de acessos.
+**en**
+The patient's **Documents** tab keeps exams, prescriptions, certificates and other files in folders (the same for all your patients): **Start here**, **Exams**, **Prescriptions**, **Certificates and reports**, **Consent terms** and **Internal documents**. It replaces the Exams and Files tabs; the files already there show in **Exams** or **Internal documents**, not shared.
+When you add a file (PDF, JPG, PNG or HEIC, up to 20 MB), give it a **Title**, pick the folder and choose whether to **Share with the patient**. A shared document shows to the patient in the app while they are connected to you; they get a notification with your name, never the title. **Internal documents** are never shared.
+On each document: **Open**, **Hide from the patient** (or **Share with the patient**), **Rename**, **Move to folder** (moving it to Internal documents stops sharing it) and **Remove**. A file you uploaded can be deleted within 24 hours; after that, and for any other document, **Remove** hides it with a reason (from the patient too) and the document stays in the record.
+Documents **Sent by the patient** arrive in the folders where you allow uploads (Exams, to start with); you get a notification with the patient's name only. Only you see the patient's documents; secretaries have no access. Every opening is in the access log.
+**No site:** Abra o paciente e a aba **Documentos**. **Enviar** adiciona um arquivo: escolha o **Título**, **Enviar para a pasta** e **Compartilhar com o paciente**. Os botões de cada documento são os mesmos do app; **Remover** pede o motivo quando o documento não pode mais ser excluído.
+**On the website:** Open the patient and the **Documents** tab. **Upload** adds a file: choose the **Title**, **Send to folder** and **Share with the patient**. Each document has the same buttons as in the app; **Remove** asks for a reason when the document can no longer be deleted.
+`open:patients`
+`requires:patient-documents-live`

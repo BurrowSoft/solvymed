@@ -395,6 +395,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "Patient documents (doctors only; app and website): the patient's \"Documentos\" / \"Documents\" tab replaces Exams and Files and keeps files in the doctor's folders, the same for every patient (\"Comece aqui\" / \"Start here\", \"Exames\" / \"Exams\", \"Prescrições\" / \"Prescriptions\", \"Atestados e laudos\" / \"Certificates and reports\", \"Termos\" / \"Consent terms\", \"Documentos internos\" / \"Internal documents\"). Adding a file (PDF, JPG, PNG or HEIC, up to 20 MB): a title, a folder and \"Compartilhar com o paciente\" / \"Share with the patient\". A shared document shows to the connected patient in the app; the patient's notification carries the doctor's name only, never the title. Internal documents are never shared. Per document: Open, \"Ocultar do paciente\" / \"Hide from the patient\", Rename, \"Mover para pasta\" / \"Move to folder\" (into Internal unshares), Remove (the doctor's own upload is deleted within 24 h; otherwise hidden with a reason, from the patient too; documents stay in the record). \"Enviado pelo paciente\" / \"Sent by the patient\" marks a patient's upload (into folders that allow uploads; Exams by default). Settings → \"Pastas de documentos\" / \"Document folders\": \"Visível para os pacientes\" / \"Visible to patients\" (off hides the folder's shared documents after a confirm with the count; on shows them again, no notification), \"Pacientes podem enviar documentos aqui\" / \"Patients can send documents here\", rename, reorder, add (up to 30), delete an empty custom folder; 5 GB per doctor. Secretaries never see documents. SolvyAI doesn't open, share or move documents; it points to these screens.",
+      pending: ["patient-documents-live"],
+    },
+    help: "P15",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-queue-on"],
     },

@@ -43,8 +43,21 @@ export type AccessLogRow = {
 // «{name}»": pass the row's object_ref, the removed record's name, as
 // {name}) have their own; anything else not described by the caller is the
 // patient's record.
-export function accessKindLabelKey(kind: string): "accessKindExport" | "accessKindImported" | "accessKindMerged" | "accessKindPatient" {
-  return kind === "export" ? "accessKindExport" : kind === "imported" ? "accessKindImported" : kind === "merged" ? "accessKindMerged" : "accessKindPatient";
+// 189's 'document' (a certificate, declaration…), 190's shared-document kinds
+// (written by the patient-document function) and 193's file_deleted have
+// their own labels (cf's wording, the same in the app).
+const KIND_LABELS = {
+  export: "accessKindExport",
+  imported: "accessKindImported",
+  merged: "accessKindMerged",
+  document: "accessKindDocument",
+  shared_document: "accessKindSharedDocument",
+  patient_upload: "accessKindPatientUpload",
+  patient_upload_removed: "accessKindUploadRemoved",
+  file_deleted: "accessKindFileDeleted",
+} as const;
+export function accessKindLabelKey(kind: string): (typeof KIND_LABELS)[keyof typeof KIND_LABELS] | "accessKindPatient" {
+  return (KIND_LABELS as Record<string, (typeof KIND_LABELS)[keyof typeof KIND_LABELS]>)[kind] ?? "accessKindPatient";
 }
 
 export type AccessLogPage = { rows: AccessLogRow[]; hasMore: boolean };
