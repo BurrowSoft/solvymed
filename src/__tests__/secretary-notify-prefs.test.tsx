@@ -13,6 +13,7 @@ vi.mock("@/lib/liveFeatures", async (orig) => {
   return { ...real, liveFeatures: { ...real.liveFeatures, multiPractice: true } };
 });
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
+vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useRouter: () => ({ refresh: () => {} }) }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async (opts?: unknown) => {
     h.acting.push(opts);

@@ -16,7 +16,7 @@ vi.mock("@/lib/liveFeatures", async (orig) => {
   return { ...real, liveFeatures: { ...real.liveFeatures, multiPractice: true } };
 });
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => (h.cookie ? { value: h.cookie } : undefined), getAll: () => [], set: () => {} }) }));
-vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), usePathname: () => h.pathname }));
+vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), usePathname: () => h.pathname, useRouter: () => ({ refresh: () => {} }) }));
 vi.mock("@supabase/ssr", () => ({
   createServerClient: (_u: string, _k: string, opts: { global?: { headers?: Record<string, string> } }) => {
     h.headers.push(opts.global?.headers ?? {});
