@@ -69,6 +69,17 @@ export function practiceLine(country: string | undefined): string {
   return "\n" + parts.join(" ");
 }
 
+// What a model failure may log: the HTTP status and the API's error type
+// (e.g. 400 invalid_request_error, 401 authentication_error, 404
+// not_found_error), else the error's class name. Never its message.
+export function modelErrorSummary(err: unknown): { status: number | null; type: string } {
+  const e = err as { status?: unknown; error?: { error?: { type?: unknown } }; name?: unknown } | null;
+  const status = typeof e?.status === "number" ? e.status : null;
+  const apiType = e?.error?.error?.type;
+  const type = typeof apiType === "string" ? apiType : typeof e?.name === "string" ? e.name : "unknown";
+  return { status, type };
+}
+
 // The clinic's "now" and the tool context for one request.
 async function toolContext(db: unknown, profId: string, locale: string, client: Client, userText = ""): Promise<ToolContext & { tz: string }> {
   const tz = await getClinicTimeZone(db, { professionalId: profId, isSecretary: false });
@@ -454,8 +465,11 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
           }
         }
         yield { kind: "block", block: { type: "text", text: "" } };
-      } catch {
+      } catch (err) {
         // The model failed: the message isn't spent (fair to the doctor).
+        // Logged: only the API's status and error type, never the
+        // conversation or the key (Production's first go-live failed silently).
+        console.error("SolvyAI: model call failed", modelErrorSummary(err));
         await refund();
         yield* debug();
         yield { kind: "error", code: "model_failed" };

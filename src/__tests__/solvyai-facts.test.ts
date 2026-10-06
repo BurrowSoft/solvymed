@@ -42,3 +42,22 @@ describe("the App Map states the corrected facts", () => {
     expect(text).toContain("/founders");
   });
 });
+
+describe("a model failure logs only its status and type", () => {
+  it("an API error: the status and the API's error type, never the message", async () => {
+    const { modelErrorSummary } = await import("@/lib/assistant/server/handle");
+    const apiError = Object.assign(new Error("Your credit balance is too low (secret detail)"), {
+      status: 400,
+      error: { type: "error", error: { type: "invalid_request_error", message: "Your credit balance is too low" } },
+    });
+    const s = modelErrorSummary(apiError);
+    expect(s).toEqual({ status: 400, type: "invalid_request_error" });
+    expect(JSON.stringify(s)).not.toContain("credit");
+  });
+
+  it("anything else: its class name", async () => {
+    const { modelErrorSummary } = await import("@/lib/assistant/server/handle");
+    expect(modelErrorSummary(new TypeError("x"))).toEqual({ status: null, type: "TypeError" });
+    expect(modelErrorSummary(null)).toEqual({ status: null, type: "unknown" });
+  });
+});
