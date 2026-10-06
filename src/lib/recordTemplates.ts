@@ -5,6 +5,7 @@
 // deleting the template never changes records already written. The limits
 // below are the database's (189's CHECKs and trg_record_templates_check);
 // the app keeps the same ones (lib/record-templates.ts).
+import { composeRecordContent } from "./recordPresets";
 
 export const TEMPLATE_NAME_MAX = 80;
 export const TEMPLATE_SECTIONS_MAX = 30;
@@ -51,6 +52,14 @@ export function parseRecordSections(raw: unknown): RecordSection[] | null {
     .filter((x): x is { title: string; text?: unknown } => !!x && typeof x === "object" && typeof (x as { title?: unknown }).title === "string")
     .map((x) => ({ title: x.title, text: typeof x.text === "string" ? x.text : "" }));
   return out.length ? out : null;
+}
+
+// A record's sections only while they still are the record: an older client
+// editing it within the 24 hours changes content alone (d1), and then the
+// content is what was written.
+export function currentRecordSections(raw: unknown, content: string): RecordSection[] | null {
+  const sections = parseRecordSections(raw);
+  return sections && composeRecordContent(sections) === (content ?? "").trim() ? sections : null;
 }
 
 // The record's sections from the form (JSON in a hidden field), checked:

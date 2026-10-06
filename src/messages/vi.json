@@ -2033,7 +2033,7 @@
     "title": "Mẫu bệnh án",
     "description": "Các mục cần điền khi bạn viết bệnh án. Bệnh án đã viết vẫn giữ các mục của nó.",
     "template": "Mẫu",
-    "freeText": "Văn bản tự do",
+    "noTemplate": "Không dùng mẫu",
     "newTemplate": "Mẫu mới",
     "fromPreset": "Bắt đầu từ một chuyên khoa",
     "createScratch": "Tạo từ đầu",

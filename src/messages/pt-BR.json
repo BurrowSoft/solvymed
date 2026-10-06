@@ -2033,7 +2033,7 @@
     "title": "Modelos de prontuário",
     "description": "Seções para preencher ao escrever um registro. Os registros já feitos mantêm suas seções.",
     "template": "Modelo",
-    "freeText": "Texto livre",
+    "noTemplate": "Sem modelo",
     "newTemplate": "Novo modelo",
     "fromPreset": "Começar por uma especialidade",
     "createScratch": "Criar do zero",

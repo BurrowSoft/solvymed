@@ -2033,7 +2033,7 @@
     "title": "病歷範本",
     "description": "撰寫病歷時要填寫的欄位。已寫好的病歷保留原有欄位。",
     "template": "範本",
-    "freeText": "自由文字",
+    "noTemplate": "不使用範本",
     "newTemplate": "新增範本",
     "fromPreset": "從專科開始",
     "createScratch": "從頭建立",

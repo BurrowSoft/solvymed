@@ -2033,7 +2033,7 @@
     "title": "Plantillas de historia clínica",
     "description": "Secciones para completar al escribir un registro. Los registros ya escritos conservan sus secciones.",
     "template": "Plantilla",
-    "freeText": "Texto libre",
+    "noTemplate": "Sin plantilla",
     "newTemplate": "Nueva plantilla",
     "fromPreset": "Empezar desde una especialidad",
     "createScratch": "Crear desde cero",

@@ -2033,7 +2033,7 @@
     "title": "Modelli di cartella clinica",
     "description": "Le sezioni da compilare quando scrivi una nota. Le note già scritte mantengono le loro sezioni.",
     "template": "Modello",
-    "freeText": "Testo libero",
+    "noTemplate": "Nessun modello",
     "newTemplate": "Nuovo modello",
     "fromPreset": "Parti da una specialità",
     "createScratch": "Crea da zero",

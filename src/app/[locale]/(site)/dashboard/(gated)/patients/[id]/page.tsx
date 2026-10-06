@@ -17,7 +17,7 @@ import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
 import { serverFlag } from "@/lib/myDoctors";
-import { parseRecordSections, parseTemplateSections, type RecordTemplate } from "@/lib/recordTemplates";
+import { currentRecordSections, parseTemplateSections, type RecordTemplate } from "@/lib/recordTemplates";
 
 export default async function PatientDetailPage({
   params,
@@ -98,7 +98,7 @@ export default async function PatientDetailPage({
   const isArchived = !!patient.archived_at;
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
   const records = ((recordsResult.data ?? []) as unknown as (MedRecord & { sections?: unknown })[])
-    .map((r) => ({ ...r, sections: parseRecordSections(r.sections) }));
+    .map((r) => ({ ...r, sections: currentRecordSections(r.sections, r.content) }));
   const recordTemplates: RecordTemplate[] | null = templatesOn
     ? ((templatesResult.data ?? []) as { id: string; name: string; sections: unknown; position: number }[])
         .map((r) => ({ id: r.id, name: r.name, sections: parseTemplateSections(r.sections), position: r.position ?? 0 }))

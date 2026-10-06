@@ -822,7 +822,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
             <div>
               <FieldLabel>{tt("template")}</FieldLabel>
               <Select aria-label={tt("template")} value={sections?.templateId ?? ""} onChange={(e) => pickTemplate(e.target.value)}>
-                <option value="">{tt("freeText")}</option>
+                <option value="">{tt("noTemplate")}</option>
                 {templates.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
               </Select>
             </div>

@@ -2063,7 +2063,7 @@
     "title": "Record templates",
     "description": "Sections to fill in when you write a record. Records already written keep their sections.",
     "template": "Template",
-    "freeText": "Free text",
+    "noTemplate": "No template",
     "newTemplate": "New template",
     "fromPreset": "Start from a specialty",
     "createScratch": "Create from scratch",

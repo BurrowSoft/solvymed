@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import fs from "node:fs";
 import path from "node:path";
 import pt from "@/messages/pt-BR.json";
-import { cleanTemplate, recordSectionsFromForm } from "@/lib/recordTemplates";
+import { cleanTemplate, currentRecordSections, recordSectionsFromForm } from "@/lib/recordTemplates";
 
 // 1.8.0 D record templates (migration 189, flag 'record_templates'): the
 // limits match the database's; a record written with a template sends its
@@ -59,6 +59,13 @@ describe("record template limits (189)", () => {
     expect(cleanTemplate({ name: "A", sections: Array.from({ length: 31 }, () => ({ title: "X" })) })).toEqual({ ok: false, error: "sections" });
   });
 
+  it("sections only while they still are the record (an older client edits content alone, d1)", () => {
+    const s = [{ title: "Q", text: "a" }, { title: "C", text: "" }];
+    expect(currentRecordSections(s, "Q:\na")).toEqual(s);
+    expect(currentRecordSections(s, "Q:\na, edited elsewhere")).toBeNull();
+    expect(currentRecordSections(null, "x")).toBeNull();
+  });
+
   it("a record's sections from the form: null when absent, refused when malformed or too big", () => {
     expect(recordSectionsFromForm(null)).toEqual({ ok: true, sections: null });
     expect(recordSectionsFromForm(JSON.stringify([{ title: " Q ", text: " a " }]))).toEqual({ ok: true, sections: [{ title: "Q", text: "a" }] });
@@ -74,6 +81,17 @@ describe("writing a record with a template", () => {
     page([], null);
     fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
     expect(screen.queryByRole("combobox", { name: T.template })).toBeNull();
+  });
+
+  it("no picker for a doctor without templates; with one, \"Sem modelo\" comes first (cf)", () => {
+    page([], []);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
+    expect(screen.queryByRole("combobox", { name: T.template })).toBeNull();
+    cleanup();
+    page([], [tpl]);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
+    const options = within(screen.getByRole("combobox", { name: T.template })).getAllByRole("option").map((o) => o.textContent);
+    expect(options).toEqual(["Sem modelo", "Retorno"]);
   });
 
   it("the template's sections, hints as placeholders; sends sections, the template name and the composed text", async () => {

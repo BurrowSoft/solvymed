@@ -2033,7 +2033,7 @@
     "title": "Modèles de dossier",
     "description": "Les sections à remplir quand vous rédigez une note. Les notes déjà rédigées gardent leurs sections.",
     "template": "Modèle",
-    "freeText": "Texte libre",
+    "noTemplate": "Sans modèle",
     "newTemplate": "Nouveau modèle",
     "fromPreset": "Partir d’une spécialité",
     "createScratch": "Créer de zéro",

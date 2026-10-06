@@ -2033,7 +2033,7 @@
     "title": "Dokumentationsvorlagen",
     "description": "Abschnitte, die Sie beim Schreiben eines Eintrags ausfüllen. Bereits geschriebene Einträge behalten ihre Abschnitte.",
     "template": "Vorlage",
-    "freeText": "Freitext",
+    "noTemplate": "Ohne Vorlage",
     "newTemplate": "Neue Vorlage",
     "fromPreset": "Mit einem Fachgebiet beginnen",
     "createScratch": "Neu erstellen",

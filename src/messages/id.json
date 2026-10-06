@@ -2033,7 +2033,7 @@
     "title": "Templat rekam medis",
     "description": "Bagian yang diisi saat Anda menulis catatan. Catatan yang sudah ditulis tetap memakai bagiannya.",
     "template": "Templat",
-    "freeText": "Teks bebas",
+    "noTemplate": "Tanpa templat",
     "newTemplate": "Templat baru",
     "fromPreset": "Mulai dari spesialisasi",
     "createScratch": "Buat dari awal",

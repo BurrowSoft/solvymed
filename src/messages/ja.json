@@ -2033,7 +2033,7 @@
     "title": "カルテのテンプレート",
     "description": "記録を書くときに入力する項目です。作成済みの記録は元の項目のまま残ります。",
     "template": "テンプレート",
-    "freeText": "自由記述",
+    "noTemplate": "テンプレートなし",
     "newTemplate": "新しいテンプレート",
     "fromPreset": "診療科から作成",
     "createScratch": "一から作成",
