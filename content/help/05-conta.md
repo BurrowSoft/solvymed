@@ -60,14 +60,14 @@ Thai title: "ปิดบัญชี"
 ## K5. Privacidade / Privacy
 **pt-BR**
 Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. As observações da clínica são privadas e não aparecem para o paciente. Veja a Política de Privacidade em solvymed.com/privacy.
-{pending:privacy-notice-live} Quando atualizamos a Política de Privacidade, um aviso aparece uma vez no topo do **Início** no site (e de **Minhas consultas** para pacientes): **Ler a política** abre o texto, **OK** fecha o aviso de vez e o **×** só até você fechar o navegador.
+{pending:privacy-notice-live} Quando atualizamos a Política de Privacidade, um aviso aparece uma vez no topo do **Início** no site (e de **Minhas consultas** para pacientes): **Ler a política** abre o texto, **OK** fecha o aviso de vez e o **×** só nesta aba.
 **en**
 Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. The clinic's notes are private and never shown to the patient. See the Privacy Policy at solvymed.com/privacy.
-{pending:privacy-notice-live} When we update the Privacy Policy, a notice shows once at the top of **Home** on the website (and of **My appointments** for patients): **Read the policy** opens it, **OK** closes the notice for good, and the **×** only until you close the browser.
+{pending:privacy-notice-live} When we update the Privacy Policy, a notice shows once at the top of **Home** on the website (and of **My appointments** for patients): **Read the policy** opens it, **OK** closes the notice for good, and the **×** only in this tab.
 Thai title: "ความเป็นส่วนตัว"
 **th**
 ข้อมูลของคุณเป็นส่วนตัวและเข้ารหัส แต่ละคลินิกเห็นเฉพาะข้อมูลของตนเอง เลขานุการไม่เห็นข้อมูลทางการแพทย์ หมายเหตุของคลินิกเป็นข้อมูลส่วนตัวและไม่แสดงต่อผู้ป่วย อ่านนโยบายความเป็นส่วนตัวได้ที่ solvymed.com/privacy
-{pending:privacy-notice-live} เมื่อเราปรับปรุงนโยบายความเป็นส่วนตัว จะมีประกาศแสดงครั้งเดียวที่ด้านบนของหน้าแรกในเว็บไซต์ (และหน้านัดหมายของฉันสำหรับผู้ป่วย): **อ่านนโยบาย** เปิดนโยบาย **ตกลง** ปิดประกาศถาวร ส่วน **×** ปิดจนกว่าคุณจะปิดเบราว์เซอร์
+{pending:privacy-notice-live} เมื่อเราปรับปรุงนโยบายความเป็นส่วนตัว จะมีประกาศแสดงครั้งเดียวที่ด้านบนของหน้าแรกในเว็บไซต์ (และหน้านัดหมายของฉันสำหรับผู้ป่วย): **อ่านนโยบาย** เปิดนโยบาย **ตกลง** ปิดประกาศถาวร ส่วน **×** ปิดเฉพาะในแท็บนี้
 `open:none`
 
 ---
