@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import type { PublicLocation } from "@/lib/locations";
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { BookingClient } from "./BookingClient";
@@ -53,7 +54,9 @@ export default async function BookPage({
   ]);
   // country: migration 110 (absent before it, which means BR).
   // time_zone: migration 128 (the clinic's own zone; the app uses it too).
-  const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null; time_zone?: string | null } | null;
+  // locations: 1.8.0 F (migration 200, UX Q4): every location with its days,
+  // only with the switch on and 2+ (else null).
+  const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null; time_zone?: string | null; locations?: PublicLocation[] | null } | null;
   const displayName = prof?.full_name?.trim() || name?.trim() || t("professionalFallback");
   const displaySpecialty = prof?.specialty?.trim() || specialty || "";
   const displayClinic = prof?.clinic_name?.trim() || clinicName || undefined;
@@ -99,6 +102,7 @@ export default async function BookPage({
       currency={countryProfile(prof?.country).currency}
       idKind={countryProfile(prof?.country).kind}
       clinicTz={prof?.time_zone || countryProfile(prof?.country).defaultTimeZone}
+      locations={prof?.locations ?? null}
     />
   );
 }
