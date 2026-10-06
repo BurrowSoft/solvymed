@@ -68,7 +68,8 @@ export function MyDocuments({ doctors }: { doctors: DocDoctor[] }) {
     try {
       const s = await startUpload({ professionalId: d.professionalId, folderId: send.folderId, title: send.title, mime, size: send.file.size });
       if (!s.ok) { setMsg({ ok: false, text: errText(s.code) }); return; }
-      const { error } = await createClient().storage.from(BUCKET).uploadToSignedUrl(s.data.path, s.data.token, send.file, { contentType: mime });
+      // A re-typed Blob, as the doctor's upload: a .heic often comes with no type (53).
+      const { error } = await createClient().storage.from(BUCKET).uploadToSignedUrl(s.data.path, s.data.token, send.file.slice(0, send.file.size, mime), { contentType: mime });
       if (error) { setMsg({ ok: false, text: tp("filesError") }); return; }
       const f = await finishUpload(s.data.documentId);
       if (!f.ok) { setMsg({ ok: false, text: errText(f.code) }); return; }
