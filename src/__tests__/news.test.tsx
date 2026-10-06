@@ -29,7 +29,7 @@ describe("the 1.4.0 announcement (walkthrough §4a)", () => {
   });
 
   it("an item appears only for its roles and when live, at most 3", () => {
-    const fake = { release: "9.9.9", items: [1, 2, 3, 4].map((n) => ({ id: `i${n}`, target: "x", path: "/dashboard", titleKey: "t", lineKey: "l", textKey: "s", roles: ["professional" as const], live: n !== 2 })) };
+    const fake = { release: "9.9.9", since: "2099-01-01", items: [1, 2, 3, 4].map((n) => ({ id: `i${n}`, target: "x", path: "/dashboard", titleKey: "t", lineKey: "l", textKey: "s", roles: ["professional" as const], live: n !== 2 })) };
     expect(newsItemsFor(fake, "professional").map((i) => i.id)).toEqual(["i1", "i3", "i4"]);
     expect(newsItemsFor(fake, "secretary")).toEqual([]);
   });
@@ -145,5 +145,16 @@ describe("the Novidades popup", () => {
     expect(save).toHaveBeenCalledWith("started", 0);
     expect(screen.queryByText("news.title")).not.toBeInTheDocument();
     vi.useRealTimers();
+  });
+});
+
+describe("What's new is for existing accounts only (cf, 6 Oct)", () => {
+  it("an account created on or after the release's date is new: no popup", async () => {
+    const { newForRelease } = await import("@/lib/news");
+    const r = { since: "2026-10-02" };
+    expect(newForRelease("2026-10-02T09:00:00Z", r)).toBe(true);
+    expect(newForRelease("2026-11-01T00:00:00Z", r)).toBe(true);
+    expect(newForRelease("2026-10-01T23:59:59Z", r)).toBe(false);
+    expect(newForRelease(null, r)).toBe(false);
   });
 });
