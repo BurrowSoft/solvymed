@@ -34,11 +34,25 @@ export function whatsappLink(phone: string | null | undefined, practiceCountry: 
 // PATIENT receives with the Pix code is always pt-BR, whatever language the
 // clinic reads. The code stays alone on the last line so a long-press
 // copies only it.
-export function pixPatientMessage(date: string, time: string, code: string): string {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
-  const d = m ? `${m[3]}/${m[2]}/${m[1]}` : date;
-  const [h = "0", mi = "0"] = time.split(":");
-  const t = `${h.padStart(2, "0")}:${mi.padStart(2, "0")}`;
-  return `Olá! Segue o Pix da sua consulta em ${d} às ${t}. `
+// 1.8.0 E (cf): with the doctor's card payment link, a line before the copy
+// instruction offers it.
+export function pixPatientMessage(date: string, time: string, code: string, cardLink: string | null = null): string {
+  const { d, t } = ptBrVisit(date, time);
+  return `Olá! Segue o Pix da sua consulta em ${d} às ${t}.`
+    + (cardLink ? `\nOu pague com cartão: ${cardLink}\n` : " ")
     + `Copie o código abaixo e cole em "Pix Copia e Cola" no app do seu banco:\n${code}`;
+}
+
+// 1.8.0 E (cf): a Brazilian practice with a card link and no Pix key sends
+// the link alone (pt-BR, as the Pix message: Brazil only).
+export function cardPatientMessage(date: string, time: string, link: string): string {
+  const { d, t } = ptBrVisit(date, time);
+  return `Olá! Para pagar sua consulta em ${d} às ${t} com cartão, use este link: ${link}`;
+}
+
+// 2026-09-28 / 9:5 → 28/09/2026 / 09:05, whatever the clinic's language.
+function ptBrVisit(date: string, time: string): { d: string; t: string } {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  const [h = "0", mi = "0"] = time.split(":");
+  return { d: m ? `${m[3]}/${m[2]}/${m[1]}` : date, t: `${h.padStart(2, "0")}:${mi.padStart(2, "0")}` };
 }

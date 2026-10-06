@@ -183,6 +183,10 @@
     "met": false,
     "what": "1.8.0 F is live: migration 200 applied, server_flags.practice_locations on, the app build with mobile #400 RELEASED and the website's location screens (My Clinics edit / Make primary, a location per working day, the agenda, new appointment, booking page and documents) live. Gates Help C15 and the App Map's location rules."
   },
+  "card-payment-live": {
+    "met": false,
+    "what": "1.8.0 E is live on the website: migration 210 (professionals.card_payment_url, get_my_clinic ends with it; mobile #420) applied on production, and the privacy §3.1 words \"card payment link\" live with a PRIVACY_VERSION bump the app accepts first. Gates the Settings field, the link in the Pix / PromptPay dialogs, the card-only WhatsApp button, that privacy text and E's Help / App Map lines. The app's part ships with its build (app-1.8.0)."
+  },
   "clinical-documents-live": {
     "met": false,
     "what": "1.8.0 B is live: migration 189 applied, server_flags.clinical_documents on, the app build with the document templates RELEASED and the website's document screens live, and the privacy text that names medical certificates, declarations and exam requests among clinical records live with its PRIVACY_VERSION bump (2026-10-15; mobile 191 accepts it first). Gates those privacy words and the B Help / App Map lines."

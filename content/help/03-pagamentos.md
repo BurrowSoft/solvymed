@@ -38,12 +38,16 @@ Thai title: "บันทึกว่าชำระแล้ว"
 1. **Configurações → Financeiro**.
 2. Digite sua chave Pix (CPF, CNPJ, e-mail, telefone ou chave aleatória) e salve.
 A partir daí, cada consulta com valor mostra o QR Code Pix e o Pix Copia e Cola com o valor certo.
+{pending:card-payment-live,app-1.8.0} Em **Configurações → Financeiro** também há o **Link de pagamento (cartão)**: a página onde o paciente paga com cartão, do seu provedor de pagamentos. Ele deve começar com https://.
 **en**
 1. **Settings → Financial**.
 2. Enter your Pix key (CPF, CNPJ, email, phone or random key) and save.
 From then on, each appointment with a value shows the Pix QR code and the Pix Copia e Cola code with the right amount.
+{pending:card-payment-live,app-1.8.0} **Settings → Financial** also has the **Card payment link**: the page where patients pay by card, from your payment provider. It must start with https://.
 **No site:** **Configurações → Clínica**: preencha a **Chave Pix** e salve.
 **On the website:** **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save.
+**No site:** {pending:card-payment-live} Em **Configurações → Clínica**, o **Link de pagamento (cartão)** fica logo abaixo (clínicas no Brasil e na Tailândia). Um link que não comece com https:// não é salvo: aparece "Informe um link que comece com https://".
+**On the website:** {pending:card-payment-live} In **Settings → Clinic**, the **Card payment link** is just below (clinics in Brazil and Thailand). A link that doesn't start with https:// isn't saved: "Enter a link that starts with https://" shows.
 `open:settings-financial`
 
 ---
@@ -54,13 +58,17 @@ From then on, each appointment with a value shows the Pix QR code and the Pix Co
 3. Quando o pagamento cair, marque a consulta como paga.
 {pending:app-1.4.0} Depois de paga, a consulta mostra **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
 O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta.
+{pending:card-payment-live} Com o **Link de pagamento (cartão)** salvo, a janela do QR mostra **Ou pague com cartão** com o link, e a mensagem do Pix por WhatsApp ganha a linha "Ou pague com cartão: {link}". Sem chave Pix, **Enviar link do cartão por WhatsApp** envia só o link.
 **en**
 1. Open the appointment and tap **Pix QR code**. The patient scans it with their banking app.
 2. Or tap **Send Pix via WhatsApp**: the patient gets the code to paste in their banking app.
 3. When the payment arrives, mark the appointment as paid.
 {pending:app-1.4.0} Once paid, the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 SolvyMed doesn't receive the money: Pix goes straight to your account.
+{pending:card-payment-live} With a **Card payment link** saved, the QR window shows **Or pay by card** with the link, and the Pix WhatsApp message gets the line "Ou pague com cartão: {link}" (Portuguese, like the rest of the message). Without a Pix key, **Send card link via WhatsApp** sends the link alone.
 **No site:** Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). Com o telefone do paciente cadastrado, **Enviar Pix por WhatsApp** (na mesma janela) abre o seu WhatsApp com a mensagem do Pix para o paciente, a mesma do app; ela só sai quando você clicar em enviar no WhatsApp. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.
+**No site:** {pending:card-payment-live} Na janela do QR, **Ou pague com cartão** mostra o link com **Copiar** e **Compartilhar link do cartão** (quando o navegador permite compartilhar). Sem chave Pix, o ícone de cartão ao lado da consulta (**Enviar link do cartão por WhatsApp**) abre o seu WhatsApp com "Olá! Para pagar sua consulta em {data} às {hora} com cartão, use este link: {link}".
+**On the website:** {pending:card-payment-live} In the QR window, **Or pay by card** shows the link with **Copy** and **Share card link** (when the browser can share). Without a Pix key, the card icon next to the appointment (**Send card link via WhatsApp**) opens your WhatsApp with the message (in Portuguese) giving the patient the link to pay for that visit by card.
 **On the website:** In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. With the patient's phone on file, **Send Pix via WhatsApp** (in the same window) opens your WhatsApp with the Pix message for the patient, the same as the app's; it's only sent when you click send in WhatsApp. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice.
 Thai title: "รับชำระด้วยพร้อมเพย์"
 **th**
@@ -68,6 +76,7 @@ Thai title: "รับชำระด้วยพร้อมเพย์"
 1. เปิดนัดหมายที่มีจำนวนเงิน: จะแสดง QR พร้อมเพย์ ให้ผู้ป่วยสแกนด้วยแอปธนาคาร
 2. เมื่อเงินเข้าบัญชีแล้ว ให้บันทึกว่านัดหมายชำระแล้ว
 เมื่อชำระแล้ว QR จะไม่แสดงอีก ผู้ป่วยจึงไม่จ่ายซ้ำ SolvyMed ไม่ได้รับเงินนี้ เงินจะเข้าบัญชีของคุณโดยตรง
+{pending:card-payment-live} หากบันทึก **ลิงก์ชำระด้วยบัตร** ไว้ (การตั้งค่า → คลินิก) ใต้ QR จะแสดง **หรือชำระด้วยบัตร** พร้อมลิงก์ ปุ่ม **คัดลอก** และ **แชร์ลิงก์ชำระด้วยบัตร** ลิงก์ต้องขึ้นต้นด้วย https://
 **ในเว็บไซต์:** ใน **ตารางงาน** คลิกไอคอน QR ข้างนัดหมาย เพื่อแสดง **QR พร้อมเพย์** เมื่อเงินเข้าแล้ว ให้ทำเครื่องหมายว่าชำระแล้วใน **การชำระเงิน**
 `open:payments`
 

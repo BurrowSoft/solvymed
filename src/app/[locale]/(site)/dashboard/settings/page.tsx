@@ -219,6 +219,12 @@ export default async function SettingsPage({
     ? await supabase.from("professionals").select("promptpay_id").eq("id", user.id).maybeSingle()
     : null;
   const showPromptPay = !!promptPayResult && !promptPayResult.error;
+  // 1.8.0 E: the card payment link (migration 210, card-payment-live), for a
+  // practice with a payment QR; read the same way (no field if unread).
+  const cardLinkResult = conditionMet("card-payment-live") && practiceProfile.paymentQr
+    ? await supabase.from("professionals").select("card_payment_url").eq("id", user.id).maybeSingle()
+    : null;
+  const showCardLink = !!cardLinkResult && !cardLinkResult.error;
   // The clinic tax ID (Thai practices; migration 112), read the same way.
   const taxIdResult = practiceProfile.clinicTaxId === "th_tax_id"
     ? await supabase.from("professionals").select("clinic_tax_id").eq("id", user.id).maybeSingle()
@@ -313,6 +319,7 @@ export default async function SettingsPage({
           showPix={practiceProfile.paymentQr === "pix"}
           showPromptPay={showPromptPay}
           showTaxId={showTaxId}
+          showCardLink={showCardLink}
           data={{
             clinic_name: prof.clinic_name ?? undefined,
             clinic_cnpj: prof.clinic_cnpj ?? undefined,
@@ -324,6 +331,7 @@ export default async function SettingsPage({
             pix_key: (prof as { pix_key?: string | null }).pix_key ?? undefined,
             clinic_tax_id: (taxIdResult?.data as { clinic_tax_id?: string | null } | null)?.clinic_tax_id ?? undefined,
             promptpay_id: (promptPayResult?.data as { promptpay_id?: string | null } | null)?.promptpay_id ?? undefined,
+            card_payment_url: (cardLinkResult?.data as { card_payment_url?: string | null } | null)?.card_payment_url ?? undefined,
           }}
         />
 
