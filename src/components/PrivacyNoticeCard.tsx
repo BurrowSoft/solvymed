@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { DISMISS_KEY } from "@/lib/privacyNotice";
 import { acknowledgePrivacyNotice } from "@/lib/privacyNoticeActions";
+import { useTour } from "@/components/tour/TourProvider";
 
 // "We've updated our Privacy Policy" (cf, 6 Oct): shown by the page only when
 // the caller's accepted version is older (lib/privacyNotice). "OK" records
@@ -14,13 +15,15 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
   const [hidden, setHidden] = useState(false);
   const [failed, setFailed] = useState(false);
   const [pending, start] = useTransition();
+  // Inline, never an overlay: hidden while a tour or popup runs (cf, 6 Oct).
+  const { running } = useTour();
 
   useEffect(() => {
     try {
       if (sessionStorage.getItem(DISMISS_KEY) === "1") setHidden(true);
     } catch { /* no storage: show it */ }
   }, []);
-  if (hidden) return null;
+  if (hidden || running) return null;
 
   function close() {
     setHidden(true);
@@ -37,7 +40,7 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
   }
 
   return (
-    <section data-testid="privacy-notice" data-tour-block role="status" className="mb-6 rounded-2xl border border-teal-100 bg-teal-50 p-5">
+    <section data-testid="privacy-notice" role="status" className="mb-6 rounded-2xl border border-teal-100 bg-teal-50 p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-bold text-teal-900">{t("title")}</p>
