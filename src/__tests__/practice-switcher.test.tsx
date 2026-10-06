@@ -15,6 +15,8 @@ vi.mock("@/lib/liveFeatures", async (orig) => {
 });
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: () => (h.cookie ? { value: h.cookie } : undefined), getAll: () => [] }) }));
 vi.mock("@/lib/supabase/server", () => ({ createClient: async () => ({ rpc: h.rpc }) }));
+const nav = vi.hoisted(() => ({ path: "/pt-BR/dashboard", refresh: vi.fn() }));
+vi.mock("next/navigation", () => ({ usePathname: () => nav.path, useRouter: () => ({ refresh: nav.refresh }) }));
 
 import { actingHeaders } from "@/lib/actingPractice";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
@@ -89,5 +91,20 @@ describe("the switcher", () => {
     fireEvent.change(screen.getByTestId("practice-switcher").querySelector("select")!, { target: { value: B } });
     expect(document.cookie).toContain(`sm_practice=${B}`);
     expect(reload).toHaveBeenCalled();
+  });
+
+  it("the middleware dropped the choice on a client navigation: the switcher re-renders, never naming that doctor (cf)", () => {
+    nav.refresh.mockReset();
+    document.cookie = `sm_practice=${A}; path=/`;
+    const view = (path: string) => {
+      nav.path = path;
+      return <NextIntlClientProvider locale="pt-BR" messages={pt}><PracticeSwitcher practices={LIST} current={A} cookie={A} /></NextIntlClientProvider>;
+    };
+    const r = render(view("/pt-BR/dashboard"));
+    expect(nav.refresh).not.toHaveBeenCalled();
+    // A removed her: the middleware's redirect cleared the cookie.
+    document.cookie = "sm_practice=; path=/; max-age=0";
+    r.rerender(view("/pt-BR/dashboard/patients"));
+    expect(nav.refresh).toHaveBeenCalledTimes(1);
   });
 });
