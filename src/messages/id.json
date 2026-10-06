@@ -2200,5 +2200,15 @@
     "editTitle": "Ubah lokasi",
     "dayLocation": "Lokasi",
     "bookingLine": "Lokasi: {name} · {address}"
+  },
+  "brandCrop": {
+    "title": "Sesuaikan gambar",
+    "use": "Gunakan gambar",
+    "small": "Gambar kecil: hasil cetak mungkin buram.",
+    "hint": "Seret untuk memindahkan. Gunakan penggeser atau roda mouse untuk zoom.",
+    "hintTouch": "Seret untuk memindahkan. Gunakan dua jari untuk zoom.",
+    "zoomIn": "Perbesar",
+    "zoomOut": "Perkecil",
+    "adjust": "Sesuaikan"
   }
 }

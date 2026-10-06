@@ -9,6 +9,7 @@ import { BRAND_LIMITS, removeBrandImage, saveMyBrand, uploadBrandImage, type Bra
 import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotAnImage, type BrandImageKind } from "@/lib/brandImage";
 import { countryProfile } from "@/lib/country";
 import { withBrandTitle } from "@/lib/doctorName";
+import { BrandCropDialog } from "./BrandCropDialog";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
@@ -78,11 +79,26 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
     if (res.ok) router.refresh();
   }
 
-  async function onFile(what: BrandImageKind, file: File | undefined) {
+  // 1.8.0 G: a picked image is cropped first ("Ajustar imagem"); its
+  // original stays in memory only (an object URL), for "Ajustar", until the
+  // page is left.
+  const [crop, setCrop] = useState<{ what: BrandImageKind; src: string; name: string } | null>(null);
+  const [originals, setOriginals] = useState<Partial<Record<BrandImageKind, { src: string; name: string }>>>({});
+  useEffect(() => () => { for (const o of Object.values(originals)) if (o) URL.revokeObjectURL(o.src); }, [originals]);
+
+  function onPick(what: BrandImageKind, file: File | undefined) {
     setImageError("");
     if (!file) return;
     if (!BRAND_INPUT_TYPES.includes(file.type)) return setImageError(t("badType"));
     if (file.size > BRAND_INPUT_MAX_BYTES) return setImageError(t("tooLarge"));
+    const src = URL.createObjectURL(file);
+    setOriginals((o) => { if (o[what]) URL.revokeObjectURL(o[what]!.src); return { ...o, [what]: { src, name: file.name } }; });
+    setCrop({ what, src, name: file.name });
+  }
+
+  async function onFile(what: BrandImageKind, file: File | undefined) {
+    setImageError("");
+    if (!file) return;
     setBusy(what);
     try {
       await uploadBrandImage(createClient(), uid, file, what);
@@ -149,14 +165,19 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
         {/* The square logo, the wide logo (documents) and the photo. */}
         <div className="grid gap-4 sm:grid-cols-3">
           <ImageField label={t("logoSquare")} url={brand?.logoSquareUrl ?? null} own={!!brand?.own.logo_square}
-            busy={busy === "logo_square"} disabled={!!busy} onFile={(f) => onFile("logo_square", f)} onRemove={() => onRemove("logo_square")} testid="brand-logo-square" />
+            busy={busy === "logo_square"} disabled={!!busy} onFile={(f) => onPick("logo_square", f)} onRemove={() => onRemove("logo_square")} onAdjust={originals.logo_square ? () => setCrop({ what: "logo_square", ...originals.logo_square! }) : undefined} testid="brand-logo-square" />
           <ImageField label={t("logoWide")} url={brand?.logoWideUrl ?? null} own={!!brand?.own.logo_wide} wide
-            busy={busy === "logo_wide"} disabled={!!busy} onFile={(f) => onFile("logo_wide", f)} onRemove={() => onRemove("logo_wide")} testid="brand-logo-wide" />
+            busy={busy === "logo_wide"} disabled={!!busy} onFile={(f) => onPick("logo_wide", f)} onRemove={() => onRemove("logo_wide")} onAdjust={originals.logo_wide ? () => setCrop({ what: "logo_wide", ...originals.logo_wide! }) : undefined} testid="brand-logo-wide" />
           <ImageField label={t("photo")} url={brand?.photoUrl ?? null} own={!!brand?.own.photo} round
-            busy={busy === "photo"} disabled={!!busy} onFile={(f) => onFile("photo", f)} onRemove={() => onRemove("photo")} testid="brand-photo" />
+            busy={busy === "photo"} disabled={!!busy} onFile={(f) => onPick("photo", f)} onRemove={() => onRemove("photo")} onAdjust={originals.photo ? () => setCrop({ what: "photo", ...originals.photo! }) : undefined} testid="brand-photo" />
         </div>
         {imageError && <p role="alert" className="text-sm text-red-600">{imageError}</p>}
         <p className="text-xs text-slate-500">{t("uploadsNote")}</p>
+        {crop && (
+          <BrandCropDialog kind={crop.what} src={crop.src} fileName={crop.name}
+            onCancel={() => setCrop(null)}
+            onUse={(file) => { const what = crop.what; setCrop(null); void onFile(what, file); }} />
+        )}
 
         {/* Preview on both backgrounds, with the readable accent. */}
         <div>
@@ -200,11 +221,14 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   );
 }
 
-function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRemove, testid }: {
+function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRemove, onAdjust, testid }: {
   label: string; url: string | null; own: boolean; round?: boolean; wide?: boolean; busy: boolean; disabled: boolean;
   onFile: (f: File | undefined) => void; onRemove: () => void; testid: string;
+  // 1.8.0 G: re-crop the original picked in this visit.
+  onAdjust?: () => void;
 }) {
   const t = useTranslations("brand");
+  const tc = useTranslations("brandCrop");
   const input = useRef<HTMLInputElement>(null);
   // Remove asks first (e7's copy): the image leaves the page and documents.
   const [confirming, setConfirming] = useState(false);
@@ -221,6 +245,12 @@ function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRe
             className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {busy ? t("uploading") : url ? t("replace") : t("upload")}
           </button>
+          {onAdjust && url && (
+            <button type="button" disabled={disabled} onClick={onAdjust} data-testid={`${testid}-adjust`}
+              className="rounded-lg px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-teal-50 disabled:opacity-60">
+              {tc("adjust")}
+            </button>
+          )}
           {own && !confirming && (
             <button type="button" disabled={disabled} onClick={() => setConfirming(true)}
               className="rounded-lg px-3 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:opacity-60">

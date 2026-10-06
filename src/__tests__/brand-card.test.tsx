@@ -35,6 +35,30 @@ import { BrandCard } from "@/app/[locale]/(site)/dashboard/settings/BrandCard";
 import type { Brand } from "@/lib/brand";
 
 const t = pt.brand;
+
+// 1.8.0 G: a picked image goes through the crop first. jsdom decodes no
+// images and has no canvas: a stand-in Image (1200×400) and canvas.
+class FakeImage {
+  onload: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  naturalWidth = 1200;
+  naturalHeight = 400;
+  set src(_v: string) { setTimeout(() => this.onload?.(), 0); }
+}
+vi.stubGlobal("Image", FakeImage);
+URL.createObjectURL = vi.fn(() => "blob:picked");
+URL.revokeObjectURL = vi.fn();
+HTMLCanvasElement.prototype.getContext = (() => ({ fillRect: () => {}, drawImage: () => {}, set fillStyle(_v: string) {}, set imageSmoothingQuality(_v: string) {} })) as never;
+HTMLCanvasElement.prototype.toBlob = function (cb: BlobCallback, type?: string) { cb(new Blob(["x"], { type: type ?? "image/png" })); };
+
+// Picks a file and confirms the crop as it opens ("Usar imagem").
+async function pickAndUse(testid: string, file: File) {
+  fireEvent.change(screen.getByTestId(testid).querySelector("input[type=file]") as HTMLInputElement, { target: { files: [file] } });
+  const dialog = await screen.findByTestId("brand-crop");
+  const use = within(dialog).getByRole("button", { name: pt.brandCrop.use });
+  await waitFor(() => expect(use).not.toBeDisabled());
+  fireEvent.click(use);
+}
 const show = (brand: Brand | null = null) =>
   render(
     <NextIntlClientProvider locale="pt-BR" messages={pt}>
@@ -141,10 +165,10 @@ describe("Minha marca", () => {
     "%s: one upload, staged then published as %s",
     async (testid, kind) => {
       show();
-      const input = screen.getByTestId(testid).querySelector("input[type=file]") as HTMLInputElement;
-      fireEvent.change(input, { target: { files: [new File(["x"], "img.png", { type: "image/png" })] } });
+      await pickAndUse(testid, new File(["x"], "img.png", { type: "image/png" }));
       await waitFor(() => expect(h.refresh).toHaveBeenCalled());
       expect(h.upload).toHaveBeenCalledTimes(1);
+      // Staged as the pipeline's PNG, whatever the crop's format.
       expect(h.upload.mock.calls[0][0]).toMatch(/^u-1\/[0-9a-f-]+\.png$/);
       expect(h.invoke).toHaveBeenCalledWith("brand-asset", { body: { action: "publish", kind, staging_path: h.upload.mock.calls[0][0] } });
     },
@@ -187,7 +211,7 @@ describe("Minha marca", () => {
   it("the function's too_large refusal shows the size message", async () => {
     h.invoke.mockResolvedValue({ data: null, error: { context: new Response(JSON.stringify({ error: "too_large" }), { status: 400 }) } });
     show();
-    fireEvent.change(screen.getByTestId("brand-photo").querySelector("input[type=file]")!, { target: { files: [new File(["x"], "p.jpg", { type: "image/jpeg" })] } });
+    await pickAndUse("brand-photo", new File(["x"], "p.jpg", { type: "image/jpeg" }));
     expect(await screen.findByRole("alert")).toHaveTextContent(t.tooLarge);
   });
 
@@ -195,5 +219,15 @@ describe("Minha marca", () => {
     show({ displayName: "", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: "https://x/legacy.png", logoWideUrl: null, photoUrl: "https://x/p.png", own: { logo_square: false, logo_wide: false, photo: true }, saved: true });
     expect(screen.getByTestId("brand-logo-square")).not.toHaveTextContent(t.remove);
     expect(screen.getByTestId("brand-photo")).toHaveTextContent(t.remove);
+  });
+
+  it("1.8.0 G: the crop opens first; Cancel uploads nothing; a small crop warns; Ajustar re-opens it", async () => {
+    show();
+    fireEvent.change(screen.getByTestId("brand-logo-wide").querySelector("input[type=file]") as HTMLInputElement, { target: { files: [new File(["x"], "w.png", { type: "image/png" })] } });
+    const dialog = await screen.findByTestId("brand-crop");
+    expect(dialog).toHaveTextContent(pt.brandCrop.title);
+    fireEvent.click(within(dialog).getByRole("button", { name: t.cancel }));
+    expect(screen.queryByTestId("brand-crop")).toBeNull();
+    expect(h.upload).not.toHaveBeenCalled();
   });
 });

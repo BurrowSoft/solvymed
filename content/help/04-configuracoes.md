@@ -166,14 +166,16 @@ Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before ea
 **pt-BR**
 Em **Configurações → Minha marca**, escolha como os pacientes veem você: **Nome de exibição**, **Título**, **Especialidade**, **Registro profissional**, **Cor da marca**, **Logo (quadrado)**, **Logo horizontal (documentos)** e **Foto**.
 Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo, aparecem as suas iniciais na sua cor; sem cor, o azul do SolvyMed.
-Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação.
+Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. No site, depois de escolher a imagem, ajuste o recorte em **Ajustar imagem** (arraste e use o zoom) e clique em **Usar imagem**: o logo quadrado e a foto ficam quadrados (a foto aparece redonda) e o logo horizontal fica em 3:1. Uma imagem pequena mostra "Imagem pequena: pode ficar sem nitidez na impressão.", mas pode ser usada; **Ajustar** refaz o recorte enquanto você está na página. **Remover** pede confirmação.
+{pending:app-1.8.0} No app também: **Ajustar imagem** antes de usar a imagem, com dois dedos para o zoom.
 Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica.
 A sua marca aparece no seu link de convite público, na sua página de agendamento (para os pacientes conectados a você) e nos documentos impressos (receitas, recibos, histórico). Depois de salvos, o logo e a foto são públicos: quem tiver o link de uma imagem consegue abri-la.
 No app, **Modelos de documentos** avisa que a cor e o logo dos documentos vêm de **Minha marca**, com o atalho **Abrir Minha marca**.
 **en**
 In **Settings → My brand**, choose how patients see you: **Display name**, **Title**, **Specialty**, **Professional registration**, **Brand colour**, **Logo (square)**, **Wide logo (documents)** and **Photo**.
 Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue.
-Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation.
+Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. On the website, after choosing the image, adjust the crop in **Adjust image** (drag and zoom) and click **Use image**: the square logo and the photo are square (the photo shows round) and the wide logo is 3:1. A small image shows "Small image: it may print blurry." but can still be used; **Adjust** redoes the crop while you stay on the page. **Remove** asks for confirmation.
+{pending:app-1.8.0} In the app too: **Adjust image** before using the image, pinching with two fingers to zoom.
 If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks.
 Your brand shows on your public invite link, on your booking page (to the patients connected to you) and on printed documents (prescriptions, receipts, history). Once saved, the logo and photo are public: anyone who has an image's link can open it.
 In the app, **Document Templates** says the documents' colour and logo come from **My brand**, with a shortcut to **Open My brand**.

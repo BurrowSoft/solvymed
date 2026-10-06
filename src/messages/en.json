@@ -2230,5 +2230,15 @@
     "editTitle": "Edit location",
     "dayLocation": "Location",
     "bookingLine": "Location: {name} · {address}"
+  },
+  "brandCrop": {
+    "title": "Adjust image",
+    "use": "Use image",
+    "small": "Small image: it may print blurry.",
+    "hint": "Drag to move. Use the slider or the mouse wheel to zoom.",
+    "hintTouch": "Drag to move. Pinch with two fingers to zoom.",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "adjust": "Adjust"
   }
 }

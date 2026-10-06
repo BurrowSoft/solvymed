@@ -2200,5 +2200,15 @@
     "editTitle": "Standort bearbeiten",
     "dayLocation": "Standort",
     "bookingLine": "Standort: {name} · {address}"
+  },
+  "brandCrop": {
+    "title": "Bild anpassen",
+    "use": "Bild verwenden",
+    "small": "Kleines Bild: Der Druck kann unscharf sein.",
+    "hint": "Zum Verschieben ziehen. Mit dem Regler oder dem Mausrad zoomen.",
+    "hintTouch": "Zum Verschieben ziehen. Mit zwei Fingern zoomen.",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "adjust": "Anpassen"
   }
 }

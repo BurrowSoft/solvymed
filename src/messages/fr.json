@@ -2200,5 +2200,15 @@
     "editTitle": "Modifier le lieu",
     "dayLocation": "Lieu",
     "bookingLine": "Lieu : {name} · {address}"
+  },
+  "brandCrop": {
+    "title": "Ajuster l'image",
+    "use": "Utiliser l'image",
+    "small": "Petite image : l'impression peut être floue.",
+    "hint": "Faites glisser pour déplacer. Utilisez le curseur ou la molette pour zoomer.",
+    "hintTouch": "Faites glisser pour déplacer. Pincez avec deux doigts pour zoomer.",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "adjust": "Ajuster"
   }
 }

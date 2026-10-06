@@ -2200,5 +2200,15 @@
     "editTitle": "Modifica sede",
     "dayLocation": "Sede",
     "bookingLine": "Sede: {name} · {address}"
+  },
+  "brandCrop": {
+    "title": "Regola immagine",
+    "use": "Usa immagine",
+    "small": "Immagine piccola: la stampa potrebbe risultare sfocata.",
+    "hint": "Trascina per spostare. Usa il cursore o la rotella del mouse per lo zoom.",
+    "hintTouch": "Trascina per spostare. Usa due dita per lo zoom.",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "adjust": "Regola"
   }
 }
