@@ -222,13 +222,13 @@ You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delet
 ## C15. Locais de atendimento / Practice locations
 **pt-BR**
 Se você atende em mais de um lugar, cadastre cada um como um local. Os locais só aparecem para você e para os pacientes quando há dois ou mais; com um só, nada muda.
-O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes.
+O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes. **Tornar principal** pede confirmação: os dias de atendimento sem local escolhido passam a usar o novo principal; consultas marcadas com um local continuam nele, e as sem local passam a mostrar o novo principal.
 Em **Horário de atendimento**, cada dia tem um **Local**: as consultas desse dia ficam nesse local (sem escolha, no principal).
 Na **Agenda**, cada consulta mostra o seu local. Em **Nova Consulta**, o local do dia já vem marcado; toque em outro local para mudar. Se uma consulta muda de dia, ela passa para o local do novo dia.
 {pending:app-1.8.0} No app: **Configurações → Minha clínica** mostra os locais, com **Adicionar local**, editar e **Tornar principal**; no **Horário de atendimento**, escolha o **Local** de cada dia.
 **en**
 If you see patients in more than one place, add each one as a location. Locations show to you and to patients only when there are two or more; with one, nothing changes.
-The **Primary** location is the default. To delete it, make another location primary first.
+The **Primary** location is the default. To delete it, make another location primary first. **Make primary** asks first: working days without a chosen location will use the new primary; appointments booked at a location stay there, and those without one will show the new primary.
 In **Working hours**, each day has a **Location**: that day's appointments are at that location (the primary when none is chosen).
 In the **Schedule**, each appointment shows its location. In **New Appointment**, the day's location is already selected; tap another location to change it. When an appointment moves to another day, it takes that day's location.
 {pending:app-1.8.0} In the app: **Settings → My Clinic** lists the locations, with **Add location**, edit and **Make primary**; in **Working hours**, choose each day's **Location**.

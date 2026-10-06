@@ -2229,6 +2229,7 @@
     "edit": "Edit",
     "editTitle": "Edit location",
     "dayLocation": "Location",
-    "bookingLine": "Location: {name} · {address}"
+    "bookingLine": "Location: {name} · {address}",
+    "primaryConfirm": "Working days without a chosen location will use {name}. Appointments booked at a location stay there; those without one will show {name}."
   }
 }

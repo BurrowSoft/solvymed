@@ -2199,6 +2199,7 @@
     "edit": "편집",
     "editTitle": "장소 편집",
     "dayLocation": "장소",
-    "bookingLine": "장소: {name} · {address}"
+    "bookingLine": "장소: {name} · {address}",
+    "primaryConfirm": "장소를 선택하지 않은 진료일은 {name}을(를) 사용합니다. 장소가 지정된 예약은 그대로이며, 장소가 없는 예약은 {name}(으)로 표시됩니다."
   }
 }

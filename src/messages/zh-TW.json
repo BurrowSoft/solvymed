@@ -2199,6 +2199,7 @@
     "edit": "編輯",
     "editTitle": "編輯地點",
     "dayLocation": "地點",
-    "bookingLine": "地點：{name} · {address}"
+    "bookingLine": "地點：{name} · {address}",
+    "primaryConfirm": "未選擇地點的工作日將使用 {name}。已指定地點的預約維持不變；沒有地點的預約將顯示為 {name}。"
   }
 }
