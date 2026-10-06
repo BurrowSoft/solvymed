@@ -194,6 +194,7 @@ export default async function PatientDetailPage({
           accessLog={accessLog}
           timeZone={timeZone}
           recordTemplates={recordTemplates}
+          documentsOn={!isSecretary && (await serverFlag(supabase, "patient_documents"))}
           addressLive={conditionMet("patient-address-live")}
         />
       </div>

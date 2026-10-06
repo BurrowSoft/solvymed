@@ -12,6 +12,7 @@ import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
+import { DocumentsTab } from "./DocumentsTab";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -95,7 +96,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -125,20 +126,24 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   timeZone?: string;
   // The doctor's record templates (1.8.0 D); null while the flag is off.
   recordTemplates?: RecordTemplate[] | null;
+  // 1.8.0 A (flag 'patient_documents', the doctor): Documents replaces Exams + Files.
+  documentsOn?: boolean;
 }) {
   const t = useTranslations("patientDetail");
-  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
+  const td = useTranslations("docs");
+  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "documents" | "appointments" | "access">("info");
   const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
     { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
-    { key: "exams" as const, label: t("tabExams") },
-    { key: "files" as const, label: t("tabFiles") },
+    ...(documentsOn
+      ? [{ key: "documents" as const, label: td("tab") }]
+      : [{ key: "exams" as const, label: t("tabExams") }, { key: "files" as const, label: t("tabFiles") }]),
     { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
     { key: "access" as const, label: t("tabAccessLog") },
   ];
   const TABS = ALL_TABS.filter(tb =>
-    (!isSecretary || !["records", "prescriptions", "exams", "files", "access"].includes(tb.key)) &&
+    (!isSecretary || !["records", "prescriptions", "exams", "files", "documents", "access"].includes(tb.key)) &&
     (tb.key !== "access" || accessLog != null),
   );
 
@@ -167,6 +172,9 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
         <FilesTab key={tab} patientId={patient.id} doctorId={currentUserId} kind={tab} isArchived={isArchived} locale={locale} />
+      )}
+      {tab === "documents" && documentsOn && !isSecretary && (
+        <DocumentsTab patientId={patient.id} doctorId={currentUserId} isArchived={isArchived} locale={locale} />
       )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
       {tab === "access" && accessLog != null && (

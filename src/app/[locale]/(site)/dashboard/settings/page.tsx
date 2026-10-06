@@ -28,6 +28,8 @@ import { BrandCard } from "./BrandCard";
 import { ColleaguesCard } from "./ColleaguesCard";
 import { RecordTemplatesCard } from "./RecordTemplatesCard";
 import { listRecordTemplates } from "./record-template-actions";
+import { DocumentFoldersCard } from "./DocumentFoldersCard";
+import { documentsEnabled, loadFolders } from "../(gated)/patients/documents-actions";
 import { listColleagues } from "../colleague-actions";
 import { loadPracticeBrand, type BrandFieldsRow } from "@/lib/brand";
 import { isAccessAllowed, planSummary, type EffectiveSub } from "@/lib/subscription";
@@ -234,6 +236,8 @@ export default async function SettingsPage({
   // 1.8.0 D record templates (server flag 'record_templates'): no card while it's off.
   const templates = await listRecordTemplates();
   const showTemplates = templates.ok || templates.code === "failed";
+  // 1.8.0 A document folders (server flag 'patient_documents'): no card while it's off.
+  const folders = (await documentsEnabled()) ? await loadFolders() : null;
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl">
@@ -279,6 +283,14 @@ export default async function SettingsPage({
         )}
 
         {showTemplates && <RecordTemplatesCard initial={templates.ok ? templates.rows : []} loadFailed={!templates.ok} />}
+        {folders && (
+          <DocumentFoldersCard
+            initial={folders.ok ? folders.data.folders : []}
+            usedBytes={folders.ok ? folders.data.usedBytes : 0}
+            limitBytes={folders.ok ? folders.data.limitBytes : 0}
+            loadFailed={!folders.ok}
+          />
+        )}
 
         {!locked && <InviteCodeCard code={(prof as { public_invite_code?: string | null }).public_invite_code ?? undefined} country={practiceCountry} />}
 
