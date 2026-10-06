@@ -2094,6 +2094,7 @@
     "err": {
       "tooLarge": "Tệp này lớn hơn 20 MB.",
       "type": "Chỉ gửi được tệp PDF, JPG, PNG hoặc HEIC.",
+      "cantShareType": "Không thể chia sẻ tệp này: chỉ hỗ trợ PDF, JPG, PNG hoặc HEIC.",
       "dailyLimit": "Bạn có thể gửi tối đa 10 tài liệu mỗi ngày cho bác sĩ này. Hãy thử lại vào ngày mai.",
       "patientFull": "Bạn đã đạt giới hạn 200 MB cho bác sĩ này.",
       "storageFull": "Dung lượng tài liệu của bác sĩ này đã đầy.",

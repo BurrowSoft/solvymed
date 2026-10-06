@@ -2094,6 +2094,7 @@
     "err": {
       "tooLarge": "이 파일은 20MB를 초과합니다.",
       "type": "PDF, JPG, PNG 또는 HEIC 파일만 보낼 수 있습니다.",
+      "cantShareType": "이 파일은 공유할 수 없습니다. PDF, JPG, PNG 또는 HEIC만 가능합니다.",
       "dailyLimit": "이 의사에게 하루 최대 10개의 문서를 보낼 수 있습니다. 내일 다시 시도하세요.",
       "patientFull": "이 의사에 대한 200MB 한도에 도달했습니다.",
       "storageFull": "이 의사의 문서 저장 공간이 가득 찼습니다.",

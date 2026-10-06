@@ -2094,6 +2094,7 @@
     "err": {
       "tooLarge": "此文件超过 20 MB。",
       "type": "只能发送 PDF、JPG、PNG 或 HEIC 文件。",
+      "cantShareType": "此文件无法共享:仅支持 PDF、JPG、PNG 或 HEIC。",
       "dailyLimit": "每天最多可向这位医生发送 10 份文件。请明天再试。",
       "patientFull": "您已达到这位医生的 200 MB 上限。",
       "storageFull": "这位医生的文件存储空间已满。",

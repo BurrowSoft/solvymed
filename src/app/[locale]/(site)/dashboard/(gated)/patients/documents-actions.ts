@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
+import { patientDocumentFn } from "@/lib/patientDocumentFn";
 import { BUCKET, isUuid } from "@/lib/patientFiles";
 import {
   DOC_TITLE_MAX, docErrorKey, toDocument, toFolder,
@@ -14,7 +15,8 @@ import {
 // acting header: documents follow the records rule, never a secretary);
 // 190's RPCs check the owner and the flag again. The browser uploads the
 // file to <doctor>/<patient>/<uuid>.<ext> first (the storage owner policy),
-// then registerDocument records it.
+// then registerDocument records it through the patient-document function,
+// which reads the file's real format first (196).
 
 type Result<T> = { ok: true; data: T } | { ok: false; code: DocErrorKey };
 
@@ -55,27 +57,30 @@ export async function registerDocument(patientId: string, input: { path: string;
   if (!title) return { ok: false, code: "invalidName" };
   const me = await doctor();
   if (!me) return { ok: false, code: "noAccess" };
-  // 190 checks the path is <me>/<patient>/<uuid>.<ext>, the object, its size and type.
-  const { data, error } = await me.supabase.rpc("register_patient_document", {
-    p_patient_id: patientId, p_path: input.path, p_folder_id: input.folderId, p_title: title,
-    p_shared: input.shared === true, p_source: "doctor_upload", p_source_id: null, p_replaces_id: null,
+  // 196: the function reads the file's real format, then registers it (190's
+  // checks: the path is <me>/<patient>/<uuid>.<ext>, the size, the folder). On
+  // a refusal it removes the file itself; it never touches anything else.
+  const r = await patientDocumentFn<{ document_id?: string }>(me.supabase, {
+    action: "register", patient_id: patientId, path: input.path, folder_id: input.folderId, title,
+    shared: input.shared === true, source: "doctor_upload", source_id: null, replaces_id: null,
   });
-  if (error) {
-    // Not registered: the uploaded object would be an orphan, so it goes.
-    // Except a path that's already registered (a repeated call, c6): that
-    // file is a document now, and stays.
-    const duplicate = error.code === "23505" || /duplicate key/i.test(error.message ?? "");
-    if (!duplicate) await me.supabase.storage.from(BUCKET).remove([input.path]);
-    return { ok: false, code: docErrorKey(error.message, true) };
-  }
-  return { ok: true, data: data as string };
+  if (!r.ok || !r.data?.document_id) return { ok: false, code: r.ok ? "generic" : docErrorKey(r.code, true) };
+  return { ok: true, data: r.data.document_id };
 }
 
 export async function setDocumentShared(id: string, shared: boolean): Promise<Result<null>> {
   if (!isUuid(id)) return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "noAccess" };
-  const { error } = await me.supabase.rpc("set_document_shared", { p_id: id, p_shared: shared === true });
+  const share = () => me.supabase.rpc("set_document_shared", { p_id: id, p_shared: shared === true });
+  let { error } = await share();
+  // 196: a file from before 190 (adopted) is read once before it can be
+  // shared; one that isn't a PDF/JPG/PNG/HEIC stays internal.
+  if (error && /format_not_checked/.test(error.message ?? "")) {
+    const c = await patientDocumentFn(me.supabase, { action: "check", document_id: id });
+    if (!c.ok) return { ok: false, code: c.code === "not_allowed_file" ? "cantShareType" : docErrorKey(c.code, true) };
+    ({ error } = await share());
+  }
   return error ? { ok: false, code: docErrorKey(error.message, true) } : { ok: true, data: null };
 }
 
