@@ -38,7 +38,9 @@ describe("the app's registration format (lib/registration)", () => {
     expect(parseCouncilRegistration("CRM 12345/sp")).toEqual({ crm: "12345", crmState: "SP" });
     expect(parseCouncilRegistration("CRM 12345")).toEqual({ crm: "12345", crmState: "" });
     expect(parseCouncilRegistration("CRO 999")).toEqual({ additionalCouncil: "CRO", additionalCouncilNumber: "999" });
-    expect(parseCouncilRegistration("12345")).toEqual({ additionalCouncilNumber: "12345" });
+    // A bare number is a CRM without a state (c6), so a partial edit keeps it.
+    expect(parseCouncilRegistration("12345")).toEqual({ crm: "12345", crmState: "" });
+    expect(parseCouncilRegistration("12.345")).toEqual({ additionalCouncilNumber: "12.345" });
     expect(parseCouncilRegistration(null)).toEqual({});
   });
 });

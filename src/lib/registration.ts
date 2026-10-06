@@ -38,6 +38,8 @@ export function parseCouncilRegistration(reg: string | null | undefined): Counci
   if (!s) return {};
   const crm = /^CRM\s+(\S+?)(?:\/([A-Za-z]{2}))?$/i.exec(s);
   if (crm) return { crm: crm[1], crmState: (crm[2] ?? "").toUpperCase() };
+  // A bare number is a CRM without a state (c6; the app the same).
+  if (/^\d+$/.test(s)) return { crm: s, crmState: "" };
   const i = s.indexOf(" ");
   if (i > 0) return { additionalCouncil: s.slice(0, i), additionalCouncilNumber: s.slice(i + 1).trim() };
   return { additionalCouncilNumber: s };
