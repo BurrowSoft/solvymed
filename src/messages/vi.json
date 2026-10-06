@@ -2182,5 +2182,13 @@
       "items": "Thêm ít nhất một loại thuốc.",
       "body": "Hãy viết nội dung."
     }
+  },
+  "privacyNotice": {
+    "title": "Chúng tôi đã cập nhật Chính sách quyền riêng tư",
+    "body": "Xem những gì đã thay đổi vào {date}.",
+    "read": "Đọc chính sách",
+    "ok": "OK",
+    "close": "Đóng",
+    "failed": "Không lưu được. Vui lòng thử lại."
   }
 }

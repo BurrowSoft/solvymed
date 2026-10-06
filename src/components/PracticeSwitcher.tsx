@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { ALL_PRACTICES, PICKED_KEY, isLapsed, setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
+import { ACTING_COOKIE, ALL_PRACTICES, PICKED_KEY, isLapsed, setBrowserActingCookie, type MyPractice } from "@/lib/actingPractice";
 import { doctorColor } from "@/lib/doctorPalette";
 import { withBrandTitle } from "@/lib/doctorName";
 
@@ -15,9 +15,18 @@ import { withBrandTitle } from "@/lib/doctorName";
 // "Todos" (166): on the Agenda only, every doctor's appointments in one
 // view; remembered like a doctor choice. Elsewhere the pages are her
 // primary doctor's, so the switcher shows that doctor there.
-export function PracticeSwitcher({ practices, current, allChosen = false }: { practices: MyPractice[]; current: string; allChosen?: boolean }) {
+export function PracticeSwitcher({ practices, current, allChosen = false, cookie = null }: { practices: MyPractice[]; current: string; allChosen?: boolean; cookie?: string | null }) {
   const t = useTranslations("secretaryPractices");
-  const onAgenda = /\/dashboard\/schedule\/?$/.test(usePathname() ?? "");
+  const pathname = usePathname();
+  const router = useRouter();
+  const onAgenda = /\/dashboard\/schedule\/?$/.test(pathname ?? "");
+  // The middleware drops a choice she no longer serves on a client
+  // navigation, which keeps this layout: re-render it then, so the switcher
+  // never names a doctor the pages no longer act for (cf, 6 Oct: a blocker
+  // for the multi-practice flip).
+  useEffect(() => {
+    if (actingCookieNow() !== cookie) router.refresh();
+  }, [pathname, cookie, router]);
   const showAll = onAgenda && allChosen;
   const chosen = practices.find((p) => p.professional_id === current) ?? practices[0];
   // The doctor's colour, as on "Todos" (lib/doctorPalette: by her list's order).
@@ -46,6 +55,12 @@ export function PracticeSwitcher({ practices, current, allChosen = false }: { pr
       </select>
     </label>
   );
+}
+
+// The raw choice cookie in the browser ("all" included); null when unset.
+function actingCookieNow(): string | null {
+  const m = document.cookie.match(new RegExp(`(?:^|; )${ACTING_COOKIE}=([^;]*)`));
+  return m && m[1] ? decodeURIComponent(m[1]) : null;
 }
 
 // The doctor's name, with " · assinatura inativa" when their subscription lapsed (d1/cf).

@@ -2212,5 +2212,13 @@
       "items": "Add at least one medication.",
       "body": "Write the text."
     }
+  },
+  "privacyNotice": {
+    "title": "We've updated our Privacy Policy",
+    "body": "See what changed on {date}.",
+    "read": "Read the policy",
+    "ok": "OK",
+    "close": "Close",
+    "failed": "Couldn't save. Please try again."
   }
 }

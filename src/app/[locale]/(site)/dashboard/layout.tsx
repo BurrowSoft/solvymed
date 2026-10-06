@@ -258,7 +258,7 @@ export default async function DashboardLayout({
               )}
               {!staleChoice && practices && practices.length > 1 && (
                 <div className="flex justify-end px-6 pt-4 lg:px-8">
-                  <PracticeSwitcher practices={practices} current={actingId} allChosen={chosenCookie === ALL_PRACTICES} />
+                  <PracticeSwitcher practices={practices} current={actingId} allChosen={chosenCookie === ALL_PRACTICES} cookie={chosenCookie || null} />
                 </div>
               )}
               <PracticeCalendarProvider calendar={practice.calendar}>{children}</PracticeCalendarProvider>

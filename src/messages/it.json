@@ -2182,5 +2182,13 @@
       "items": "Aggiungi almeno un farmaco.",
       "body": "Scrivi il testo."
     }
+  },
+  "privacyNotice": {
+    "title": "Abbiamo aggiornato la nostra Informativa sulla privacy",
+    "body": "Scopri cosa è cambiato il {date}.",
+    "read": "Leggi l'informativa",
+    "ok": "OK",
+    "close": "Chiudi",
+    "failed": "Impossibile salvare. Riprova."
   }
 }

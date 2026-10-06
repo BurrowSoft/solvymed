@@ -577,7 +577,7 @@ accept it.
 | F-4 | Errors | Console: no uncaught errors on the main pages. Server log: no 5xx during the run. |
 | F-5 | Version gate (`app_config`) | Doctors and secretaries below the minimum version see the gate; others don't. |
 | F-6 | Unit tests (`npx vitest run`) on the RC SHA | **All green.** As of 2026-09-26, master has 18 pre-existing failures: `BookingRequestsPanel.test.tsx` doesn't mock `useParams`, and vitest also picks up the Playwright `e2e/` specs. That makes this ❌ until the follow-up fix lands, because "all green" means nothing until then. **Update: fixed by #19, merged at `07c7452`, which runs 78/78; CI (#20) enforces it on every PR.** |
-| F-7 | Vercel env scoping, a **launch gate** | **Previews never have live Stripe keys.** Once prod has the live `sk_live_`/`whsec_` keys, every Preview-scoped Stripe var must still be a **test** key. Check by names and scopes only (`vercel env ls`); never print values. On a preview, a checkout must show Stripe's **test-mode** banner. **Until this is confirmed, don't run any checkout on a preview.** The Supabase `NEXT_PUBLIC_*` vars and `SENTRY_AUTH_TOKEN` are Preview-scoped: on 2026-09-26 they were Production-only, so every preview's middleware crashed (`MIDDLEWARE_INVOCATION_FAILED`). |
+| F-7 | Vercel env scoping, a **launch gate** | **Previews never have live Stripe keys.** Once prod has the live `sk_live_`/`whsec_` keys, every Preview-scoped Stripe var must still be a **test** key. Check by names and scopes only (`vercel env ls`); never print values. On a preview, a checkout must show Stripe's **test-mode** banner. **Until this is confirmed, don't run any checkout on a preview.** The Supabase `NEXT_PUBLIC_*` vars and `SENTRY_AUTH_TOKEN` are Preview-scoped: on 2026-09-26 they were Production-only, so every preview's middleware crashed (`MIDDLEWARE_INVOCATION_FAILED`). **✅ Closed 2026-10-07: scopes split, the Preview webhook secret is test-mode, the publishable key removed (see batch 13).** |
 | F-8 | Preview is really reachable | Using the bypass header `x-vercel-protection-bypass` from the git-ignored `VERCEL_AUTOMATION_BYPASS_SECRET` (never printed), the preview serves **the app**, not Vercel's login page and not a 500. Check the page content, not just the HTTP status: an SSO redirect also ends in a 200. |
 | F-S1 | Sentry: the server event arrives scrubbed. **HARD pre-launch** (UX, 2026-09-26). The user runs it with UX, since it needs Sentry UI access. | On a preview built from master, `GET /api/sentry-check` (preview-only; 404 on prod). In Sentry (org `burrowsoft`, project `solvymed-web`, environment `preview`), the event must show: the message `sentry-check: test error for [email], CPF [cpf], phone [phone]`; a request with the **path only** plus the method (no query, headers, cookies or body); no `nextjs` context and no spans; and a user that is absent or holds only an id. The same envelope was captured locally at #31 `279ea4f` and passed; this check confirms it in Sentry itself. The stack's source-context lines show the test route's literal fake email, CPF and phone. That's the route's code, not a scrubber leak, unless the #31 follow-up has removed it. ❌ blocks the launch. |
 | F-S2 | Sentry: the stack resolves. **HARD pre-launch.** The user runs it with UX. | The same event's stack trace points to `src/app/api/sentry-check/route.ts` (readable source, not minified). This needs the replaced `SENTRY_AUTH_TOKEN`: the build log must show the source-map upload succeeding, with no `Invalid token (401)`. `*.js.map` must still not be served publicly (403/404), with no `sourceMappingURL` in the chunks. ❌ blocks the launch. |
@@ -10384,3 +10384,50 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 **Fixtures:**
 - Throwaway accounts (`e2e-test-opus-…`, `e2e-smoke-…`).
 - The 1.8.0 records were seeded or saved with cf's OK. The mobile dev purged them by exact id, records first, together with documents, storage objects, folders, templates and flag listings. WT1 verified 0 left after each purge.
+
+## Batch 13: web PRs #423–#440, incl. the SolvyAI go-live, the removed-secretary fix and the Thai PDPA block (web tester 1 + web tester 2, 2026-10-06)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; listings, seeds and purges by the mobile dev. Every row below with a Preview also ran the regression suite: "smoke: 57 passed at `<SHA>`" unless noted.
+
+**F-7 (Stripe env scoping, a launch gate): closed (cf, 2026-10-06/07).**
+- `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET` have separate Preview, Development and Production entries (WT1, `vercel env ls`, names and scopes only).
+- The Preview webhook secret is test-mode (per Vitor, 7 Oct).
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` was removed from all environments (7 Oct; nothing on master reads it).
+- Both completed live Checkouts were Vitor's own.
+- The rule stays: Stripe flows only on Previews built after 2026-10-06.
+
+**SolvyAI go-live:**
+- **Tracking issue #429.** The hidden-features audit (WT1 pt-BR + th on the Preview of `629809c`, WT2 en): no hidden feature was offered as available. Six wrong answers were fixed in #432 and re-tested on its Preview.
+- **Master merge hold** (b4/c6), while Vitor's Production env vars were set ahead of the go:
+  - WT1, signed in on www at `96514ce` and after #428 at `4e30600`: no ✦ / intro / Settings card; `/api/assistant/usage` and `POST /api/assistant` → 404.
+- **#432 live** (`f5fe211`): every question → `model_failed`. The Production key was missing (Anthropic 400 `invalid_request_error`).
+- #437 added the log line, and #436 reverted the go-live. WT1 confirmed OFF at `5dcb447`.
+- After a new key, #440 turned it back on. WT1 at `c1ed1ce`: one question answered, usage 0 → 1; secretary and patient have no ✦ (403 `not_doctor`).
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #423 | Acessos in the viewer's zone; a hidden document leaves the list at once | WT1 🟢 `5d58d09` (6011819203; at `7ac4505` uploads couldn't register, since the branch predated #422 with 196 live): the same Acessos entry reads 04:40 São Paulo / 21:40 (5 Oct) Honolulu / 14:2x Bangkok; a > 24 h hide closes the dialog and the row together at ~1.9 s; after a reload "por Dra. …". Merged at `629809c` = a master merge (c6 same-patch) | `96514ce` into master |
+| #424 | Privacy 2026-10-10: §10b Thailand (PDPA) | WT2 🟢 `7a3a1f1` (6012079065): §10b between §10 and §11, 8 bullets in en + pt-BR, th shows the English, "10 October 2026", an aborted BR/TH signup sends 2026-10-10 | `130eaae` into master |
+| #425 | TESTING-WEB batch 12 | n/a: docs (c6 CLEAN) | `aafb1fa` into master |
+| #426 | Switching straight back restores the previous template exactly | WT1 🟢 `bf38bc5` (6011675575): A → B → A unedited restores A; free text → A → Sem modelo returns the exact text; an edit in B then switching → the joining rule; no record saved | `ec3dbd6` into master |
+| #427 | Team page: invite-sent banner, local times, refresh on return | WT2 🟢 `dec13eb` (6012193006): banner + check (cleared by a later action); resend / expiry in the browser zone (none in the server HTML); a secretary accepting elsewhere moves to the team on return without a reload | `7328b88` into master |
+| #428 | SolvyAI also needs `solvyai-live` (the gate) | Review-only (c6 CLEAN at `7e742c3`, 6012151631). WT1's signed-in www check after the deploy (`4e30600`): SolvyAI OFF everywhere | `4e30600` into master |
+| #430 | A secretary with no team never gets the dashboard (no login loop) | WT1 🟢 `5aa5d6f` (6013088857): a soft click → 307 /auth/not-connected (3.6 s); a focus after > 10 s → moves (8.2 s); idle → moves at ~2 min; "/" → not-connected with "Você não faz parte de nenhuma equipe no momento." + the code entry + Sair; re-join by code works; on A + B acting as A, A removes her → she lands on B, `sm_practice` cleared. The www repro before the fix (2 passes): no loop, but a stale empty shell on soft navigation | `85aa4f4` into master |
+| #431 | "Built for PDPA" on the Thai home | WT1 🟢 `21c4d5b` (6013214308): /th gains "ออกแบบตาม PDPA"; the en + pt-BR homes are identical to www | `49aaeef` into master |
+| #432 | SolvyAI go-live | WT1 🟢 pt-BR + th at `84dfa0e` → `da4481e` (6013451527): the 4 re-asked answers fixed (TH → no WhatsApp); the intro card once; Abrir tela navigates; a forced cut isn't reachable naturally (unit-tested). WT2 🟢 en + actions at `727fda6` → `da4481e` (6013224012), smoke 57 at `da4481e`. Live on www (`f5fe211`): ⛔ every question `model_failed` (6013633527), see #436 / #440 | `f5fe211` into master |
+| #433 | `merge-patients-live` met (the app's merge released) | WT2 🟢 `6d632c0` (6013554961): Help P12 en + pt-BR shows the app steps next to the website line; the App Map's app merge rule gated on it. Merged at `264aa90` = a master merge (c6 same-patch) | `122b84b` into master |
+| #435 | The tour's resume card sits above the ✦ | WT1 🟢 `f1400ff` (6013954399): at 1280 and 390 px the card ends 20 px above the ✦, no overlap; the ✦ is topmost at its centre and opens the panel; Dispensar works | `aebf1d9` into master |
+| #436 | Revert: SolvyAI off while Production model calls fail | WT1 🟢 **live** (6013980946): Production `5dcb447`, signed-in doctor: no ✦ / intro / Settings card, usage + POST → 404, no pricing line | `5dcb447` into master |
+| #437 | Log a SolvyAI model failure's status and error type | Review-only (c6 CLEAN at `fa9cbee`, 6013713289). WT1 asked one question on www at `050d70d` (09:56:02Z) → still `model_failed`; the log showed Anthropic 400 `invalid_request_error` | `050d70d` into master |
+| #438 | Help C4 + App Map: the app's no-team screen (pending app-1.8.0) | WT1 🟢 `61e7963` (6014107506): /help/c4 en + pt-BR identical to www (hidden). Merged at `511b025` = a master merge (c6 same-patch) | `f25c6a1` into master |
+| #440 | SolvyAI back on (revert of #436), after the Production key fix | WT1 🟢 **live** on www `c1ed1ce` (6014547944): one pt-BR question answered (+ Abrir tela), usage 0 → 1; secretary + patient: no ✦, usage 403 `not_doctor` | `c1ed1ce` into master |
+
+**Still open, so not in this batch:**
+- #434: the switcher refresh; WT1 🟢 at `a93bb0c`, smoke 57.
+- #439: 1.8.0 B clinical documents.
+
+**Fixtures:**
+- Throwaway accounts (`e2e-test-opus-…`, `e2e-smoke-…`).
+- The multi-practice secretaries were listed on `multi_practice_secretary` by the mobile dev (cf's OK by exact id) and unlisted after.
+- The mobile dev purged everything by exact id; WT1 verified 0 left. The purge of the #434 + #440 accounts was queued behind a running SQL suite at the time of writing.
+- The SolvyAI usage rows of purged trial doctors went with the accounts. Migration 205 will keep that spend on future purges.

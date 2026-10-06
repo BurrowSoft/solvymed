@@ -12,6 +12,9 @@ import { countryProfile } from "@/lib/country";
 import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadMyDocumentDoctors } from "./document-actions";
+import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
+import { PRIVACY_VERSION } from "@/lib/legalVersions";
+import { formatDateLabel } from "@/lib/dateLabels";
 
 export type PatientAppointment = {
   id: string;
@@ -162,12 +165,17 @@ export default async function MyAppointmentsPage({
   // 1.8.0 A: empty unless the server's switch is on for this patient (190).
   const docDoctors = await loadMyDocumentDoctors();
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
+  // A newer privacy policy than this account accepted (migration 204).
+  const privacyNoticeDate = privacyNoticeDue(await readAcceptedPrivacy(supabase))
+    ? formatDateLabel(locale, PRIVACY_VERSION, { day: "numeric", month: "long", year: "numeric" })
+    : null;
 
   return (
     <>
     <SaveMyLocale locale={locale} />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
+      privacyNoticeDate={privacyNoticeDate}
       upcoming={upcoming ?? []}
       past={past ?? []}
       userEmail={user.email ?? ""}

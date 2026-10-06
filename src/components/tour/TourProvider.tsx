@@ -244,8 +244,10 @@ export function TourProvider({
       {introPopup && !active && !newsTour && !newsPopup && (
         <SolvyAiIntroPopup onTry={introTry} onLater={introLater} />
       )}
+      {/* Above the SolvyAI ✦ button's corner (bottom-5 right-5), never on top
+          of it: a new doctor sees both on day one (53, cf 6 Oct). */}
       {offerResume && !active && pathname === home && (
-        <div role="status" className="fixed bottom-4 right-4 z-50 w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
+        <div role="status" data-testid="tour-resume" className="fixed bottom-24 right-4 z-50 w-72 rounded-2xl border border-slate-100 bg-white p-4 shadow-xl">
           <p className="text-sm font-semibold text-slate-900">{t("resumeTitle", { n: Math.min(resumeAt + 1, steps.length), total: steps.length })}</p>
           <div className="mt-3 flex justify-end gap-2">
             <button
