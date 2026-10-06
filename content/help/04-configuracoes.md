@@ -225,14 +225,14 @@ Se você atende em mais de um lugar, cadastre cada um como um local. Os locais s
 O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes.
 Em **Horário de atendimento**, cada dia tem um **Local**: as consultas desse dia ficam nesse local (sem escolha, no principal).
 {pending:app-1.8.0} No app: **Configurações → Minha clínica** mostra os locais, com **Adicionar local**, editar e **Tornar principal**; no **Horário de atendimento**, escolha o **Local** de cada dia.
-Com dois ou mais locais, os documentos em PDF (receitas, recibos e o histórico) listam todos os locais no rodapé (nome, endereço e telefone).
+{pending:app-1.8.0} No app, com dois ou mais locais, os documentos em PDF (receitas, recibos e o histórico) listam todos os locais no rodapé (nome, endereço e telefone).
 **en**
 If you see patients in more than one place, add each one as a location. Locations show to you and to patients only when there are two or more; with one, nothing changes.
 The **Primary** location is the default. To delete it, make another location primary first.
 In **Working hours**, each day has a **Location**: that day's appointments are at that location (the primary when none is chosen).
 {pending:app-1.8.0} In the app: **Settings → My Clinic** lists the locations, with **Add location**, edit and **Make primary**; in **Working hours**, choose each day's **Location**.
-With two or more locations, the PDF documents (prescriptions, receipts and the history) list every location in the footer (name, address and phone).
-**No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia.
-**On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**.
+{pending:app-1.8.0} In the app, with two or more locations, the PDF documents (prescriptions, receipts and the history) list every location in the footer (name, address and phone).
+**No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia. Com dois ou mais locais, receitas, recibos e o histórico impressos listam todos os locais no rodapé (nome, endereço e telefone).
+**On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**. With two or more locations, printed prescriptions, receipts and the history list every location in the footer (name, address and phone).
 `open:none`
 `requires:practice-locations-live`

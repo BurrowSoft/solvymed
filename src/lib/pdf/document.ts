@@ -253,8 +253,14 @@ export class Writer {
     for (const p of this.pdf.getPages()) {
       p.drawLine({ start: { x: MARGIN, y: MARGIN + 18 + lines.length * LOC_LH }, end: { x: A4[0] - MARGIN, y: MARGIN + 18 + lines.length * LOC_LH }, thickness: 0.75, color: LINE });
       lines.forEach((l, i) => {
-        const lw = textWidth(this.fonts.regular, l, 8);
-        drawShaped(p, l, { x: Math.max(MARGIN, (A4[0] - lw) / 2), y: MARGIN + (lines.length - i) * LOC_LH, font: this.fonts.regular, size: 8, color: FAINT });
+        // A long line shrinks to fit (down to 6 pt), then is cut with "…".
+        let size = 8;
+        let text = l;
+        const full = textWidth(this.fonts.regular, text, size);
+        if (full > this.width) size = Math.max(6, (size * this.width) / full);
+        while (text.length > 1 && textWidth(this.fonts.regular, text, size) > this.width) text = `${text.slice(0, -2).trimEnd()}…`;
+        const lw = textWidth(this.fonts.regular, text, size);
+        drawShaped(p, text, { x: Math.max(MARGIN, (A4[0] - lw) / 2), y: MARGIN + (lines.length - i) * LOC_LH, font: this.fonts.regular, size, color: FAINT });
       });
       const fw = textWidth(this.fonts.regular, this.frame.footer, 8.5);
       drawShaped(p, this.frame.footer, { x: (A4[0] - fw) / 2, y: MARGIN, font: this.fonts.regular, size: 8.5, color: FAINT });
