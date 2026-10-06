@@ -6,7 +6,7 @@ import { PDFDocument } from "pdf-lib";
 import { renderMedicalDocumentPdf, dateLine } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { renderPrescriptionPdf } from "@/lib/pdf/prescription";
-import { documentTypesFor, fixedLanguage, longDate, prefilledBody, validateFields } from "@/lib/medicalDocuments";
+import { documentTypesFor, fixedLanguage, longDate, prefilledBody, registrationLine, validateFields } from "@/lib/medicalDocuments";
 
 // 1.8.0 B's model and the website's PDFs: the types per country (an explicit
 // default, never "if Brazil"), the prefilled sentences in the document's
@@ -37,6 +37,21 @@ describe("the B model", () => {
     expect(longDate("de", "2026-10-07")).toBe("7. Oktober 2026");
     expect(dateLine("pt-BR", "Fortaleza", "2026-10-07")).toBe("Fortaleza, 7 de outubro de 2026");
     expect(dateLine("th", "", "2026-10-07")).toBe("วันที่ 7 ตุลาคม 2569");
+    // French: "{city}, le {date}", and "Le {date}" with no city (cf, #413 row).
+    expect(dateLine("fr", "Lyon", "2026-10-07")).toBe("Lyon, le 7 octobre 2026");
+    expect(dateLine("fr", "", "2026-10-07")).toBe("Le 7 octobre 2026");
+  });
+
+  it("the registration line under the name: digits formatted per country, a letter as typed (cf, #413 row)", () => {
+    expect(registrationLine("BR", "pt-BR", " 12345 ", "sp")).toBe("CRM 12345/SP");
+    expect(registrationLine("BR", "en", "12345", null)).toBe("CRM 12345");
+    expect(registrationLine("BR", "pt-BR", "CRM 12345/RJ", "SP")).toBe("CRM 12345/RJ");
+    expect(registrationLine("TH", "th", "12345")).toBe("ใบอนุญาตประกอบวิชาชีพเวชกรรม เลขที่ ว.12345");
+    expect(registrationLine("TH", "en", "12345")).toBe("Medical licence no. 12345");
+    expect(registrationLine("TH", "th", "ว.12345")).toBe("ว.12345");
+    expect(registrationLine("US", "en", "12345")).toBe("12345");
+    expect(registrationLine("BR", "pt-BR", "  ")).toBeNull();
+    expect(registrationLine("BR", "pt-BR", null)).toBeNull();
   });
 
   it("the checks before saving", () => {

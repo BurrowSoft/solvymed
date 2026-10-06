@@ -25,7 +25,11 @@ export type MedicalDocPdfInput = {
   template: { primaryColor: string; footerText: string | null; logoBytes: Uint8Array | null };
   brand: { logoBytes: Uint8Array | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
   signerName: string;
+  // Under the signer's name: the formatted line (registrationLine).
   signerRegistration: string | null;
+  // The TH certificate's "I {doctor}, licence no. {no.}": the registration as
+  // saved (the sentence has its own label; cf, 76's #413 row).
+  licenceNo?: string | null;
   footer: string;
   // A copy shared with the patient (no drawn signature on the website).
   unsignedLine: string | null;
@@ -38,11 +42,12 @@ const TITLE_KEY: Record<MedicalDocPdfInput["type"], keyof typeof PRINT.en.title>
   exam_request: "exam_request",
 };
 
-// "{city}, {date}" (Thai: "{city} วันที่ {date}"); without a city, the date alone.
+// "{city}, {date}" (Thai "{city} วันที่ {date}", French "{city}, le {date}");
+// without a city the date alone, with Thai's "วันที่" and French's "Le" (cf, #413 row).
 export function dateLine(lang: DocLang, city: string, iso: string): string {
   const date = longDate(lang, iso);
   if (city.trim()) return fill(PRINT[lang].dateLine, { city: city.trim(), date });
-  return lang === "th" ? `วันที่ ${date}` : date;
+  return lang === "th" ? `วันที่ ${date}` : lang === "fr" ? `Le ${date}` : date;
 }
 
 export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts: FontBytes): Promise<Uint8Array> {
@@ -69,7 +74,7 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     writer.text(`${tw.place}: ${input.place}`, { size: 11 });
     writer.aligned(dateLine(input.lang, "", input.issued), "right", { size: 11 });
     writer.gap(10);
-    writer.text(`${tw.iDoctor} ${input.signerName}${input.signerRegistration ? ` ${tw.licence} ${input.signerRegistration}` : ""}`, { size: 11 });
+    writer.text(`${tw.iDoctor} ${input.signerName}${input.licenceNo?.trim() ? ` ${tw.licence} ${input.licenceNo.trim()}` : ""}`, { size: 11 });
     writer.text(`${tw.examined} ${input.patientName}${input.patientId ? ` ${input.patientId.label} ${input.patientId.value}` : ""}`, { size: 11 });
     writer.text(`${tw.on} ${longDate(input.lang, t.examDate)}`, { size: 11 });
     writer.gap(10);
