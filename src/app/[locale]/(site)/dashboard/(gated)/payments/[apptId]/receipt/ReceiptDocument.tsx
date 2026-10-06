@@ -115,6 +115,11 @@ export function ReceiptDocument({ template, labels, patientName, idLines, number
       </section>
 
       <footer className="mt-8 border-t border-[#E5E9F0] pt-4 text-center text-[11px] text-[#A0ABBE]">
+        {(template.locationLines ?? []).length > 0 && (
+          <div data-testid="doc-location-lines" className="mb-1.5 space-y-0.5">
+            {template.locationLines!.map((l) => <div key={l}>{l}</div>)}
+          </div>
+        )}
         {template.footerText ?? labels.footer}
       </footer>
     </article>

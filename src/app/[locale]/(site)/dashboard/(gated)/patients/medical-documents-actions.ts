@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { readLocationLines } from "@/lib/locationLines";
 import { createClient } from "@/lib/supabase/server";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
@@ -110,6 +111,8 @@ export type DocPrintData = {
   brand: { logoUrl: string | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
   doctor: { name: string; registration: string | null; clinicName: string | null; address: string | null; city: string | null; state: string | null; phone: string | null };
   patient: { name: string; cpf: string | null; thId: string | null; passport: string | null };
+  // 1.8.0 F: the footer's location lines (2+ locations, switch on).
+  locationLines: string[];
 };
 
 // Everything the PDF needs, read only once the access is logged ('document',
@@ -138,6 +141,7 @@ export async function documentPrintData(patientId: string, documentId: string): 
     ok: true,
     data: {
       country: lookup.country,
+      locationLines: await readLocationLines(me.supabase, me.uid),
       idKind: countryProfile(lookup.country).patientId,
       template: { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, logoUrl: t.logoUrl },
       brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
