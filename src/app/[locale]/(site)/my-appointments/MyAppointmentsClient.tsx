@@ -19,6 +19,8 @@ import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
 import { shortDoctorName } from "@/lib/doctorName";
 import { MyDoctors } from "./MyDoctors";
+import { MyDocuments } from "./MyDocuments";
+import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
 
 const STATUS_COLOR: Record<string, string> = {
@@ -408,6 +410,7 @@ export function MyAppointmentsClient({
   connectedClinicName = null,
   doctors = null,
   canAddDoctor = false,
+  docDoctors = null,
 }: {
   upcoming: PatientAppointment[];
   past: PatientAppointment[];
@@ -426,6 +429,9 @@ export function MyAppointmentsClient({
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
   doctors?: MyDoctor[] | null;
   canAddDoctor?: boolean;
+  // 1.8.0 A (flag 'patient_documents'): the doctors with documents for this
+  // patient, or a folder that takes uploads; null / empty = no section.
+  docDoctors?: DocDoctor[] | null;
 }) {
   const t = useTranslations("myAppointments");
   const { locale } = useParams<{ locale: string }>();
@@ -518,6 +524,8 @@ export function MyAppointmentsClient({
             )}
           </section>
         )}
+
+        {docDoctors && docDoctors.length > 0 && <MyDocuments doctors={docDoctors} />}
 
         {many && (
           <div role="radiogroup" aria-label={tDoctors("homeSection")} data-testid="doctor-filter" className="flex flex-wrap gap-2">
