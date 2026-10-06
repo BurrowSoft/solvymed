@@ -76,6 +76,10 @@ describe("Team: live", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Bia@X.co" } });
     fireEvent.click(screen.getByRole("button", { name: pt.secretary.teamInvite }));
     expect(await screen.findByRole("status")).toHaveTextContent("E-mail enviado para bia@x.co");
+    // Prominent (cf): its own bold banner with a check icon.
+    const banner = screen.getByTestId("invite-sent");
+    expect(banner.className).toMatch(/font-bold/);
+    expect(banner.querySelector("svg")).not.toBeNull();
     expect(h.sends).toEqual([{ code: "S-ABCD2345" }]);
     expect(screen.getByText("S-ABCD2345")).toBeInTheDocument();
   });

@@ -53,6 +53,9 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   const [pending, start] = useTransition();
   const emailLive = conditionMet("secretary-invite-email-live");
   const [notice, setNotice] = useState("");
+  // "E-mail enviado para {email}" on its own, prominent (cf, Vitor's test):
+  // the invite already went out.
+  const [sentTo, setSentTo] = useState("");
   // "Now" after mount (no hydration mismatch), ticking so a waiting
   // "Reenviar convite" turns on by itself.
   const [now, setNow] = useState<number | null>(null);
@@ -62,6 +65,26 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     const id = setInterval(() => setNow(Date.now()), 30_000);
     return () => clearInterval(id);
   }, [emailLive]);
+  // Times and dates only after mount: in the viewer's own time zone, never
+  // the server's (Vitor's test; the app does the same).
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+  // A secretary who just joined moves from Pending to the team when the doctor
+  // comes back to this tab (at most every 10 s; no timer, the page's forms stay).
+  useEffect(() => {
+    let last = Date.now();
+    const onBack = () => {
+      if (document.visibilityState !== "visible" || Date.now() - last < 10_000) return;
+      last = Date.now();
+      router.refresh();
+    };
+    document.addEventListener("visibilitychange", onBack);
+    window.addEventListener("focus", onBack);
+    return () => {
+      document.removeEventListener("visibilitychange", onBack);
+      window.removeEventListener("focus", onBack);
+    };
+  }, [router]);
   const time = (iso: string) => new Date(iso).toLocaleTimeString(dateLocale(locale), { hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
   const nextAt = (r: TeamRow) => (r.sent_at ? new Date(new Date(r.sent_at).getTime() + RESEND_GAP_MS).toISOString() : null);
   // The function's refusals (151): too soon / already sent / the daily cap.
@@ -84,6 +107,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
 
   function invite(targetEmail: string) {
     setError("");
+    setSentTo("");
     setNotice("");
     setCreated(null);
     start(async () => {
@@ -98,7 +122,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
       // The first email goes out by itself; the share buttons stay.
       if (emailLive) {
         const sent = await sendSecretaryInviteEmail({ code: result.code });
-        if (sent.ok) setNotice(t("teamEmailSent", { email: to }));
+        if (sent.ok) { setNotice(""); setSentTo(t("teamEmailSent", { email: to })); }
         else setError(emailError(sent));
       }
       router.refresh();
@@ -110,6 +134,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function resendEmail(row: TeamRow) {
     if (!window.confirm(t("teamResendConfirm", { email: row.email }))) return;
     setError("");
+    setSentTo("");
     setNotice("");
     setCreated(null);
     start(async () => {
@@ -124,7 +149,8 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
         }
       } else {
         if (sent.code) setCreated({ code: sent.code, email: row.email });
-        setNotice(t("teamEmailSent", { email: row.email }));
+        setNotice("");
+        setSentTo(t("teamEmailSent", { email: row.email }));
       }
       router.refresh();
     });
@@ -133,6 +159,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function revoke(id: string) {
     if (!window.confirm(t("teamRevokeConfirm"))) return;
     setError("");
+    setSentTo("");
     start(async () => {
       const result = await revokeSecretaryInvite(id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
@@ -143,6 +170,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
   function remove(row: TeamRow) {
     if (!window.confirm(t("teamRemoveConfirm", { name: row.name ?? row.email }))) return;
     setError("");
+    setSentTo("");
     start(async () => {
       const result = await removeSecretary(row.id);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
@@ -193,12 +221,12 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
               <li key={inv.id} className="flex items-center justify-between gap-3 px-4 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm text-slate-900">{inv.email}</p>
-                  {inv.expires_at && (
+                  {inv.expires_at && mounted && (
                     <p className="text-xs text-slate-500">
                       {t("teamExpires", { date: new Date(inv.expires_at).toLocaleDateString(dateLocale(locale)) })}
                     </p>
                   )}
-                  {tooSoon && waitUntil && <p data-testid="resend-wait" className="text-xs text-slate-500">{t("teamResendAt", { time: time(waitUntil) })}</p>}
+                  {tooSoon && waitUntil && mounted && <p data-testid="resend-wait" className="text-xs text-slate-500">{t("teamResendAt", { time: time(waitUntil) })}</p>}
                 </div>
                 <div className="flex shrink-0 gap-3">
                   <button
@@ -225,6 +253,12 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
         </div>
       )}
 
+      {sentTo && (
+        <p role="status" data-testid="invite-sent" className="mb-4 flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-base font-bold text-emerald-800">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="h-5 w-5 shrink-0"><polyline points="20 6 9 17 4 12" /></svg>
+          {sentTo}
+        </p>
+      )}
       {notice && <p role="status" className="mb-4 rounded-xl bg-teal-50 px-4 py-2.5 text-sm font-semibold text-teal-800">{notice}</p>}
 
       {created && (
