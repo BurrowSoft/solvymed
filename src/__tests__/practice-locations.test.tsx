@@ -132,3 +132,12 @@ describe("the working-hours picker", () => {
     expect(tue.value).toBe(B.id);
   });
 });
+
+describe("a short agenda card's location chip", () => {
+  it("initials: two words → their first letters; one word → its first two", async () => {
+    const { locationInitials } = await import("@/lib/locations");
+    expect(locationInitials("Unidade Centro")).toBe("UC");
+    expect(locationInitials("Sul")).toBe("SU");
+    expect(locationInitials("สาขา สีลม")).toBe("สส");
+  });
+});
