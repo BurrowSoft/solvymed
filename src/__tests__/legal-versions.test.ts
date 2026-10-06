@@ -25,3 +25,10 @@ describe("the secretary-invite flip (2026-10-02)", () => {
     expect(PRIVACY_VERSION >= "2026-10-02").toBe(true);
   });
 });
+
+describe("the SolvyAI go-live (2026-10-12)", () => {
+  it("solvyai-live and the privacy version go together (mobile 198 accepts 2026-10-12)", async () => {
+    const { conditionMet } = await import("@/lib/conditions");
+    if (conditionMet("solvyai-live")) expect(PRIVACY_VERSION >= "2026-10-12").toBe(true);
+  });
+});

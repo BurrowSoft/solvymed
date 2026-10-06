@@ -86,9 +86,9 @@ describe("App Map ↔ the contract ↔ the code", () => {
     const pending = [...ACTIONS.flatMap((a) => a.rules), ...GENERAL.map((g) => g.rule)].filter((r) => typeof r !== "string");
     expect(pending.length).toBeGreaterThan(0);
     for (const r of pending) {
-      expect(r.pending.length, r.text).toBeGreaterThan(0);
-      for (const id of r.pending) expect(Object.keys(conditions), `${r.text}: ${id}`).toContain(id);
-      if (r.pending.every(isMet)) expect(text, r.text).toContain(r.text);
+      expect(r.pending.length + (r.until?.length ?? 0), r.text).toBeGreaterThan(0);
+      for (const id of [...r.pending, ...(r.until ?? [])]) expect(Object.keys(conditions), `${r.text}: ${id}`).toContain(id);
+      if (ruleIsLive(r)) expect(text, r.text).toContain(r.text);
       else expect(text, r.text).not.toContain(r.text);
     }
   });
@@ -97,6 +97,8 @@ describe("App Map ↔ the contract ↔ the code", () => {
     const r = { text: "x", pending: ["mobile#91"] as ConditionId[] };
     expect(ruleIsLive(r)).toBe(isMet("mobile#91"));
     expect(ruleIsLive("always")).toBe(true);
+    // until: true only while the feature is hidden.
+    expect(ruleIsLive({ text: "y", pending: [], until: ["mobile#91"] as ConditionId[] })).toBe(!isMet("mobile#91"));
   });
 
   it("the 'never' list covers the spec's (clinical data, deletions, settings, account)", () => {

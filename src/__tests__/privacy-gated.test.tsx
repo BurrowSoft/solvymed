@@ -11,14 +11,17 @@ import { conditionMet } from "@/lib/conditions";
 // when their features are live (policy = what runs).
 
 describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => {
-  it("today (both unmet) neither appears, in either language", () => {
-    expect(conditionMet("solvyai-live")).toBe(false);
-    expect(conditionMet("line-live")).toBe(false);
+  it("no flag: neither block appears, in either language", () => {
     for (const Doc of [PrivacyEn, PrivacyPtBR]) {
       const { container, unmount } = render(<Doc turnstile={false} />);
       expect(container.textContent).not.toMatch(/Anthropic|SolvyAI|LY Corporation|LINE/);
       unmount();
     }
+  });
+
+  it("today: SolvyAI is live, LINE isn't", () => {
+    expect(conditionMet("solvyai-live")).toBe(true);
+    expect(conditionMet("line-live")).toBe(false);
   });
 
   it("each block shows with its own flag only", () => {
