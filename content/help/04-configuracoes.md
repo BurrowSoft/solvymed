@@ -42,7 +42,7 @@
 1. **Configurações → Equipe → Convidar**.
 2. Compartilhe o código de convite (vale 7 dias, uso único).
 3. A pessoa cria a conta em "Trabalha na secretaria?" com esse código.
-Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
+Sua equipe pode ter até 3 pessoas, contando os convites pendentes. A equipe cuida da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
 No site, quem foi removido da última equipe vê, ao voltar ao painel, "Você não faz parte de nenhuma equipe no momento.", com **Entrar com um código de convite** e **Sair**.
 {pending:app-1.8.0} No app também: em até 2 minutos, ou ao voltar ao app, quem foi removido(a) da última equipe vê a mesma tela; quem ainda trabalha para outro médico passa para a equipe dele.
 {pending:secretary-invite-email-live} O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido.
@@ -54,7 +54,7 @@ No site, quem foi removido da última equipe vê, ao voltar ao painel, "Você n�
 1. **Settings → Team → Invite**.
 2. Share the invite code (valid for 7 days, single use).
 3. The person signs up under "Work at the front desk?" with that code.
-You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
+Your team can have up to 3 people, counting pending invites. The team manages the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
 On the website, someone removed from their last team sees "You're not part of any team right now." when they return to the dashboard, with **Join with an invite code** and **Sign out**.
 {pending:app-1.8.0} In the app too: within 2 minutes, or on returning to the app, someone removed from their last team sees the same screen; someone still working for another doctor moves to that doctor's team.
 {pending:secretary-invite-email-live} The invite is also emailed to the address you entered. **Resend invite** sends a new one (at most once an hour, up to 10 a day; the previous code stops working). Whoever signs up from the invite finds the email already filled in.
@@ -69,7 +69,7 @@ Thai title: "เชิญเลขานุการ"
 1. **การตั้งค่า → ทีม → เชิญ**
 2. ส่ง **รหัสเชิญ** ให้อีกฝ่าย (ใช้ได้ 7 วัน ครั้งเดียว)
 3. อีกฝ่ายสร้างบัญชีโดยเลือก **เลขานุการ / พนักงานต้อนรับ** แล้วใส่รหัสนั้น
-คุณมีเลขานุการได้สูงสุด 3 คน เลขานุการดูแลตารางงาน ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
+ทีมของคุณมีได้สูงสุด 3 คน รวมคำเชิญที่รออยู่ ทีมดูแลตารางงาน ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
 ในเว็บไซต์ ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็น "ขณะนี้คุณไม่ได้อยู่ในทีมใด" เมื่อกลับมาที่แดชบอร์ด พร้อม **เข้าร่วมด้วยรหัสเชิญ** และ **ออกจากระบบ**
 {pending:app-1.8.0} ในแอปก็เช่นกัน: ภายใน 2 นาที หรือเมื่อกลับมาที่แอป ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็นหน้าจอเดียวกัน ส่วนผู้ที่ยังทำงานให้แพทย์คนอื่นจะย้ายไปที่ทีมของแพทย์คนนั้น
 **ในเว็บไซต์:** **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วคลิก **เชิญ** ส่งลิงก์หรือรหัสที่แสดงทันที (แสดงเพียงครั้งเดียว ใช้ได้ 7 วัน และเฉพาะอีเมลนั้น) หากต้องการนำออก: **นำออก** หากต้องการยกเลิกคำเชิญที่รออยู่: **ยกเลิก**

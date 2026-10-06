@@ -1410,7 +1410,7 @@
             },
             {
               "type": "p",
-              "text": "Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**."
+              "text": "Sua equipe pode ter até 3 pessoas, contando os convites pendentes. A equipe cuida da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**."
             },
             {
               "type": "p",
@@ -1432,7 +1432,7 @@
             },
             {
               "type": "p",
-              "text": "You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
+              "text": "Your team can have up to 3 people, counting pending invites. The team manages the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
             },
             {
               "type": "p",
@@ -1746,7 +1746,7 @@
           "pt": [
             {
               "type": "p",
-              "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os)."
+              "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com uma equipe de até 3 pessoas."
             },
             {
               "type": "p",
@@ -1756,7 +1756,7 @@
           "en": [
             {
               "type": "p",
-              "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries."
+              "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with a team of up to 3 people."
             },
             {
               "type": "p",
