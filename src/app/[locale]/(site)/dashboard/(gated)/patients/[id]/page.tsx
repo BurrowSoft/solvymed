@@ -16,6 +16,8 @@ import { logPatientOpen, readAccessLog } from "@/lib/accessLog";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
+import { serverFlag } from "@/lib/myDoctors";
+import { parseRecordSections, parseTemplateSections, type RecordTemplate } from "@/lib/recordTemplates";
 
 export default async function PatientDetailPage({
   params,
@@ -50,11 +52,15 @@ export default async function PatientDetailPage({
   // a secretary, but the page doesn't even ask, so clinical content can
   // never reach a secretary's browser through these props.
   const noRows = Promise.resolve({ data: [] as never[] });
-  const [patientResult, recordsResult, prescriptionsResult, apptsResult, preview, t] = await Promise.all([
+  // 1.8.0 D (migration 189, flag 'record_templates'): the columns are only
+  // asked for once the flag is on, so the page works before 189 too.
+  const templatesOn = !isSecretary && (await serverFlag(supabase, "record_templates"));
+  const recordCols: string = `id, date, time, content, record_type, created_at, created_by, created_by_name, corrects_id, correction_reason${templatesOn ? ", template_name, sections" : ""}`;
+  const [patientResult, recordsResult, prescriptionsResult, apptsResult, preview, t, templatesResult] = await Promise.all([
     supabase.from("patients").select("*").eq("id", id).eq("professional_id", effectiveProfId).single(),
     isSecretary
       ? noRows
-      : supabase.from("medical_records").select("id, date, time, content, record_type, created_at, created_by, created_by_name, corrects_id, correction_reason").eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
+      : supabase.from("medical_records").select(recordCols).eq("patient_id", id).order("date", { ascending: false }).order("time", { ascending: false }),
     isSecretary
       ? noRows
       : supabase.from("prescriptions").select("id, date, notes, created_at, created_by, created_by_name, corrects_id, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("patient_id", id).order("date", { ascending: false }),
@@ -63,6 +69,9 @@ export default async function PatientDetailPage({
     // Null on error: Delete stays hidden and Archive is always available.
     getArchivePreview(id),
     getTranslations("patientDetail"),
+    templatesOn
+      ? supabase.from("record_templates").select("id, name, sections, position").eq("professional_id", user.id).order("position").order("created_at")
+      : noRows,
   ]);
 
   if (!patientResult.data) notFound();
@@ -88,7 +97,12 @@ export default async function PatientDetailPage({
   };
   const isArchived = !!patient.archived_at;
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
-  const records = (recordsResult.data ?? []) as MedRecord[];
+  const records = ((recordsResult.data ?? []) as unknown as (MedRecord & { sections?: unknown })[])
+    .map((r) => ({ ...r, sections: parseRecordSections(r.sections) }));
+  const recordTemplates: RecordTemplate[] | null = templatesOn
+    ? ((templatesResult.data ?? []) as { id: string; name: string; sections: unknown; position: number }[])
+        .map((r) => ({ id: r.id, name: r.name, sections: parseTemplateSections(r.sections), position: r.position ?? 0 }))
+    : null;
   const prescriptions = (prescriptionsResult.data ?? []) as Rx[];
   const appointments = (apptsResult.data ?? []) as { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount: number | null }[];
 
@@ -179,6 +193,7 @@ export default async function PatientDetailPage({
           hasAppointments={preview?.hasAppointments === true}
           accessLog={accessLog}
           timeZone={timeZone}
+          recordTemplates={recordTemplates}
           addressLive={conditionMet("patient-address-live")}
         />
       </div>

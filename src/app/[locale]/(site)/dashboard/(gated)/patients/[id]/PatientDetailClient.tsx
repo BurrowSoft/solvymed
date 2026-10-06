@@ -18,6 +18,8 @@ import { profileOfKind } from "@/lib/country";
 import { hasAmount } from "@/lib/paymentRules";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
+import { composeRecordContent } from "@/lib/recordPresets";
+import type { RecordSection, RecordTemplate, TemplateSection } from "@/lib/recordTemplates";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -29,7 +31,8 @@ type ClinicalMeta = {
   corrects_id?: string | null;
   correction_reason?: string | null;
 };
-export type MedRecord = ClinicalMeta & { id: string; date: string; time: string; content: string; record_type?: string };
+// template_name + sections: a record written with a template (1.8.0 D, 189).
+export type MedRecord = ClinicalMeta & { id: string; date: string; time: string; content: string; record_type?: string; template_name?: string | null; sections?: RecordSection[] | null };
 type RxItem = { name: string; dosage: string; frequency: string; duration: string };
 export type Rx = ClinicalMeta & { id: string; date: string; notes?: string; prescription_items: RxItem[] };
 type Appt = { id: string; date: string; start_time: string; consultation_type: string; status: string; payment_status: string; payment_amount?: number | null };
@@ -92,7 +95,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -120,6 +123,8 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   addressLive?: boolean;
   // The clinic's (IANA); dates of timestamps are shown in it.
   timeZone?: string;
+  // The doctor's record templates (1.8.0 D); null while the flag is off.
+  recordTemplates?: RecordTemplate[] | null;
 }) {
   const t = useTranslations("patientDetail");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "appointments" | "access">("info");
@@ -158,7 +163,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       </div>
 
       {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
-      {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
+      {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} templates={recordTemplates ?? []} />}
       {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
         <FilesTab key={tab} patientId={patient.id} doctorId={currentUserId} kind={tab} isArchived={isArchived} locale={locale} />
@@ -664,10 +669,17 @@ function ReasonField({ required = true }: { required?: boolean }) {
 
 type RecordDialog = { mode: "new" } | { mode: "edit"; record: MedRecord } | { mode: "correct"; record: MedRecord };
 
-function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
-  patientId: string; records: MedRecord[]; isArchived: boolean; currentUserId: string; locale: string;
+// The sections being written: a template's (new record) or the record's own
+// copy (edit / correction). hint = the template's placeholder.
+type SectionDraft = { title: string; hint?: string; text: string };
+type SectionsState = { templateId?: string; templateName: string | null; rows: SectionDraft[] } | null;
+
+function RecordsTab({ patientId, records, isArchived, currentUserId, locale, templates = [] }: {
+  patientId: string; records: MedRecord[]; isArchived: boolean; currentUserId: string; locale: string; templates?: RecordTemplate[];
 }) {
   const t = useTranslations("patientDetail");
+  const tt = useTranslations("recordTemplates");
+  const [sections, setSections] = useState<SectionsState>(null);
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
@@ -677,12 +689,30 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(records);
 
-  function open(d: RecordDialog) { setError(""); setDialog(d); }
+  function open(d: RecordDialog) {
+    setError("");
+    // A record written with sections is edited / corrected with the same ones.
+    const own = d.mode !== "new" ? d.record.sections : null;
+    setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
+    setDialog(d);
+  }
+
+  function pickTemplate(id: string) {
+    const tpl = templates.find((x) => x.id === id);
+    setSections(tpl ? { templateId: tpl.id, templateName: tpl.name, rows: tpl.sections.map((x: TemplateSection) => ({ title: x.title, hint: x.hint, text: "" })) } : null);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!dialog) return;
     const formData = new FormData(formRef.current!);
+    if (sections) {
+      const rows = sections.rows.map((x) => ({ title: x.title, text: x.text }));
+      // content stays the whole record as text, for older clients and prints.
+      formData.set("content", composeRecordContent(rows));
+      formData.set("sections", JSON.stringify(rows));
+      formData.set("template_name", sections.templateName ?? "");
+    }
     setError("");
     startTransition(async () => {
       const result =
@@ -715,6 +745,9 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
             {r.record_type && r.record_type !== "free_text" && (
               <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700 capitalize">{r.record_type.replace("_", " ")}</span>
             )}
+            {r.template_name && (
+              <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{r.template_name}</span>
+            )}
           </div>
           <EntryActions
             editable={canEditEntry(r, currentUserId) && !corrected}
@@ -725,7 +758,18 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
             onCorrect={() => open({ mode: "correct", record: r })}
           />
         </div>
-        <p className={`text-sm whitespace-pre-wrap leading-relaxed ${corrected ? "text-slate-400 line-through" : "text-slate-800"}`}>{r.content}</p>
+        {r.sections ? (
+          <div data-testid="record-sections" className={`space-y-2 text-sm leading-relaxed ${corrected ? "text-slate-400 line-through" : "text-slate-800"}`}>
+            {r.sections.filter((x) => x.text.trim()).map((x, i) => (
+              <div key={i}>
+                <p className={`font-semibold ${corrected ? "" : "text-slate-900"}`}>{x.title}</p>
+                <p className="whitespace-pre-wrap">{x.text}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className={`text-sm whitespace-pre-wrap leading-relaxed ${corrected ? "text-slate-400 line-through" : "text-slate-800"}`}>{r.content}</p>
+        )}
         {corrections.map((c) => (
           <div key={c.id} className="mt-3">
             <CorrectionTrail correction={c} locale={locale} />
@@ -774,10 +818,40 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale }: {
               <option value="referral">{t("referral")}</option>
             </Select>
           </div>
-          <div>
-            <FieldLabel>{t("content")} *</FieldLabel>
-            <textarea name="content" required rows={6} defaultValue={initial?.content ?? ""} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
-          </div>
+          {dialog?.mode === "new" && templates.length > 0 && (
+            <div>
+              <FieldLabel>{tt("template")}</FieldLabel>
+              <Select aria-label={tt("template")} value={sections?.templateId ?? ""} onChange={(e) => pickTemplate(e.target.value)}>
+                <option value="">{tt("freeText")}</option>
+                {templates.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+              </Select>
+            </div>
+          )}
+          {sections ? (
+            <div className="space-y-3">
+              {sections.rows.map((x, i) => (
+                <div key={i}>
+                  <FieldLabel>{x.title}</FieldLabel>
+                  <textarea
+                    aria-label={x.title}
+                    rows={3}
+                    value={x.text}
+                    placeholder={x.hint ?? ""}
+                    onChange={(e) => {
+                      const text = e.target.value;
+                      setSections((s) => s && { ...s, rows: s.rows.map((r, j) => (j === i ? { ...r, text } : r)) });
+                    }}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-y"
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <FieldLabel>{t("content")} *</FieldLabel>
+              <textarea name="content" required rows={6} defaultValue={initial?.content ?? ""} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+            </div>
+          )}
           {dialog?.mode === "correct" && <ReasonField />}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
