@@ -219,7 +219,8 @@ describe("switching templates never loses typed text (cf)", () => {
     expect(screen.getByRole("textbox", { name: "Queixa" })).toHaveValue("Paciente refere insônia");
     expect(screen.getByRole("status")).toHaveTextContent("O texto foi movido para “Queixa”.");
     fireEvent.change(screen.getByRole("combobox", { name: T.template }), { target: { value: "" } });
-    expect(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder)).toHaveValue("Queixa:\nPaciente refere insônia");
+    // Straight back with no edit: the free text exactly as typed (cf's switch-back rule).
+    expect(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder)).toHaveValue("Paciente refere insônia");
   });
 });
 
@@ -240,5 +241,39 @@ describe("record types: the web's keys and the app's old labels (cf)", () => {
     fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.saveRecord }));
     await waitFor(() => expect(sent("updateRecord")).toHaveLength(1));
     expect(sent("updateRecord")[0].get("record_type")).toBe("soap");
+  });
+});
+
+describe("switching straight back restores exactly what was there (cf)", () => {
+  const tpl2 = { id: "t2", name: "Outro", position: 1, sections: [{ title: "Exame" }] };
+  const open = () => {
+    page([], [tpl, tpl2]);
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
+  };
+  const pick = (id: string) => fireEvent.change(screen.getByRole("combobox", { name: T.template }), { target: { value: id } });
+
+  it("template A → B → A with no edit: A's sections come back as they were", () => {
+    open();
+    pick("t1");
+    fireEvent.change(screen.getByRole("textbox", { name: "Queixa" }), { target: { value: "dor" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "Conduta" }), { target: { value: "repouso" } });
+    pick("t2");
+    expect(screen.getByRole("textbox", { name: "Exame" })).toHaveValue("Queixa:\ndor\n\nConduta:\nrepouso");
+    pick("t1");
+    expect(screen.getByRole("textbox", { name: "Queixa" })).toHaveValue("dor");
+    expect(screen.getByRole("textbox", { name: "Conduta" })).toHaveValue("repouso");
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("free text → A → back with no edit: the free text exactly; after an edit, the switch rule applies", () => {
+    open();
+    fireEvent.change(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder), { target: { value: "  linha 1\n\nlinha 2  " } });
+    pick("t1");
+    pick("");
+    expect(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder)).toHaveValue("  linha 1\n\nlinha 2  ");
+    pick("t1");
+    fireEvent.change(screen.getByRole("textbox", { name: "Conduta" }), { target: { value: "x" } });
+    pick("");
+    expect(screen.getByPlaceholderText(pt.patientDetail.contentPlaceholder)).toHaveValue("Queixa:\nlinha 1\n\nlinha 2\n\nConduta:\nx");
   });
 });
