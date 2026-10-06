@@ -15,12 +15,14 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    { name: "chromium", testIgnore: /smoke\//, use: { ...devices["Desktop Chrome"] } },
+    // Both patterns are anchored on e2e/smoke: they see the absolute path, so
+    // a checkout under a folder named "…smoke" matched every spec (53).
+    { name: "chromium", testIgnore: /e2e[\\/]smoke[\\/]/, use: { ...devices["Desktop Chrome"] } },
     // The smoke suite (e2e/smoke, e7): run against a Preview or www with
     // E2E_BASE_URL=<url> npx playwright test --project=smoke
     // No trace: it records every fill() value, the test password included
     // (screenshots stay; a password field renders masked).
-    { name: "smoke", testMatch: /smoke\/.*\.spec\.ts/, use: { ...devices["Desktop Chrome"], trace: "off" } },
+    { name: "smoke", testMatch: /e2e[\\/]smoke[\\/].*\.spec\.ts$/, use: { ...devices["Desktop Chrome"], trace: "off" } },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined
