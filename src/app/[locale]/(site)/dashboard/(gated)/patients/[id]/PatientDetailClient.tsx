@@ -21,7 +21,8 @@ import { hasAmount } from "@/lib/paymentRules";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
-import type { RecordSection, RecordTemplate, TemplateSection } from "@/lib/recordTemplates";
+import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
+import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -239,7 +240,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
       const rec = records.find((x) => x.id === r.objectRef);
       const label = r.kind === "exam" ? t("accessKindExam") : t("accessKindRecord");
       if (!rec) return label;
-      const type = rec.record_type && rec.record_type !== "free_text" ? ` · ${rec.record_type.replace("_", " ")}` : "";
+      const key = recordTypeKey(rec.record_type);
+      const type = key !== "free_text" ? ` · ${t(recordTypeLabelKey(key))}` : "";
       return `${label}${type} · ${formatDateLabel(locale, rec.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}`;
     }
     if (r.kind === "prescription") {
@@ -713,6 +715,10 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const t = useTranslations("patientDetail");
   const tt = useTranslations("recordTemplates");
   const [sections, setSections] = useState<SectionsState>(null);
+  // The free-text box (controlled, so switching templates can carry its text).
+  const [freeText, setFreeText] = useState("");
+  // The section that received the doctor's text when switching (cf: never lost).
+  const [movedTo, setMovedTo] = useState<string | null>(null);
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
@@ -727,12 +733,21 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
     // A record written with sections is edited / corrected with the same ones.
     const own = d.mode !== "new" ? d.record.sections : null;
     setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
+    setFreeText(d.mode !== "new" && !own ? d.record.content : "");
+    setMovedTo(null);
     setDialog(d);
   }
 
   function pickTemplate(id: string) {
-    const tpl = templates.find((x) => x.id === id);
-    setSections(tpl ? { templateId: tpl.id, templateName: tpl.name, rows: tpl.sections.map((x: TemplateSection) => ({ title: x.title, hint: x.hint, text: "" })) } : null);
+    const tpl = templates.find((x) => x.id === id) ?? null;
+    const r = switchTemplate(sections ? { kind: "sections", rows: sections.rows } : { kind: "free", text: freeText }, tpl?.sections ?? null);
+    if (r.draft.kind === "free" || !tpl) {
+      setSections(null);
+      setFreeText(r.draft.kind === "free" ? r.draft.text : "");
+    } else {
+      setSections({ templateId: tpl.id, templateName: tpl.name, rows: r.draft.rows });
+    }
+    setMovedTo(r.movedTo);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -775,8 +790,9 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, r.date, practiceCalendar)} {r.time?.slice(0, 5)}</span>
-            {r.record_type && r.record_type !== "free_text" && (
-              <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700 capitalize">{r.record_type.replace("_", " ")}</span>
+            {/* The app's English labels and the web's keys alike (cf). */}
+            {recordTypeKey(r.record_type) !== "free_text" && (
+              <span className="rounded-full bg-teal-50 px-2 py-0.5 text-xs font-semibold text-teal-700">{t(recordTypeLabelKey(recordTypeKey(r.record_type)))}</span>
             )}
             {r.template_name && (
               <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">{r.template_name}</span>
@@ -843,7 +859,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           )}
           <div>
             <FieldLabel>{t("recordType")}</FieldLabel>
-            <Select name="record_type" defaultValue={initial?.record_type ?? "free_text"}>
+            <Select name="record_type" defaultValue={recordTypeKey(initial?.record_type)}>
               <option value="free_text">{t("freeText")}</option>
               <option value="soap">{t("soapNote")}</option>
               <option value="follow_up">{t("followUp")}</option>
@@ -858,6 +874,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
                 <option value="">{tt("noTemplate")}</option>
                 {templates.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
               </Select>
+              {movedTo && <p role="status" className="mt-1.5 text-xs text-teal-700">{tt("textMoved", { section: movedTo })}</p>}
             </div>
           )}
           {sections ? (
@@ -882,7 +899,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           ) : (
             <div>
               <FieldLabel>{t("content")} *</FieldLabel>
-              <textarea name="content" required rows={6} defaultValue={initial?.content ?? ""} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
+              <textarea name="content" required rows={6} value={freeText} onChange={(e) => setFreeText(e.target.value)} placeholder={t("contentPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
             </div>
           )}
           {dialog?.mode === "correct" && <ReasonField />}

@@ -2039,6 +2039,7 @@
     "description": "Seções para preencher ao escrever um registro. Os registros já feitos mantêm suas seções.",
     "template": "Modelo",
     "noTemplate": "Sem modelo",
+    "textMoved": "O texto foi movido para “{section}”.",
     "newTemplate": "Novo modelo",
     "fromPreset": "Começar por uma especialidade",
     "createScratch": "Criar do zero",

@@ -2069,6 +2069,7 @@
     "description": "Sections to fill in when you write a record. Records already written keep their sections.",
     "template": "Template",
     "noTemplate": "No template",
+    "textMoved": "Your text was moved to “{section}”.",
     "newTemplate": "New template",
     "fromPreset": "Start from a specialty",
     "createScratch": "Create from scratch",
