@@ -223,11 +223,13 @@ You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delet
 **pt-BR**
 Se você atende em mais de um lugar, cadastre cada um como um local. Os locais só aparecem para você e para os pacientes quando há dois ou mais; com um só, nada muda.
 O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes.
+Os pacientes veem onde é cada consulta: ao marcar pelo seu link, o dia escolhido mostra "Local: nome · endereço"; em **Minhas consultas**, cada consulta mostra o local.
 Em **Horário de atendimento**, cada dia tem um **Local**: as consultas desse dia ficam nesse local (sem escolha, no principal).
 {pending:app-1.8.0} No app: **Configurações → Minha clínica** mostra os locais, com **Adicionar local**, editar e **Tornar principal**; no **Horário de atendimento**, escolha o **Local** de cada dia.
 **en**
 If you see patients in more than one place, add each one as a location. Locations show to you and to patients only when there are two or more; with one, nothing changes.
 The **Primary** location is the default. To delete it, make another location primary first.
+Patients see where each visit is: when booking from your link, the chosen day shows "Location: name · address"; in **My appointments**, each visit shows its location.
 In **Working hours**, each day has a **Location**: that day's appointments are at that location (the primary when none is chosen).
 {pending:app-1.8.0} In the app: **Settings → My Clinic** lists the locations, with **Add location**, edit and **Make primary**; in **Working hours**, choose each day's **Location**.
 **No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia.
