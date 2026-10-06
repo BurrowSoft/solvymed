@@ -90,13 +90,15 @@ In the first 24 hours you can edit or delete. After that the entry is protected:
 2. Toque em **+**, adicione os medicamentos e toque em **Salvar**.
 3. Toque em **PDF** para gerar a receita com sua assinatura e compartilhar.
 Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**.
+{pending:app-1.7.0} O PDF sai em papel A4.
 **en**
 1. Open the patient and the **Prescriptions** tab.
 2. Tap **+**, add the medications and tap **Save**.
 3. Tap **PDF** to create the prescription with your signature and share it.
 For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**.
-**No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo.
-**On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it.
+{pending:app-1.7.0} The PDF is on A4 paper.
+**No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo. A impressão sai em papel A4.
+**On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it. It prints on A4 paper.
 `open:patients`
 
 ---
@@ -117,10 +119,12 @@ Files are private: only you can open them, through temporary links.
 ## P8. Histórico em PDF / Export a patient's history as PDF
 **pt-BR**
 Abra o paciente e toque no ícone de exportar histórico. O PDF sai no idioma do app, com datas e valores no formato local.
+{pending:app-1.7.0} O PDF sai em papel A4.
 **en**
 Open the patient and tap the export-history icon. The PDF comes out in the app's language, with local date and currency formats.
-**No site:** Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão.
-**On the website:** Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand.
+{pending:app-1.7.0} The PDF is on A4 paper.
+**No site:** Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão. A impressão sai em papel A4.
+**On the website:** Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand. It prints on A4 paper.
 `open:patients`
 
 ---

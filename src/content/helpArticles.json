@@ -653,8 +653,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo.",
-          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it."
+          "pt": "Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo. A impressão sai em papel A4.",
+          "en": "Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it. It prints on A4 paper."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -727,8 +727,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão.",
-          "en": "Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand."
+          "pt": "Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão. A impressão sai em papel A4.",
+          "en": "Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand. It prints on A4 paper."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -1182,8 +1182,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Sem valor definido não há recibo: a página pede \"Defina o valor da consulta antes de emitir o recibo.\" com **Definir valor**. O recibo traz o registro no conselho (ex.: CRM) ao lado do nome do médico, quando cadastrado; no Brasil, sem CNPJ da clínica, inclui a nota sobre o recibo oficial pelo app Receita Saúde. Clínicas na Tailândia: os recibos numerados são emitidos no app.",
-          "en": "In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. There's no receipt without an amount: the page asks \"Set the appointment amount before issuing a receipt.\" with **Set amount**. The receipt shows the doctor's council registration (e.g. CRM) next to their name, when it's on file; in Brazil, with no clinic CNPJ, it adds the note (in Portuguese) about the official receipt in the Receita Saúde app. Clinics in Thailand: numbered receipts are issued in the app."
+          "pt": "Em **Pagamentos**, na consulta recebida, clique em **Recibo** e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Médico e secretária(o) podem emitir. Sem valor definido não há recibo: a página pede \"Defina o valor da consulta antes de emitir o recibo.\" com **Definir valor**. O recibo traz o registro no conselho (ex.: CRM) ao lado do nome do médico, quando cadastrado; no Brasil, sem CNPJ da clínica, inclui a nota sobre o recibo oficial pelo app Receita Saúde. Clínicas na Tailândia: os recibos numerados são emitidos no app. A impressão sai em papel A4.",
+          "en": "In **Payments**, on the received appointment, click **Receipt** and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. The doctor and the secretary can create it. There's no receipt without an amount: the page asks \"Set the appointment amount before issuing a receipt.\" with **Set amount**. The receipt shows the doctor's council registration (e.g. CRM) next to their name, when it's on file; in Brazil, with no clinic CNPJ, it adds the note (in Portuguese) about the official receipt in the Receita Saúde app. Clinics in Thailand: numbered receipts are issued in the app. It prints on A4 paper."
         },
         "webUnavailable": false,
         "open": "payments",
@@ -1295,8 +1295,8 @@
           ]
         },
         "web": {
-          "pt": "**Configurações → Horário de atendimento**: igual ao app.",
-          "en": "**Settings → Working hours**: the same as in the app."
+          "pt": "**Configurações → Horário de atendimento**: igual ao app. Uma clínica nova já começa com segunda a sexta, das 08:00 às 18:00, até você salvar o seu horário; os pacientes podem pedir consultas nesses horários.",
+          "en": "**Settings → Working hours**: the same as in the app. A new practice already starts with Monday to Friday, 08:00–18:00, until you save your own hours; patients can request appointments in those hours."
         },
         "webUnavailable": false,
         "open": "settings-hours",
