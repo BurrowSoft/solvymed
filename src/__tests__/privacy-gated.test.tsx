@@ -171,3 +171,46 @@ describe("Z-API row lists every send-whatsapp message (c6 B1)", () => {
     r.unmount();
   });
 });
+
+describe("privacy 1.8.0: clinical documents (189) and documents shared with patients (190), hidden until live", () => {
+  const text = (el: React.ReactElement) => { const r = render(el); const t = r.container.textContent ?? ""; r.unmount(); return t.replace(/\s+/g, " "); };
+
+  it("both conditions are unmet today, and the page reads exactly as before", () => {
+    expect([conditionMet("clinical-documents-live"), conditionMet("patient-documents-live")]).toEqual([false, false]);
+    const en = text(<PrivacyEn turnstile={false} />);
+    expect(en).toContain("(clinical notes, prescriptions, exams, files, appointments), the professional or clinic is the controller");
+    expect(en).toContain("They cannot see medical records, prescriptions, exams or clinical files.");
+    expect(en).toContain("who opened each patient record, prescription, exam or file, and when");
+    expect(en).toContain("Medical records (clinical notes, prescriptions, exams, files, appointment history) are kept");
+    expect(en).toContain("After 24 hours, a clinical note or prescription can no longer be edited or deleted.");
+    expect(en).toContain("Patients see their own appointments and the clinic's booking and payment information.");
+    expect(en).not.toMatch(/3\.8|shares a document/);
+  });
+
+  it("clinicalDocs: the five passages name certificates, declarations and exam requests (en + pt-BR)", () => {
+    const en = text(<PrivacyEn turnstile={false} clinicalDocs />);
+    expect(en).toContain("(clinical notes, prescriptions, medical certificates, medical declarations, exam requests, exams, files, appointments)");
+    expect(en).toContain("cannot see medical records, prescriptions, medical certificates, declarations, exam requests, exams or clinical files.");
+    expect(en).toContain("who opened each patient record, prescription, medical certificate, declaration, exam request, exam or file, and when");
+    expect(en).toContain("(clinical notes, prescriptions, medical certificates, declarations, exam requests, exams, files, appointment history)");
+    expect(en).toContain("After 24 hours, a clinical note, prescription, medical certificate, declaration or exam request can no longer be edited or deleted.");
+    const pt = text(<PrivacyPtBR turnstile={false} clinicalDocs />);
+    expect(pt).toContain("(anotações clínicas, receitas, atestados, declarações médicas, solicitações de exames, exames, arquivos, consultas)");
+    expect(pt).toContain("Depois de 24 horas, uma anotação clínica, receita, atestado, declaração ou solicitação de exames não pode mais ser editada nem excluída.");
+  });
+
+  it("patientDocs: §3.8, the notification line and the patients clause (en + pt-BR), with cf's and d1's wording", () => {
+    const en = text(<PrivacyEn turnstile={false} clinicalDocs patientDocs />);
+    expect(en).toContain("3.8 Documents shared with patients:");
+    expect(en).toContain("Only the patient’s own professional sees the patient’s documents, including the ones the patient sends.");
+    expect(en).toContain("but cannot delete it, except a file they uploaded themselves, within 24 hours of uploading it.");
+    expect(en).toContain("A notification never includes a document’s title or content.");
+    expect(en).toContain("and the documents their professional shares with them and the documents they send (see 3.8).");
+    expect(en).toContain("including documents shared with or sent by patients.");
+    const pt = text(<PrivacyPtBR turnstile={false} clinicalDocs patientDocs />);
+    expect(pt).toContain("3.8 Documentos compartilhados com pacientes:");
+    expect(pt).toContain("Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia.");
+    expect(pt).toContain("mas não pode excluí-lo, exceto um arquivo que ele mesmo enviou, em até 24 horas após o envio.");
+    expect(pt).toContain("A notificação nunca inclui o título nem o conteúdo do documento.");
+  });
+});

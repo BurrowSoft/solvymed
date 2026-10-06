@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false }: { turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false }: { turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -24,8 +24,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             subscription), BurrowSoft is the <strong>controller</strong>.
           </li>
           <li>
-            For <strong>patient records</strong> that a professional enters (clinical notes, prescriptions, exams,
-            files, appointments), the <strong>professional or clinic is the controller</strong> and BurrowSoft is
+            For <strong>patient records</strong> that a professional enters (clinical notes, prescriptions,{" "}
+            {clinicalDocs && "medical certificates, medical declarations, exam requests, "}exams,
+            files, appointments{patientDocs && ", and documents shared with or sent by the patient"}), the <strong>professional or clinic is the controller</strong> and BurrowSoft is
             the <strong>operator</strong> (processor), acting only on their instructions. Requests about those
             records should go to the clinic first. We will help the clinic answer them.
           </li>
@@ -50,6 +51,22 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
         {secretaryInvites && <p><strong>3.7 Secretary invitations:</strong> when a professional invites a secretary, we store the email address they enter and send the invitation to it (at most one resend an hour). The invitation expires after 7 days, and the address is deleted 30 days after the invitation expires or is cancelled.</p>}
+        {patientDocs && (
+          <div>
+            <p><strong>3.8 Documents shared with patients:</strong></p>
+            <ul>
+              <li>A professional can share documents with a patient (for example prescriptions, certificates, exam requests and consent terms), and a patient can send documents to their professional (for example exam results or photos). These may include health data.</li>
+              <li>For each document we store the file, its title, type, size, when it was uploaded and who uploaded it. Files are checked by their real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.</li>
+              <li>Only the patient&rsquo;s own professional sees the patient&rsquo;s documents, including the ones the patient sends. Secretaries and other professionals in the same practice do not.</li>
+              <li>The patient sees only the documents their professional shares with them and the documents they sent, and only while they are connected to that professional. Turning the feature on does not share any existing file: a professional shares each document themselves.</li>
+              <li>Documents are stored in the same private storage, in the same region, as other patient files, and are opened through links that expire after 5 minutes.</li>
+              <li>Shared and sent documents are part of the medical record and are kept for the same period (see section 9). The professional can hide a document from the patient, or hide it entirely with a reason, but cannot delete it, except a file they uploaded themselves, within 24 hours of uploading it.</li>
+              <li>A patient can remove a document they sent until their professional first opens it, at most 24 hours after sending. It is then deleted, and the removal is recorded in the access log. After that it is kept like any other document in the record.</li>
+              <li>When the patient disconnects or closes their account, their access ends at once, but the documents stay in the professional&rsquo;s record.</li>
+              <li>We record each time a patient opens or downloads a shared document and each time the professional opens a document the patient sent. The professional can see this log; the patient can request it.</li>
+            </ul>
+          </div>
+        )}
       </Section>
 
       <Section title="4. How we use information">
@@ -174,6 +191,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           {closureNotices && (
             <li>When a professional closes their account, our server sends their patients a notice that the practice closed or that an appointment was cancelled. To do this we keep only the clinic&rsquo;s name (which can be the professional&rsquo;s own name) and country, the appointment date and time (for cancelled appointments), and the delivery status, and we delete the notice as soon as it&rsquo;s sent (at most 30 days).</li>
           )}
+          {patientDocs && (
+            <li>When a professional shares a document, the patient gets a notification with the professional&rsquo;s name only. When a patient sends a document, the professional gets one with the patient&rsquo;s name only. A notification never includes a document&rsquo;s title or content.</li>
+          )}
           <li>You can turn notifications off at any time in your device&rsquo;s settings.</li>
         </ul>
       </Section>
@@ -185,16 +205,21 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <strong>Secretaries</strong> the professional invites (up to 3) can see and manage patients&apos;
             identification and contact data (including the patient&apos;s profile photo), the schedule and
             appointment payments, and can add, archive and restore patients. They <strong>cannot</strong> see
-            medical records, prescriptions, exams or clinical files.
+            medical records, prescriptions, {clinicalDocs && "medical certificates, declarations, exam requests, "}exams or clinical files
+            {patientDocs && ", including documents shared with or sent by patients"}.
           </li>
-          <li><strong>Patients</strong> see their own appointments and the clinic&apos;s booking and payment information.</li>
+          <li>
+            <strong>Patients</strong> see their own appointments and the clinic&apos;s booking and payment information
+            {patientDocs && ", and the documents their professional shares with them and the documents they send (see 3.8)"}.
+          </li>
           <li>
             Nobody outside the clinic, including other SolvyMed users, can see a clinic&apos;s data. SolvyMed staff
             access data only when needed for support or legal obligations.
           </li>
         </ul>
         <p>
-          An access log records who opened each patient record, prescription, exam or file, and when. The
+          An access log records who opened each patient record, prescription,{" "}
+          {clinicalDocs && "medical certificate, declaration, exam request, "}exam or file, and when. The
           professional responsible for the patient can see it. Entries are kept for as long as the record and keep
           the name of the person who opened it, even if their account is later deleted.
         </p>
@@ -213,13 +238,16 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
       <Section title="9. Data retention">
         <ul>
           <li>
-            <strong>Medical records</strong> (clinical notes, prescriptions, exams, files, appointment history) are
+            <strong>Medical records</strong> (clinical notes, prescriptions,{" "}
+            {clinicalDocs && "medical certificates, declarations, exam requests, "}exams, files,{" "}
+            {patientDocs && "documents shared with or sent by the patient, "}appointment history) are
             kept for at least <strong>20 years</strong>, the period Brazilian law sets for patient records (Lei n.º
             13.787/2018), even if the clinic archives the patient or closes its SolvyMed account. A patient with
             medical records can be archived but not deleted.
           </li>
           <li>
-            After 24 hours, a clinical note or prescription can no longer be edited or deleted. It can be corrected,
+            After 24 hours, a clinical note{clinicalDocs ? ", prescription, medical certificate, declaration or exam request" : " or prescription"} can
+            no longer be edited or deleted. It can be corrected,
             and each correction is kept with its date, author and reason. Files removed from a patient&apos;s chart
             after 24 hours are hidden, not deleted, and are kept for the retention period.
           </li>
