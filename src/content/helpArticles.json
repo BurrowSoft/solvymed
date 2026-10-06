@@ -635,6 +635,10 @@
             {
               "type": "p",
               "text": "Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**."
+            },
+            {
+              "type": "p",
+              "text": "O PDF sai em papel A4."
             }
           ],
           "en": [
@@ -649,6 +653,10 @@
             {
               "type": "p",
               "text": "For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**."
+            },
+            {
+              "type": "p",
+              "text": "The PDF is on A4 paper."
             }
           ]
         },
@@ -717,12 +725,20 @@
             {
               "type": "p",
               "text": "Abra o paciente e toque no ícone de exportar histórico. O PDF sai no idioma do app, com datas e valores no formato local."
+            },
+            {
+              "type": "p",
+              "text": "O PDF sai em papel A4."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "Open the patient and tap the export-history icon. The PDF comes out in the app's language, with local date and currency formats."
+            },
+            {
+              "type": "p",
+              "text": "The PDF is on A4 paper."
             }
           ]
         },
@@ -921,6 +937,10 @@
             {
               "type": "p",
               "text": "Os pacientes importados aparecem no app normalmente."
+            },
+            {
+              "type": "p",
+              "text": "No app (só médicos): em **Configurações → Integrações**, na seção **Importação**, **Importar pacientes** explica que a importação é feita pelo site, em um computador (solvymed.com → Pacientes → Importar pacientes). A lista de **Pacientes** vazia mostra \"Vindo de outro sistema? Importe seus pacientes pelo site.\"."
             }
           ],
           "en": [
@@ -931,6 +951,10 @@
             {
               "type": "p",
               "text": "Imported patients show up in the app as usual."
+            },
+            {
+              "type": "p",
+              "text": "In the app (doctors only): in **Settings → Integrations**, under **Import**, **Import patients** explains that importing is done on the website, on a computer (solvymed.com → Patients → Import patients). An empty **Patients** list shows \"Coming from another system? Import your patients on the website.\"."
             }
           ]
         },
@@ -1182,6 +1206,10 @@
             {
               "type": "p",
               "text": "Sem valor definido não há recibo: numa consulta sem valor, ao tocar em **Gerar recibo em PDF** (clínicas no Brasil) ou **Emitir recibo (ใบเสร็จรับเงิน)** (clínicas na Tailândia), o app pede \"Defina o valor da consulta antes de emitir o recibo.\" com **Definir valor**, que abre o valor da consulta. Ver um recibo já emitido nunca é bloqueado."
+            },
+            {
+              "type": "p",
+              "text": "O PDF sai em papel A4."
             }
           ],
           "en": [
@@ -1196,6 +1224,10 @@
             {
               "type": "p",
               "text": "There's no receipt without an amount: on an appointment with no amount, tapping **Generate invoice PDF** (clinics in Brazil) or **Issue receipt (ใบเสร็จรับเงิน)** (clinics in Thailand) makes the app ask \"Set the appointment amount before issuing a receipt.\" with **Set amount**, which opens the appointment's amount. Viewing a receipt already issued is never blocked."
+            },
+            {
+              "type": "p",
+              "text": "The PDF is on A4 paper."
             }
           ]
         },
@@ -1303,12 +1335,20 @@
             {
               "type": "p",
               "text": "**Configurações → Horário de atendimento**. Escolha os dias e horários. Pacientes só conseguem pedir consultas dentro desses horários."
+            },
+            {
+              "type": "p",
+              "text": "Uma clínica nova começa com segunda a sexta, das 08:00 às 18:00, até você salvar o seu horário."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**Settings → Working hours**. Choose the days and times. Patients can only request appointments within these hours."
+            },
+            {
+              "type": "p",
+              "text": "A new practice starts with Monday to Friday, 08:00–18:00, until you save your own hours."
             }
           ]
         },
@@ -1370,7 +1410,7 @@
             },
             {
               "type": "p",
-              "text": "Você pode ter até 3 secretárias(os). Elas(es) cuidam da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**."
+              "text": "Sua equipe pode ter até 3 pessoas, contando os convites pendentes. A equipe cuida da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**."
             },
             {
               "type": "p",
@@ -1392,7 +1432,7 @@
             },
             {
               "type": "p",
-              "text": "You can have up to 3 secretaries. They manage the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
+              "text": "Your team can have up to 3 people, counting pending invites. The team manages the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**."
             },
             {
               "type": "p",
@@ -1706,7 +1746,7 @@
           "pt": [
             {
               "type": "p",
-              "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com até 3 secretárias(os)."
+              "text": "Você tem 15 dias grátis, sem cartão. Para continuar depois, assine pelo site solvymed.com, entrando com sua conta. O plano inclui tudo, com uma equipe de até 3 pessoas."
             },
             {
               "type": "p",
@@ -1716,7 +1756,7 @@
           "en": [
             {
               "type": "p",
-              "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with up to 3 secretaries."
+              "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with a team of up to 3 people."
             },
             {
               "type": "p",
@@ -1841,12 +1881,20 @@
             {
               "type": "p",
               "text": "Seus dados ficam privados e criptografados; cada clínica só vê os próprios dados; secretárias(os) não veem dados clínicos. As observações da clínica são privadas e não aparecem para o paciente. Veja a Política de Privacidade em solvymed.com/privacy."
+            },
+            {
+              "type": "p",
+              "text": "Quando atualizamos a Política de Privacidade, um aviso aparece uma vez no topo do **Início** no site (e de **Minhas consultas** para pacientes): **Ler a política** abre o texto, **OK** fecha o aviso de vez e o **×** só nesta aba."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "Your data is private and encrypted; each clinic only sees its own data; secretaries don't see clinical data. The clinic's notes are private and never shown to the patient. See the Privacy Policy at solvymed.com/privacy."
+            },
+            {
+              "type": "p",
+              "text": "When we update the Privacy Policy, a notice shows once at the top of **Home** on the website (and of **My appointments** for patients): **Read the policy** opens it, **OK** closes the notice for good, and the **×** only in this tab."
             }
           ]
         },

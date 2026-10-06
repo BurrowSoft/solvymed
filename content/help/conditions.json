@@ -156,7 +156,7 @@
     "what": "\"Refer a colleague\" (167) is live on both platforms: migration 180 applied, server_flags.colleague_referrals on, AND multi_doctor_patient on (else an already-linked patient can't join a second doctor via /join), the app's My colleagues + Refer a colleague in a RELEASED build, liveFeatures.colleagues true on the website, and the privacy §3.1 colleague-list line live with its PRIVACY_VERSION bump (mobile's accepting migration first). Gates Help C12, the App Map rule and the privacy line."
   },
   "app-361-batch": {
-    "met": false,
+    "met": true,
     "what": "The app build with mobile #361 (the 1.6.x batch: Settings → Integrations → Import → \"Import patients\" pointing to the website + the Patients empty-state hint; the WhatsApp API row hidden while server_flags.whatsapp_auto is off; the Agenda arrow labels; Thai เลขานุการ) is RELEASED on Google Play. Gates Help P13's app line and the App Map's app import-pointer and WhatsApp-row rules."
   },
   "app-365-secretary-join": {
@@ -168,7 +168,7 @@
     "what": "The daily Stripe check (/api/cron/stripe-reconcile, Vercel Cron 09:17 UTC = 06:17 BRT) emails support@solvymed.com on a mismatch. Met only after CRON_SECRET is set on Production (Vitor, VITOR.md 1c) AND its dry runs looked right (cf). Until then every run is a dry run: the report is only in the response and a one-line log."
   },
   "app-1.7.0": {
-    "met": false,
+    "met": true,
     "what": "App 1.7.0 is RELEASED on Google Play (d1 sends the cut SHA), with mobile #376 (a practice that never saved its hours uses the default week, Monday to Friday 08:00–18:00, in booking, reschedule, the Agenda and the Working hours form) and #377 (every app PDF on A4 via the country registry's paperSize). Gates the app halves of Help C2's default-week line and the A4 lines in P6, P8 and G5, and the App Map's app rules for both. The website's halves are live already (#403, 186, the shared @page A4)."
   },
   "app-1.8.0": {
@@ -176,7 +176,7 @@
     "what": "App 1.8.0 is RELEASED on Google Play (d1 sends the cut SHA), with mobile #401 (a secretary removed from her last team sees \"You're not part of any team right now.\" with \"Join with an invite code\" and \"Sign out\" within about 2 minutes or on returning to the app; one still on another team moves to it). Gates the app half of Help C4's no-team line and its App Map rule. The website's half is live (#430)."
   },
   "privacy-notice-live": {
-    "met": false,
+    "met": true,
     "what": "The privacy-policy notice is live on the website: migration 204 (my_privacy_status + record_privacy_consent refusing older versions, mobile #409) applied on production, so the dashboard Home / My appointments card can show. Gates Help K5's notice line and its App Map rule. The app's card ships with its own build (app-1.8.0)."
   },
   "clinical-documents-live": {

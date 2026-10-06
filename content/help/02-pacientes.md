@@ -233,3 +233,20 @@ The patient sees the shared documents in the app and on the website (**My appoin
 **On the website:** Open the patient and the **Documents** tab. **Upload** adds a file: choose the **Title**, **Send to folder** and **Share with the patient**. Each document has the same buttons as in the app; **Remove** asks for a reason when the document can no longer be deleted.
 `open:patients`
 `requires:patient-documents-live`
+
+---
+## P16. Atestados, declarações e solicitações de exames / Certificates, declarations and exam requests
+**pt-BR**
+Na aba **Receitas e documentos** do paciente, **+ Documento** cria um documento clínico (só o médico). Os tipos seguem o país da clínica: no Brasil, **Atestado médico**, **Declaração médica**, **Solicitação de exames** e **Receita de controle especial (impressa)**; na Tailândia, **Atestado médico** (o modelo tailandês), **Declaração médica** e **Solicitação de exames**.
+Escolha o **Idioma do documento** (muda os rótulos, a data e o calendário; o texto é você quem escreve) e preencha os campos. O CID só entra no atestado se você marcar **Incluir CID** (só com o consentimento do paciente).
+Receitas e documentos aparecem numa só lista, do mais novo ao mais antigo. **Baixar PDF** gera o documento. Você pode editar ou excluir um documento nas primeiras 24 horas; depois, use **Adicionar correção**: o original fica guardado junto com a correção.
+A **Receita de controle especial** é só impressa: imprima, assine à mão e entregue as duas vias ao paciente. Ela precisa do CPF ou do passaporte do paciente.
+Só você vê esses documentos; secretárias(os) não têm acesso. Cada PDF gerado fica registrado no **Registro de acessos**.
+**en**
+In the patient's **Prescriptions & documents** tab, **+ Document** creates a clinical document (doctors only). The types follow the practice country: in Brazil, **Medical certificate**, **Medical declaration**, **Exam request** and **Special control prescription (print)**; in Thailand, **Medical certificate** (the Thai form), **Medical declaration** and **Exam request**.
+Choose the **Document language** (it changes the labels, the date and the calendar; you write the text) and fill in the fields. The ICD code is on a certificate only if you tick **Include ICD code** (only with the patient's consent).
+Prescriptions and documents are in one list, newest first. **Download PDF** creates the document. You can edit or delete a document within 24 hours; after that, use **Add correction**: the original is kept with the correction.
+The **Special control prescription** is print-only: print it, sign it by hand and give both copies to the patient. It needs the patient's CPF or passport.
+Only you see these documents; secretaries have no access. Every PDF created is logged in the **Access log**.
+`open:patients`
+`requires:clinical-documents-live`

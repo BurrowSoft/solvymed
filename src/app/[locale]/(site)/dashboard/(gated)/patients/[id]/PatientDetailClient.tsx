@@ -13,6 +13,8 @@ import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
+import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type MedDoc } from "./MedicalDocuments";
+import { deleteMedicalDocument } from "../medical-documents-actions";
 import { loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
@@ -98,7 +100,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false, medicalDocs = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -130,14 +132,18 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   recordTemplates?: RecordTemplate[] | null;
   // 1.8.0 A (flag 'patient_documents', the doctor): Documents replaces Exams + Files.
   documentsOn?: boolean;
+  // 1.8.0 B (flag 'clinical_documents', the doctor): the patient's documents
+  // in "Receitas e documentos" (cf); null = the flag is off.
+  medicalDocs?: { list: MedDoc[]; country: string; hasPatientId: boolean } | null;
 }) {
   const t = useTranslations("patientDetail");
   const td = useTranslations("docs");
+  const tDocs = useTranslations("documents");
   const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "documents" | "appointments" | "access">("info");
   const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
-    { key: "prescriptions" as const, label: t("tabPrescriptions", { n: prescriptions.length }) },
+    { key: "prescriptions" as const, label: medicalDocs ? tDocs("tabTitle", { n: prescriptions.filter((x) => !x.corrects_id).length + medicalDocs.list.filter((x) => !x.corrects_id).length }) : t("tabPrescriptions", { n: prescriptions.length }) },
     ...(documentsOn
       ? [{ key: "documents" as const, label: td("tab") }]
       : [{ key: "exams" as const, label: t("tabExams") }, { key: "files" as const, label: t("tabFiles") }]),
@@ -171,7 +177,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
       {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} templates={recordTemplates ?? []} />}
-      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} />}
+      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} patientName={patient.full_name} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} medicalDocs={medicalDocs} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
         <FilesTab key={tab} patientId={patient.id} doctorId={currentUserId} kind={tab} isArchived={isArchived} locale={locale} />
       )}
@@ -949,10 +955,79 @@ type MedRow = RxItem & { key: number };
 let medRowKey = 0;
 const medRow = (m: RxItem = EMPTY_MED): MedRow => ({ ...m, key: ++medRowKey });
 
-function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId, locale }: {
-  patientId: string; prescriptions: Rx[]; isArchived: boolean; currentUserId: string; locale: string;
+function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, currentUserId, locale, medicalDocs = null }: {
+  patientId: string; patientName: string; prescriptions: Rx[]; isArchived: boolean; currentUserId: string; locale: string;
+  medicalDocs?: { list: MedDoc[]; country: string; hasPatientId: boolean } | null;
 }) {
   const t = useTranslations("patientDetail");
+  const td = useTranslations("documents");
+  const tpd = useTranslations("prescriptionDoc");
+  const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
+  const docGroups = groupCorrections(medicalDocs?.list ?? []);
+  const [pdfBusy, setPdfBusy] = useState<string | null>(null);
+
+  async function downloadDoc(doc: MedDoc) {
+    setListError("");
+    setPdfBusy(doc.id);
+    try {
+      const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
+      if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
+      downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${doc.created_at.slice(0, 10)}.pdf`);
+    } catch {
+      setListError(td("pdfFailed"));
+    } finally {
+      setPdfBusy(null);
+    }
+  }
+
+  function deleteDoc(id: string) {
+    if (!confirm(t("deleteRecordConfirm"))) return;
+    setListError("");
+    startTransition(async () => {
+      const r = await deleteMedicalDocument(id, patientId);
+      if (!r.ok) setListError(errorText(r.code));
+    });
+  }
+
+  function renderDoc(doc: MedDoc, depth: number): React.ReactNode {
+    const corrections = docGroups.correctionsOf.get(doc.id) ?? [];
+    const corrected = corrections.length > 0;
+    const f = doc.fields as Record<string, unknown>;
+    const preview = doc.doc_type === "exam_request"
+      ? ((f.exams as string[] | undefined) ?? []).filter((x) => x.trim()).join(" · ")
+      : doc.doc_type === "controlled_prescription"
+        ? ((f.items as { name: string }[] | undefined) ?? []).map((x) => x.name).filter(Boolean).join(" · ")
+        : doc.body ?? "";
+    return (
+      <div key={doc.id} data-testid="medical-doc" className={depth === 0 ? "rounded-2xl border border-slate-100 bg-white p-5" : "mt-3 rounded-xl border border-amber-100 bg-amber-50/40 p-4"}>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
+            <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, doc.created_at.slice(0, 10))}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{td("download")}</button>
+            <EntryActions
+              editable={canEditEntry(doc, currentUserId) && !corrected}
+              isArchived={isArchived}
+              pending={pending}
+              onEdit={() => setDocDialog({ mode: "edit", doc })}
+              onDelete={() => deleteDoc(doc.id)}
+              onCorrect={() => setDocDialog({ mode: "correct", doc })}
+            />
+          </div>
+        </div>
+        {preview && <p className={`line-clamp-3 whitespace-pre-wrap text-sm ${corrected ? "text-slate-400 line-through" : "text-slate-700"}`}>{preview}</p>}
+        {corrections.map((c) => (
+          <div key={c.id} className="mt-3">
+            <CorrectionTrail correction={c} locale={locale} />
+            {renderDoc(c, depth + 1)}
+          </div>
+        ))}
+      </div>
+    );
+  }
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
   const [dialog, setDialog] = useState<RxDialog | null>(null);
@@ -1049,19 +1124,47 @@ function PrescriptionsTab({ patientId, prescriptions, isArchived, currentUserId,
     <div>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-slate-500">{t("prescriptions", { n: originals.length })}</p>
-        {!isArchived && <button onClick={() => open({ mode: "new" })} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
+        {!isArchived && (medicalDocs ? (
+          <div className="flex gap-2">
+            <button onClick={() => open({ mode: "new" })} className="rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">{td("addPrescription")}</button>
+            <button onClick={() => setDocDialog({ mode: "new", type: null })} className="rounded-xl border border-teal-600 px-3 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50 transition">{td("addDocument")}</button>
+          </div>
+        ) : <button onClick={() => open({ mode: "new" })} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-3.5 w-3.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           {t("newPrescription")}
-        </button>}
+        </button>)}
       </div>
       {listError && <p className="mb-3 text-sm text-red-600">{listError}</p>}
 
-      {originals.length === 0 ? (
+      {originals.length + docGroups.originals.length === 0 ? (
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-10 text-center">
           <p className="text-sm text-slate-400">{t("noPrescriptions")}</p>
         </div>
       ) : (
-        <div className="space-y-3">{originals.map((rx) => renderRx(rx, 0))}</div>
+        // One list, newest first (cf): prescriptions and documents together.
+        <div className="space-y-3">
+          {[
+            ...originals.map((rx) => ({ at: rx.created_at, node: () => renderRx(rx, 0) })),
+            ...docGroups.originals.map((d) => ({ at: d.created_at, node: () => renderDoc(d, 0) })),
+          ].sort((a, b) => b.at.localeCompare(a.at)).map((x) => x.node())}
+        </div>
+      )}
+
+      {medicalDocs && (
+        <Dialog open={!!docDialog} onClose={() => setDocDialog(null)} title={docDialog?.mode === "edit" ? t("editPrescriptionTitle") : docDialog?.mode === "correct" ? t("correctPrescriptionTitle") : td("newDocument")}>
+          {docDialog && (
+            <DocumentDialog
+              key={docDialog.mode === "new" ? "new" : `${docDialog.mode}-${docDialog.doc.id}`}
+              state={docDialog}
+              patientId={patientId}
+              patientName={patientName}
+              country={medicalDocs.country}
+              hasPatientId={medicalDocs.hasPatientId}
+              onClose={() => setDocDialog(null)}
+              reasonField={<ReasonField />}
+            />
+          )}
+        </Dialog>
       )}
 
       <Dialog open={!!dialog} onClose={() => setDialog(null)} title={title}>

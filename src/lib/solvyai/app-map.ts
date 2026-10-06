@@ -428,6 +428,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "Clinical documents (doctors only): the patient's \"Receitas e documentos\" / \"Prescriptions & documents\" tab has \"+ Receita\" / \"+ Prescription\" and \"+ Documento\" / \"+ Document\". The types follow the practice country: Brazil \"Atestado médico\" / \"Medical certificate\", \"Declaração médica\" / \"Medical declaration\", \"Solicitação de exames\" / \"Exam request\" and \"Receita de controle especial (impressa)\" / \"Special control prescription (print)\"; Thailand the Thai medical certificate, the declaration and the exam request. \"Idioma do documento\" / \"Document language\" changes the labels, date and calendar (the doctor writes the text); the ICD code only with \"Incluir CID\" / \"Include ICD code\" (with the patient's consent). One list, newest first; \"Baixar PDF\" / \"Download PDF\". Editable or deletable by its author for 24 hours, then \"Adicionar correção\" / \"Add correction\" (the original kept). The special control prescription is print-only (sign by hand, two copies) and needs the patient's CPF or passport. Secretaries never see documents; every PDF created is in the access log. SolvyAI doesn't write, open or print documents; it points to this tab.",
+      pending: ["clinical-documents-live"],
+    },
+    help: "P16",
+  },
+  {
+    rule: {
       text: "On the website's Schedule, right after a manual book, move or cancel, \"Desfazer\" / \"Undo\" shows for 10 s, while the notice to the patient hasn't gone out yet. It first checks the appointment wasn't changed again; if it was, or the notice is already on its way, it says \"Não foi possível desfazer. Abra o item para ajustar.\". A booked series is undone whole.",
       pending: ["notice-queue-on"],
     },

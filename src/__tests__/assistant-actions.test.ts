@@ -809,10 +809,11 @@ describe("SolvyAI actions mode: part 2 (unblock, booking decision, add patient)"
     expect(cardOf((await run(t, ask("…"))).blocks)).toBeUndefined();
   });
 
-  it("on the website, sending Pix is app-only (said, with the Help link)", async () => {
+  it("on the website, SolvyAI points to the appointment's Enviar Pix por WhatsApp (with the Help link)", async () => {
     const t = setup(() => "ok");
     await run(t, ask("Manda o Pix para a Maria"));
-    expect(t.model.calls[0].system).toContain("can't send Pix by WhatsApp");
+    expect(t.model.calls[0].system).toContain("can't send Pix by WhatsApp yourself");
+    expect(t.model.calls[0].system).toContain("Enviar Pix por WhatsApp");
     expect(t.model.calls[0].system).not.toContain("can't move");
   });
 
