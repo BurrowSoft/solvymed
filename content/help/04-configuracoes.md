@@ -240,6 +240,8 @@ In the **Schedule**, each appointment shows its location. In **New Appointment**
 {pending:app-1.8.0} In the app, with two or more locations, the PDF documents (prescriptions, receipts and the history) list every location in the footer (name, address and phone).
 **No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia. Com dois ou mais locais, receitas, recibos e o histórico impressos listam todos os locais no rodapé (nome, endereço e telefone).
 **On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**. With two or more locations, printed prescriptions, receipts and the history list every location in the footer (name, address and phone).
+**No site:** {pending:clinical-documents-live} Os documentos clínicos em PDF (atestados, declarações e solicitações de exames) também listam todos os locais no rodapé.
+**On the website:** {pending:clinical-documents-live} Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer.
 Thai title: "สถานที่ให้บริการ"
 **th**
 หากคุณตรวจผู้ป่วยมากกว่าหนึ่งแห่ง ให้เพิ่มแต่ละแห่งเป็นสถานที่ สถานที่จะแสดงให้คุณและผู้ป่วยเห็นเมื่อมีตั้งแต่สองแห่งขึ้นไป ถ้ามีแห่งเดียวจะไม่มีอะไรเปลี่ยน
@@ -249,6 +251,7 @@ Thai title: "สถานที่ให้บริการ"
 ใน **ตารางงาน** แต่ละนัดจะแสดงสถานที่ ใน **นัดหมายใหม่** สถานที่ของวันนั้นจะถูกเลือกไว้แล้ว แตะสถานที่อื่นเพื่อเปลี่ยน หากย้ายนัดไปวันอื่น นัดจะใช้สถานที่ของวันใหม่
 {pending:app-1.8.0} ในแอป: **การตั้งค่า → คลินิกของฉัน** แสดงรายการสถานที่ พร้อม **เพิ่มสถานที่** การแก้ไข และ **ตั้งเป็นหลัก** และใน **เวลาทำการ** ให้เลือก **สถานที่** ของแต่ละวัน
 {pending:app-1.8.0} ในแอป เมื่อมีตั้งแต่สองสถานที่ขึ้นไป เอกสาร PDF (ใบสั่งยา ใบเสร็จ และประวัติการรักษา) จะแสดงทุกสถานที่ที่ส่วนท้าย (ชื่อ ที่อยู่ และโทรศัพท์)
+{pending:clinical-documents-live} ในเว็บไซต์ เอกสารทางการแพทย์ที่เป็น PDF (ใบรับรองแพทย์ ใบรับรองการมาพบแพทย์ และใบส่งตรวจ) จะแสดงทุกสถานที่ที่ส่วนท้ายด้วย
 **ในเว็บไซต์:** ใน **คลินิกของฉัน** แต่ละสถานที่มี **แก้ไข** (ชื่อ ที่อยู่ เมือง จังหวัด และโทรศัพท์) และ **ตั้งเป็นหลัก** ใน **การตั้งค่า → เวลาทำงาน** ให้เลือก **สถานที่** ของแต่ละวัน เมื่อมีตั้งแต่สองสถานที่ขึ้นไป ใบสั่งยา ใบเสร็จ และประวัติการรักษาที่พิมพ์จะแสดงทุกสถานที่ที่ส่วนท้าย (ชื่อ ที่อยู่ และโทรศัพท์)
 `open:none`
 `requires:practice-locations-live`
