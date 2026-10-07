@@ -31,6 +31,8 @@ export type MedicalDocPdfInput = {
   // saved (the sentence has its own label; cf, 76's #413 row).
   licenceNo?: string | null;
   footer: string;
+  // 1.8.0 F: every practice location, above the footer (2+ locations).
+  locationLines?: string[];
   // A copy shared with the patient (no drawn signature on the website).
   unsignedLine: string | null;
 };
@@ -60,6 +62,7 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     brand: input.brand,
     logoBytes: input.template.logoBytes,
     footer: input.template.footerText ?? input.footer,
+    locationLines: input.locationLines,
     signerName: input.signerName,
     signerRegistration: input.signerRegistration,
     unsignedLine: input.unsignedLine,
@@ -71,8 +74,8 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     // "on {exam date}", the findings, and the rest line when set.
     const t = input.fields as ThCertificateFields;
     const tw = thCertWords(input.lang);
-    writer.text(`${tw.place}: ${input.place}`, { size: 11 });
-    writer.aligned(dateLine(input.lang, "", input.issued), "right", { size: 11 });
+    // The place and the date on one line (53: the date sat a line low).
+    writer.pair(`${tw.place}: ${input.place}`, dateLine(input.lang, "", input.issued), { size: 11 });
     writer.gap(10);
     writer.text(`${tw.iDoctor} ${input.signerName}${input.licenceNo?.trim() ? ` ${tw.licence} ${input.licenceNo.trim()}` : ""}`, { size: 11 });
     writer.text(`${tw.examined} ${input.patientName}${input.patientId ? ` ${input.patientId.label} ${input.patientId.value}` : ""}`, { size: 11 });
