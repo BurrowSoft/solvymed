@@ -10,14 +10,14 @@ describe("SolvyAI: the other platform's path, in one line", () => {
   it("on the website, the app's path as the example", () => {
     const prompt = rules("pt", "web", "home", "help", say);
     expect(prompt).toContain("end the steps with ONE short line naming its path");
-    expect(prompt).toContain("No app: Pacientes → ⋯ → Mesclar.");
+    expect(prompt).toContain("No app: Pacientes → menu (⋯) do paciente → Mesclar com outro paciente…");
     expect(prompt).toContain("Never a second step-by-step");
   });
 
   it("in the app, the website's path as the example; in both modes", () => {
     for (const mode of ["help", "actions"] as const) {
       const prompt = rules("en", "app", "home", mode, say);
-      expect(prompt).toContain("On the website: Patients → Information → Merge with another patient.");
+      expect(prompt).toContain("On the website: Patients → Info tab → Merge with another patient…");
       expect(prompt).toContain("skip it when the feature is on one platform only");
     }
   });
