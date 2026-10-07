@@ -25,6 +25,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-acti
 import { PatientTabs } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient";
 import { restEnd, type MedDoc } from "@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MedicalDocuments";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
+import { docLangsForType } from "@/lib/medicalDocuments";
 
 const T = pt.documents;
 const TH = (th as unknown as typeof pt);
@@ -92,6 +93,25 @@ describe("the document dialog (12's #413 row)", () => {
     expect(end.value).toBe("10/10/2026");
     expect(dialog()).toHaveTextContent("พ.ศ. 2569");
     expect(within(dialog()).getAllByPlaceholderText("วว/ดด/ปปปป (ค.ศ.)").length).toBeGreaterThan(0);
+  });
+});
+
+describe("the Thai certificate's languages (ad: the form exists in th / en only)", () => {
+  it("the picker offers only Thai and English; other types keep all 7", () => {
+    open([], "TH", "th", TH);
+    fireEvent.click(screen.getByRole("button", { name: TH.documents.addDocument }));
+    fireEvent.click(within(dialog()).getAllByRole("button", { name: TH.documents.type.th_certificate })[0]);
+    const picker = within(dialog()).getByLabelText(new RegExp(`^${TH.documents.language}`)) as HTMLSelectElement;
+    expect([...picker.options].map((o) => o.value)).toEqual(["th", "en"]);
+  });
+
+  it("docLangsForType: th_certificate → th / en in the given order; an existing other language is kept", () => {
+    const all = ["th", "en", "pt-BR", "es", "de", "fr", "it"] as const;
+    expect(docLangsForType("th_certificate", all)).toEqual(["th", "en"]);
+    expect(docLangsForType("th_certificate", ["pt-BR", "en", "th"])).toEqual(["en", "th"]);
+    expect(docLangsForType("th_certificate", all, "fr")).toEqual(["th", "en", "fr"]);
+    expect(docLangsForType("declaration", all)).toEqual([...all]);
+    expect(docLangsForType(null, all)).toEqual([...all]);
   });
 });
 

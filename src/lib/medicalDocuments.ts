@@ -22,6 +22,15 @@ export function docLangsFor(country: string | null | undefined): DocLang[] {
   return [...new Set<DocLang>([...first, ...DOC_LANGS])];
 }
 
+// The languages a type offers (ad, 7 Oct): the Thai medical certificate's
+// form exists in Thai and English only; every other type keeps the full
+// list. A document already saved in another language keeps it (it's added
+// at the end), never forced to change.
+export function docLangsForType(type: MedicalDocType | null, langs: readonly DocLang[], current?: DocLang | null): DocLang[] {
+  const out = type === "th_certificate" ? langs.filter((l) => l === "th" || l === "en") : [...langs];
+  return current && !out.includes(current) ? [...out, current] : out;
+}
+
 // A CPF as printed: 000.000.000-00 (11 digits), else as stored.
 export function formatCpfDigits(cpf: string): string {
   const d = cpf.replace(/\D/g, "");
