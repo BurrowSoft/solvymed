@@ -12,7 +12,8 @@ const DIR = resolve("content/help");
 const conditions = readConditions(DIR);
 const files = readdirSync(DIR).filter((f) => /^\d\d-.+\.md$/.test(f)).sort();
 const build = (met: boolean) => files.map((f) => parseBatch(f.replace(/\.md$/, ""), readFileSync(resolve(DIR, f), "utf8"), { ...conditions, "help-th-live": { ...conditions["help-th-live"], met } }));
-const DRAFTED = ["A1", "A3", "A4", "A5", "A6", "A8", "P1", "P2", "G1", "G4", "G5", "C4", "K2", "K4", "K5"];
+// Live articles only (P16 / C15 have Thai drafts too, behind their features). C11: 1.8.0 (ad).
+const DRAFTED = ["A1", "A3", "A4", "A5", "A6", "A8", "P1", "P2", "G1", "G4", "G5", "C4", "C11", "K2", "K4", "K5"];
 
 type Built = { titleTh?: string; articles: { id: string; th?: { title: string; body: unknown[]; web: string | null } }[] }[];
 
@@ -25,7 +26,7 @@ describe("Thai Help", () => {
     for (const c of build(false) as Built) for (const a of c.articles) expect(a.th).toBeUndefined();
   });
 
-  it("once live: the 15 drafted articles carry a Thai title and text; the categories a Thai name", () => {
+  it("once live: the drafted live articles carry a Thai title and text; the categories a Thai name", () => {
     const cats = build(true) as Built;
     const withTh = cats.flatMap((c) => c.articles.filter((a) => a.th).map((a) => a.id));
     expect(withTh.sort()).toEqual([...DRAFTED].sort());
