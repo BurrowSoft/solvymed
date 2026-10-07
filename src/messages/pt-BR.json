@@ -2171,6 +2171,7 @@
     "controlledNeedsId": "A receita de controle especial exige o CPF ou o passaporte do paciente.",
     "controlledPrintOnly": "Imprima, assine à mão e entregue as duas vias ao paciente.",
     "download": "Baixar PDF",
+    "print": "Imprimir",
     "save": "Salvar documento",
     "pdfFailed": "Não foi possível gerar o PDF. Tente novamente.",
     "err": {

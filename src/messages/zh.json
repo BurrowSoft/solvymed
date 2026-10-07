@@ -2171,6 +2171,7 @@
     "controlledNeedsId": "特殊管制处方需要患者的 CPF 或护照。",
     "controlledPrintOnly": "打印后亲笔签名,并将两份都交给患者。",
     "download": "下载 PDF",
+    "print": "打印",
     "save": "保存文件",
     "pdfFailed": "无法生成 PDF,请重试。",
     "err": {

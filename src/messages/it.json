@@ -2171,6 +2171,7 @@
     "controlledNeedsId": "La ricetta a controllo speciale richiede il CPF o il passaporto del paziente.",
     "controlledPrintOnly": "Stampala, firmala a mano e consegna entrambe le copie al paziente.",
     "download": "Scarica PDF",
+    "print": "Stampa",
     "save": "Salva documento",
     "pdfFailed": "Impossibile creare il PDF. Riprova.",
     "err": {
