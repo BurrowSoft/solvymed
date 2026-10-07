@@ -69,8 +69,8 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     // "on {exam date}", the findings, and the rest line when set.
     const t = input.fields as ThCertificateFields;
     const tw = thCertWords(input.lang);
-    writer.text(`${tw.place}: ${input.place}`, { size: 11 });
-    writer.aligned(dateLine(input.lang, "", input.issued), "right", { size: 11 });
+    // The place and the date on one line (53: the date sat a line low).
+    writer.pair(`${tw.place}: ${input.place}`, dateLine(input.lang, "", input.issued), { size: 11 });
     writer.gap(10);
     writer.text(`${tw.iDoctor} ${input.signerName}${input.signerRegistration ? ` ${tw.licence} ${input.signerRegistration}` : ""}`, { size: 11 });
     writer.text(`${tw.examined} ${input.patientName}${input.patientId ? ` ${input.patientId.label} ${input.patientId.value}` : ""}`, { size: 11 });
