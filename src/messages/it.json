@@ -2132,6 +2132,11 @@
     "addPrescription": "+ Ricetta",
     "addDocument": "+ Documento",
     "newDocument": "Nuovo documento",
+    "editDocument": "Modifica documento",
+    "correctDocument": "Correggi documento",
+    "discardTitle": "Scartare le modifiche?",
+    "discard": "Scarta",
+    "keepEditing": "Continua a modificare",
     "typeLabel": "Tipo",
     "type": {
       "certificate": "Certificato medico",

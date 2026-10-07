@@ -2132,6 +2132,11 @@
     "addPrescription": "+ 處方",
     "addDocument": "+ 文件",
     "newDocument": "新增文件",
+    "editDocument": "編輯文件",
+    "correctDocument": "更正文件",
+    "discardTitle": "要捨棄變更嗎？",
+    "discard": "捨棄",
+    "keepEditing": "繼續編輯",
     "typeLabel": "類型",
     "type": {
       "certificate": "診斷證明",

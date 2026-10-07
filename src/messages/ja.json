@@ -2132,6 +2132,11 @@
     "addPrescription": "+ 処方箋",
     "addDocument": "+ 書類",
     "newDocument": "新しい書類",
+    "editDocument": "書類を編集",
+    "correctDocument": "書類を訂正",
+    "discardTitle": "変更を破棄しますか？",
+    "discard": "破棄",
+    "keepEditing": "編集を続ける",
     "typeLabel": "種類",
     "type": {
       "certificate": "診断書",

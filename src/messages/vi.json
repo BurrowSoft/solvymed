@@ -2132,6 +2132,11 @@
     "addPrescription": "+ Đơn thuốc",
     "addDocument": "+ Tài liệu",
     "newDocument": "Tài liệu mới",
+    "editDocument": "Sửa tài liệu",
+    "correctDocument": "Đính chính tài liệu",
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục sửa",
     "typeLabel": "Loại",
     "type": {
       "certificate": "Giấy chứng nhận y tế",

@@ -2132,6 +2132,11 @@
     "addPrescription": "+ Ordonnance",
     "addDocument": "+ Document",
     "newDocument": "Nouveau document",
+    "editDocument": "Modifier le document",
+    "correctDocument": "Corriger le document",
+    "discardTitle": "Abandonner les modifications ?",
+    "discard": "Abandonner",
+    "keepEditing": "Continuer la modification",
     "typeLabel": "Type",
     "type": {
       "certificate": "Certificat médical",

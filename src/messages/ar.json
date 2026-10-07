@@ -2132,6 +2132,11 @@
     "addPrescription": "+ وصفة",
     "addDocument": "+ مستند",
     "newDocument": "مستند جديد",
+    "editDocument": "تعديل المستند",
+    "correctDocument": "تصحيح المستند",
+    "discardTitle": "تجاهل التغييرات؟",
+    "discard": "تجاهل",
+    "keepEditing": "متابعة التعديل",
     "typeLabel": "النوع",
     "type": {
       "certificate": "شهادة طبية",

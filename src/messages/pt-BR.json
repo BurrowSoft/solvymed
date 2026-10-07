@@ -2132,6 +2132,11 @@
     "addPrescription": "+ Receita",
     "addDocument": "+ Documento",
     "newDocument": "Novo documento",
+    "editDocument": "Editar documento",
+    "correctDocument": "Corrigir documento",
+    "discardTitle": "Descartar alterações?",
+    "discard": "Descartar",
+    "keepEditing": "Continuar editando",
     "typeLabel": "Tipo",
     "type": {
       "certificate": "Atestado médico",

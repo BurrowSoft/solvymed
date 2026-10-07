@@ -972,6 +972,11 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const td = useTranslations("documents");
   const tpd = useTranslations("prescriptionDoc");
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
+  // Unsaved changes in the document dialog: closing asks first (ad).
+  const docDirty = useRef(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const closeDoc = () => { if (docDirty.current) setConfirmDiscard(true); else setDocDialog(null); };
+  const discardDoc = () => { docDirty.current = false; setConfirmDiscard(false); setDocDialog(null); };
   const docGroups = groupCorrections(medicalDocs?.list ?? []);
   const [pdfBusy, setPdfBusy] = useState<string | null>(null);
   // A printed special control prescription keeps an "Abrir PDF" link (ad):
@@ -1176,7 +1181,16 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       )}
 
       {medicalDocs && (
-        <Dialog open={!!docDialog} onClose={() => setDocDialog(null)} title={docDialog?.mode === "edit" ? t("editPrescriptionTitle") : docDialog?.mode === "correct" ? t("correctPrescriptionTitle") : td("newDocument")}>
+        <Dialog open={!!docDialog} onClose={closeDoc} title={docDialog?.mode === "edit" ? td("editDocument") : docDialog?.mode === "correct" ? td("correctDocument") : td("newDocument")}>
+          {confirmDiscard && (
+            <div role="alertdialog" aria-labelledby="discard-doc-title" data-testid="discard-doc" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p id="discard-doc-title" className="text-sm font-semibold text-slate-900">{td("discardTitle")}</p>
+              <div className="mt-3 flex gap-2">
+                <button type="button" onClick={discardDoc} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700">{td("discard")}</button>
+                <button type="button" autoFocus onClick={() => setConfirmDiscard(false)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">{td("keepEditing")}</button>
+              </div>
+            </div>
+          )}
           {docDialog && (
             <DocumentDialog
               key={docDialog.mode === "new" ? "new" : `${docDialog.mode}-${docDialog.doc.id}`}
@@ -1185,7 +1199,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               patientName={patientName}
               country={medicalDocs.country}
               hasPatientId={medicalDocs.hasPatientId}
-              onClose={() => setDocDialog(null)}
+              onClose={closeDoc}
+              onSaved={discardDoc}
+              onDirtyChange={(d) => { docDirty.current = d; }}
               reasonField={<ReasonField />}
             />
           )}

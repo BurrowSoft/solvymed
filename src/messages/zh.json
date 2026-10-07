@@ -2132,6 +2132,11 @@
     "addPrescription": "+ 处方",
     "addDocument": "+ 文件",
     "newDocument": "新建文件",
+    "editDocument": "编辑文件",
+    "correctDocument": "更正文件",
+    "discardTitle": "放弃更改？",
+    "discard": "放弃",
+    "keepEditing": "继续编辑",
     "typeLabel": "类型",
     "type": {
       "certificate": "医疗证明",
