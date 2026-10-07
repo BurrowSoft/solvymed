@@ -2245,7 +2245,10 @@
     "hint": "这些资料将保存到您在{doctor}处的登记中。",
     "done": "完成！您的登记信息已完整。",
     "idInUse": "此证件号已在本诊所的另一份登记中。请联系诊所。",
-    "invalid": "请检查：{field}"
+    "invalid": "请检查：{field}",
+    "saveFailed": "无法保存。请重试。",
+    "orPassport": "或您的护照号码：",
+    "emailInUse": "此电子邮箱已在本诊所的另一份登记中。请联系诊所。"
   },
   "brandCrop": {
     "title": "调整图片",

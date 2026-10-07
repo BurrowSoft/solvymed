@@ -2245,7 +2245,10 @@
     "hint": "Ces informations vont dans votre dossier chez {doctor}.",
     "done": "C'est fait ! Votre dossier est complet.",
     "idInUse": "Ce document figure déjà sur un autre dossier de ce cabinet. Contactez la clinique.",
-    "invalid": "Vérifiez : {field}."
+    "invalid": "Vérifiez : {field}.",
+    "saveFailed": "Impossible d'enregistrer. Veuillez réessayer.",
+    "orPassport": "Ou votre numéro de passeport :",
+    "emailInUse": "Cet e-mail figure déjà sur un autre dossier de ce cabinet. Contactez la clinique."
   },
   "brandCrop": {
     "title": "Ajuster l'image",

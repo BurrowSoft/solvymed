@@ -2245,7 +2245,10 @@
     "hint": "Data ini masuk ke pendaftaran Anda di {doctor}.",
     "done": "Selesai! Pendaftaran Anda sudah lengkap.",
     "idInUse": "Nomor identitas ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik.",
-    "invalid": "Periksa: {field}."
+    "invalid": "Periksa: {field}.",
+    "saveFailed": "Gagal menyimpan. Silakan coba lagi.",
+    "orPassport": "Atau nomor paspor Anda:",
+    "emailInUse": "Email ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik."
   },
   "brandCrop": {
     "title": "Sesuaikan gambar",

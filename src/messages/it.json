@@ -2245,7 +2245,10 @@
     "hint": "Questi dati vanno nella tua registrazione presso {doctor}.",
     "done": "Fatto! La tua registrazione è completa.",
     "idInUse": "Questo documento è già in un'altra registrazione di questo studio. Contatta la clinica.",
-    "invalid": "Controlla: {field}."
+    "invalid": "Controlla: {field}.",
+    "saveFailed": "Impossibile salvare. Riprova.",
+    "orPassport": "Oppure il numero del tuo passaporto:",
+    "emailInUse": "Questa e-mail è già in un'altra registrazione di questo studio. Contatta la clinica."
   },
   "brandCrop": {
     "title": "Regola immagine",

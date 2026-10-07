@@ -44,13 +44,15 @@ export default async function PrivacyPage({
   const patientDocs = conditionMet("patient-documents-live");
   // 1.8.0 E: the doctor's card payment link (§3.1).
   const cardLink = conditionMet("card-payment-live");
+  // 1.8.0 C2: patients completing the details their professional asks for.
+  const selfFields = conditionMet("c2-patient-step-live");
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_VERSION)}`}>
-      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} cardLink={cardLink} />
+      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} cardLink={cardLink} selfFields={selfFields} />
     </LegalDoc>
   ) : (
     <LegalDoc locale={locale} title="Privacy Policy" updated={`Last updated: ${legalDateLabel("en", PRIVACY_VERSION)}`}>
-      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} cardLink={cardLink} />
+      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} cardLink={cardLink} selfFields={selfFields} />
     </LegalDoc>
   );
 }

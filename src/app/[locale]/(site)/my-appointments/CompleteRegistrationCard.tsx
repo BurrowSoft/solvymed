@@ -83,8 +83,12 @@ function SelfFieldsForm({ prompt, onDone, onCancel }: { prompt: SelfPrompt; onDo
     start(async () => {
       const r = await saveSelfFields(prompt.doctorId, values);
       if (r.ok) { onDone(); return; }
-      if (r.error === "invalid" && r.key && (prompt.keys as string[]).includes(r.key)) { setFieldError({ key: r.key, text: invalidText(r.key as FieldKey) }); return; }
-      setError(r.error === "id_in_use" ? t("idInUse") : tp("saveError"));
+      // 212 names the field: a refused value, or the one holding a duplicate ID / e-mail.
+      if (r.key && (prompt.keys as string[]).includes(r.key) && (r.error === "invalid" || r.error === "id_in_use")) {
+        setFieldError({ key: r.key, text: r.error === "id_in_use" ? (r.key === "email" ? t("emailInUse") : t("idInUse")) : invalidText(r.key as FieldKey) });
+        return;
+      }
+      setError(r.error === "id_in_use" ? t("idInUse") : t("saveFailed"));
     });
   }
 
@@ -108,7 +112,7 @@ function SelfFieldsForm({ prompt, onDone, onCancel }: { prompt: SelfPrompt; onDo
         <div className="grid grid-cols-2 gap-3">
           <label className="block"><span className={labelCls}>{tIds("thaiId")}</span>
             <input name="th_national_id" inputMode="numeric" maxLength={17} className={input} /></label>
-          <label className="block"><span className={labelCls}>{tIds("passport")}</span>
+          <label className="block"><span className={labelCls}>{t("orPassport")}</span>
             <input name="national_passport" maxLength={30} className={input} /></label>
         </div>
       )}
