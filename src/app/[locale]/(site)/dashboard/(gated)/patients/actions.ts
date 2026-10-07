@@ -20,6 +20,8 @@ import { conditionMet } from "@/lib/conditions";
 import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
+import { serverFlag } from "@/lib/myDoctors";
+import { removeSnapshotPaths, snapshotPathsOf } from "@/lib/snapshotCopies";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 
@@ -437,7 +439,8 @@ export async function createPrescription(patientId: string, formData: FormData) 
   if (iError) return { error: actionError(iError.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
-  return { success: true };
+  // The id: the patient's copy is made from it (1.8.0 B2).
+  return { success: true, id: prescription.id as string };
 }
 
 export async function toggleBookingBlock(patientId: string, blocked: boolean) {
@@ -482,10 +485,13 @@ export async function deletePrescription(id: string, patientId: string) {
 
   // The items go first; stop if that's refused (e.g. clinical_record_locked
   // after 24 hours) instead of trying the prescription anyway.
+  // Its copies shared with the patient go too (ad, 1.8.0 B2): found first.
+  const copies = (await serverFlag(supabase, "patient_documents")) ? await snapshotPathsOf(supabase, user.id, patientId, "prescription", id) : [];
   const { error: iError } = await supabase.from("prescription_items").delete().eq("prescription_id", id);
   if (iError) return { error: actionError(iError.message) };
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };
+  await removeSnapshotPaths(supabase, copies);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -549,7 +555,7 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   if (meds.length === 0) return { error: "medication_required" };
   if (!reason) return { error: "reason_required" };
 
-  const { error } = await supabase.rpc("add_prescription_correction", {
+  const { data: correctionId, error } = await supabase.rpc("add_prescription_correction", {
     p_prescription_id: prescriptionId,
     p_notes: (formData.get("notes") as string)?.trim() || null,
     p_items: meds,
@@ -557,7 +563,7 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
-  return { success: true };
+  return { success: true, id: (correctionId as string | null) ?? null };
 }
 
 // ── Merge duplicate patients (migration 133; the app's lib/patient-merge.ts) ──

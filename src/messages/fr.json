@@ -2117,6 +2117,9 @@
     },
     "storageNotice": "Vous avez utilisé {used} sur 5 Go pour les documents.",
     "snapshotNotShared": "Enregistré, mais non partagé : votre espace documents est plein.",
+    "snapshotFailed": "Enregistré, mais la copie n'a pas pu être partagée avec le patient.",
+    "tryAgain": "Réessayer",
+    "unsignedCopy": "Copie non signée, pour information du patient.",
     "settings": {
       "title": "Dossiers de documents",
       "add": "Ajouter un dossier",

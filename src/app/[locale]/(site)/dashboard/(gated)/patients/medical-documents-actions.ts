@@ -13,6 +13,7 @@ import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
+import { removeSnapshotPaths, snapshotPathsOf } from "@/lib/snapshotCopies";
 import { DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
@@ -90,7 +91,7 @@ export async function updateMedicalDocument(id: string, patientId: string, input
 }
 
 // After 24 hours: a correction (189's add_document_correction), the original kept.
-export async function correctMedicalDocument(id: string, patientId: string, input: Input & { reason: string }): Promise<Result<null>> {
+export async function correctMedicalDocument(id: string, patientId: string, input: Input & { reason: string }): Promise<Result<string | null>> {
   if (!isUuid(id) || !isUuid(patientId)) return { ok: false, code: "generic" };
   const reason = (input.reason ?? "").trim();
   if (!reason) return { ok: false, code: "reason_required" };
@@ -98,20 +99,24 @@ export async function correctMedicalDocument(id: string, patientId: string, inpu
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
-  const { error } = await me.supabase.rpc("add_document_correction", {
+  const { data: correctionId, error } = await me.supabase.rpc("add_document_correction", {
     p_document_id: id, p_body: (input.body ?? "").trim() || null, p_fields: input.fields, p_reason: reason,
   });
   if (error) return { ok: false, code: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
-  return { ok: true, data: null };
+  // The correction's id: the patient's copy is made from it (1.8.0 B2).
+  return { ok: true, data: (correctionId as string | null) ?? null };
 }
 
 export async function deleteMedicalDocument(id: string, patientId: string): Promise<Result<null>> {
   if (!isUuid(id) || !isUuid(patientId)) return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "not_doctor" };
+  // Its copies shared with the patient go too (ad, 1.8.0 B2): found first.
+  const copies = (await serverFlag(me.supabase, "patient_documents")) ? await snapshotPathsOf(me.supabase, me.uid, patientId, "medical_document", id) : [];
   const { error } = await me.supabase.from("medical_documents").delete().eq("id", id).eq("professional_id", me.uid);
   if (error) return { ok: false, code: actionError(error.message) };
+  await removeSnapshotPaths(me.supabase, copies);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { ok: true, data: null };
 }

@@ -2117,6 +2117,9 @@
     },
     "storageNotice": "Bạn đã dùng {used} trên 5 GB cho tài liệu.",
     "snapshotNotShared": "Đã lưu nhưng chưa chia sẻ: dung lượng tài liệu của bạn đã đầy.",
+    "snapshotFailed": "Đã lưu, nhưng không thể chia sẻ bản sao với bệnh nhân.",
+    "tryAgain": "Thử lại",
+    "unsignedCopy": "Bản sao không chữ ký, để bệnh nhân tham khảo.",
     "settings": {
       "title": "Thư mục tài liệu",
       "add": "Thêm thư mục",

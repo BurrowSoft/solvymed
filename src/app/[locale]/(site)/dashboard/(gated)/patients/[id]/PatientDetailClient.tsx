@@ -16,6 +16,7 @@ import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
 import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type MedDoc } from "./MedicalDocuments";
 import { printPdf } from "@/lib/printPdf";
+import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
 import { loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
@@ -179,7 +180,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
       {tab === "info" && <PatientInfoTab patient={patient} locale={locale} isArchived={isArchived} canDelete={canDelete} hasAppointments={hasAppointments} canMerge={canMerge} mergeWith={mergeWith} idKind={idKind} addressLive={addressLive} />}
       {tab === "records" && <RecordsTab patientId={patient.id} records={records} isArchived={isArchived} currentUserId={currentUserId} locale={locale} templates={recordTemplates ?? []} />}
-      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} patientName={patient.full_name} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} medicalDocs={medicalDocs} />}
+      {tab === "prescriptions" && <PrescriptionsTab patientId={patient.id} patientName={patient.full_name} prescriptions={prescriptions} isArchived={isArchived} currentUserId={currentUserId} locale={locale} medicalDocs={medicalDocs} canShare={documentsOn && !isSecretary} />}
       {(tab === "exams" || tab === "files") && !isSecretary && (
         <FilesTab key={tab} patientId={patient.id} doctorId={currentUserId} kind={tab} isArchived={isArchived} locale={locale} />
       )}
@@ -964,14 +965,43 @@ type MedRow = RxItem & { key: number };
 let medRowKey = 0;
 const medRow = (m: RxItem = EMPTY_MED): MedRow => ({ ...m, key: ++medRowKey });
 
-function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, currentUserId, locale, medicalDocs = null }: {
+function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, currentUserId, locale, medicalDocs = null, canShare = false }: {
   patientId: string; patientName: string; prescriptions: Rx[]; isArchived: boolean; currentUserId: string; locale: string;
   medicalDocs?: { list: MedDoc[]; country: string; hasPatientId: boolean } | null;
+  // 1.8.0 B2: copies go to the patient's Documents (flag patient_documents).
+  canShare?: boolean;
 }) {
   const t = useTranslations("patientDetail");
   const td = useTranslations("documents");
   const tpd = useTranslations("prescriptionDoc");
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
+  const tdocs = useTranslations("docs");
+  // 1.8.0 B2: the patient's copy is made after the save; a failure only
+  // says so (the document is saved), with "Tentar de novo" (ad).
+  const [shareIssue, setShareIssue] = useState<{ text: string; retry: (() => void) | null } | null>(null);
+  async function runShare(make: () => Promise<string>) {
+    setShareIssue(null);
+    const outcome = await make();
+    if (outcome === "shared" || outcome === "notShared") return;
+    setShareIssue({
+      text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
+      retry: outcome === "storageFull" ? null : () => { void runShare(make); },
+    });
+  }
+  function shareRx(rxId: string, correctsId: string | null) {
+    void runShare(() => shareRxSnapshot({
+      doctorId: currentUserId, patientId, rxId, correctsId, locale,
+      labels: {
+        title: tpd("title"), patient: tpd("patient"), date: tpd("date"), medications: tpd("medications"), medication: tpd("medication"),
+        dosage: tpd("dosage"), frequency: tpd("frequency"), duration: tpd("duration"), notes: tpd("notes"), footer: tpd("footer"),
+        corrected: tpd("corrected"), unsignedCopy: tdocs("unsignedCopy"),
+      },
+      title: (iso) => `${tpd("title")} ${formatShortDate(locale, iso)}`,
+    }));
+  }
+  function shareDoc(doc: MedDoc, correctsId: string | null) {
+    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer") }));
+  }
   // Unsaved changes in the document dialog: closing asks first (ad).
   const docDirty = useRef(false);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
@@ -1065,6 +1095,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const [error, setError] = useState("");
   const [listError, setListError] = useState("");
   const [medications, setMedications] = useState<MedRow[]>([medRow()]);
+  // "Compartilhar com o paciente" (1.8.0 B2): ON by default.
+  const [shareRxOn, setShareRxOn] = useState(true);
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
@@ -1072,6 +1104,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setError("");
     const items = d.mode === "new" ? [] : d.rx.prescription_items;
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
+    setShareRxOn(true);
     setDialog(d);
   }
 
@@ -1086,7 +1119,11 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         : dialog.mode === "edit" ? await updatePrescription(dialog.rx.id, patientId, formData)
         : await addPrescriptionCorrection(dialog.rx.id, patientId, formData);
       if (result?.error) { setError(errorText(result.error)); return; }
+      // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
+      const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
+      const sharing = canShare && shareRxOn && !!savedId;
       setDialog(null);
+      if (sharing) shareRx(savedId!, dialog.mode === "new" ? null : dialog.rx.id);
     });
   }
 
@@ -1165,6 +1202,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         </button>)}
       </div>
       {listError && <p className="mb-3 text-sm text-red-600">{listError}</p>}
+      {shareIssue && (
+        <div role="alert" data-testid="share-issue" className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          <span>{shareIssue.text}</span>
+          {shareIssue.retry && <button type="button" onClick={shareIssue.retry} className="rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">{tdocs("tryAgain")}</button>}
+        </div>
+      )}
 
       {originals.length + docGroups.originals.length === 0 ? (
         <div className="rounded-2xl border border-slate-100 bg-slate-50 p-10 text-center">
@@ -1200,7 +1243,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               country={medicalDocs.country}
               hasPatientId={medicalDocs.hasPatientId}
               onClose={closeDoc}
-              onSaved={discardDoc}
+              onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
+              canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}
               reasonField={<ReasonField />}
             />
@@ -1239,6 +1283,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             <textarea name="notes" rows={2} defaultValue={initial?.notes ?? ""} placeholder={t("notesPlaceholder")} className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20 resize-none" />
           </div>
           {dialog?.mode === "correct" && <ReasonField />}
+          {canShare && dialog && (
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" checked={shareRxOn} onChange={(e) => setShareRxOn(e.target.checked)} className="h-4 w-4 accent-teal-600" />
+              {tdocs("share")}
+            </label>
+          )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
