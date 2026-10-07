@@ -62,6 +62,9 @@ export type DocTemplate = {
   logoUrl: string | null;
   headerText: string | null;
   footerText: string | null;
+  // 1.8.0 F: every practice location, one line each above the footer text
+  // (2+ locations, switch on; lib/locationLines).
+  locationLines?: string[];
 };
 
 export const DEFAULT_TEMPLATE: DocTemplate = {

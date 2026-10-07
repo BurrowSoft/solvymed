@@ -137,6 +137,16 @@ describe("the working-hours picker", () => {
   });
 });
 
+describe("the documents' footer lines (the app's template-service)", () => {
+  it("every location, Name · address · phone, only with 2+", async () => {
+    const { locationFooterLines } = await import("@/lib/locations");
+    const a = { ...A, address: "Rua A, 1", city: "Recife", state: "PE", phone: "81 3333-0000" };
+    const b = { ...B, address: null, city: "Olinda", state: null, phone: null };
+    expect(locationFooterLines([a, b])).toEqual(["Unidade Centro · Rua A, 1, Recife, PE · 81 3333-0000", "Unidade Sul · Olinda"]);
+    expect(locationFooterLines([a])).toEqual([]);
+  });
+});
+
 describe("a short agenda card's location chip", () => {
   it("initials: two words → their first letters; one word → its first two", async () => {
     const { locationInitials } = await import("@/lib/locations");

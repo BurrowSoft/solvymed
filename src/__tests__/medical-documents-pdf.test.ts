@@ -71,6 +71,13 @@ describe("the PDFs", () => {
     }
   });
 
+  it("1.8.0 F: every location in the footer, still one page (Thai shaped too)", async () => {
+    const locationLines = ["Unidade Centro · Rua A, 1, Fortaleza, CE · 85 3333-0000", "Unidade Sul · Rua B, 2, Fortaleza, CE", "สาขาสีลม · ถนนสีลม, กรุงเทพฯ", "Unidade Muito Longa · " + "Avenida Exemplo Comprida, 1234, Sala 567, ".repeat(4) + "Fortaleza, CE · 85 99999-0000"];
+    const bytes = await renderMedicalDocumentPdf({ ...base, type: "declaration", lang: "pt-BR", fields: { date: "2026-10-07", from: "09:00", to: "10:00" }, body: "Declaro…", locationLines }, fonts);
+    expect(isPdf(bytes)).toBe(true);
+    expect((await PDFDocument.load(bytes)).getPageCount()).toBe(1);
+  });
+
   it("the controlled prescription: two copies, one page each", async () => {
     const bytes = await renderControlledPrescriptionPdf({
       doctor: { name: "Vivian", crm: "19408", uf: "CE", address: "Rua A", city: "Fortaleza", cityUf: "CE", phone: null },

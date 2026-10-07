@@ -343,6 +343,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     return { ok: true, bytes };
   }
   const bytes = await renderMedicalDocumentPdf({
+    locationLines: d.locationLines,
     type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
     issued: issuedIso, city: d.doctor.city ?? "",
     place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),

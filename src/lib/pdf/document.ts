@@ -10,6 +10,8 @@ import { drawShaped, textWidth, wrapText } from "./text";
 
 export const A4: [number, number] = [595.28, 841.89];
 export const MARGIN = 48;
+// One footer location line (8 pt).
+const LOC_LH = 11;
 export const INK = rgb(0x1a / 255, 0x21 / 255, 0x38 / 255); // #1A2138
 export const MUTED = rgb(0x6b / 255, 0x7a / 255, 0x99 / 255); // #6B7A99
 export const FAINT = rgb(0xa0 / 255, 0xab / 255, 0xbe / 255); // #A0ABBE
@@ -56,6 +58,9 @@ export type DocFrame = {
   // The template's own logo when there's no brand.
   logo: PDFImage | null;
   footer: string;
+  // 1.8.0 F: every practice location, "Name · address · phone", one line
+  // each above the footer text (2+ locations; the app's lib/pdf-utils).
+  locationLines?: string[];
   signerName: string;
   signerRegistration: string | null;
   // A copy shared with the patient without a drawn signature says so (cf).
@@ -93,9 +98,14 @@ export class Writer {
     return w;
   }
 
+  // The footer's height: the divider, the location lines, the footer text.
+  private get footerRoom(): number {
+    return 40 + (this.frame.locationLines?.length ?? 0) * LOC_LH;
+  }
+
   // Room for h points, else a new page.
   need(h: number) {
-    if (this.y - h < MARGIN + 40) {
+    if (this.y - h < MARGIN + this.footerRoom) {
       this.page = this.pdf.addPage(A4);
       this.y = A4[1] - MARGIN;
     }
@@ -256,8 +266,19 @@ export class Writer {
 
   // The footer on every page, then the bytes.
   async finish(): Promise<Uint8Array> {
+    const lines = this.frame.locationLines ?? [];
     for (const p of this.pdf.getPages()) {
-      p.drawLine({ start: { x: MARGIN, y: MARGIN + 18 }, end: { x: A4[0] - MARGIN, y: MARGIN + 18 }, thickness: 0.75, color: LINE });
+      p.drawLine({ start: { x: MARGIN, y: MARGIN + 18 + lines.length * LOC_LH }, end: { x: A4[0] - MARGIN, y: MARGIN + 18 + lines.length * LOC_LH }, thickness: 0.75, color: LINE });
+      lines.forEach((l, i) => {
+        // A long line shrinks to fit (down to 6 pt), then is cut with "…".
+        let size = 8;
+        let text = l;
+        const full = textWidth(this.fonts.regular, text, size);
+        if (full > this.width) size = Math.max(6, (size * this.width) / full);
+        while (text.length > 1 && textWidth(this.fonts.regular, text, size) > this.width) text = `${text.slice(0, -2).trimEnd()}…`;
+        const lw = textWidth(this.fonts.regular, text, size);
+        drawShaped(p, text, { x: Math.max(MARGIN, (A4[0] - lw) / 2), y: MARGIN + (lines.length - i) * LOC_LH, font: this.fonts.regular, size, color: FAINT });
+      });
       const fw = textWidth(this.fonts.regular, this.frame.footer, 8.5);
       drawShaped(p, this.frame.footer, { x: (A4[0] - fw) / 2, y: MARGIN, font: this.fonts.regular, size: 8.5, color: FAINT });
     }

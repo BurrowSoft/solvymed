@@ -27,6 +27,8 @@ export type MedicalDocPdfInput = {
   signerName: string;
   signerRegistration: string | null;
   footer: string;
+  // 1.8.0 F: every practice location, above the footer (2+ locations).
+  locationLines?: string[];
   // A copy shared with the patient (no drawn signature on the website).
   unsignedLine: string | null;
 };
@@ -55,6 +57,7 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     brand: input.brand,
     logoBytes: input.template.logoBytes,
     footer: input.template.footerText ?? input.footer,
+    locationLines: input.locationLines,
     signerName: input.signerName,
     signerRegistration: input.signerRegistration,
     unsignedLine: input.unsignedLine,
