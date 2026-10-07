@@ -9,6 +9,7 @@ import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 import { withCountryHint } from "@/lib/signupCountry";
 import { dayLocationValue } from "@/lib/locations";
+import { cardLinkInput } from "@/lib/cardLink";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -203,6 +204,7 @@ type ClinicData = {
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
   pix_key?: string;
   promptpay_id?: string;
+  card_payment_url?: string;
 };
 
 // showPix / showPromptPay: the practice country's payment QR is Pix
@@ -210,7 +212,8 @@ type ClinicData = {
 // state label, the sample placeholders and the business ID: CNPJ in BR,
 // the clinic tax ID in TH (showTaxId: only when it could be read, or an
 // empty field would clear it), none elsewhere (UX).
-export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; country?: string }) {
+// showCardLink: 1.8.0 E's card payment link (only when it could be read).
+export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, showCardLink = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; showCardLink?: boolean; country?: string }) {
   const t = useTranslations("settings");
   // Everything country-specific comes from the practice's profile
   // (lib/country), never an if/else on the country (UX).
@@ -235,10 +238,11 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
     setError("");
     const cnpj = ((fd.get("clinic_cnpj") as string | null) ?? "").trim();
     if (cnpjField && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
+    if (fd.has("card_payment_url") && !cardLinkInput(fd.get("card_payment_url") as string).ok) { setError(t("cardLinkInvalid")); return; }
     start(async () => {
       const result = await updateClinic(fd);
       if ("error" in result && result.error) {
-        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : t("saveFailed"));
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : result.error === "invalid_card_link" ? t("cardLinkInvalid") : t("saveFailed"));
         return;
       }
       setSaved(true);
@@ -299,6 +303,14 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
               <Label>{t("promptPay")}</Label>
               <Input name="promptpay_id" defaultValue={data.promptpay_id ?? ""} placeholder="08X-XXX-XXXX" />
               <p className="mt-1 text-xs text-slate-400">{t("promptPayHint")}</p>
+            </div>
+          )}
+          {/* 1.8.0 E: offered next to the Pix / PromptPay code. */}
+          {showCardLink && (
+            <div className="sm:col-span-2">
+              <Label>{t("cardLink")}</Label>
+              <Input name="card_payment_url" defaultValue={data.card_payment_url ?? ""} placeholder="https://" />
+              <p className="mt-1 text-xs text-slate-400">{t("cardLinkHint")}</p>
             </div>
           )}
         </div>
