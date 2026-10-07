@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, PRINT, docLangsFor, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, validateFields,
+  DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -129,7 +129,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const f = emptyFields(ty);
     setFields(f);
     setBodyTouched(false);
-    setBody(prefilledBody(ty, f, fixedLanguage(ty) ?? lang, patientName));
+    // A type that doesn't offer the chosen language (the Thai certificate:
+    // th / en only) starts in its first one.
+    const offered = docLangsForType(ty, docLangsFor(country));
+    const l = offered.includes(lang) ? lang : offered[0];
+    if (l !== lang) setLang(l);
+    setBody(prefilledBody(ty, f, fixedLanguage(ty) ?? l, patientName));
   };
   const changeLang = (l: DocLang) => {
     setLang(l);
@@ -182,7 +187,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
             <label className="block">
               <span className={label}>{t("language")}</span>
               <select value={lang} onChange={(e) => changeLang(e.target.value as DocLang)} className={`${input} bg-white`}>
-                {docLangsFor(country).map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
+                {docLangsForType(type, docLangsFor(country), existing?.language).map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
               </select>
               <span className="mt-1 block text-xs text-slate-500">{t("languageHint")}</span>
             </label>
