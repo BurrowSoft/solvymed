@@ -10,9 +10,23 @@
 // the body in that language. The controlled prescription is Portuguese only.
 
 import { dateLocale } from "@/lib/dateLabels";
+import { countryProfile } from "@/lib/country";
 
 export const DOC_LANGS = ["pt-BR", "en", "th", "es", "de", "fr", "it"] as const;
 export type DocLang = (typeof DOC_LANGS)[number];
+
+// The picker's order (cf, 6 Oct): the practice country's language and English
+// first, then the rest (all 7 kept: a certificate for travel abroad).
+export function docLangsFor(country: string | null | undefined): DocLang[] {
+  const first = [countryProfile(country).fallbackLocale, "en"] as DocLang[];
+  return [...new Set<DocLang>([...first, ...DOC_LANGS])];
+}
+
+// A CPF as printed: 000.000.000-00 (11 digits), else as stored.
+export function formatCpfDigits(cpf: string): string {
+  const d = cpf.replace(/\D/g, "");
+  return d.length === 11 ? `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}` : cpf;
+}
 
 export type MedicalDocType = "certificate" | "declaration" | "exam_request" | "controlled_prescription" | "th_certificate";
 
@@ -102,6 +116,8 @@ type Words = {
   request: string; indication: string; cid: string; signature: string;
   certAbsence: string; certAttendance: string; declaration: string; companion: string;
   dateLine: string; // {city}, {date}
+  // The PDF footer, in the document's language (cf, 6 Oct: never the UI's).
+  footer: string;
 };
 
 // en / pt-BR / th: cf-approved (B.6). es / de / fr / it: titles and labels
@@ -116,6 +132,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "I declare that {patient} attended a medical appointment at this practice on {date}, from {from} to {to}.",
     companion: "Accompanied by {companion}.",
     dateLine: "{city}, {date}",
+    footer: "SolvyMed — Clinic management",
   },
   "pt-BR": {
     title: { certificate: "ATESTADO MÉDICO", declaration: "DECLARAÇÃO MÉDICA", exam_request: "SOLICITAÇÃO DE EXAMES", prescription: "RECEITA" },
@@ -126,6 +143,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "Declaro que {patient} compareceu a consulta médica neste consultório em {date}, das {from} às {to}.",
     companion: "Acompanhado(a) por {companion}.",
     dateLine: "{city}, {date}",
+    footer: "SolvyMed — Gestão de clínicas",
   },
   th: {
     title: { certificate: "ใบรับรองแพทย์", declaration: "ใบรับรองการมาพบแพทย์", exam_request: "ใบส่งตรวจ", prescription: "ใบสั่งยา" },
@@ -136,6 +154,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "ขอรับรองว่า {patient} ได้มาพบแพทย์ที่สถานพยาบาลแห่งนี้เมื่อวันที่ {date} เวลา {from} ถึง {to} น.",
     companion: "โดยมี {companion} เป็นผู้ติดตาม",
     dateLine: "{city} วันที่ {date}",
+    footer: "SolvyMed — ระบบบริหารคลินิก",
   },
   es: {
     title: { certificate: "CERTIFICADO MÉDICO", declaration: "DECLARACIÓN MÉDICA", exam_request: "SOLICITUD DE EXÁMENES", prescription: "RECETA" },
@@ -146,6 +165,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "Declaro que {patient} asistió a una consulta médica en este consultorio el {date}, de {from} a {to}.",
     companion: "Acompañado(a) por {companion}.",
     dateLine: "{city}, {date}",
+    footer: "SolvyMed — Gestión de consultas",
   },
   de: {
     title: { certificate: "ÄRZTLICHES ATTEST", declaration: "ÄRZTLICHE BESCHEINIGUNG", exam_request: "UNTERSUCHUNGSANFORDERUNG", prescription: "REZEPT" },
@@ -156,6 +176,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "Hiermit erkläre ich, dass {patient} am {date} von {from} bis {to} Uhr einen Arzttermin in dieser Praxis wahrgenommen hat.",
     companion: "In Begleitung von {companion}.",
     dateLine: "{city}, {date}",
+    footer: "SolvyMed — Praxisverwaltung",
   },
   fr: {
     title: { certificate: "CERTIFICAT MÉDICAL", declaration: "DÉCLARATION MÉDICALE", exam_request: "DEMANDE D'EXAMENS", prescription: "ORDONNANCE" },
@@ -166,6 +187,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "Je déclare que {patient} s'est présenté(e) à une consultation médicale dans ce cabinet le {date}, de {from} à {to}.",
     companion: "Accompagné(e) de {companion}.",
     dateLine: "{city}, le {date}",
+    footer: "SolvyMed — Gestion de cabinet",
   },
   it: {
     title: { certificate: "CERTIFICATO MEDICO", declaration: "DICHIARAZIONE MEDICA", exam_request: "RICHIESTA DI ESAMI", prescription: "RICETTA" },
@@ -176,6 +198,7 @@ export const PRINT: Record<DocLang, Words> = {
     declaration: "Dichiaro che {patient} si è presentato/a a una visita medica in questo studio il {date}, dalle {from} alle {to}.",
     companion: "Accompagnato/a da {companion}.",
     dateLine: "{city}, {date}",
+    footer: "SolvyMed — Gestione dello studio",
   },
 };
 
@@ -225,6 +248,30 @@ export const TH_CERT: Record<"th" | "en", ThCertWords> = {
   },
 };
 export const thCertWords = (lang: DocLang): ThCertWords => (lang === "th" ? TH_CERT.th : TH_CERT.en);
+
+// The registration line under the signer's name (cf, 76's #413 row; app and
+// web identical).  Only a registration of digits is formatted: Brazil
+// "CRM {no.}/{UF}" (no UF saved → "CRM {no.}"); Thailand the medical licence in
+// the document's language.  Anything with a letter is printed as typed; none → null.
+const TH_LICENCE: Record<DocLang, string> = {
+  th: "ใบอนุญาตประกอบวิชาชีพเวชกรรม เลขที่ ว.{no}",
+  en: "Medical licence no. {no}",
+  "pt-BR": "Licença médica nº {no}",
+  es: "Licencia médica n.º {no}",
+  fr: "Licence médicale n° {no}",
+  de: "Ärztliche Approbation Nr. {no}",
+  it: "Licenza medica n. {no}",
+};
+export function registrationLine(
+  country: string | null | undefined, lang: DocLang, registration: string | null | undefined, uf?: string | null,
+): string | null {
+  const r = (registration ?? "").trim();
+  if (!r) return null;
+  if (/\p{L}/u.test(r)) return r;
+  if (country === "BR") return uf?.trim() ? `CRM ${r}/${uf.trim().toUpperCase()}` : `CRM ${r}`;
+  if (country === "TH") return fill(TH_LICENCE[lang], { no: r });
+  return r;
+}
 
 // The patient's ID line for the printed document, by the practice's ID kind.
 export function idLabel(lang: DocLang, kind: "cpf" | "thai_id" | "passport"): string {

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Sao chép",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Hoặc thanh toán bằng thẻ",
+    "sendCardWhatsApp": "Gửi liên kết thẻ qua WhatsApp",
+    "shareCardLink": "Chia sẻ liên kết thẻ",
     "durationMinutes": "{n} phút",
     "undoBooked": "Đã đặt lịch hẹn",
     "undoMoved": "Đã dời lịch hẹn",
@@ -627,6 +630,9 @@
     "themeLight": "Sáng",
     "themeDark": "Tối",
     "pixKey": "Khóa Pix",
+    "cardLink": "Liên kết thanh toán bằng thẻ",
+    "cardLinkHint": "Trang để bệnh nhân thanh toán bằng thẻ, từ nhà cung cấp thanh toán của bạn. Phải bắt đầu bằng https://.",
+    "cardLinkInvalid": "Nhập liên kết bắt đầu bằng https://",
     "pixKeyPlaceholder": "CPF, CNPJ, email, số điện thoại hoặc khóa ngẫu nhiên",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "vd: ว.12345 (giấy phép Hội đồng Y khoa)",
@@ -2178,6 +2184,8 @@
     "controlledNeedsId": "Đơn thuốc kiểm soát đặc biệt cần CPF hoặc hộ chiếu của bệnh nhân.",
     "controlledPrintOnly": "In ra, ký tay và giao cả hai bản cho bệnh nhân.",
     "download": "Tải PDF",
+    "print": "In",
+    "openPdf": "Mở PDF",
     "save": "Lưu tài liệu",
     "pdfFailed": "Không tạo được PDF. Vui lòng thử lại.",
     "err": {
@@ -2206,6 +2214,17 @@
     "edit": "Sửa",
     "editTitle": "Sửa địa điểm",
     "dayLocation": "Địa điểm",
-    "bookingLine": "Địa điểm: {name} · {address}"
+    "bookingLine": "Địa điểm: {name} · {address}",
+    "primaryConfirm": "Các ngày làm việc chưa chọn địa điểm sẽ dùng {name}. Lịch hẹn đã đặt tại một địa điểm giữ nguyên; lịch hẹn không có địa điểm sẽ hiển thị {name}."
+  },
+  "brandCrop": {
+    "title": "Điều chỉnh ảnh",
+    "use": "Dùng ảnh này",
+    "small": "Ảnh nhỏ: bản in có thể bị mờ.",
+    "hint": "Kéo để di chuyển. Dùng thanh trượt hoặc con lăn chuột để phóng to/thu nhỏ.",
+    "hintTouch": "Kéo để di chuyển. Dùng hai ngón tay để phóng to/thu nhỏ.",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "adjust": "Điều chỉnh"
   }
 }

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copy",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Or pay by card",
+    "sendCardWhatsApp": "Send card link via WhatsApp",
+    "shareCardLink": "Share card link",
     "durationMinutes": "{n} min",
     "undoBooked": "Appointment booked",
     "undoMoved": "Appointment moved",
@@ -627,6 +630,9 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "pixKey": "Pix key",
+    "cardLink": "Card payment link",
+    "cardLinkHint": "The page where patients pay by card, from your payment provider. It must start with https://.",
+    "cardLinkInvalid": "Enter a link that starts with https://",
     "pixKeyPlaceholder": "CPF, CNPJ, email, phone or random key",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "e.g. ว.12345 (Medical Council licence)",
@@ -2208,6 +2214,8 @@
     "controlledNeedsId": "The special control prescription needs the patient's CPF or passport.",
     "controlledPrintOnly": "Print it, sign by hand and give both copies to the patient.",
     "download": "Download PDF",
+    "print": "Print",
+    "openPdf": "Open PDF",
     "save": "Save document",
     "pdfFailed": "Couldn't create the PDF. Please try again.",
     "err": {
@@ -2236,6 +2244,17 @@
     "edit": "Edit",
     "editTitle": "Edit location",
     "dayLocation": "Location",
-    "bookingLine": "Location: {name} · {address}"
+    "bookingLine": "Location: {name} · {address}",
+    "primaryConfirm": "Working days without a chosen location will use {name}. Appointments booked at a location stay there; those without one will show {name}."
+  },
+  "brandCrop": {
+    "title": "Adjust image",
+    "use": "Use image",
+    "small": "Small image: it may print blurry.",
+    "hint": "Drag to move. Use the slider or the mouse wheel to zoom.",
+    "hintTouch": "Drag to move. Pinch with two fingers to zoom.",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "adjust": "Adjust"
   }
 }

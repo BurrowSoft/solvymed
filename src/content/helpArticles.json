@@ -1678,7 +1678,7 @@
             },
             {
               "type": "p",
-              "text": "Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação."
+              "text": "Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. No site, depois de escolher a imagem, ajuste o recorte em **Ajustar imagem** (arraste e use o zoom) e clique em **Usar imagem**: o logo quadrado e a foto ficam quadrados (a foto aparece redonda) e o logo horizontal fica em 3:1. Uma imagem pequena mostra \"Imagem pequena: pode ficar sem nitidez na impressão.\", mas pode ser usada; **Ajustar** refaz o recorte enquanto você está na página. **Remover** pede confirmação."
             },
             {
               "type": "p",
@@ -1704,7 +1704,7 @@
             },
             {
               "type": "p",
-              "text": "Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation."
+              "text": "Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. On the website, after choosing the image, adjust the crop in **Adjust image** (drag and zoom) and click **Use image**: the square logo and the photo are square (the photo shows round) and the wide logo is 3:1. A small image shows \"Small image: it may print blurry.\" but can still be used; **Adjust** redoes the crop while you stay on the page. **Remove** asks for confirmation."
             },
             {
               "type": "p",

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copiar",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "O paga con tarjeta",
+    "sendCardWhatsApp": "Enviar enlace de tarjeta por WhatsApp",
+    "shareCardLink": "Compartir enlace de tarjeta",
     "durationMinutes": "{n} min",
     "undoBooked": "Cita reservada",
     "undoMoved": "Cita cambiada",
@@ -627,6 +630,9 @@
     "themeLight": "Claro",
     "themeDark": "Oscuro",
     "pixKey": "Clave Pix",
+    "cardLink": "Enlace de pago (tarjeta)",
+    "cardLinkHint": "La página donde los pacientes pagan con tarjeta, de tu proveedor de pagos. Debe empezar por https://.",
+    "cardLinkInvalid": "Introduce un enlace que empiece por https://",
     "pixKeyPlaceholder": "CPF, CNPJ, correo, teléfono o clave aleatoria",
     "fullNameTitles": "Dr., Dra., Prof.",
     "registrationPlaceholderTH": "p. ej. ว.12345 (licencia del Consejo Médico)",
@@ -2178,6 +2184,8 @@
     "controlledNeedsId": "La receta de control especial requiere el CPF o el pasaporte del paciente.",
     "controlledPrintOnly": "Imprímela, fírmala a mano y entrega las dos copias al paciente.",
     "download": "Descargar PDF",
+    "print": "Imprimir",
+    "openPdf": "Abrir PDF",
     "save": "Guardar documento",
     "pdfFailed": "No se pudo crear el PDF. Inténtalo de nuevo.",
     "err": {
@@ -2206,6 +2214,17 @@
     "edit": "Editar",
     "editTitle": "Editar lugar",
     "dayLocation": "Lugar",
-    "bookingLine": "Lugar: {name} · {address}"
+    "bookingLine": "Lugar: {name} · {address}",
+    "primaryConfirm": "Los días de atención sin lugar elegido pasarán a usar {name}. Las citas reservadas en un lugar siguen allí; las que no tienen lugar mostrarán {name}."
+  },
+  "brandCrop": {
+    "title": "Ajustar imagen",
+    "use": "Usar imagen",
+    "small": "Imagen pequeña: puede imprimirse borrosa.",
+    "hint": "Arrastra para mover. Usa el control o la rueda del ratón para acercar o alejar.",
+    "hintTouch": "Arrastra para mover. Usa dos dedos para acercar o alejar.",
+    "zoomIn": "Acercar",
+    "zoomOut": "Alejar",
+    "adjust": "Ajustar"
   }
 }

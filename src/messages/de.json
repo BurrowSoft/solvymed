@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Kopieren",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Oder mit Karte bezahlen",
+    "sendCardWhatsApp": "Kartenlink per WhatsApp senden",
+    "shareCardLink": "Kartenlink teilen",
     "durationMinutes": "{n} Min.",
     "undoBooked": "Termin gebucht",
     "undoMoved": "Termin verschoben",
@@ -627,6 +630,9 @@
     "themeLight": "Hell",
     "themeDark": "Dunkel",
     "pixKey": "Pix-Schlüssel",
+    "cardLink": "Kartenzahlungslink",
+    "cardLinkHint": "Die Seite, auf der Patienten mit Karte zahlen, von Ihrem Zahlungsanbieter. Sie muss mit https:// beginnen.",
+    "cardLinkInvalid": "Geben Sie einen Link ein, der mit https:// beginnt",
     "pixKeyPlaceholder": "CPF, CNPJ, E-Mail, Telefon oder zufälliger Schlüssel",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "z. B. ว.12345 (Zulassung des Medical Council)",
@@ -2178,6 +2184,8 @@
     "controlledNeedsId": "Das Sonderrezept erfordert die CPF oder den Reisepass des Patienten.",
     "controlledPrintOnly": "Drucken, von Hand unterschreiben und beide Exemplare dem Patienten geben.",
     "download": "PDF herunterladen",
+    "print": "Drucken",
+    "openPdf": "PDF öffnen",
     "save": "Dokument speichern",
     "pdfFailed": "Das PDF konnte nicht erstellt werden. Bitte erneut versuchen.",
     "err": {
@@ -2206,6 +2214,17 @@
     "edit": "Bearbeiten",
     "editTitle": "Standort bearbeiten",
     "dayLocation": "Standort",
-    "bookingLine": "Standort: {name} · {address}"
+    "bookingLine": "Standort: {name} · {address}",
+    "primaryConfirm": "Arbeitstage ohne gewählten Standort verwenden {name}. Termine mit Standort bleiben dort; Termine ohne Standort zeigen {name}."
+  },
+  "brandCrop": {
+    "title": "Bild anpassen",
+    "use": "Bild verwenden",
+    "small": "Kleines Bild: Der Druck kann unscharf sein.",
+    "hint": "Zum Verschieben ziehen. Mit dem Regler oder dem Mausrad zoomen.",
+    "hintTouch": "Zum Verschieben ziehen. Mit zwei Fingern zoomen.",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "adjust": "Anpassen"
   }
 }

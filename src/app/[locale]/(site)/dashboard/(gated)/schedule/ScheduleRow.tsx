@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { NewAppointmentButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, PixQrButton, PromptPayQrButton } from "./ScheduleClient";
+import { NewAppointmentButton, AppointmentStatusSelect, DeleteAppointmentButton, RescheduleButton, PixQrButton, PromptPayQrButton, CardLinkWhatsAppButton } from "./ScheduleClient";
 import { MOVABLE_STATUSES, offersPaymentQr } from "@/lib/scheduleChecks";
 import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import { SetAmountButton } from "../payments/PaymentsClient";
@@ -15,6 +15,8 @@ export type RowPracticeCtx = {
   currency: Currency;
   pixKey: string | null;
   promptPayId: string | null;
+  // 1.8.0 E: the doctor's card payment link (https), or null.
+  cardLink?: string | null;
   clinicName: string;
   clinicCity: string;
   procedures: { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
@@ -38,6 +40,7 @@ function statusBadge(status: string) {
 export async function ScheduleRow({ appt, ctx, today, doctor, city }: { appt: CalendarAppt; ctx: RowPracticeCtx; today: string; doctor?: DoctorTagInfo; city?: string }) {
   const t = await getTranslations("schedule");
   const { currency, pixKey, promptPayId, clinicName, clinicCity, procedures } = ctx;
+  const cardLink = ctx.cardLink ?? null;
   // G4: the Pix code to the patient's WhatsApp, when the practice country
   // shares payments there (registry) and the patient has a phone.
   const phone = appt.patient_id ? ctx.phones?.[appt.patient_id] : undefined;
@@ -82,10 +85,14 @@ export async function ScheduleRow({ appt, ctx, today, doctor, city }: { appt: Ca
               <span className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusBadge(appt.status)}`}>{t("blockedLabel")}</span>
             )}
             {pixKey && offersPaymentQr(appt) && (
-              <PixQrButton pixKey={pixKey} clinicName={clinicName} clinicCity={clinicCity} amount={appt.payment_amount} share={pixShare} />
+              <PixQrButton pixKey={pixKey} clinicName={clinicName} clinicCity={clinicCity} amount={appt.payment_amount} share={pixShare} cardLink={cardLink} />
+            )}
+            {/* 1.8.0 E (cf): a card link and no Pix key → the link alone on WhatsApp. */}
+            {!pixKey && cardLink && pixShare && offersPaymentQr(appt) && (
+              <CardLinkWhatsAppButton link={cardLink} share={pixShare} />
             )}
             {promptPayId && offersPaymentQr(appt) && (
-              <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} />
+              <PromptPayQrButton promptPayId={promptPayId} amount={appt.payment_amount} cardLink={cardLink} />
             )}
             {MOVABLE_STATUSES.includes(appt.status) && <RescheduleButton id={appt.id} date={appt.date} start={appt.start_time} durationMin={appt.duration_minutes ?? undefined} />}
             {/* A no-show is never moved (UX 36): book again instead (in

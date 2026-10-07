@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
@@ -71,7 +72,7 @@ export default async function PrescriptionPrintPage({
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${patient.id}`} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <PrescriptionDocument
-          template={brandedDocTemplate(baseTemplate, brand)}
+          template={{ ...brandedDocTemplate(baseTemplate, brand), locationLines: await readLocationLines(supabase, user.id) }}
           brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("title"), patient: t("patient"), date: t("date"), medications: t("medications"),

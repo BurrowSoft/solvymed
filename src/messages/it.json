@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copia",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Oppure paga con carta",
+    "sendCardWhatsApp": "Invia il link carta via WhatsApp",
+    "shareCardLink": "Condividi il link carta",
     "durationMinutes": "{n} min",
     "undoBooked": "Appuntamento prenotato",
     "undoMoved": "Appuntamento spostato",
@@ -627,6 +630,9 @@
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
     "pixKey": "Chiave Pix",
+    "cardLink": "Link di pagamento (carta)",
+    "cardLinkHint": "La pagina in cui i pazienti pagano con carta, del tuo fornitore di pagamenti. Deve iniziare con https://.",
+    "cardLinkInvalid": "Inserisci un link che inizi con https://",
     "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefono o chiave casuale",
     "fullNameTitles": "Dott., Dott.ssa, Prof.",
     "registrationPlaceholderTH": "es. ว.12345 (licenza del Consiglio medico)",
@@ -2178,6 +2184,8 @@
     "controlledNeedsId": "La ricetta a controllo speciale richiede il CPF o il passaporto del paziente.",
     "controlledPrintOnly": "Stampala, firmala a mano e consegna entrambe le copie al paziente.",
     "download": "Scarica PDF",
+    "print": "Stampa",
+    "openPdf": "Apri PDF",
     "save": "Salva documento",
     "pdfFailed": "Impossibile creare il PDF. Riprova.",
     "err": {
@@ -2206,6 +2214,17 @@
     "edit": "Modifica",
     "editTitle": "Modifica sede",
     "dayLocation": "Sede",
-    "bookingLine": "Sede: {name} · {address}"
+    "bookingLine": "Sede: {name} · {address}",
+    "primaryConfirm": "I giorni di lavoro senza una sede scelta useranno {name}. Gli appuntamenti prenotati in una sede restano lì; quelli senza sede mostreranno {name}."
+  },
+  "brandCrop": {
+    "title": "Regola immagine",
+    "use": "Usa immagine",
+    "small": "Immagine piccola: la stampa potrebbe risultare sfocata.",
+    "hint": "Trascina per spostare. Usa il cursore o la rotella del mouse per lo zoom.",
+    "hintTouch": "Trascina per spostare. Usa due dita per lo zoom.",
+    "zoomIn": "Ingrandisci",
+    "zoomOut": "Riduci",
+    "adjust": "Regola"
   }
 }
