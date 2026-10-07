@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "複製",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "或以信用卡付款",
+    "sendCardWhatsApp": "透過 WhatsApp 傳送信用卡付款連結",
+    "shareCardLink": "分享信用卡付款連結",
     "durationMinutes": "{n} 分鐘",
     "undoBooked": "已預約",
     "undoMoved": "預約已改期",
@@ -588,6 +591,13 @@
     "regenerateError": "無法產生新的邀請碼，請重試。",
     "showSetup": "顯示設定清單",
     "registration": "執業登記號碼",
+    "regCouncilSection": "專業委員會 (CRM / CRO / CRP…)",
+    "regNumber": "編號",
+    "regState": "州",
+    "regSelectState": "選擇州",
+    "regOtherCouncil": "其他委員會 (CRN, CRO, CFP…)",
+    "regCouncil": "委員會",
+    "regNumberPlaceholder": "註冊號碼",
     "registrationPlaceholder": "例如 CRM 12345/SP",
     "promptPay": "PromptPay ID",
     "promptPayHint": "與 PromptPay 綁定的手機號碼或13位身分證號 / 稅號。病患掃描預約的 QR 碼付款。",
@@ -620,6 +630,9 @@
     "themeLight": "淺色",
     "themeDark": "深色",
     "pixKey": "Pix 金鑰",
+    "cardLink": "信用卡付款連結",
+    "cardLinkHint": "病患以信用卡付款的頁面，由您的金流服務商提供。必須以 https:// 開頭。",
+    "cardLinkInvalid": "請輸入以 https:// 開頭的連結",
     "pixKeyPlaceholder": "CPF、CNPJ、電子郵件、電話或隨機金鑰",
     "fullNameTitles": "Dr.、Prof.",
     "registrationPlaceholderTH": "例如：ว.12345（醫學委員會執照）",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ 處方",
     "addDocument": "+ 文件",
     "newDocument": "新增文件",
+    "editDocument": "編輯文件",
+    "correctDocument": "更正文件",
+    "discardTitle": "要捨棄變更嗎？",
+    "discard": "捨棄",
+    "keepEditing": "繼續編輯",
     "typeLabel": "類型",
     "type": {
       "certificate": "診斷證明",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "特殊管制處方需要病患的 CPF 或護照。",
     "controlledPrintOnly": "列印後親筆簽名,並將兩份都交給病患。",
     "download": "下載 PDF",
+    "print": "列印",
+    "openPdf": "開啟 PDF",
     "save": "儲存文件",
     "pdfFailed": "無法產生 PDF,請再試一次。",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "編輯",
     "editTitle": "編輯地點",
     "dayLocation": "地點",
-    "bookingLine": "地點：{name} · {address}"
+    "bookingLine": "地點：{name} · {address}",
+    "primaryConfirm": "未選擇地點的工作日將使用 {name}。已指定地點的預約維持不變；沒有地點的預約將顯示為 {name}。"
   },
   "patientFields": {
     "title": "患者登記",
@@ -2214,5 +2235,15 @@
     "orPassport": "{id}或護照",
     "address": "地址",
     "saved": "已儲存"
+  },
+  "brandCrop": {
+    "title": "調整圖片",
+    "use": "使用圖片",
+    "small": "圖片較小：列印可能不清晰。",
+    "hint": "拖曳以移動。使用滑桿或滑鼠滾輪縮放。",
+    "hintTouch": "拖曳以移動。用兩指縮放。",
+    "zoomIn": "放大",
+    "zoomOut": "縮小",
+    "adjust": "調整"
   }
 }

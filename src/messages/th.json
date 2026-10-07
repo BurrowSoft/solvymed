@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "คัดลอก",
     "sendPixWhatsApp": "ส่ง Pix ทาง WhatsApp",
+    "orPayByCard": "หรือชำระด้วยบัตร",
+    "sendCardWhatsApp": "ส่งลิงก์ชำระด้วยบัตรทาง WhatsApp",
+    "shareCardLink": "แชร์ลิงก์ชำระด้วยบัตร",
     "durationMinutes": "{n} นาที",
     "undoBooked": "นัดหมายแล้ว",
     "undoMoved": "เลื่อนนัดแล้ว",
@@ -588,6 +591,13 @@
     "regenerateError": "ไม่สามารถสร้างรหัสใหม่ได้ กรุณาลองใหม่อีกครั้ง",
     "showSetup": "แสดงรายการตั้งค่า",
     "registration": "เลขทะเบียนวิชาชีพ",
+    "regCouncilSection": "สภาวิชาชีพ (CRM / CRO / CRP…)",
+    "regNumber": "เลขที่",
+    "regState": "จังหวัด",
+    "regSelectState": "เลือกรัฐ",
+    "regOtherCouncil": "สภาวิชาชีพอื่น (CRN, CRO, CFP…)",
+    "regCouncil": "สภาวิชาชีพ",
+    "regNumberPlaceholder": "เลขทะเบียน",
     "registrationPlaceholder": "เช่น CRM 12345/SP",
     "promptPay": "พร้อมเพย์",
     "promptPayHint": "เบอร์มือถือหรือเลขประจำตัวประชาชน / เลขผู้เสียภาษี 13 หลักที่ผูกกับพร้อมเพย์ ผู้ป่วยสแกน QR ของนัดหมายเพื่อชำระเงิน",
@@ -620,6 +630,9 @@
     "themeLight": "สว่าง",
     "themeDark": "มืด",
     "pixKey": "คีย์ Pix",
+    "cardLink": "ลิงก์ชำระด้วยบัตร",
+    "cardLinkHint": "หน้าชำระเงินด้วยบัตรจากผู้ให้บริการชำระเงินของคุณ ต้องขึ้นต้นด้วย https://",
+    "cardLinkInvalid": "กรุณาใส่ลิงก์ที่ขึ้นต้นด้วย https://",
     "pixKeyPlaceholder": "CPF, CNPJ, อีเมล, เบอร์โทร หรือคีย์สุ่ม",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "เช่น ว.12345",
@@ -1436,7 +1449,7 @@
   "dateInput": {
     "buddhistYear": "ดูเหมือนเป็นปี พ.ศ. กรุณาใช้ปี ค.ศ. (เช่น 1996)",
     "invalidBirthDate": "วันเกิดไม่ถูกต้อง กรุณาใช้วันที่ระหว่างปี ค.ศ. 1900 ถึงวันนี้",
-    "placeholder": "วว/ดด/ปปปป",
+    "placeholder": "วว/ดด/ปปปป (ค.ศ.)",
     "invalid": "วันที่ต้องอยู่ในรูปแบบ {format}"
   },
   "solvyaiSettings": {
@@ -2162,6 +2175,11 @@
     "addPrescription": "+ ใบสั่งยา",
     "addDocument": "+ เอกสาร",
     "newDocument": "สร้างเอกสาร",
+    "editDocument": "แก้ไขเอกสาร",
+    "correctDocument": "แก้ไขเอกสาร (บันทึกการแก้ไข)",
+    "discardTitle": "ทิ้งการเปลี่ยนแปลงหรือไม่",
+    "discard": "ทิ้ง",
+    "keepEditing": "แก้ไขต่อ",
     "typeLabel": "ประเภท",
     "type": {
       "certificate": "ใบรับรองแพทย์",
@@ -2201,6 +2219,8 @@
     "controlledNeedsId": "ใบสั่งยาควบคุมพิเศษต้องมีเลข CPF หรือหนังสือเดินทางของผู้ป่วย",
     "controlledPrintOnly": "พิมพ์ ลงลายมือชื่อ และมอบทั้งสองฉบับให้ผู้ป่วย",
     "download": "ดาวน์โหลด PDF",
+    "print": "พิมพ์",
+    "openPdf": "เปิด PDF",
     "save": "บันทึกเอกสาร",
     "pdfFailed": "สร้าง PDF ไม่สำเร็จ โปรดลองอีกครั้ง",
     "err": {
@@ -2229,7 +2249,8 @@
     "edit": "แก้ไข",
     "editTitle": "แก้ไขสถานที่",
     "dayLocation": "สถานที่",
-    "bookingLine": "สถานที่: {name} · {address}"
+    "bookingLine": "สถานที่: {name} · {address}",
+    "primaryConfirm": "วันทำงานที่ไม่ได้เลือกสถานที่จะใช้ {name} แทน นัดหมายที่ระบุสถานที่ไว้แล้วจะไม่เปลี่ยน ส่วนนัดที่ไม่มีสถานที่จะแสดงเป็น {name}"
   },
   "patientFields": {
     "title": "ข้อมูลผู้ป่วย",
@@ -2244,5 +2265,15 @@
     "orPassport": "{id}หรือหนังสือเดินทาง",
     "address": "ที่อยู่",
     "saved": "บันทึกแล้ว"
+  },
+  "brandCrop": {
+    "title": "ปรับรูปภาพ",
+    "use": "ใช้รูปนี้",
+    "small": "รูปมีขนาดเล็ก อาจไม่คมชัดเมื่อพิมพ์",
+    "hint": "ลากเพื่อเลื่อน ใช้แถบเลื่อนหรือล้อเมาส์เพื่อซูมเข้าหรือออก",
+    "hintTouch": "ลากเพื่อเลื่อน ใช้สองนิ้วเพื่อซูมเข้าหรือออก",
+    "zoomIn": "ซูมเข้า",
+    "zoomOut": "ซูมออก",
+    "adjust": "ปรับ"
   }
 }

@@ -2,6 +2,7 @@ import pt from "../../src/messages/pt-BR.json";
 import { formatDateLabel } from "../../src/lib/dateLabels";
 import { LOCALES, expect, expectNo12h, expectNoRawKeys, test } from "./harness";
 import { cleanup, mkDoctor, mkLinkedPatient, rest, signIn, skipTour, unambiguousDate } from "./fixtures";
+import { countryProfile } from "../../src/lib/country";
 
 // Signed-in critical paths, with throwaway accounts created for this run and
 // deleted in afterAll. Needs the fixture env (e2e/smoke/README.md).
@@ -28,7 +29,11 @@ for (const locale of LOCALES) {
   test(`sign-in routes each account (${locale.code})`, async ({ page, context, consoleErrors }) => {
     test.setTimeout(240_000);
     await signIn(page, locale.prefix, doctor.email);
-    await expect(page).toHaveURL(new RegExp(`${locale.prefix}/dashboard`));
+    // The smoke doctor's practice is Brazilian (fixtures): a language it
+    // doesn't offer (Thai) lands on the practice's own (#468; ad, 10-01).
+    const offered = countryProfile("BR").languages as readonly string[];
+    const doctorPrefix = offered.includes(locale.code) ? locale.prefix : `/${offered[0]}`;
+    await expect(page).toHaveURL(new RegExp(`${doctorPrefix}/dashboard`));
     await skipTour(page);
     await expectNoRawKeys(page);
     await expectNo12h(page);

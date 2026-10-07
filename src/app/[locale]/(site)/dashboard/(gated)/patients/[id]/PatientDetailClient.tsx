@@ -10,12 +10,14 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
+import { localDay } from "@/lib/patientDocuments";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
 import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type MedDoc } from "./MedicalDocuments";
+import { printPdf } from "@/lib/printPdf";
 import { deleteMedicalDocument } from "../medical-documents-actions";
 import { loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
@@ -192,7 +194,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
       {tab === "access" && accessLog != null && (
-        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} />
+        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} medicalDocs={medicalDocs?.list ?? null} />
       )}
     </div>
     </TimeZoneContext.Provider>
@@ -201,7 +203,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
 // Who opened this patient's record, and when (migration 111). The doctor
 // only; newest first, 50 at a time.
-function AccessLogTab({ patientId, initial, records, prescriptions, locale, documentsOn = false }: {
+function AccessLogTab({ patientId, initial, records, prescriptions, locale, documentsOn = false, medicalDocs = null }: {
   patientId: string;
   initial: AccessLogPage | "failed";
   records: MedRecord[];
@@ -209,8 +211,11 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   locale: string;
   // 1.8.0 A: documents are named by their title (cf), "(removed)" when gone.
   documentsOn?: boolean;
+  // 1.8.0 B: a document's entry names its type (cf), "(removed)" when gone.
+  medicalDocs?: { id: string; doc_type: string }[] | null;
 }) {
   const t = useTranslations("patientDetail");
+  const tMed = useTranslations("documents");
   const practiceCalendar = usePracticeCalendar();
   const [rows, setRows] = useState<AccessLogRow[]>(initial === "failed" ? [] : initial.rows);
   const [hasMore, setHasMore] = useState(initial !== "failed" && initial.hasMore);
@@ -268,6 +273,10 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
     if (r.kind === "prescription") {
       const rx = prescriptions.find((x) => x.id === r.objectRef);
       return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}` : t("accessKindPrescription");
+    }
+    if (medicalDocs && r.kind === "document") {
+      const doc = medicalDocs.find((x) => x.id === r.objectRef);
+      return `${t(accessKindLabelKey(r.kind))} · ${doc ? tMed(`type.${doc.doc_type}`) : td("removedMark")}`;
     }
     if (docTitles && (r.kind === "shared_document" || r.kind === "patient_upload" || r.kind === "patient_upload_removed")) {
       return `${t(accessKindLabelKey(r.kind))} · ${docTitles.byId.get(r.objectRef ?? "") ?? td("removedMark")}`;
@@ -1005,8 +1014,20 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const td = useTranslations("documents");
   const tpd = useTranslations("prescriptionDoc");
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
+  // Unsaved changes in the document dialog: closing asks first (ad).
+  const docDirty = useRef(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const closeDoc = () => { if (docDirty.current) setConfirmDiscard(true); else setDocDialog(null); };
+  const discardDoc = () => { docDirty.current = false; setConfirmDiscard(false); setDocDialog(null); };
   const docGroups = groupCorrections(medicalDocs?.list ?? []);
   const [pdfBusy, setPdfBusy] = useState<string | null>(null);
+  // A printed special control prescription keeps an "Abrir PDF" link (ad):
+  // where the browser couldn't print it, the PDF opens in a tab from there.
+  // Kept while the page is open; a new print replaces it.
+  const [printed, setPrinted] = useState<Record<string, string>>({});
+  const printedRef = useRef(printed);
+  printedRef.current = printed;
+  useEffect(() => () => { for (const u of Object.values(printedRef.current)) URL.revokeObjectURL(u); }, []);
 
   async function downloadDoc(doc: MedDoc) {
     setListError("");
@@ -1014,7 +1035,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     try {
       const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
-      downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${doc.created_at.slice(0, 10)}.pdf`);
+      // The special control prescription is print-only (ad, as the app):
+      // the print dialog opens on its two copies; the others download.
+      if (doc.doc_type === "controlled_prescription") {
+        const url = printPdf(r.bytes);
+        setPrinted((p) => { if (p[doc.id]) URL.revokeObjectURL(p[doc.id]); return { ...p, [doc.id]: url }; });
+      } else downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${localDay(doc.created_at)}.pdf`);
     } catch {
       setListError(td("pdfFailed"));
     } finally {
@@ -1046,10 +1072,14 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
-            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, doc.created_at.slice(0, 10))}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{td("download")}</button>
+            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
+            {printed[doc.id] && (
+              <a href={printed[doc.id]} target="_blank" rel="noopener noreferrer" data-testid="open-printed-pdf"
+                className="rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 underline hover:bg-slate-50">{td("openPdf")}</a>
+            )}
             <EntryActions
               editable={canEditEntry(doc, currentUserId) && !corrected}
               isArchived={isArchived}
@@ -1193,7 +1223,16 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       )}
 
       {medicalDocs && (
-        <Dialog open={!!docDialog} onClose={() => setDocDialog(null)} title={docDialog?.mode === "edit" ? t("editPrescriptionTitle") : docDialog?.mode === "correct" ? t("correctPrescriptionTitle") : td("newDocument")}>
+        <Dialog open={!!docDialog} onClose={closeDoc} title={docDialog?.mode === "edit" ? td("editDocument") : docDialog?.mode === "correct" ? td("correctDocument") : td("newDocument")}>
+          {confirmDiscard && (
+            <div role="alertdialog" aria-labelledby="discard-doc-title" data-testid="discard-doc" className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-4">
+              <p id="discard-doc-title" className="text-sm font-semibold text-slate-900">{td("discardTitle")}</p>
+              <div className="mt-3 flex gap-2">
+                <button type="button" onClick={discardDoc} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700">{td("discard")}</button>
+                <button type="button" autoFocus onClick={() => setConfirmDiscard(false)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">{td("keepEditing")}</button>
+              </div>
+            </div>
+          )}
           {docDialog && (
             <DocumentDialog
               key={docDialog.mode === "new" ? "new" : `${docDialog.mode}-${docDialog.doc.id}`}
@@ -1202,7 +1241,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               patientName={patientName}
               country={medicalDocs.country}
               hasPatientId={medicalDocs.hasPatientId}
-              onClose={() => setDocDialog(null)}
+              onClose={closeDoc}
+              onSaved={discardDoc}
+              onDirtyChange={(d) => { docDirty.current = d; }}
               reasonField={<ReasonField />}
             />
           )}

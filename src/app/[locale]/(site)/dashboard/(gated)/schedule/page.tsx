@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, ViewToggle, ScheduleUndoToast } from "./ScheduleClient";
 import { normalizePromptPayId } from "@/lib/promptpay";
+import { normalizeCardLink } from "@/lib/cardLink";
+import { conditionMet } from "@/lib/conditions";
 import { ScheduleRow, type RowPracticeCtx } from "./ScheduleRow";
 import { AllSchedule } from "./AllSchedule";
 import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
@@ -21,6 +23,9 @@ import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { parseView, viewRange } from "@/lib/calendarRange";
 import { patientPhones } from "@/lib/patientPhones";
 import { offersPaymentQr } from "@/lib/scheduleChecks";
+import { serverFlag } from "@/lib/myDoctors";
+import { locationNameFor, shownLocations, sortLocations, type PracticeLocation } from "@/lib/locations";
+import { PracticeLocationsProvider } from "@/components/PracticeLocations";
 
 export default async function SchedulePage({
   params,
@@ -47,6 +52,8 @@ export default async function SchedulePage({
     .maybeSingle();
 
   const isSecretary = userRoleData?.role === "secretary";
+  // 1.8.0 E: card_payment_url exists once migration 210 is live.
+  const cardLive = conditionMet("card-payment-live");
   // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = isSecretary
     ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
@@ -72,7 +79,17 @@ export default async function SchedulePage({
   const { start: rangeStart, end: rangeEnd } = viewRange(view, currentDate);
 
   // 150 (item 12): the reason a cancelled appointment shows staff.
-  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}`;
+  // 1.8.0 F (flag 'practice_locations'): the practice's locations (2+) and
+  // hours, each visit's location (migration 200's column).
+  const locationsOn = await serverFlag(supabase, "practice_locations");
+  const [clinicsRes, hoursRes] = locationsOn
+    ? await Promise.all([
+        supabase.from("clinics").select("id, name, address, city, state, phone, is_primary, position, created_at").eq("professional_id", effectiveProfId),
+        supabase.rpc("get_professional_working_hours", { p_professional_id: effectiveProfId }),
+      ])
+    : [null, null];
+  const locations: PracticeLocation[] = shownLocations(sortLocations((clinicsRes?.data ?? []) as (PracticeLocation & { position?: number; created_at?: string })[]), locationsOn);
+  const apptCols: string = `id, date, patient_id, patient_name, start_time, end_time, duration_minutes, status, type, consultation_type, payment_status, payment_amount, notes, patient_note${statusReasonLive() ? ", status_reason, status_by" : ""}${locations.length ? ", location_id" : ""}`;
   const [apptsResult, procsResult, tentativeBookings, profResult, anyApptResult] = await Promise.all([
     supabase
       .from("appointments")
@@ -88,7 +105,7 @@ export default async function SchedulePage({
     // clinic_city from migration 089. A professional reads their own row.
     isSecretary
       ? supabase.rpc("get_my_clinic")
-      : supabase.from("professionals").select("pix_key, clinic_name, clinic_city, public_invite_code").eq("id", effectiveProfId).maybeSingle(),
+      : supabase.from("professionals").select(`pix_key, clinic_name, clinic_city, public_invite_code${cardLive ? ", card_payment_url" : ""}`).eq("id", effectiveProfId).maybeSingle(),
     // Whether the practice has any appointment at all (first-run empty state).
     supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId).neq("status", "blocked"),
   ]);
@@ -110,6 +127,11 @@ export default async function SchedulePage({
       : ((await supabase.from("professionals").select("promptpay_id").eq("id", effectiveProfId).maybeSingle()).data as { promptpay_id?: string | null } | null)?.promptpay_id;
     promptPayId = normalizePromptPayId(stored);
   }
+  // 1.8.0 E: the card payment link, offered with the payment QR (migration
+  // 210: a secretary reads it from get_my_clinic's last column).
+  const cardLink = cardLive && countryProfile(practiceCountry).paymentQr
+    ? normalizeCardLink((pixSource as { card_payment_url?: string | null } | null)?.card_payment_url)
+    : null;
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
   // The doctor's public invite code, for "Share invite link" (not for a secretary).
@@ -117,17 +139,19 @@ export default async function SchedulePage({
   // No appointment ever: the first-run empty state instead of "nothing on this day".
   const noAppointmentsEver = !anyApptResult.error && (anyApptResult.count ?? 0) === 0;
 
-  const appointments = (apptsResult.data ?? []) as unknown as CalendarAppt[];
+  const appointments = ((apptsResult.data ?? []) as unknown as (CalendarAppt & { location_id?: string | null })[])
+    .map((a) => (locations.length ? { ...a, location_name: locationNameFor(a.location_id, locations) } : a));
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
   // G4: the list's phones, only where the Pix code can go to WhatsApp.
-  const phones = view === "list" && pixKey && countryProfile(practiceCountry).paymentShare
+  const phones = view === "list" && (pixKey || cardLink) && countryProfile(practiceCountry).paymentShare
     ? await patientPhones(supabase, appointments.filter(offersPaymentQr).map((a) => a.patient_id))
     : {};
-  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures, country: practiceCountry, phones };
+  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, cardLink, clinicName, clinicCity, procedures, country: practiceCountry, phones };
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 
   return (
+    <PracticeLocationsProvider value={{ list: locations, hours: (hoursRes?.data ?? null) as Record<string, { location_id?: string | null } | null> | null }}>
     <div className="p-6 lg:p-8 max-w-6xl">
       {/* Header */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -198,5 +222,6 @@ export default async function SchedulePage({
       )}
       <ScheduleUndoToast />
     </div>
+    </PracticeLocationsProvider>
   );
 }

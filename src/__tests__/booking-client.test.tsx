@@ -52,6 +52,8 @@ vi.mock("next-intl", () => ({
       "patientIds.cpf": "CPF",
       "book.cpfPlaceholder": "000.000.000-00",
       "book.durationMin": "{n} min",
+      "locations.bookingLine": "Location: {name} · {address}",
+      "locations.dayLocation": "Location",
       "consultType.consultation": "Consultation",
       "consultType.followUp": "Follow-up",
       "consultType.examReview": "Exam Review",
@@ -481,6 +483,25 @@ describe("BookingClient: items 7/10/16 + no hours / slow load", () => {
     await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
     fireEvent.click(screen.getByText("9:00"));
     expect(screen.getByTestId("chosen-time")).toHaveTextContent(/chosenTime/);
+  });
+
+  // 1.8.0 F (UX Q4): with 2+ locations, the chosen day's place. 2030-01-14 is a Monday.
+  it("shows the chosen day's location, from the public list", async () => {
+    setupMocks();
+    const locations = [
+      { id: "a", name: "Unidade Centro", address: "Rua A, 1", city: "Recife", state: "PE", is_primary: true, days: ["tue"] },
+      { id: "b", name: "Unidade Sul", address: null, city: null, state: null, is_primary: false, days: ["mon"] },
+    ];
+    render(<BookingClient {...BASE_PROPS} locations={locations} />);
+    await waitFor(() => expect(screen.getByTestId("booking-location")).toBeInTheDocument());
+    expect(screen.getByTestId("booking-location")).toHaveTextContent("Location: Unidade Sul");
+  });
+
+  it("one location: no line", async () => {
+    setupMocks();
+    render(<BookingClient {...BASE_PROPS} locations={null} />);
+    await waitFor(() => expect(screen.getByText("9:00")).toBeInTheDocument());
+    expect(screen.queryByTestId("booking-location")).toBeNull();
   });
 });
 

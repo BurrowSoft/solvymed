@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copiar",
     "sendPixWhatsApp": "Enviar Pix por WhatsApp",
+    "orPayByCard": "Ou pague com cartão",
+    "sendCardWhatsApp": "Enviar link do cartão por WhatsApp",
+    "shareCardLink": "Compartilhar link do cartão",
     "durationMinutes": "{n} min",
     "undoBooked": "Consulta marcada",
     "undoMoved": "Consulta remarcada",
@@ -588,6 +591,13 @@
     "regenerateError": "Não foi possível gerar um novo código. Tente novamente.",
     "showSetup": "Mostrar lista de configuração",
     "registration": "Registro profissional",
+    "regCouncilSection": "Conselho de Classe (CRM / CRO / CRP…)",
+    "regNumber": "Número",
+    "regState": "Estado",
+    "regSelectState": "Selecionar estado",
+    "regOtherCouncil": "Outro conselho (CRN, CRO, CFP…)",
+    "regCouncil": "Conselho",
+    "regNumberPlaceholder": "Número de registro",
     "registrationPlaceholder": "ex.: CRM 12345/SP",
     "promptPay": "ID PromptPay",
     "promptPayHint": "Seu celular ou ID nacional / fiscal de 13 dígitos vinculado ao PromptPay. Os pacientes escaneiam o QR da consulta para pagar.",
@@ -620,6 +630,9 @@
     "themeLight": "Claro",
     "themeDark": "Escuro",
     "pixKey": "Chave Pix",
+    "cardLink": "Link de pagamento (cartão)",
+    "cardLinkHint": "A página onde o paciente paga com cartão, do seu provedor de pagamentos. Deve começar com https://.",
+    "cardLinkInvalid": "Informe um link que comece com https://",
     "pixKeyPlaceholder": "CPF, CNPJ, e-mail, telefone ou chave aleatória",
     "fullNameTitles": "Dr., Dra., Prof.",
     "registrationPlaceholderTH": "ex.: ว.12345 (licença do Conselho Médico)",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ Receita",
     "addDocument": "+ Documento",
     "newDocument": "Novo documento",
+    "editDocument": "Editar documento",
+    "correctDocument": "Corrigir documento",
+    "discardTitle": "Descartar alterações?",
+    "discard": "Descartar",
+    "keepEditing": "Continuar editando",
     "typeLabel": "Tipo",
     "type": {
       "certificate": "Atestado médico",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "A receita de controle especial exige o CPF ou o passaporte do paciente.",
     "controlledPrintOnly": "Imprima, assine à mão e entregue as duas vias ao paciente.",
     "download": "Baixar PDF",
+    "print": "Imprimir",
+    "openPdf": "Abrir PDF",
     "save": "Salvar documento",
     "pdfFailed": "Não foi possível gerar o PDF. Tente novamente.",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "Editar",
     "editTitle": "Editar local",
     "dayLocation": "Local",
-    "bookingLine": "Local: {name} · {address}"
+    "bookingLine": "Local: {name} · {address}",
+    "primaryConfirm": "Os dias de atendimento sem local escolhido passam a usar {name}. Consultas marcadas com um local continuam nele; as sem local passam a mostrar {name}."
   },
   "patientFields": {
     "title": "Cadastro do paciente",
@@ -2214,5 +2235,15 @@
     "orPassport": "{id} ou passaporte",
     "address": "Endereço",
     "saved": "Salvo"
+  },
+  "brandCrop": {
+    "title": "Ajustar imagem",
+    "use": "Usar imagem",
+    "small": "Imagem pequena: pode ficar sem nitidez na impressão.",
+    "hint": "Arraste para mover. Use o controle ou a roda do mouse para aproximar ou afastar.",
+    "hintTouch": "Arraste para mover. Use dois dedos para aproximar ou afastar.",
+    "zoomIn": "Aproximar",
+    "zoomOut": "Afastar",
+    "adjust": "Ajustar"
   }
 }

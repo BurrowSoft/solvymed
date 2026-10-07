@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
 import { formatCnpj } from "@/lib/cnpj";
 import { createClient } from "@/lib/supabase/server";
@@ -104,7 +105,7 @@ export default async function ReceiptPrintPage({
       <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
       <div className="mx-auto max-w-[680px] shadow-sm ring-1 ring-slate-100">
         <ReceiptDocument
-          template={brandedDocTemplate(baseTemplate, brand)}
+          template={{ ...brandedDocTemplate(baseTemplate, brand), locationLines: await readLocationLines(supabase, profId) }}
           brand={docBrand(baseTemplate, brand)}
           labels={{
             title: t("receiptTitle"), patient: t("patient"), services: t("services"), description: t("description"), amount: t("amount"),

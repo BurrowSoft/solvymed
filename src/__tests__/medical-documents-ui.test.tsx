@@ -81,6 +81,15 @@ describe("Receitas e documentos", () => {
     expect(within(dialog).getByRole("alert")).toHaveTextContent(T.controlledNeedsId);
   });
 
+  it("the special control prescription prints (ad, as the app); the others download", () => {
+    const controlled: MedDoc = { id: "d2", doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [{ name: "Clonazepam 2 mg", dose: "", quantity: "30", posology: "" }] }, body: null, created_at: "2026-10-07T12:00:00Z" };
+    open("BR", [controlled, doc]);
+    const [first, second] = screen.getAllByTestId("medical-doc");
+    expect(within(first).getByRole("button", { name: T.print })).toBeInTheDocument();
+    expect(within(first).queryByRole("button", { name: T.download })).toBeNull();
+    expect(within(second).getByRole("button", { name: T.download })).toBeInTheDocument();
+  });
+
   it("a Thai practice offers the Thai types", () => {
     open("TH", []);
     fireEvent.click(screen.getByRole("button", { name: T.addDocument }));

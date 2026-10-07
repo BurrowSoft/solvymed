@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { readLocationLines } from "@/lib/locationLines";
 import { createClient } from "@/lib/supabase/server";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
@@ -11,7 +12,8 @@ import { countryProfile } from "@/lib/country";
 import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
-import { DOC_LANGS, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
+import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
+import { DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
 // server flag 'clinical_documents'): the doctor's certificates, declarations,
@@ -41,6 +43,9 @@ async function checked(me: NonNullable<Awaited<ReturnType<typeof doctor>>>, inpu
   if (!documentTypesFor(lookup.country).includes(input.type)) return { ok: false, code: "check_failed" };
   const lang = fixedLanguage(input.type) ?? input.lang;
   if (!(DOC_LANGS as readonly string[]).includes(lang)) return { ok: false, code: "check_failed" };
+  // Dates are typed in the Gregorian year (ad, 1.8.0); a Buddhist-era-looking
+  // one is refused, never converted (as patients' birth dates).
+  if (documentDatesLookBuddhist(input.fields)) return { ok: false, code: "buddhist_year" };
   const bad = validateFields(input.type, input.fields, input.body ?? "");
   if (bad) return { ok: false, code: `field_${bad}` };
   return { ok: true, lang };
@@ -52,6 +57,8 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
+  // A new Thai certificate: Thai or English only (ad).
+  if (!docLangsForType(input.type, DOC_LANGS).includes(c.lang)) return { ok: false, code: "check_failed" };
   const { data, error } = await me.supabase.from("medical_documents").insert({
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
@@ -68,6 +75,12 @@ export async function updateMedicalDocument(id: string, patientId: string, input
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
+  // A language the type doesn't offer only if the document already has it
+  // (an older Thai certificate keeps its language; ad).
+  if (!docLangsForType(input.type, DOC_LANGS).includes(c.lang)) {
+    const { data: cur } = await me.supabase.from("medical_documents").select("language").eq("id", id).eq("professional_id", me.uid).maybeSingle();
+    if ((cur as { language?: string } | null)?.language !== c.lang) return { ok: false, code: "check_failed" };
+  }
   const { error } = await me.supabase.from("medical_documents")
     .update({ language: c.lang, fields: input.fields, body: (input.body ?? "").trim() || null })
     .eq("id", id).eq("professional_id", me.uid);
@@ -110,6 +123,8 @@ export type DocPrintData = {
   brand: { logoUrl: string | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
   doctor: { name: string; registration: string | null; clinicName: string | null; address: string | null; city: string | null; state: string | null; phone: string | null };
   patient: { name: string; cpf: string | null; thId: string | null; passport: string | null };
+  // 1.8.0 F: the footer's location lines (2+ locations, switch on).
+  locationLines: string[];
 };
 
 // Everything the PDF needs, read only once the access is logged ('document',
@@ -138,6 +153,7 @@ export async function documentPrintData(patientId: string, documentId: string): 
     ok: true,
     data: {
       country: lookup.country,
+      locationLines: await readLocationLines(me.supabase, me.uid),
       idKind: countryProfile(lookup.country).patientId,
       template: { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, logoUrl: t.logoUrl },
       brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
