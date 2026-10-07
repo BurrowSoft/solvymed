@@ -91,9 +91,9 @@ Thai title: "เขียนเวชระเบียน"
 ---
 ## P5. Corrigir um prontuário ou receita / Correct a record or prescription
 **pt-BR**
-Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Corrigir**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido.
+Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Adicionar correção**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido.
 **en**
-In the first 24 hours you can edit or delete. After that the entry is protected: tap **Correct**, write the correction and save. The original text stays saved and visible, marked as corrected.
+In the first 24 hours you can edit or delete. After that the entry is protected: tap **Add correction**, write the correction and save. The original text stays saved and visible, marked as corrected.
 **No site:** Nas primeiras 24 horas aparecem **Editar** e **Excluir**. Depois, clique em **Adicionar correção**, escreva a correção e o motivo, e salve.
 **On the website:** In the first 24 hours you'll see **Edit** and **Delete**. After that, click **Add correction**, write the correction and the reason, and save.
 Thai title: "แก้ไขเวชระเบียนหรือใบสั่งยา"
@@ -189,6 +189,11 @@ Thai title: "เชิญผู้ป่วยเข้าแอป"
 **On the website:** {unless:migration-126} Not available on the website yet; use the app.
 **No site:** {pending:migration-126} Em **Configurações → Exportar pacientes (CSV)** (só para médicos) o site baixa a planilha com todos os pacientes, ativos e arquivados. O registro de acesso de cada paciente anota "Exportado na lista de pacientes (CSV)"; se esse registro não puder ser gravado, nada é baixado e aparece "Não foi possível registrar o acesso. Tente novamente."
 **On the website:** {pending:migration-126} In **Settings → Export patients (CSV)** (doctors only) the website downloads the spreadsheet with every patient, active and archived. Each patient's access log records "Exported in the patient list (CSV)"; if that can't be recorded, nothing is downloaded and you see "Couldn't record the access. Please try again."
+Thai title: "ส่งออกรายชื่อผู้ป่วย (CSV)"
+**th**
+**การตั้งค่า → ส่งออกรายชื่อผู้ป่วย (CSV)** ไฟล์เปิดใน Excel ได้ทันที แอปจะลบสำเนาออกจากโทรศัพท์เมื่อส่งออกครั้งถัดไป เมื่อเปิดแอปครั้งถัดไป หรือเมื่อออกจากระบบ
+**ในเว็บไซต์:** {unless:migration-126} ยังไม่มีในเว็บไซต์ ให้ใช้แอป
+**ในเว็บไซต์:** {pending:migration-126} ใน **การตั้งค่า → ส่งออกผู้ป่วย (CSV)** (เฉพาะแพทย์) เว็บไซต์จะดาวน์โหลดสเปรดชีตที่มีผู้ป่วยทุกคน ทั้งที่ใช้งานอยู่และที่เก็บถาวร บันทึกการเข้าถึงของผู้ป่วยแต่ละคนจะบันทึกว่า "ส่งออกในรายชื่อผู้ป่วย (CSV)" หากบันทึกไม่ได้ จะไม่มีการดาวน์โหลด และคุณจะเห็น "ไม่สามารถบันทึกการเข้าถึงได้ กรุณาลองอีกครั้ง"
 `open:settings`
 
 ---

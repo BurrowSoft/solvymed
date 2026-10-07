@@ -596,13 +596,13 @@
           "pt": [
             {
               "type": "p",
-              "text": "Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Corrigir**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido."
+              "text": "Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Adicionar correção**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido."
             }
           ],
           "en": [
             {
               "type": "p",
-              "text": "In the first 24 hours you can edit or delete. After that the entry is protected: tap **Correct**, write the correction and save. The original text stays saved and visible, marked as corrected."
+              "text": "In the first 24 hours you can edit or delete. After that the entry is protected: tap **Add correction**, write the correction and save. The original text stays saved and visible, marked as corrected."
             }
           ]
         },
