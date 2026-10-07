@@ -140,7 +140,10 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     });
   }
 
+  // "Make primary" asks first (cf; the app's #417): what moves, what doesn't.
+  const [confirmPrimary, setConfirmPrimary] = useState<Clinic | null>(null);
   function handleMakePrimary(id: string) {
+    setConfirmPrimary(null);
     startTransition(async () => {
       const result = await makePrimaryClinic(id);
       if (!result.error) {
@@ -311,7 +314,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                     </button>
                   )}
                   {several && !clinic.is_primary && (
-                    <button type="button" disabled={isPending} onClick={() => handleMakePrimary(clinic.id)} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800 disabled:opacity-50">
+                    <button type="button" disabled={isPending} onClick={() => setConfirmPrimary(clinic)} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800 disabled:opacity-50">
                       {tl("makePrimary")}
                     </button>
                   )}
@@ -363,6 +366,21 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
           </div>
         ))}
       </div>
+
+      {confirmPrimary && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => setConfirmPrimary(null)}>
+          <div role="alertdialog" aria-modal="true" aria-labelledby="primary-confirm-title" data-testid="primary-confirm"
+            className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h2 id="primary-confirm-title" className="text-base font-bold text-slate-900">{tl("makePrimary")}</h2>
+            <p className="mt-2 text-sm text-slate-600">{tl("primaryConfirm", { name: confirmPrimary.name })}</p>
+            <div className="mt-4 flex justify-end gap-3">
+              <button type="button" onClick={() => setConfirmPrimary(null)} className="text-sm text-slate-500 hover:text-slate-700">{t("cancel")}</button>
+              <button type="button" disabled={isPending} onClick={() => handleMakePrimary(confirmPrimary.id)}
+                className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">{tl("makePrimary")}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Pin dialog: the map (and its tiles) exists only while it's open. */}
       {pinClinic && (

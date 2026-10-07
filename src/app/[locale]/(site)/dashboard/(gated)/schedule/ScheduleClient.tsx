@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
-import { useState, useTransition, useRef, useEffect } from "react";
+import { usePracticeLocations } from "@/components/PracticeLocations";
+import { locationIdForDate } from "@/lib/locations";
+import { useCallback, useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
@@ -469,6 +471,15 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const uiLocale = useLocale();
   const practiceCalendar = usePracticeCalendar();
   const formRef = useRef<HTMLFormElement>(null);
+  // 1.8.0 F: with 2+ locations, chips preselect the chosen day's location
+  // (its hours, else the primary: what the database would pick). Only a
+  // chip the user taps is posted; otherwise the database fills it.
+  const locations = usePracticeLocations();
+  const tl = useTranslations("locations");
+  const [pickedDate, setPickedDate] = useState(defaultDate);
+  const [pickedLocation, setPickedLocation] = useState<string | null>(null);
+  const dayLocation = locationIdForDate(locations.hours, pickedDate, locations.list);
+  const onTimeChange = useCallback((d: string) => setPickedDate(d), []);
 
   // Patient suggestions come from a server search as the name is typed (a
   // clinic can have thousands of patients; loading all would be capped at
@@ -484,6 +495,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setPaymentType(first?.payment_type ?? "private");
     setRecurrence("");
     setOccurrences(String(DEFAULT_OCCURRENCES));
+    setPickedLocation(null);
     setError("");
     setOpen(true);
   }
@@ -616,8 +628,33 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           {/* Item 10: a month calendar + the time grid (DoctorTimePicker). */}
           <div>
             <FieldLabel>{t("date")} *</FieldLabel>
-            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} />
+            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} onChange={onTimeChange} />
           </div>
+
+          {locations.list.length >= 2 && (
+            <div>
+              <FieldLabel>{tl("dayLocation")}</FieldLabel>
+              <div role="radiogroup" aria-label={tl("dayLocation")} className="flex flex-wrap gap-2">
+                {locations.list.map((l) => {
+                  const on = (pickedLocation ?? dayLocation) === l.id;
+                  return (
+                    <button
+                      key={l.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      data-testid="location-chip"
+                      onClick={() => setPickedLocation(l.id)}
+                      className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${on ? "border-teal-600 bg-teal-50 text-teal-800" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      {l.name}
+                    </button>
+                  );
+                })}
+              </div>
+              {pickedLocation && pickedLocation !== dayLocation && <input type="hidden" name="location_id" value={pickedLocation} />}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
