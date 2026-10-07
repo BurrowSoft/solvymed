@@ -1623,6 +1623,7 @@
     "chooseFile": "選擇檔案",
     "template": "下載試算表範本",
     "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 位病患。可自動辨識 iClinic 與 Prontuário Verde 的匯出檔。",
+    "beYears": "佛曆年份會自動轉換為西元。",
     "reading": "正在讀取檔案…",
     "file_too_big": "檔案超過 20 MB。",
     "file_unsupported": "請上傳 CSV 或 Excel 檔(.csv、.xlsx、.xls)。",

@@ -1623,6 +1623,7 @@
     "chooseFile": "Datei auswählen",
     "template": "Tabellenvorlage herunterladen",
     "fileFormats": "CSV oder Excel (.xlsx, .xls), bis 20 MB und 20.000 Patienten. Exporte aus iClinic und Prontuário Verde werden automatisch erkannt.",
+    "beYears": "Jahre im buddhistischen Kalender werden automatisch umgerechnet.",
     "reading": "Datei wird gelesen…",
     "file_too_big": "Die Datei ist größer als 20 MB.",
     "file_unsupported": "Laden Sie eine CSV- oder Excel-Datei hoch (.csv, .xlsx, .xls).",

@@ -1623,6 +1623,7 @@
     "chooseFile": "파일 선택",
     "template": "스프레드시트 템플릿 다운로드",
     "fileFormats": "CSV 또는 Excel(.xlsx, .xls), 최대 20MB, 환자 20,000명까지. iClinic과 Prontuário Verde의 내보내기 파일은 자동으로 인식됩니다.",
+    "beYears": "불기 연도는 자동으로 서기로 변환됩니다.",
     "reading": "파일 읽는 중…",
     "file_too_big": "파일이 20MB를 넘습니다.",
     "file_unsupported": "CSV 또는 Excel 파일(.csv, .xlsx, .xls)을 올려 주세요.",

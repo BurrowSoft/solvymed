@@ -1623,6 +1623,7 @@
     "chooseFile": "Elegir archivo",
     "template": "Descargar plantilla de hoja de cálculo",
     "fileFormats": "CSV o Excel (.xlsx, .xls), hasta 20 MB y 20.000 pacientes. Las exportaciones de iClinic y Prontuário Verde se reconocen automáticamente.",
+    "beYears": "Los años de la era budista se convierten automáticamente.",
     "reading": "Leyendo el archivo…",
     "file_too_big": "El archivo supera los 20 MB.",
     "file_unsupported": "Sube un archivo CSV o Excel (.csv, .xlsx, .xls).",

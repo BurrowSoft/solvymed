@@ -1623,6 +1623,7 @@
     "chooseFile": "选择文件",
     "template": "下载电子表格模板",
     "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 名患者。可自动识别 iClinic 和 Prontuário Verde 的导出文件。",
+    "beYears": "佛历年份会自动转换为公历。",
     "reading": "正在读取文件…",
     "file_too_big": "文件超过 20 MB。",
     "file_unsupported": "请上传 CSV 或 Excel 文件(.csv、.xlsx、.xls)。",

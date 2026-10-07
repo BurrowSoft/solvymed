@@ -1623,6 +1623,7 @@
     "chooseFile": "Выбрать файл",
     "template": "Скачать шаблон таблицы",
     "fileFormats": "CSV или Excel (.xlsx, .xls), до 20 МБ и 20 000 пациентов. Выгрузки из iClinic и Prontuário Verde распознаются автоматически.",
+    "beYears": "Годы по буддийскому летоисчислению преобразуются автоматически.",
     "reading": "Чтение файла…",
     "file_too_big": "Файл больше 20 МБ.",
     "file_unsupported": "Загрузите файл CSV или Excel (.csv, .xlsx, .xls).",

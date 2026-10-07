@@ -14,6 +14,7 @@ import {
   type CommitSummary, type ImportDb, type LastImport, type PreviewRow, type ValidateSummary,
 } from "@/lib/import/api";
 import { templateCsv } from "@/lib/import/template";
+import { countryProfile } from "@/lib/country";
 import { errorListCsv, lostLeadingZero } from "@/lib/import/errorList";
 
 // Importar pacientes (UX, migrations 130/131): the file is read in the
@@ -250,6 +251,8 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
               </button>
             </div>
             <p className="text-xs text-slate-500">{t("fileFormats")}</p>
+            {/* _import_birth_date (130) converts years >= 2400 from the Buddhist era. */}
+            {countryProfile(country).calendar === "buddhist" && <p className="text-xs text-slate-500">{t("beYears")}</p>}
           </div>
         )}
 

@@ -1623,6 +1623,7 @@
     "chooseFile": "Choisir un fichier",
     "template": "Télécharger le modèle de tableur",
     "fileFormats": "CSV ou Excel (.xlsx, .xls), jusqu'à 20 Mo et 20 000 patients. Les exports d'iClinic et de Prontuário Verde sont reconnus automatiquement.",
+    "beYears": "Les années de l'ère bouddhique sont converties automatiquement.",
     "reading": "Lecture du fichier…",
     "file_too_big": "Le fichier dépasse 20 Mo.",
     "file_unsupported": "Envoyez un fichier CSV ou Excel (.csv, .xlsx, .xls).",

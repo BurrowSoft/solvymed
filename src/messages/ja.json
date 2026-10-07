@@ -1623,6 +1623,7 @@
     "chooseFile": "ファイルを選択",
     "template": "スプレッドシートのテンプレートをダウンロード",
     "fileFormats": "CSV または Excel(.xlsx、.xls)、最大 20 MB・20,000 人まで。iClinic と Prontuário Verde のエクスポートは自動で認識されます。",
+    "beYears": "仏暦の年は自動的に西暦に変換されます。",
     "reading": "ファイルを読み込み中…",
     "file_too_big": "ファイルが 20 MB を超えています。",
     "file_unsupported": "CSV または Excel ファイル(.csv、.xlsx、.xls)をアップロードしてください。",

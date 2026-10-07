@@ -1653,6 +1653,7 @@
     "chooseFile": "Choose a file",
     "template": "Download the spreadsheet template",
     "fileFormats": "CSV or Excel (.xlsx, .xls), up to 20 MB and 20,000 patients. Exports from iClinic and Prontuário Verde are recognised automatically.",
+    "beYears": "Buddhist-era years are converted automatically.",
     "reading": "Reading the file…",
     "file_too_big": "The file is larger than 20 MB.",
     "file_unsupported": "Upload a CSV or Excel file (.csv, .xlsx, .xls).",

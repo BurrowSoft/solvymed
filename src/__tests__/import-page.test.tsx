@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
+import th from "@/messages/th.json";
 import type { ImportDb } from "@/lib/import/api";
 
 // Importar pacientes, end to end in the browser against a fake database:
@@ -95,6 +96,23 @@ describe("Importar pacientes", () => {
     fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("x", "export.zip")] } });
     expect(await screen.findByText(pt.patientImport.file_zip)).toBeInTheDocument();
     expect(calls).toEqual([]);
+  });
+
+  it("Buddhist-calendar practice (TH): the page says BE years are converted (130); not in Brazil", () => {
+    const { db } = fakeDb();
+    const { unmount } = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("ปี พ.ศ. จะถูกแปลงเป็น ค.ศ. ให้อัตโนมัติ")).toBeInTheDocument();
+    unmount();
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.queryByText(pt.patientImport.beYears)).toBeNull();
   });
 
   it("CPFs Excel stripped of the leading zero: 130's count line, the row's warning, and the Excel hint on a 9/10-digit CPF still invalid", async () => {
