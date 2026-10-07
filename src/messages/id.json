@@ -2214,5 +2214,16 @@
     "orPassport": "{id} atau paspor",
     "address": "Alamat",
     "saved": "Tersimpan"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor} meminta beberapa data",
+    "cardBody": "Lengkapi pendaftaran Anda.",
+    "complete": "Lengkapi",
+    "notNow": "Nanti saja",
+    "formTitle": "Lengkapi pendaftaran Anda",
+    "hint": "Data ini masuk ke pendaftaran Anda di {doctor}.",
+    "done": "Selesai! Pendaftaran Anda sudah lengkap.",
+    "idInUse": "Nomor identitas ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik.",
+    "invalid": "Periksa: {field}."
   }
 }

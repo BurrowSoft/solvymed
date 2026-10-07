@@ -9,6 +9,8 @@ import { acceptProposal, cancelMyRequest, declineProposal, requestReschedule, ge
 import type { PatientAppointment } from "./page";
 import { OnboardingCard } from "@/components/OnboardingCard";
 import { PrivacyNoticeCard } from "@/components/PrivacyNoticeCard";
+import { CompleteRegistrationCards } from "./CompleteRegistrationCard";
+import type { SelfPrompt } from "@/lib/selfFields";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BrandLogo } from "@/components/BrandLogo";
 import { MonthCalendar } from "@/components/MonthCalendar";
@@ -410,6 +412,7 @@ export function MyAppointmentsClient({
   practices = {},
   connectedClinicName = null,
   privacyNoticeDate = null,
+  selfPrompts = [],
   doctors = null,
   canAddDoctor = false,
   docDoctors = null,
@@ -430,6 +433,8 @@ export function MyAppointmentsClient({
   connectedClinicName?: string | null;
   // "We've updated our Privacy Policy" with its date (null = don't show).
   privacyNoticeDate?: string | null;
+  // 1.8.0 C2: "{doctor} pediu alguns dados" cards (212).
+  selfPrompts?: SelfPrompt[];
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
   doctors?: MyDoctor[] | null;
   canAddDoctor?: boolean;
@@ -503,6 +508,7 @@ export function MyAppointmentsClient({
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
         {privacyNoticeDate && <PrivacyNoticeCard locale={locale} date={privacyNoticeDate} />}
+        {selfPrompts.length > 0 && <CompleteRegistrationCards prompts={selfPrompts} />}
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />
         )}

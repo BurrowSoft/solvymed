@@ -2244,5 +2244,16 @@
     "orPassport": "{id} or passport",
     "address": "Address",
     "saved": "Saved"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor} asked for a few details",
+    "cardBody": "Complete your registration.",
+    "complete": "Complete",
+    "notNow": "Not now",
+    "formTitle": "Complete your registration",
+    "hint": "These details go to your registration with {doctor}.",
+    "done": "Done! Your registration is complete.",
+    "idInUse": "This ID is already on another registration at this practice. Please contact the clinic.",
+    "invalid": "Please check: {field}."
   }
 }

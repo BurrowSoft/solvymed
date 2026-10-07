@@ -2214,5 +2214,16 @@
     "orPassport": "{id} ou passaporte",
     "address": "Endereço",
     "saved": "Salvo"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor} pediu alguns dados",
+    "cardBody": "Complete seu cadastro.",
+    "complete": "Completar",
+    "notNow": "Agora não",
+    "formTitle": "Complete seu cadastro",
+    "hint": "Esses dados vão para o seu cadastro com {doctor}.",
+    "done": "Pronto! Seu cadastro está completo.",
+    "idInUse": "Este documento já está em outro cadastro deste consultório. Fale com a clínica.",
+    "invalid": "Confira: {field}."
   }
 }

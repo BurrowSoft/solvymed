@@ -2214,5 +2214,16 @@
     "orPassport": "{id} o passaporto",
     "address": "Indirizzo",
     "saved": "Salvato"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor} ha chiesto alcuni dati",
+    "cardBody": "Completa la tua registrazione.",
+    "complete": "Completa",
+    "notNow": "Non ora",
+    "formTitle": "Completa la tua registrazione",
+    "hint": "Questi dati vanno nella tua registrazione presso {doctor}.",
+    "done": "Fatto! La tua registrazione è completa.",
+    "idInUse": "Questo documento è già in un'altra registrazione di questo studio. Contatta la clinica.",
+    "invalid": "Controlla: {field}."
   }
 }

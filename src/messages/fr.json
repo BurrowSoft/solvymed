@@ -2214,5 +2214,16 @@
     "orPassport": "{id} ou passeport",
     "address": "Adresse",
     "saved": "Enregistré"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor} a demandé quelques informations",
+    "cardBody": "Complétez votre dossier.",
+    "complete": "Compléter",
+    "notNow": "Plus tard",
+    "formTitle": "Complétez votre dossier",
+    "hint": "Ces informations vont dans votre dossier chez {doctor}.",
+    "done": "C'est fait ! Votre dossier est complet.",
+    "idInUse": "Ce document figure déjà sur un autre dossier de ce cabinet. Contactez la clinique.",
+    "invalid": "Vérifiez : {field}."
   }
 }

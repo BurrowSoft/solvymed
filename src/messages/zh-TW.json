@@ -2214,5 +2214,16 @@
     "orPassport": "{id}或護照",
     "address": "地址",
     "saved": "已儲存"
+  },
+  "selfFields": {
+    "cardTitle": "{doctor}需要您補充一些資料",
+    "cardBody": "請完成您的登記資料。",
+    "complete": "完成",
+    "notNow": "稍後再說",
+    "formTitle": "完成登記資料",
+    "hint": "這些資料將儲存到您在{doctor}的登記中。",
+    "done": "完成！您的登記資料已完整。",
+    "idInUse": "此證件號碼已在本診所的另一份登記中。請聯絡診所。",
+    "invalid": "請檢查：{field}"
   }
 }
