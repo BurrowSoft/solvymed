@@ -87,3 +87,10 @@ export function locationInitials(name: string): string {
 export function addressLine(l: Pick<PracticeLocation, "address" | "city" | "state">): string {
   return [l.address, l.city, l.state].filter((x) => x && x.trim()).join(", ");
 }
+
+// The documents' footer lines (the app's template-service): every location,
+// "Name · address, city, state · phone", with 2+ locations; else none.
+export function locationFooterLines(list: PracticeLocation[]): string[] {
+  if (list.length < 2) return [];
+  return list.map((l) => [l.name, addressLine(l), l.phone].filter((x) => x && String(x).trim()).join(" · "));
+}
