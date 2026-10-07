@@ -64,7 +64,8 @@ export function DateInput({
     ref.current?.setCustomValidity(message);
   }, [message]);
 
-  const beYear = birthDate && locale === "th" ? buddhistYearOf(iso) : null;
+  // Thai: the Buddhist-era year under every date (ad, 1.8.0; typing stays Gregorian).
+  const beYear = locale === "th" ? buddhistYearOf(iso) : null;
 
   return (
     <>

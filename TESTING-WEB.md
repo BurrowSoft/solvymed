@@ -10431,3 +10431,54 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 - The multi-practice secretaries were listed on `multi_practice_secretary` by the mobile dev (cf's OK by exact id) and unlisted after.
 - The mobile dev purged everything by exact id; WT1 verified 0 left. The purge of the #434 + #440 accounts was queued behind a running SQL suite at the time of writing.
 - The SolvyAI usage rows of purged trial doctors went with the accounts. Migration 205 will keep that spend on future purges.
+
+## Batch 14: web PRs #434–#461, incl. 1.8.0 B clinical documents, F practice locations, G brand crop and the E card link (flag off) (web tester 1 + web tester 2, 2026-10-06 → 10-07)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; listings, seeds and purges by the mobile dev (d1, then 86 after the 10-07 restart). Every row below with a Preview also ran the regression suite: "smoke: 57 passed at `<SHA>`" unless noted.
+
+**Correction to batch 13:** #434 was listed there as "still open"; it had already merged (`945ea01`, 2026-10-06 10:44Z) at the SHA WT1 tested. Its row is below.
+
+**Prod DB bug found during #446:** migration 120's clinic triggers called `_clinic_pin_marker`, which is revoked from `authenticated`, so any doctor update of address/city/lat/lng failed with 42501 (incl. "Ajustar no mapa" on www). Fixed by the mobile dev's migration 205 (GRANT); re-verified through the UI.
+
+**Smoke notes:**
+- On 10-07 the host's network dropped repeatedly (ERR_NETWORK_CHANGED, ENOTFOUND, ECONNRESET), so failed files were rerun and the rows count both runs.
+- `undo.spec`'s "undo a booking" sometimes hits its test-wide 30 s limit on slow Previews. A debug run on #454's old Preview showed booking saves correctly (row = posted date/time).
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #434 | The practice switcher re-renders when a stale choice is dropped | WT1 🟢 `46fe27f` (6014282079) + final `a93bb0c` (6014550714), smoke 57 at `a93bb0c` | `945ea01` into master |
+| #439 | 1.8.0 B: clinical documents (flag `clinical_documents`) | WT1 🟢 `bd61395` (6015733872): BR certificate (+ CID), declaration, exam request, controlled Rx (2 pages: farmácia / paciente), an English doc on the Gregorian calendar. TH ใบรับรองแพทย์ th → 2569 (no พ.ศ., shaping correct in the render), English → Gregorian. Edit within 24 h; correction after a backdate; access log; a secretary sees nothing; a non-listed doctor is unchanged. Nits handed to #453 | `e5d7c9a` into master |
+| #441 | TESTING-WEB batch 13 | n/a: docs | `fd27b7f` into master |
+| #442 | "We've updated our Privacy Policy" card (migration 204) | WT2 🟢 `a8b6df4` (PR comment): the card on Home / My appointments for older or unrecorded versions (pt-BR/en/th, th BE); Read → /privacy; × hides it for this tab only; OK records 2026-10-12 and the card never returns; a 10-12 signup sees none | `c36598f` into master |
+| #443 | `privacy-notice-live` met | WT2 🟢 `bca779a` (PR comment): Help K5 shows the website notice line (pt-BR / en; th reads the English while help-th-live is off); the app line stays hidden | `0c80396` into master |
+| #444 | Help P15 + App Map: the app's prescription sharing (pending 1.8.0) | WT2 🟢 `e1e223d` (PR comment): P15 unchanged vs www (hidden article, 404 in en / pt-BR / th) | `94a2a38` into master |
+| #445 | `app-1.7.0` + `app-361-batch` met | WT2 🟢 `dc4f3ec` (6016035742): A4 line in P6 / P8 / G5, the C2 default-week line, P13's Integrations line + the empty-list hint, en + pt-BR | `00b987a` into master |
+| #446 | 1.8.0 F part 1: practice locations in My Clinics + working hours | WT1 🟢 `c0706fb` (6016964033): 1 clinic = as before; 2 → Principal + Tornar principal; Editar saves (after 205), a failure shows "Algo deu errado"; deleting the primary is refused; Local per day saved + reloaded; flag off = as before. Open question then: a day pinned to a temporarily-primary clinic is rewritten to null | `b9adf60` into master |
+| #447 | SolvyAI in the app: plain text, the right Settings sheet, team wording | WT1 🟢 **live** on www `b4e4b08` (PR comment): bold renders as `<strong>`, "até 3 pessoas (contando convites pendentes)", Abrir tela → Settings, usage +1; throwaway deleted | `b4e4b08` into master |
+| #448 | `app-365-secretary-join` met | WT2 🟢 `aaf3521` (PR comment): Help C4 byte-identical to www in en / pt-BR / th (the join lines also need multi-practice-live, off) | `d90482f` into master |
+| #449 | 1.8.0 F part 2: Agenda locations + New Appointment chips | WT1 🟢 `94b02fd` (6018217270): Tuesday (→ B) preselects B and saves at B; tapping A saves A; a day with no choice → the primary; list, panel and a 60-min card show "· Clínica B Bairro"; a non-listed doctor shows no chips. Note: 30-min cards hide their second line (→ #456) | `a3e75da` into master |
+| #450 | One Home overlay at a time | WT2 🟢 `0a353a7` (PR comment): the privacy card waits for the tour (auto + replayed) and the SolvyAI intro, then shows; the tour isn't held; a fresh signup gets the tour with no Novidades / card | `178c005` into master |
+| #452 | 1.8.0 F part 3a: patients see each visit's location | WT1 🟢 `d46609f` (6018801331): booking link on a B day "Local: Clínica B Bairro · Rua Augusta, 500, São Paulo, SP", another day → the primary; My appointments: every visit's line matches its DB location; a non-listed doctor shows nothing. Smoke 55 + `payments.spec` 2/2 on rerun (ECONNRESET in a fixture call) | `202abd8` into master |
+| #453 | 1.8.0 B follow-ups | WT1 🟢 `2c73e14` (6040891889; all checks at `c362d55`): footer follows the document's language (UI en + pt doc → "Gestão de clínicas", UI pt + en doc → "Clinic management", TH th/en likewise); CPF 111.444.777-35; the picker shows the practice language + English first; at UTC+14 the list and file name show the viewer's day; access log "Abriu um documento · Atestado médico"; the TH certificate's place and date share one line | `08f4351` into master |
+| #454 | 1.8.0 F part 3b: every location above the documents' footer | WT1 🟢 `97a1a7e` (6040545909; app at `9f497e7`, `97a1a7e` test-only): Rx / history / receipt / certificate list A + B (primary first), 1 page; a 243-char address: the certificate PDF shrinks and cuts with "…", the HTML prints wrap (ad: keep wrapping), 1 page; a 1-clinic doctor shows no lines. Smoke 54 + `undo.spec` 3/3 | `b092be3` into master |
+| #456 | F follow-ups: short-card initials + Make primary confirm | WT1 🟢 `4629ea5` (6019191831): 30-min cards show "CB" / "CA" with the full name in the tooltip; the confirm uses cf's copy, Cancel / backdrop change nothing, confirm switches; `working_hours` unchanged through B and back to A | `d81935d` into master |
+| #457 | "Open screen" opens the right Settings section | WT2 🟢 `75b61fd` (PR comment): SolvyAI's Abrir tela for the secretary question → settings#team; Help C4 → #team, C2 → #hours | `a67c38b` into master |
+| #458 | 1.8.0 G: crop brand images before upload | WT2 🟢 `6a0e302` (PR comment): frames 1:1 / 3:1 / round; pan; slider + wheel zoom 1–4×; Usar imagem uploads, Cancel uploads nothing; low-res warning; Ajustar reopens the original; slider names en / pt / th; Help C11; storage purged | `7670eba` into master |
+| #461 | 1.8.0 E: card payment link, **flag off** | WT1 🟢 `6fb153f` (6041434325): no card field in Settings → Clinic (BR / TH), Pix and PromptPay saves work; the Pix dialog + WhatsApp text are the old single line (read from the link, never sent); PromptPay dialog unchanged; /privacy §3.1 en + pt unchanged. The flag-on row comes after migration 210 | `31078f6` into master |
+
+**Still open, so not in this batch:**
+- #459 (B document signatures): WT1 🟢 at `c88cd51` (6041775138), smoke 57. Results:
+  - "CRM 12345/SP", "CRM 12345" with no state, "CRM 999/RJ" as typed;
+  - TH "…เลขที่ ว.12345" / "Medical licence no. 12345";
+  - no title added; the signature line is drawn;
+  - French "São Paulo, le …" / "Le …";
+  - the controlled Rx is unchanged.
+  - Follow-up (ad): the TH certificate's language picker offers only th + en.
+- #451, #455, #460, #462.
+
+**Fixtures:**
+- Throwaway accounts (`e2e-test-opus-…`, `e2e-smoke-…`).
+- Listings on `practice_locations` / `clinical_documents` were made by the mobile dev, with UX & PM's OK by exact id, and unlisted after.
+- Clinical rows were purged first (post-094 order); WT1 verified 0 left for the #434/#440, #439, #446, and #449–#454 sets.
+- The #453/#459/#461 set (2 doctors) was handed to the mobile dev for purge after the #459 row.
+- Two `e2e-smoke` doctors orphaned by network drops were deleted by WT1 (0 clinical rows, verified 404).

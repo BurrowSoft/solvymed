@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "نسخ",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "أو ادفع بالبطاقة",
+    "sendCardWhatsApp": "إرسال رابط البطاقة عبر واتساب",
+    "shareCardLink": "مشاركة رابط البطاقة",
     "durationMinutes": "{n} دقيقة",
     "undoBooked": "تم حجز الموعد",
     "undoMoved": "تم نقل الموعد",
@@ -588,6 +591,13 @@
     "regenerateError": "تعذّر إنشاء رمز جديد. يرجى المحاولة مرة أخرى.",
     "showSetup": "عرض قائمة الإعداد",
     "registration": "رقم التسجيل المهني",
+    "regCouncilSection": "المجلس المهني (CRM / CRO / CRP…)",
+    "regNumber": "الرقم",
+    "regState": "الولاية",
+    "regSelectState": "اختر الولاية",
+    "regOtherCouncil": "مجلس آخر (CRN, CRO, CFP…)",
+    "regCouncil": "المجلس",
+    "regNumberPlaceholder": "رقم التسجيل",
     "registrationPlaceholder": "مثال: CRM 12345/SP",
     "promptPay": "معرّف PromptPay",
     "promptPayHint": "رقم هاتفك المحمول أو رقم الهوية الوطنية / الضريبية المكوّن من 13 رقمًا المرتبط بـ PromptPay. يمسح المرضى رمز QR الخاص بالموعد للدفع.",
@@ -620,6 +630,9 @@
     "themeLight": "فاتح",
     "themeDark": "داكن",
     "pixKey": "مفتاح Pix",
+    "cardLink": "رابط الدفع بالبطاقة",
+    "cardLinkHint": "الصفحة التي يدفع فيها المرضى بالبطاقة، من مزوّد الدفع لديك. يجب أن يبدأ بـ https://.",
+    "cardLinkInvalid": "أدخل رابطًا يبدأ بـ https://",
     "pixKeyPlaceholder": "CPF أو CNPJ أو البريد الإلكتروني أو الهاتف أو مفتاح عشوائي",
     "fullNameTitles": "Dr.، Prof.",
     "registrationPlaceholderTH": "مثال: ว.12345 (ترخيص المجلس الطبي)",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ وصفة",
     "addDocument": "+ مستند",
     "newDocument": "مستند جديد",
+    "editDocument": "تعديل المستند",
+    "correctDocument": "تصحيح المستند",
+    "discardTitle": "تجاهل التغييرات؟",
+    "discard": "تجاهل",
+    "keepEditing": "متابعة التعديل",
     "typeLabel": "النوع",
     "type": {
       "certificate": "شهادة طبية",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "تتطلب وصفة الرقابة الخاصة رقم CPF أو جواز سفر المريض.",
     "controlledPrintOnly": "اطبعها ووقّعها بخط اليد وأعطِ النسختين للمريض.",
     "download": "تنزيل PDF",
+    "print": "طباعة",
+    "openPdf": "فتح PDF",
     "save": "حفظ المستند",
     "pdfFailed": "تعذّر إنشاء ملف PDF. حاول مرة أخرى.",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "تعديل",
     "editTitle": "تعديل المكان",
     "dayLocation": "المكان",
-    "bookingLine": "المكان: {name} · {address}"
+    "bookingLine": "المكان: {name} · {address}",
+    "primaryConfirm": "ستستخدم أيام العمل التي لم يُختر لها مكان {name}. تبقى المواعيد المحجوزة في مكان محدد فيه؛ أما التي بلا مكان فستظهر {name}."
   },
   "patientFields": {
     "title": "تسجيل المريض",
@@ -2225,5 +2246,15 @@
     "done": "تم! اكتمل تسجيلك.",
     "idInUse": "هذه الوثيقة موجودة بالفعل في سجل آخر لدى هذه العيادة. يُرجى التواصل مع العيادة.",
     "invalid": "يُرجى التحقق من: {field}."
+  },
+  "brandCrop": {
+    "title": "ضبط الصورة",
+    "use": "استخدام الصورة",
+    "small": "صورة صغيرة: قد تُطبع غير واضحة.",
+    "hint": "اسحب للتحريك. استخدم شريط التمرير أو عجلة الفأرة للتكبير والتصغير.",
+    "hintTouch": "اسحب للتحريك. استخدم إصبعين للتكبير والتصغير.",
+    "zoomIn": "تكبير",
+    "zoomOut": "تصغير",
+    "adjust": "ضبط"
   }
 }

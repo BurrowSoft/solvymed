@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname, useParams } from "next/navigation";
-import { useState, useTransition, useRef, useEffect } from "react";
+import { usePracticeLocations } from "@/components/PracticeLocations";
+import { locationIdForDate } from "@/lib/locations";
+import { useCallback, useState, useTransition, useRef, useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { formatDateLabel } from "@/lib/dateLabels";
 import { DateInput } from "@/components/DateInput";
@@ -10,7 +12,7 @@ import { createAppointment, updateAppointmentStatus, deleteAppointment, blockTim
 import { UNDO_EVENT, offerUndo, type UndoToken } from "@/lib/scheduleUndo";
 import { generatePixString, pixQrDataUrl } from "@/lib/pix";
 import { generatePromptPayString } from "@/lib/promptpay";
-import { pixPatientMessage, whatsappLink } from "@/lib/whatsappLink";
+import { cardPatientMessage, pixPatientMessage, whatsappLink } from "@/lib/whatsappLink";
 import { toLocalDateString } from "@/lib/slots";
 import { dropQueryParam } from "@/lib/dropQueryParam";
 import { DEFAULT_OCCURRENCES, MAX_OCCURRENCES, MIN_OCCURRENCES } from "@/lib/recurrence";
@@ -469,6 +471,15 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const uiLocale = useLocale();
   const practiceCalendar = usePracticeCalendar();
   const formRef = useRef<HTMLFormElement>(null);
+  // 1.8.0 F: with 2+ locations, chips preselect the chosen day's location
+  // (its hours, else the primary: what the database would pick). Only a
+  // chip the user taps is posted; otherwise the database fills it.
+  const locations = usePracticeLocations();
+  const tl = useTranslations("locations");
+  const [pickedDate, setPickedDate] = useState(defaultDate);
+  const [pickedLocation, setPickedLocation] = useState<string | null>(null);
+  const dayLocation = locationIdForDate(locations.hours, pickedDate, locations.list);
+  const onTimeChange = useCallback((d: string) => setPickedDate(d), []);
 
   // Patient suggestions come from a server search as the name is typed (a
   // clinic can have thousands of patients; loading all would be capped at
@@ -484,6 +495,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setPaymentType(first?.payment_type ?? "private");
     setRecurrence("");
     setOccurrences(String(DEFAULT_OCCURRENCES));
+    setPickedLocation(null);
     setError("");
     setOpen(true);
   }
@@ -616,8 +628,33 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           {/* Item 10: a month calendar + the time grid (DoctorTimePicker). */}
           <div>
             <FieldLabel>{t("date")} *</FieldLabel>
-            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} />
+            <DoctorTimePicker defaultDate={defaultDate} defaultStart="09:00" duration={Number(duration) || 30} onChange={onTimeChange} />
           </div>
+
+          {locations.list.length >= 2 && (
+            <div>
+              <FieldLabel>{tl("dayLocation")}</FieldLabel>
+              <div role="radiogroup" aria-label={tl("dayLocation")} className="flex flex-wrap gap-2">
+                {locations.list.map((l) => {
+                  const on = (pickedLocation ?? dayLocation) === l.id;
+                  return (
+                    <button
+                      key={l.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={on}
+                      data-testid="location-chip"
+                      onClick={() => setPickedLocation(l.id)}
+                      className={`rounded-full border px-3 py-1.5 text-sm font-semibold transition ${on ? "border-teal-600 bg-teal-50 text-teal-800" : "border-slate-200 text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      {l.name}
+                    </button>
+                  );
+                })}
+              </div>
+              {pickedLocation && pickedLocation !== dayLocation && <input type="hidden" name="location_id" value={pickedLocation} />}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -767,6 +804,7 @@ export function PixQrButton({
   clinicCity,
   amount,
   share = null,
+  cardLink = null,
 }: {
   pixKey: string;
   clinicName: string;
@@ -776,6 +814,8 @@ export function PixQrButton({
   // visit, when the practice country shares payments on WhatsApp and the
   // patient has a phone (ScheduleRow decides); null = no button.
   share?: { phone: string; country: string; date: string; time: string } | null;
+  // 1.8.0 E: the doctor's card payment link, offered under the code.
+  cardLink?: string | null;
 }) {
   const t = useTranslations("schedule");
   // "QR Code Pix" in Portuguese, "Pix QR code" elsewhere (UX).
@@ -784,7 +824,7 @@ export function PixQrButton({
   const pixStr = generatePixString(pixKey, clinicName, clinicCity, amount);
   // The clinic's own WhatsApp opens with the app's pt-BR message; nothing
   // is sent until they press send there.
-  const waUrl = share ? whatsappLink(share.phone, share.country, pixPatientMessage(share.date, share.time, pixStr)) : null;
+  const waUrl = share ? whatsappLink(share.phone, share.country, pixPatientMessage(share.date, share.time, pixStr, cardLink)) : null;
   // Built in the page, only while the dialog is open (one per appointment row).
   const qrUrl = open ? pixQrDataUrl(pixStr) : "";
 
@@ -836,6 +876,7 @@ export function PixQrButton({
               {t("sendPixWhatsApp")}
             </a>
           )}
+          {cardLink && <CardLinkBox link={cardLink} />}
         </div>
       </Dialog>
     </>
@@ -845,7 +886,7 @@ export function PixQrButton({
 // PromptPay (Thailand's payment QR) for a Thai practice, with the
 // appointment's amount in THB. Same QR rendering as Pix (built in the page,
 // never sent to a QR service).
-export function PromptPayQrButton({ promptPayId, amount }: { promptPayId: string; amount?: number }) {
+export function PromptPayQrButton({ promptPayId, amount, cardLink = null }: { promptPayId: string; amount?: number; cardLink?: string | null }) {
   const t = useTranslations("schedule");
   const [open, setOpen] = useState(false);
   const payload = generatePromptPayString(promptPayId, amount);
@@ -873,8 +914,51 @@ export function PromptPayQrButton({ promptPayId, amount }: { promptPayId: string
           <img src={qrUrl} alt={t("promptPayTitle")} className="max-w-full rounded-xl border border-slate-100 [image-rendering:pixelated]" />
           {amount != null && amount > 0 && <p className="text-lg font-bold text-slate-900">{formatMoney(amount, "THB")}</p>}
           <p className="text-center text-sm text-slate-500">{t("promptPayScan")}</p>
+          {cardLink && <CardLinkBox link={cardLink} />}
         </div>
       </Dialog>
     </>
+  );
+}
+
+// 1.8.0 E (cf): under the payment QR, "Or pay by card" with the link, Copy
+// and Share (the browser's share sheet, where it has one).
+function CardLinkBox({ link }: { link: string }) {
+  const t = useTranslations("schedule");
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
+  return (
+    <div className="w-full border-t border-slate-100 pt-3" data-testid="card-link">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-1.5">{t("orPayByCard")}</p>
+      <a href={link} target="_blank" rel="noopener noreferrer" className="block break-all text-sm text-teal-700 underline">{link}</a>
+      <div className="mt-2 flex gap-2">
+        <button type="button" onClick={() => { navigator.clipboard.writeText(link).catch(() => {}); }}
+          className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+          {t("pixCopy")}
+        </button>
+        {canShare && (
+          <button type="button" onClick={() => { navigator.share({ url: link }).catch(() => {}); }}
+            className="rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 transition">
+            {t("shareCardLink")}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// 1.8.0 E (cf): a Brazilian practice with a card link but no Pix key sends
+// the link alone to the patient's WhatsApp (nothing is sent until they press
+// send there).
+export function CardLinkWhatsAppButton({ link, share }: { link: string; share: { phone: string; country: string; date: string; time: string } }) {
+  const t = useTranslations("schedule");
+  const url = whatsappLink(share.phone, share.country, cardPatientMessage(share.date, share.time, link));
+  if (!url) return null;
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" title={t("sendCardWhatsApp")} aria-label={t("sendCardWhatsApp")}
+      data-testid="send-card-whatsapp" className="rounded-lg p-1.5 text-teal-500 hover:bg-teal-50 transition">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4" aria-hidden="true">
+        <rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M2.5 9.5h19M6 15h4"/>
+      </svg>
+    </a>
   );
 }

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copy",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Or pay by card",
+    "sendCardWhatsApp": "Send card link via WhatsApp",
+    "shareCardLink": "Share card link",
     "durationMinutes": "{n} min",
     "undoBooked": "Appointment booked",
     "undoMoved": "Appointment moved",
@@ -588,6 +591,13 @@
     "regenerateError": "Couldn't generate a new code. Please try again.",
     "showSetup": "Show setup checklist",
     "registration": "Professional registration",
+    "regCouncilSection": "Professional council (CRM / CRO / CRP…)",
+    "regNumber": "Number",
+    "regState": "State",
+    "regSelectState": "Select state",
+    "regOtherCouncil": "Other council (CRN, CRO, CFP…)",
+    "regCouncil": "Council",
+    "regNumberPlaceholder": "Registration number",
     "registrationPlaceholder": "e.g. CRM 12345/SP",
     "promptPay": "PromptPay ID",
     "promptPayHint": "Your mobile number or 13-digit national ID / tax ID linked to PromptPay. Patients scan the appointment's QR to pay.",
@@ -620,6 +630,9 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "pixKey": "Pix key",
+    "cardLink": "Card payment link",
+    "cardLinkHint": "The page where patients pay by card, from your payment provider. It must start with https://.",
+    "cardLinkInvalid": "Enter a link that starts with https://",
     "pixKeyPlaceholder": "CPF, CNPJ, email, phone or random key",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "e.g. ว.12345 (Medical Council licence)",
@@ -2162,6 +2175,11 @@
     "addPrescription": "+ Prescription",
     "addDocument": "+ Document",
     "newDocument": "New document",
+    "editDocument": "Edit document",
+    "correctDocument": "Correct document",
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing",
     "typeLabel": "Type",
     "type": {
       "certificate": "Medical certificate",
@@ -2201,6 +2219,8 @@
     "controlledNeedsId": "The special control prescription needs the patient's CPF or passport.",
     "controlledPrintOnly": "Print it, sign by hand and give both copies to the patient.",
     "download": "Download PDF",
+    "print": "Print",
+    "openPdf": "Open PDF",
     "save": "Save document",
     "pdfFailed": "Couldn't create the PDF. Please try again.",
     "err": {
@@ -2229,7 +2249,8 @@
     "edit": "Edit",
     "editTitle": "Edit location",
     "dayLocation": "Location",
-    "bookingLine": "Location: {name} · {address}"
+    "bookingLine": "Location: {name} · {address}",
+    "primaryConfirm": "Working days without a chosen location will use {name}. Appointments booked at a location stay there; those without one will show {name}."
   },
   "patientFields": {
     "title": "Patient registration",
@@ -2255,5 +2276,15 @@
     "done": "Done! Your registration is complete.",
     "idInUse": "This ID is already on another registration at this practice. Please contact the clinic.",
     "invalid": "Please check: {field}."
+  },
+  "brandCrop": {
+    "title": "Adjust image",
+    "use": "Use image",
+    "small": "Small image: it may print blurry.",
+    "hint": "Drag to move. Use the slider or the mouse wheel to zoom.",
+    "hintTouch": "Drag to move. Pinch with two fingers to zoom.",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "adjust": "Adjust"
   }
 }

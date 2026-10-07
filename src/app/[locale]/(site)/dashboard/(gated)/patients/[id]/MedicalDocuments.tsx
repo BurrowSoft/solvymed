@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, documentTypesFor, fixedLanguage, idLabel, prefilledBody, validateFields,
+  DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -11,6 +11,8 @@ import { correctMedicalDocument, createMedicalDocument, documentPrintData, updat
 import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
+import { DateInput } from "@/components/DateInput";
+import { crmIssuer } from "@/lib/registration";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -56,18 +58,31 @@ export type DocDialogState =
 const input = "w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 const label = "mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500";
 
-export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, reasonField }: {
+// The rest period's last day: start + days − 1 (YYYY-MM-DD, UTC arithmetic).
+export function restEnd(start: string, days: number): string {
+  const d = new Date(`${start}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + Math.max(1, Math.floor(days)) - 1);
+  return d.toISOString().slice(0, 10);
+}
+
+export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onDirtyChange, reasonField }: {
   state: DocDialogState;
   patientId: string;
   patientName: string;
   country: string;
   // Whether the patient has a CPF / passport (the controlled prescription needs one).
   hasPatientId: boolean;
+  // Cancel: the host asks "Descartar alterações?" when something changed.
   onClose: () => void;
+  // After a save (nothing to discard).
+  onSaved?: () => void;
+  // Whether anything changed since the dialog opened (12's #413 row, ad).
+  onDirtyChange?: (dirty: boolean) => void;
   reasonField: React.ReactNode;
 }) {
   const t = useTranslations("documents");
   const tp = useTranslations("patientDetail");
+  const tdate = useTranslations("dateInput");
   const uiLocale = useLocale();
   const existing = state.mode !== "new" ? state.doc : null;
   const [type, setType] = useState<MedicalDocType | null>(existing?.doc_type ?? (state.mode === "new" ? state.type : null));
@@ -82,6 +97,19 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const types = documentTypesFor(country);
   const effLang = (type && fixedLanguage(type)) ?? lang;
 
+  // Changed since it opened: the host confirms before closing, and leaving
+  // the page asks too (the browser's own prompt).
+  const snapshot = JSON.stringify({ type, lang, fields, body });
+  const opened = useRef(snapshot);
+  const dirty = snapshot !== opened.current;
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
   const setF = (patch: Partial<DocFields>) => {
     setFields((f) => {
       const next = { ...(f as object), ...patch } as DocFields;
@@ -89,12 +117,25 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       return next;
     });
   };
+  // The rest period (Thai certificate): changing the days or the start sets
+  // the end to start + days − 1, as the app (12's #413 row); the end stays
+  // editable.
+  const setRest = (patch: Partial<NonNullable<ThCertificateFields["rest"]>>) => {
+    const r = { ...((fields as ThCertificateFields).rest ?? { days: 1, start: today(), end: today() }), ...patch };
+    if (("days" in patch || "start" in patch) && r.days >= 1 && /^\d{4}-\d{2}-\d{2}$/.test(r.start)) r.end = restEnd(r.start, r.days);
+    setF({ rest: r } as Partial<ThCertificateFields>);
+  };
   const pick = (ty: MedicalDocType) => {
     setType(ty);
     const f = emptyFields(ty);
     setFields(f);
     setBodyTouched(false);
-    setBody(prefilledBody(ty, f, fixedLanguage(ty) ?? lang, patientName));
+    // A type that doesn't offer the chosen language (the Thai certificate:
+    // th / en only) starts in its first one.
+    const offered = docLangsForType(ty, docLangsFor(country));
+    const l = offered.includes(lang) ? lang : offered[0];
+    if (l !== lang) setLang(l);
+    setBody(prefilledBody(ty, f, fixedLanguage(ty) ?? l, patientName));
   };
   const changeLang = (l: DocLang) => {
     setLang(l);
@@ -115,10 +156,10 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
         : await correctMedicalDocument(state.doc.id, patientId, { ...payload, reason });
       if (!r.ok) {
         const k = r.code.startsWith("field_") ? r.code.slice(6) : null;
-        setError(k ? t(`err.${k}` as "err.date") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));
+        setError(k ? t(`err.${k}` as "err.date") : r.code === "buddhist_year" ? tdate("buddhistYear") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));
         return;
       }
-      onClose();
+      (onSaved ?? onClose)();
     });
   }
 
@@ -147,7 +188,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
             <label className="block">
               <span className={label}>{t("language")}</span>
               <select value={lang} onChange={(e) => changeLang(e.target.value as DocLang)} className={`${input} bg-white`}>
-                {DOC_LANGS.map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
+                {docLangsForType(type, docLangsFor(country), existing?.language).map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
               </select>
               <span className="mt-1 block text-xs text-slate-500">{t("languageHint")}</span>
             </label>
@@ -164,7 +205,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
                 ))}
               </div>
               <label className="block"><span className={label}>{t("visitDate")}</span>
-                <input type="date" value={(f!.date as string) ?? ""} onChange={(e) => setF({ date: e.target.value } as Partial<CertificateFields>)} className={input} />
+                <DateInput value={(f!.date as string) ?? ""} onChange={(v) => setF({ date: v } as Partial<CertificateFields>)} className={input} />
               </label>
               {f!.variant === "absence" ? (
                 <div className="grid grid-cols-2 gap-3">
@@ -172,7 +213,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
                     <input type="number" min={1} max={365} value={(f!.days as number) ?? 1} onChange={(e) => setF({ days: Number(e.target.value) } as Partial<CertificateFields>)} className={input} />
                   </label>
                   <label className="block"><span className={label}>{t("startDate")}</span>
-                    <input type="date" value={(f!.start as string) ?? ""} onChange={(e) => setF({ start: e.target.value } as Partial<CertificateFields>)} className={input} />
+                    <DateInput value={(f!.start as string) ?? ""} onChange={(v) => setF({ start: v } as Partial<CertificateFields>)} className={input} />
                   </label>
                 </div>
               ) : (
@@ -200,7 +241,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           {type === "declaration" && (
             <>
               <label className="block"><span className={label}>{t("visitDate")}</span>
-                <input type="date" value={(f!.date as string) ?? ""} onChange={(e) => setF({ date: e.target.value } as Partial<DeclarationFields>)} className={input} />
+                <DateInput value={(f!.date as string) ?? ""} onChange={(v) => setF({ date: v } as Partial<DeclarationFields>)} className={input} />
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <label className="block"><span className={label}>{t("timeFrom")}</span>
@@ -256,7 +297,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           {type === "th_certificate" && (
             <>
               <label className="block"><span className={label}>{t("examDate")}</span>
-                <input type="date" value={(f!.examDate as string) ?? ""} onChange={(e) => setF({ examDate: e.target.value } as Partial<ThCertificateFields>)} className={input} />
+                <DateInput value={(f!.examDate as string) ?? ""} onChange={(v) => setF({ examDate: v } as Partial<ThCertificateFields>)} className={input} />
               </label>
               <label className="flex items-center gap-2 text-sm text-slate-700">
                 <input type="checkbox" checked={!!f!.rest} onChange={(e) => setF({ rest: e.target.checked ? { days: 1, start: today(), end: today() } : undefined } as Partial<ThCertificateFields>)} className="h-4 w-4 accent-teal-600" />
@@ -266,8 +307,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
                 <div className="grid grid-cols-3 gap-3">
                   {(["days", "start", "end"] as const).map((k) => (
                     <label key={k} className="block"><span className={label}>{t(k === "days" ? "days" : k === "start" ? "startDate" : "endDate")}</span>
-                      <input type={k === "days" ? "number" : "date"} min={k === "days" ? 1 : undefined} value={String((f!.rest as Record<string, unknown>)[k] ?? "")}
-                        onChange={(e) => setF({ rest: { ...(f!.rest as object), [k]: k === "days" ? Number(e.target.value) : e.target.value } } as Partial<ThCertificateFields>)} className={input} />
+                      {k === "days" ? (
+                        <input type="number" min={1} value={String((f!.rest as Record<string, unknown>).days ?? "")}
+                          onChange={(e) => setRest({ days: Number(e.target.value) })} className={input} />
+                      ) : (
+                        <DateInput value={String((f!.rest as Record<string, unknown>)[k] ?? "")} onChange={(v) => setRest({ [k]: v })} className={input} />
+                      )}
                     </label>
                   ))}
                 </div>
@@ -320,7 +365,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
   const d = r.data;
   const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
   const brand = d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null;
-  const idValue = d.idKind === "cpf" ? d.patient.cpf : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
+  const idValue = d.idKind === "cpf" ? (d.patient.cpf ? formatCpfDigits(d.patient.cpf) : null) : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
   const idKind = d.idKind === "thai_id" && !d.patient.thId && d.patient.passport ? "passport" : d.idKind;
   const created = new Date(doc.created_at);
   const issuedIso = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}-${String(created.getDate()).padStart(2, "0")}`;
@@ -329,12 +374,13 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     const [y, m, dd] = issuedIso.split("-");
     const bytes = await renderControlledPrescriptionPdf({
       doctor: {
-        name: d.doctor.name, crm: d.doctor.registration ?? "", uf: d.doctor.state ?? "", address: d.doctor.address ?? "",
+        // The CRM number and its UF from the saved line ("CRM 12345/SP"), as the app.
+        name: d.doctor.name, ...crmIssuer(d.doctor.registration, d.doctor.state), address: d.doctor.address ?? "",
         city: d.doctor.city ?? "", cityUf: d.doctor.state ?? "", phone: d.doctor.phone,
       },
       patientName: d.patient.name,
       // The CPF, else the passport, else "não possui" (B.4).
-      patientIdValue: d.patient.cpf || (d.patient.passport ? `${d.patient.passport}` : "não possui"),
+      patientIdValue: d.patient.cpf ? formatCpfDigits(d.patient.cpf) : (d.patient.passport ? `${d.patient.passport}` : "não possui"),
       items: f.items ?? [],
       date: `${dd}/${m}/${y}`,
       template: { primaryColor: d.template.primaryColor, logoBytes },
@@ -343,14 +389,18 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     return { ok: true, bytes };
   }
   const bytes = await renderMedicalDocumentPdf({
+    locationLines: d.locationLines,
     type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
     issued: issuedIso, city: d.doctor.city ?? "",
     place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),
     patientName: d.patient.name,
     patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
     template: { primaryColor: d.template.primaryColor, footerText: d.template.footerText, logoBytes },
-    brand, signerName: d.doctor.name, signerRegistration: d.doctor.registration,
-    footer: words.footer, unsignedLine: words.unsignedCopy,
+    // The name exactly as saved (no title prefix); the registration formatted (cf).
+    brand, signerName: d.doctor.name,
+    signerRegistration: registrationLine(d.country, doc.language, d.doctor.registration, d.doctor.state),
+    licenceNo: d.doctor.registration,
+    footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
   }, fonts);
   return { ok: true, bytes };
 }

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Salin",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Atau bayar dengan kartu",
+    "sendCardWhatsApp": "Kirim tautan kartu lewat WhatsApp",
+    "shareCardLink": "Bagikan tautan kartu",
     "durationMinutes": "{n} menit",
     "undoBooked": "Janji temu dibuat",
     "undoMoved": "Janji temu dipindahkan",
@@ -588,6 +591,13 @@
     "regenerateError": "Tidak dapat membuat kode baru. Silakan coba lagi.",
     "showSetup": "Tampilkan daftar penyiapan",
     "registration": "Nomor registrasi profesi",
+    "regCouncilSection": "Dewan profesi (CRM / CRO / CRP…)",
+    "regNumber": "Nomor",
+    "regState": "Negara bagian",
+    "regSelectState": "Pilih negara bagian",
+    "regOtherCouncil": "Dewan lain (CRN, CRO, CFP…)",
+    "regCouncil": "Dewan",
+    "regNumberPlaceholder": "Nomor registrasi",
     "registrationPlaceholder": "mis. CRM 12345/SP",
     "promptPay": "ID PromptPay",
     "promptPayHint": "Nomor ponsel atau ID nasional / NPWP 13 digit yang terhubung ke PromptPay. Pasien memindai QR janji temu untuk membayar.",
@@ -620,6 +630,9 @@
     "themeLight": "Terang",
     "themeDark": "Gelap",
     "pixKey": "Kunci Pix",
+    "cardLink": "Tautan pembayaran kartu",
+    "cardLinkHint": "Halaman tempat pasien membayar dengan kartu, dari penyedia pembayaran Anda. Harus diawali https://.",
+    "cardLinkInvalid": "Masukkan tautan yang diawali https://",
     "pixKeyPlaceholder": "CPF, CNPJ, email, telepon, atau kunci acak",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "mis. ว.12345 (izin Dewan Medis)",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ Resep",
     "addDocument": "+ Dokumen",
     "newDocument": "Dokumen baru",
+    "editDocument": "Edit dokumen",
+    "correctDocument": "Koreksi dokumen",
+    "discardTitle": "Buang perubahan?",
+    "discard": "Buang",
+    "keepEditing": "Lanjutkan mengedit",
     "typeLabel": "Jenis",
     "type": {
       "certificate": "Surat keterangan dokter",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "Resep obat kontrol khusus memerlukan CPF atau paspor pasien.",
     "controlledPrintOnly": "Cetak, tanda tangani dengan tangan, dan berikan kedua salinan kepada pasien.",
     "download": "Unduh PDF",
+    "print": "Cetak",
+    "openPdf": "Buka PDF",
     "save": "Simpan dokumen",
     "pdfFailed": "Gagal membuat PDF. Silakan coba lagi.",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "Ubah",
     "editTitle": "Ubah lokasi",
     "dayLocation": "Lokasi",
-    "bookingLine": "Lokasi: {name} · {address}"
+    "bookingLine": "Lokasi: {name} · {address}",
+    "primaryConfirm": "Hari kerja tanpa lokasi yang dipilih akan memakai {name}. Janji temu yang dipesan di suatu lokasi tetap di sana; yang tanpa lokasi akan menampilkan {name}."
   },
   "patientFields": {
     "title": "Data pasien",
@@ -2225,5 +2246,15 @@
     "done": "Selesai! Pendaftaran Anda sudah lengkap.",
     "idInUse": "Nomor identitas ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik.",
     "invalid": "Periksa: {field}."
+  },
+  "brandCrop": {
+    "title": "Sesuaikan gambar",
+    "use": "Gunakan gambar",
+    "small": "Gambar kecil: hasil cetak mungkin buram.",
+    "hint": "Seret untuk memindahkan. Gunakan penggeser atau roda mouse untuk zoom.",
+    "hintTouch": "Seret untuk memindahkan. Gunakan dua jari untuk zoom.",
+    "zoomIn": "Perbesar",
+    "zoomOut": "Perkecil",
+    "adjust": "Sesuaikan"
   }
 }

@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Copier",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Ou payer par carte",
+    "sendCardWhatsApp": "Envoyer le lien carte par WhatsApp",
+    "shareCardLink": "Partager le lien carte",
     "durationMinutes": "{n} min",
     "undoBooked": "Rendez-vous pris",
     "undoMoved": "Rendez-vous déplacé",
@@ -588,6 +591,13 @@
     "regenerateError": "Impossible de générer un nouveau code. Réessayez.",
     "showSetup": "Afficher la liste de configuration",
     "registration": "Numéro d'inscription professionnelle",
+    "regCouncilSection": "Ordre professionnel (CRM / CRO / CRP…)",
+    "regNumber": "Numéro",
+    "regState": "État",
+    "regSelectState": "Choisir l'État",
+    "regOtherCouncil": "Autre ordre (CRN, CRO, CFP…)",
+    "regCouncil": "Ordre",
+    "regNumberPlaceholder": "Numéro d'inscription",
     "registrationPlaceholder": "ex. : CRM 12345/SP",
     "promptPay": "Identifiant PromptPay",
     "promptPayHint": "Votre numéro de mobile ou votre identifiant national / fiscal à 13 chiffres lié à PromptPay. Les patients scannent le QR du rendez-vous pour payer.",
@@ -620,6 +630,9 @@
     "themeLight": "Clair",
     "themeDark": "Sombre",
     "pixKey": "Clé Pix",
+    "cardLink": "Lien de paiement (carte)",
+    "cardLinkHint": "La page où les patients paient par carte, chez votre prestataire de paiement. Elle doit commencer par https://.",
+    "cardLinkInvalid": "Saisissez un lien qui commence par https://",
     "pixKeyPlaceholder": "CPF, CNPJ, e-mail, téléphone ou clé aléatoire",
     "fullNameTitles": "Dr, Pr",
     "registrationPlaceholderTH": "ex. ว.12345 (licence du Conseil médical)",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ Ordonnance",
     "addDocument": "+ Document",
     "newDocument": "Nouveau document",
+    "editDocument": "Modifier le document",
+    "correctDocument": "Corriger le document",
+    "discardTitle": "Abandonner les modifications ?",
+    "discard": "Abandonner",
+    "keepEditing": "Continuer la modification",
     "typeLabel": "Type",
     "type": {
       "certificate": "Certificat médical",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "L'ordonnance à contrôle spécial exige le CPF ou le passeport du patient.",
     "controlledPrintOnly": "Imprimez-la, signez à la main et remettez les deux exemplaires au patient.",
     "download": "Télécharger le PDF",
+    "print": "Imprimer",
+    "openPdf": "Ouvrir le PDF",
     "save": "Enregistrer le document",
     "pdfFailed": "Impossible de créer le PDF. Veuillez réessayer.",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "Modifier",
     "editTitle": "Modifier le lieu",
     "dayLocation": "Lieu",
-    "bookingLine": "Lieu : {name} · {address}"
+    "bookingLine": "Lieu : {name} · {address}",
+    "primaryConfirm": "Les jours de consultation sans lieu choisi utiliseront {name}. Les rendez-vous pris dans un lieu y restent ; ceux sans lieu afficheront {name}."
   },
   "patientFields": {
     "title": "Fiche patient",
@@ -2225,5 +2246,15 @@
     "done": "C'est fait ! Votre dossier est complet.",
     "idInUse": "Ce document figure déjà sur un autre dossier de ce cabinet. Contactez la clinique.",
     "invalid": "Vérifiez : {field}."
+  },
+  "brandCrop": {
+    "title": "Ajuster l'image",
+    "use": "Utiliser l'image",
+    "small": "Petite image : l'impression peut être floue.",
+    "hint": "Faites glisser pour déplacer. Utilisez le curseur ou la molette pour zoomer.",
+    "hintTouch": "Faites glisser pour déplacer. Pincez avec deux doigts pour zoomer.",
+    "zoomIn": "Zoom avant",
+    "zoomOut": "Zoom arrière",
+    "adjust": "Ajuster"
   }
 }

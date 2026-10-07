@@ -10,7 +10,7 @@ import { greetingFirstName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
 import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn, solvyAiPanelOn } from "@/lib/solvyaiIntro";
-import { CURRENT_NEWS, newsTourId } from "@/lib/news";
+import { CURRENT_NEWS, newForRelease, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
 import { assistantApiEnabled } from "@/lib/assistant/server/caller";
@@ -27,6 +27,7 @@ import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { ACTING_COOKIE, ALL_PRACTICES, allFallbackCookieScript, allFallbackId } from "@/lib/actingPractice";
 import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 import { TeamAccessWatch } from "@/components/TeamAccessWatch";
+import { LocaleRedirect } from "@/components/LocaleRedirect";
 import { teamAccessKey } from "@/lib/teamAccess";
 
 function isVersionBelow(current: string, minimum: string): boolean {
@@ -174,7 +175,10 @@ export default async function DashboardLayout({
   const tourState = await readTourState(supabase, user.id);
   // The Novidades popup (liveFeatures.news): pending when this release's
   // announcement has no saved state yet (before 113: unavailable, so never).
+  // A brand-new account (created on this release) gets the tour, not
+  // "What's new" (cf, 6 Oct).
   const newsPending = liveFeatures.news
+    && !newForRelease(user.created_at, CURRENT_NEWS)
     && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
   // The SolvyAI panel (doctors, not while locked) and "Meet SolvyAI ✦":
   // once SolvyAI is live, where the panel is, until seen (113).
@@ -187,6 +191,9 @@ export default async function DashboardLayout({
   // the flag), else her primary.
   const actingId = isSecretary ? ((await actingPracticeFor(roleRow.invited_by_professional_id!, user.id)) ?? roleRow.invited_by_professional_id!) : user.id;
   const practice = countryProfile(await getPracticeCountry(supabase, user.id, actingId));
+  // A language the practice country doesn't offer: no dashboard in it, the
+  // same page in the country's language (ad, after b3's lost SolvyAI answer).
+  if (practice.languages.length && !(practice.languages as readonly string[]).includes(locale)) return <LocaleRedirect to={practice.languages[0]} />;
   // The switcher (2+ doctors), or the reset of a choice she no longer serves.
   const practices = isSecretary && liveFeatures.multiPractice ? await myPractices(user.id) : null;
   const chosenCookie = isSecretary && liveFeatures.multiPractice ? (await cookies()).get(ACTING_COOKIE)?.value : undefined;

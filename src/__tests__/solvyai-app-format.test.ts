@@ -69,3 +69,14 @@ describe("the app's Open screen goes to the right Settings sheet", () => {
     expect(await target("C8")).toEqual({ screen: "settings" });
   });
 });
+
+describe("the website's Open screen goes to the Settings section too (cf)", () => {
+  it("C4 → /pt-BR/dashboard/settings#team; C2 → #hours", async () => {
+    const href = async (id: string) => {
+      const o = (await run("web", `Veja.\n[[open:${id}]]`)).find((c) => c.kind === "block" && c.block.type === "open");
+      return o && o.kind === "block" && o.block.type === "open" ? o.block.href : null;
+    };
+    expect(await href("C4")).toBe("/pt-BR/dashboard/settings#team");
+    expect(await href("C2")).toBe("/pt-BR/dashboard/settings#hours");
+  });
+});

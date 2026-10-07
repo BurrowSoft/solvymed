@@ -6,7 +6,7 @@ import { PDFDocument } from "pdf-lib";
 import { renderMedicalDocumentPdf, dateLine } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { renderPrescriptionPdf } from "@/lib/pdf/prescription";
-import { documentTypesFor, fixedLanguage, longDate, prefilledBody, validateFields } from "@/lib/medicalDocuments";
+import { documentTypesFor, fixedLanguage, longDate, prefilledBody, registrationLine, validateFields } from "@/lib/medicalDocuments";
 
 // 1.8.0 B's model and the website's PDFs: the types per country (an explicit
 // default, never "if Brazil"), the prefilled sentences in the document's
@@ -37,6 +37,21 @@ describe("the B model", () => {
     expect(longDate("de", "2026-10-07")).toBe("7. Oktober 2026");
     expect(dateLine("pt-BR", "Fortaleza", "2026-10-07")).toBe("Fortaleza, 7 de outubro de 2026");
     expect(dateLine("th", "", "2026-10-07")).toBe("วันที่ 7 ตุลาคม 2569");
+    // French: "{city}, le {date}", and "Le {date}" with no city (cf, #413 row).
+    expect(dateLine("fr", "Lyon", "2026-10-07")).toBe("Lyon, le 7 octobre 2026");
+    expect(dateLine("fr", "", "2026-10-07")).toBe("Le 7 octobre 2026");
+  });
+
+  it("the registration line under the name: digits formatted per country, a letter as typed (cf, #413 row)", () => {
+    expect(registrationLine("BR", "pt-BR", " 12345 ", "sp")).toBe("CRM 12345/SP");
+    expect(registrationLine("BR", "en", "12345", null)).toBe("CRM 12345");
+    expect(registrationLine("BR", "pt-BR", "CRM 12345/RJ", "SP")).toBe("CRM 12345/RJ");
+    expect(registrationLine("TH", "th", "12345")).toBe("ใบอนุญาตประกอบวิชาชีพเวชกรรม เลขที่ ว.12345");
+    expect(registrationLine("TH", "en", "12345")).toBe("Medical licence no. 12345");
+    expect(registrationLine("TH", "th", "ว.12345")).toBe("ว.12345");
+    expect(registrationLine("US", "en", "12345")).toBe("12345");
+    expect(registrationLine("BR", "pt-BR", "  ")).toBeNull();
+    expect(registrationLine("BR", "pt-BR", null)).toBeNull();
   });
 
   it("the checks before saving", () => {
@@ -71,6 +86,13 @@ describe("the PDFs", () => {
     }
   });
 
+  it("1.8.0 F: every location in the footer, still one page (Thai shaped too)", async () => {
+    const locationLines = ["Unidade Centro · Rua A, 1, Fortaleza, CE · 85 3333-0000", "Unidade Sul · Rua B, 2, Fortaleza, CE", "สาขาสีลม · ถนนสีลม, กรุงเทพฯ", "Unidade Muito Longa · " + "Avenida Exemplo Comprida, 1234, Sala 567, ".repeat(4) + "Fortaleza, CE · 85 99999-0000"];
+    const bytes = await renderMedicalDocumentPdf({ ...base, type: "declaration", lang: "pt-BR", fields: { date: "2026-10-07", from: "09:00", to: "10:00" }, body: "Declaro…", locationLines }, fonts);
+    expect(isPdf(bytes)).toBe(true);
+    expect((await PDFDocument.load(bytes)).getPageCount()).toBe(1);
+  });
+
   it("the controlled prescription: two copies, one page each", async () => {
     const bytes = await renderControlledPrescriptionPdf({
       doctor: { name: "Vivian", crm: "19408", uf: "CE", address: "Rua A", city: "Fortaleza", cityUf: "CE", phone: null },
@@ -91,5 +113,29 @@ describe("the PDFs", () => {
       notes: "Retorno em 30 dias.", signerName: "Vivian", signerRegistration: null, forPatient: true,
     }, fonts);
     expect((await PDFDocument.load(bytes)).getPageCount()).toBe(2);
+  });
+});
+
+describe("B follow-ups (53's row, cf 6 Oct)", () => {
+  it("the language picker: the practice's language and English first, all 7 kept", async () => {
+    const { docLangsFor } = await import("@/lib/medicalDocuments");
+    expect(docLangsFor("BR")).toEqual(["pt-BR", "en", "th", "es", "de", "fr", "it"]);
+    expect(docLangsFor("TH")).toEqual(["th", "en", "pt-BR", "es", "de", "fr", "it"]);
+    expect(docLangsFor("US").slice(0, 1)).toEqual(["en"]);
+    expect(docLangsFor(null)).toHaveLength(7);
+  });
+
+  it("the footer is in the document's language, for every language", async () => {
+    const { PRINT, DOC_LANGS } = await import("@/lib/medicalDocuments");
+    for (const l of DOC_LANGS) expect(PRINT[l].footer).toMatch(/^SolvyMed — /);
+    expect(PRINT.th.footer).toBe("SolvyMed — ระบบบริหารคลินิก");
+    expect(PRINT["pt-BR"].footer).toBe("SolvyMed — Gestão de clínicas");
+  });
+
+  it("a CPF prints formatted", async () => {
+    const { formatCpfDigits } = await import("@/lib/medicalDocuments");
+    expect(formatCpfDigits("12345678909")).toBe("123.456.789-09");
+    expect(formatCpfDigits("123.456.789-09")).toBe("123.456.789-09");
+    expect(formatCpfDigits("abc")).toBe("abc");
   });
 });

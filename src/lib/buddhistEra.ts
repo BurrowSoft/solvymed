@@ -11,6 +11,14 @@ function yearOf(value: string | null | undefined): number | null {
   return m ? Number(m[1]) : null;
 }
 
+// A clinical document's dates (1.8.0 B, ad): the visit, the absence start,
+// the Thai exam date and the rest period; any Buddhist-era-looking one.
+export function documentDatesLookBuddhist(fields: unknown): boolean {
+  const f = (fields ?? {}) as Record<string, unknown>;
+  const rest = (f.rest ?? {}) as Record<string, unknown>;
+  return [f.date, f.start, f.examDate, rest.start, rest.end].some((d) => typeof d === "string" && looksBuddhistEra(d));
+}
+
 export function looksBuddhistEra(value: string | null | undefined): boolean {
   const y = yearOf(value);
   return y !== null && y >= BUDDHIST_YEAR_MIN;

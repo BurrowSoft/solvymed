@@ -239,6 +239,9 @@
     "pixCopyPaste": "Pix Copia e Cola",
     "pixCopy": "Копировать",
     "sendPixWhatsApp": "Send Pix via WhatsApp",
+    "orPayByCard": "Или оплатите картой",
+    "sendCardWhatsApp": "Отправить ссылку для оплаты картой в WhatsApp",
+    "shareCardLink": "Поделиться ссылкой для оплаты картой",
     "durationMinutes": "{n} мин",
     "undoBooked": "Запись создана",
     "undoMoved": "Запись перенесена",
@@ -588,6 +591,13 @@
     "regenerateError": "Не удалось создать новый код. Попробуйте снова.",
     "showSetup": "Показать список настройки",
     "registration": "Профессиональная регистрация",
+    "regCouncilSection": "Профессиональный совет (CRM / CRO / CRP…)",
+    "regNumber": "Номер",
+    "regState": "Штат",
+    "regSelectState": "Выберите штат",
+    "regOtherCouncil": "Другой совет (CRN, CRO, CFP…)",
+    "regCouncil": "Совет",
+    "regNumberPlaceholder": "Регистрационный номер",
     "registrationPlaceholder": "напр. CRM 12345/SP",
     "promptPay": "ID PromptPay",
     "promptPayHint": "Ваш мобильный номер или 13-значный национальный / налоговый ID, привязанный к PromptPay. Пациенты сканируют QR-код приёма для оплаты.",
@@ -620,6 +630,9 @@
     "themeLight": "Светлая",
     "themeDark": "Тёмная",
     "pixKey": "Ключ Pix",
+    "cardLink": "Ссылка для оплаты картой",
+    "cardLinkHint": "Страница вашего платёжного сервиса, где пациенты платят картой. Должна начинаться с https://.",
+    "cardLinkInvalid": "Введите ссылку, начинающуюся с https://",
     "pixKeyPlaceholder": "CPF, CNPJ, e-mail, телефон или случайный ключ",
     "fullNameTitles": "Dr., Prof.",
     "registrationPlaceholderTH": "напр. ว.12345 (лицензия Медицинского совета)",
@@ -2132,6 +2145,11 @@
     "addPrescription": "+ Рецепт",
     "addDocument": "+ Документ",
     "newDocument": "Новый документ",
+    "editDocument": "Изменить документ",
+    "correctDocument": "Исправить документ",
+    "discardTitle": "Отменить изменения?",
+    "discard": "Отменить",
+    "keepEditing": "Продолжить редактирование",
     "typeLabel": "Тип",
     "type": {
       "certificate": "Медицинская справка",
@@ -2171,6 +2189,8 @@
     "controlledNeedsId": "Для рецепта особого контроля нужен CPF или паспорт пациента.",
     "controlledPrintOnly": "Распечатайте, подпишите от руки и отдайте пациенту оба экземпляра.",
     "download": "Скачать PDF",
+    "print": "Печать",
+    "openPdf": "Открыть PDF",
     "save": "Сохранить документ",
     "pdfFailed": "Не удалось создать PDF. Попробуйте ещё раз.",
     "err": {
@@ -2199,7 +2219,8 @@
     "edit": "Изменить",
     "editTitle": "Изменить место",
     "dayLocation": "Место",
-    "bookingLine": "Место: {name} · {address}"
+    "bookingLine": "Место: {name} · {address}",
+    "primaryConfirm": "Рабочие дни без выбранного места будут использовать {name}. Записи с указанным местом останутся там; записи без места будут показывать {name}."
   },
   "patientFields": {
     "title": "Карточка пациента",
@@ -2225,5 +2246,15 @@
     "done": "Готово! Ваша регистрация заполнена.",
     "idInUse": "Этот документ уже указан в другой регистрации этой клиники. Обратитесь в клинику.",
     "invalid": "Проверьте: {field}."
+  },
+  "brandCrop": {
+    "title": "Настроить изображение",
+    "use": "Использовать",
+    "small": "Маленькое изображение: при печати может быть нечётким.",
+    "hint": "Перетащите, чтобы сдвинуть. Масштаб — ползунком или колесом мыши.",
+    "hintTouch": "Перетащите, чтобы сдвинуть. Масштаб — двумя пальцами.",
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить",
+    "adjust": "Настроить"
   }
 }

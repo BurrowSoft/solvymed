@@ -212,6 +212,7 @@ export function requestLapsed(date: string, start: string, now: Date, tz?: strin
 }
 
 function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practiceCountry = null }: { appt: PatientAppointment; onMutate: () => void; clinicTz?: string; practiceCountry?: string | null }) {
+  const tl = useTranslations("locations");
   const t = useTranslations("myAppointments");
   const tSchedule = useTranslations("schedule");
   const locale = useLocale();
@@ -297,6 +298,11 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
           )}
           {whoLine(appt.professional_name, appt.clinic_name) && (
             <p data-testid="appointment-who" className="text-sm text-slate-600 mt-0.5">{whoLine(appt.professional_name, appt.clinic_name)}</p>
+          )}
+          {appt.location_name && (
+            <p data-testid="appointment-location" className="text-sm text-slate-600 mt-0.5">
+              {appt.location_address ? tl("bookingLine", { name: appt.location_name, address: appt.location_address }) : `${tl("dayLocation")}: ${appt.location_name}`}
+            </p>
           )}
           <p className="text-xs text-slate-400 mt-0.5">{appt.type === "online" ? tSchedule("online") : tSchedule("inPerson")}</p>
           {/* 150 (item 12): who declined/cancelled, the clinic's reason, and its message. */}

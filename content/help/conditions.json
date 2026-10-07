@@ -160,7 +160,7 @@
     "what": "The app build with mobile #361 (the 1.6.x batch: Settings → Integrations → Import → \"Import patients\" pointing to the website + the Patients empty-state hint; the WhatsApp API row hidden while server_flags.whatsapp_auto is off; the Agenda arrow labels; Thai เลขานุการ) is RELEASED on Google Play. Gates Help P13's app line and the App Map's app import-pointer and WhatsApp-row rules."
   },
   "app-365-secretary-join": {
-    "met": false,
+    "met": true,
     "what": "The app build with mobile #365 (0a slice 1b: a secretary's Settings → \"Entrar na equipe de outro médico\" / \"Join another doctor's team\" → \"Código de convite\" → \"Entrar\", behind server_flags.multi_practice_secretary) is RELEASED on Google Play. Gates (together with multi-practice-live) Help C4's app line and the App Map's app join rule."
   },
   "stripe-reconcile-email": {
@@ -186,6 +186,10 @@
   "patient-fields-live": {
     "met": false,
     "what": "1.8.0 C1 is live on the website: migration 207 (professionals.patient_fields, get_patient_fields / set_patient_fields) applied on production with the web's Settings card and forms merged. Gates Help C16 and the App Map's registration-rules rule; the app's half also needs app-1.8.0."
+  },
+  "card-payment-live": {
+    "met": false,
+    "what": "1.8.0 E is live on the website: migration 210 (professionals.card_payment_url, get_my_clinic ends with it; mobile #420) applied on production, and the privacy §3.1 words \"card payment link\" live with a PRIVACY_VERSION bump the app accepts first. Gates the Settings field, the link in the Pix / PromptPay dialogs, the card-only WhatsApp button, that privacy text and E's Help / App Map lines. The app's part ships with its build (app-1.8.0)."
   },
   "clinical-documents-live": {
     "met": false,
