@@ -14,6 +14,15 @@ describe("SolvyAI: the other platform's path, in one line", () => {
     expect(prompt).toContain("Never a second step-by-step");
   });
 
+  it("required in every reply language, with a Thai example in the real Thai labels (b3's Thai answer dropped it)", () => {
+    const web = rules("en", "web", "home", "help", say);
+    expect(web).toContain("in every reply language, Thai included");
+    // Web reader: the app's labels (patients.title, merge.action in the app's th).
+    expect(web).toContain("ในแอป: ผู้ป่วย → เมนู (⋯) ของผู้ป่วย → รวมกับผู้ป่วยอีกคน…");
+    // App reader: the website's (nav.patients, patientDetail.tabInfo, patientMerge.action).
+    expect(rules("en", "app", "home", "help", say)).toContain("บนเว็บไซต์: ผู้ป่วย → แท็บ ข้อมูล → รวมกับผู้ป่วยอีกคน…");
+  });
+
   it("in the app, the website's path as the example; in both modes", () => {
     for (const mode of ["help", "actions"] as const) {
       const prompt = rules("en", "app", "home", mode, say);
