@@ -20,8 +20,6 @@ import { conditionMet } from "@/lib/conditions";
 import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
-import { serverFlag } from "@/lib/myDoctors";
-import { removeSnapshotPaths, snapshotPathsOf } from "@/lib/snapshotCopies";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 
@@ -485,13 +483,12 @@ export async function deletePrescription(id: string, patientId: string) {
 
   // The items go first; stop if that's refused (e.g. clinical_record_locked
   // after 24 hours) instead of trying the prescription anyway.
-  // Its copies shared with the patient go too (ad, 1.8.0 B2): found first.
-  const copies = (await serverFlag(supabase, "patient_documents")) ? await snapshotPathsOf(supabase, user.id, patientId, "prescription", id) : [];
+  // Its copies shared with the patient go too (ad, 1.8.0 B2): migration 211's
+  // trigger marks them 'removing' in the same delete (the sweep removes them).
   const { error: iError } = await supabase.from("prescription_items").delete().eq("prescription_id", id);
   if (iError) return { error: actionError(iError.message) };
   const { error } = await supabase.from("prescriptions").delete().eq("id", id).eq("professional_id", user.id);
   if (error) return { error: actionError(error.message) };
-  await removeSnapshotPaths(supabase, copies);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }

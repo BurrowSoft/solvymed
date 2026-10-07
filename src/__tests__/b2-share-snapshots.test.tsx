@@ -102,18 +102,3 @@ describe("registerSnapshot", () => {
   });
 });
 
-describe("deleting within 24 h removes the copies (ad)", () => {
-  it("finds the doctor's own copies of exactly that document, before the delete", async () => {
-    const { snapshotPathsOf } = await import("@/lib/snapshotCopies");
-    const uid = "11111111-1111-4111-8111-111111111111";
-    const rows = [
-      { source: "prescription", prescription_id: RX1, storage_path: `${uid}/${PAT}/a.pdf` },
-      { source: "prescription", prescription_id: RX2, storage_path: `${uid}/${PAT}/b.pdf` },
-      { source: "medical_document", medical_document_id: RX1, storage_path: `${uid}/${PAT}/c.pdf` },
-      { source: "prescription", prescription_id: RX1, storage_path: `someone-else/${PAT}/d.pdf` },
-    ];
-    const supabase = { rpc: async () => ({ data: rows, error: null }) } as never;
-    expect(await snapshotPathsOf(supabase, uid, PAT, "prescription", RX1)).toEqual([`${uid}/${PAT}/a.pdf`]);
-    expect(await snapshotPathsOf(supabase, uid, PAT, "medical_document", RX1)).toEqual([`${uid}/${PAT}/c.pdf`]);
-  });
-});

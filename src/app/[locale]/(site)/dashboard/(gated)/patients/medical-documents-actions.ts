@@ -13,7 +13,6 @@ import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
-import { removeSnapshotPaths, snapshotPathsOf } from "@/lib/snapshotCopies";
 import { DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
@@ -112,11 +111,10 @@ export async function deleteMedicalDocument(id: string, patientId: string): Prom
   if (!isUuid(id) || !isUuid(patientId)) return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "not_doctor" };
-  // Its copies shared with the patient go too (ad, 1.8.0 B2): found first.
-  const copies = (await serverFlag(me.supabase, "patient_documents")) ? await snapshotPathsOf(me.supabase, me.uid, patientId, "medical_document", id) : [];
+  // Its copies shared with the patient go too (ad, 1.8.0 B2): migration 211's
+  // trigger marks them 'removing' in the same delete (the sweep removes them).
   const { error } = await me.supabase.from("medical_documents").delete().eq("id", id).eq("professional_id", me.uid);
   if (error) return { ok: false, code: actionError(error.message) };
-  await removeSnapshotPaths(me.supabase, copies);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { ok: true, data: null };
 }
