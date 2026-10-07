@@ -206,6 +206,11 @@ Patients brought from another system may have **Imported data**: the spreadsheet
 Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
 **No site:** Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …"). Só o médico vê essa seção, e a abertura fica registrada na aba **Registro de acessos** do paciente, como no app.
 **On the website:** In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from ("Imported from … on …"). Only the doctor sees this section, and opening it is recorded in the patient's **Access log** tab, as in the app.
+Thai title: "ข้อมูลที่นำเข้า"
+**th**
+ผู้ป่วยที่นำมาจากระบบอื่นอาจมี **ข้อมูลที่นำเข้า**: คอลัมน์ในสเปรดชีตที่ไม่ได้กลายเป็นช่องข้อมูลของ SolvyMed ในแอป เปิดผู้ป่วยแล้วแตะ **ข้อมูลที่นำเข้า** เพื่อดูข้อมูลและแหล่งที่มา ("นำเข้าจาก … เมื่อ …")
+เฉพาะคุณ (แพทย์) เท่านั้นที่เห็นข้อมูลที่นำเข้า เลขานุการและผู้ป่วยมองไม่เห็น เมื่อคุณเปิดดู จะมีการบันทึกในแท็บ **การเข้าถึง** ของผู้ป่วย ("เปิดข้อมูลที่นำเข้า") การเปิดซ้ำภายในหนึ่งนาทีนับเป็นครั้งเดียว
+**ในเว็บไซต์:** ใน **ผู้ป่วย** เปิดผู้ป่วย ใต้แท็บต่างๆ คลิก **ข้อมูลที่นำเข้า** เพื่อดูข้อมูลและแหล่งที่มา ("นำเข้าจาก … เมื่อ …") เฉพาะแพทย์เท่านั้นที่เห็นส่วนนี้ และการเปิดดูจะถูกบันทึกในแท็บ **บันทึกการเข้าถึง** ของผู้ป่วย เหมือนในแอป
 `open:patients`
 `requires:import-extras-live`
 
@@ -231,6 +236,17 @@ If either record had booking blocked, the one that stays remains blocked. A reco
 {pending:patient-address-live} The **Address** is chosen as a whole, from one record or the other; the **CNS** like the other fields. When the **Notes** differ, **Both, joined** is preselected (the kept record's first); if together they exceed 2,000 characters, pick one (and edit it afterwards if you like).
 **No site:** Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**. Cada cadastro mostra a data de nascimento, o final do telefone e quando foi cadastrado ou importado; ao trocar qual fica, os valores marcados continuam marcados. Dois cadastros com o mesmo nome aparecem na confirmação com o que os diferencia, por exemplo «Maria Silva (nasc. 12/03/1980)».
 **On the website:** Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**. Each record shows its birth date, the end of its phone number and when it was added or imported; switching which one stays keeps the values you marked. Two records with the same name are named in the confirmation by what tells them apart, for example «Maria Silva (born 12/03/1980)».
+Thai title: "รวมแฟ้มผู้ป่วยที่ซ้ำกัน"
+**th**
+เมื่อบุคคลเดียวกันมีสองแฟ้ม คุณรวมแฟ้มได้: ทุกอย่างจะย้ายไปยังแฟ้มที่เก็บไว้
+{pending:merge-patients-live} 1. ใน **ผู้ป่วย** แตะเมนู (⋯) ของผู้ป่วย แล้วแตะ **รวมกับผู้ป่วยอีกคน…** (เฉพาะแพทย์)
+{pending:merge-patients-live} 2. ค้นหาอีกแฟ้มหนึ่ง (แฟ้มที่เก็บถาวรก็แสดงด้วย)
+{pending:merge-patients-live} 3. จะแสดงเฉพาะช่องที่ต่างกัน: แตะค่าที่ต้องการเก็บไว้ ใต้ **เก็บประวัตินี้ไว้** เลือกแฟ้มที่จะเก็บไว้ (แฟ้มที่ใช้แอปจะถูกเลือกไว้ก่อน) แต่ละแฟ้มแสดงวันเกิด เลขท้ายของหมายเลขโทรศัพท์ และวันที่เพิ่มหรือนำเข้า หากสลับแฟ้มที่จะเก็บไว้ ค่าที่คุณเลือกจะยังคงอยู่
+{pending:merge-patients-live} 4. ยืนยัน (หากสองแฟ้มมีชื่อเดียวกัน จะระบุด้วยสิ่งที่แตกต่างกัน เช่น วันเกิด) หากแฟ้มใดแฟ้มหนึ่งใช้แอป ให้ยืนยันอีกครั้งด้วย **เป็นคนเดียวกัน**
+นัดหมาย เวชระเบียน ใบสั่งยา และไฟล์ จะย้ายไปยังแฟ้มที่เก็บไว้ (ไฟล์อาจใช้เวลาสองสามวินาที) การรวมแฟ้มยกเลิกไม่ได้ แท็บ **การเข้าถึง** จะบันทึก "รวมกับ «ชื่อ»"
+หากแฟ้มใดแฟ้มหนึ่งถูกปิดการขอนัด แฟ้มที่เก็บไว้จะยังถูกปิดการขอนัด แฟ้มที่นำเข้าในสถานะเสียชีวิตต้องกู้คืนก่อนจึงจะรวมได้ รหัสเชิญของแฟ้มที่ถูกรวมออกจะใช้ไม่ได้อีก เพื่อการตรวจสอบ ระบบจะเก็บสำเนาของแฟ้มที่ถูกรวมออกไว้ตราบเท่าที่คลินิกยังอยู่
+{pending:patient-address-live} **ที่อยู่** จะเลือกทั้งชุด จากแฟ้มใดแฟ้มหนึ่ง ส่วน CNS (คลินิกในบราซิล) เลือกเหมือนช่องอื่น เมื่อ **หมายเหตุ** ต่างกัน จะเลือก **ทั้งสอง รวมกัน** ไว้ก่อน (หมายเหตุของแฟ้มที่เก็บไว้อยู่ก่อน) หากรวมกันเกิน 2,000 ตัวอักษร ให้เลือกอย่างใดอย่างหนึ่ง (และแก้ไขภายหลังได้)
+**ในเว็บไซต์:** เปิดผู้ป่วย ในแท็บ **ข้อมูล** คลิก **รวมกับผู้ป่วยอีกคน…** (เฉพาะแพทย์) ค้นหาอีกแฟ้มหนึ่ง (แฟ้มที่เก็บถาวรก็แสดงด้วย) เลือกแฟ้มที่จะเก็บไว้ใต้ **เก็บประวัตินี้ไว้** ทำเครื่องหมายค่าที่ต้องการเก็บในแต่ละช่องที่ต่างกัน แล้วคลิก **รวม** หากแฟ้มใดแฟ้มหนึ่งใช้แอป ให้ยืนยันด้วย **เป็นคนเดียวกัน** แต่ละแฟ้มแสดงวันเกิด เลขท้ายของหมายเลขโทรศัพท์ และวันที่เพิ่มหรือนำเข้า หากสลับแฟ้มที่จะเก็บไว้ ค่าที่คุณทำเครื่องหมายจะยังคงอยู่ หากสองแฟ้มมีชื่อเดียวกัน ในการยืนยันจะระบุด้วยสิ่งที่แตกต่างกัน เช่น วันเกิด
 `open:patients`
 `requires:merge-web-live`
 
@@ -258,6 +274,10 @@ Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um *
 On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. It goes to the patients connected to you, and only those with SolvyMed notifications on receive it; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours.
 **No site:** Em **Visão geral**, clique em **Enviar para Pacientes** (só o médico): o mesmo título, mensagem e limites; **Enviar Notificação** só fica disponível com título e mensagem preenchidos.
 **On the website:** On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in.
+Thai title: "ส่งถึงผู้ป่วย"
+**th**
+ใน **หน้าแรก** แตะ **ส่งถึงผู้ป่วย** (เฉพาะแพทย์): เขียน **หัวข้อการแจ้งเตือน** (ไม่เกิน 100 ตัวอักษร) และ **ข้อความ** (ไม่เกิน 500 ตัวอักษร) แล้วแตะ **ส่งการแจ้งเตือน** ข้อความจะส่งถึงผู้ป่วยที่เชื่อมต่อกับคุณ และจะได้รับเฉพาะผู้ที่เปิดการแจ้งเตือนของ SolvyMed ไว้ ข้อความต้องไม่ว่างเปล่า อย่าใส่ข้อมูลของผู้ป่วย คุณส่งได้ไม่เกิน 10 ครั้งทุก 24 ชั่วโมง
+**ในเว็บไซต์:** ใน **ภาพรวม** คลิก **ส่งถึงผู้ป่วย** (เฉพาะแพทย์): หัวข้อ ข้อความ และขีดจำกัดเหมือนในแอป **ส่งการแจ้งเตือน** จะกดได้เมื่อกรอกทั้งหัวข้อและข้อความแล้วเท่านั้น
 `open:home`
 `requires:broadcast-live`
 ---
