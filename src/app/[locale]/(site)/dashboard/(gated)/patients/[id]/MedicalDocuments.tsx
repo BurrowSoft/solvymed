@@ -11,6 +11,7 @@ import { correctMedicalDocument, createMedicalDocument, documentPrintData, updat
 import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
+import { crmIssuer } from "@/lib/registration";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -329,7 +330,8 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     const [y, m, dd] = issuedIso.split("-");
     const bytes = await renderControlledPrescriptionPdf({
       doctor: {
-        name: d.doctor.name, crm: d.doctor.registration ?? "", uf: d.doctor.state ?? "", address: d.doctor.address ?? "",
+        // The CRM number and its UF from the saved line ("CRM 12345/SP"), as the app.
+        name: d.doctor.name, ...crmIssuer(d.doctor.registration, d.doctor.state), address: d.doctor.address ?? "",
         city: d.doctor.city ?? "", cityUf: d.doctor.state ?? "", phone: d.doctor.phone,
       },
       patientName: d.patient.name,
