@@ -93,7 +93,8 @@ function SelfFieldsForm({ prompt, onDone, onCancel }: { prompt: SelfPrompt; onDo
   }
 
   return (
-    <form ref={formRef} onSubmit={submit} data-testid="self-fields-form" className="mt-3 space-y-3 rounded-xl bg-white p-4">
+    // POST: a submit before hydration must never put these details in the URL (#332).
+    <form ref={formRef} method="post" onSubmit={submit} data-testid="self-fields-form" className="mt-3 space-y-3 rounded-xl bg-white p-4">
       <p className="text-sm font-bold text-slate-900">{t("formTitle")}</p>
       <p className="text-xs text-slate-500">{t("hint", { doctor: prompt.doctorName })}</p>
       {asks("email") && (

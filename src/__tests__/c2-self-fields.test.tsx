@@ -133,3 +133,20 @@ describe("212's named duplicates (86, ad)", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(T.emailInUse));
   });
 });
+
+describe("0f's review", () => {
+  it("212's national-ID prefill ({cpf}) fills the CPF input", async () => {
+    const db = { rpc: async () => ({ data: { country: "BR", keys: ["national_id"], prefill: { national_id: { cpf: "11144477735" }, email: "me@x.com" }, prompted: false }, error: null }) };
+    const [p] = await loadSelfFieldPrompts(db, [{ id: D, name: "Dra. Ana" }]);
+    expect(p.prefill).toEqual({ email: "me@x.com", cpf: "11144477735" });
+    render(<NextIntlClientProvider locale="pt-BR" messages={pt}><CompleteRegistrationCards prompts={[p]} /></NextIntlClientProvider>);
+    fireEvent.click(screen.getByRole("button", { name: T.complete }));
+    expect((screen.getByTestId("self-fields-form").querySelector("input[name=cpf]") as HTMLInputElement).value).toBe("11144477735");
+  });
+
+  it("the form posts (#332: a submit before hydration never puts the details in the URL)", () => {
+    render(<NextIntlClientProvider locale="pt-BR" messages={pt}><CompleteRegistrationCards prompts={[{ doctorId: D, doctorName: "Dra. Ana", country: "BR", keys: ["national_id"], prefill: {} }]} /></NextIntlClientProvider>);
+    fireEvent.click(screen.getByRole("button", { name: T.complete }));
+    expect(screen.getByTestId("self-fields-form").getAttribute("method")).toBe("post");
+  });
+});

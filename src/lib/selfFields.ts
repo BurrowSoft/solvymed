@@ -25,7 +25,11 @@ export async function loadSelfFieldPrompts(db: Rpc, doctors: { id: string; name:
       const r = data as { country?: string; keys?: unknown; prefill?: unknown; prompted?: boolean };
       const keys = (Array.isArray(r.keys) ? r.keys : []).filter((k): k is FieldKey => (SELF_KEYS as readonly string[]).includes(k as string));
       if (!keys.length || r.prompted) return;
-      const prefill = Object.fromEntries(Object.entries((r.prefill ?? {}) as Record<string, unknown>).filter(([, v]) => typeof v === "string")) as Record<string, string>;
+      // Strings as they are; the national ID comes as {cpf} (0f): its value under its input's name.
+      const raw = (r.prefill ?? {}) as Record<string, unknown>;
+      const prefill: Record<string, string> = Object.fromEntries(Object.entries(raw).filter(([, v]) => typeof v === "string")) as Record<string, string>;
+      const nid = raw.national_id;
+      if (nid && typeof nid === "object") for (const [k, v] of Object.entries(nid as Record<string, unknown>)) if (typeof v === "string") prefill[k] = v;
       out.push({ doctorId: d.id, doctorName: d.name, country: r.country ?? "", keys, prefill });
     } catch {
       // No card for this doctor.
