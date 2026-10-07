@@ -2175,6 +2175,11 @@
     "addPrescription": "+ Prescription",
     "addDocument": "+ Document",
     "newDocument": "New document",
+    "editDocument": "Edit document",
+    "correctDocument": "Correct document",
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing",
     "typeLabel": "Type",
     "type": {
       "certificate": "Medical certificate",

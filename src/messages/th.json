@@ -1449,7 +1449,7 @@
   "dateInput": {
     "buddhistYear": "ดูเหมือนเป็นปี พ.ศ. กรุณาใช้ปี ค.ศ. (เช่น 1996)",
     "invalidBirthDate": "วันเกิดไม่ถูกต้อง กรุณาใช้วันที่ระหว่างปี ค.ศ. 1900 ถึงวันนี้",
-    "placeholder": "วว/ดด/ปปปป",
+    "placeholder": "วว/ดด/ปปปป (ค.ศ.)",
     "invalid": "วันที่ต้องอยู่ในรูปแบบ {format}"
   },
   "solvyaiSettings": {
@@ -2175,6 +2175,11 @@
     "addPrescription": "+ ใบสั่งยา",
     "addDocument": "+ เอกสาร",
     "newDocument": "สร้างเอกสาร",
+    "editDocument": "แก้ไขเอกสาร",
+    "correctDocument": "แก้ไขเอกสาร (บันทึกการแก้ไข)",
+    "discardTitle": "ทิ้งการเปลี่ยนแปลงหรือไม่",
+    "discard": "ทิ้ง",
+    "keepEditing": "แก้ไขต่อ",
     "typeLabel": "ประเภท",
     "type": {
       "certificate": "ใบรับรองแพทย์",

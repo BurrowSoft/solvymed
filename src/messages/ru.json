@@ -2145,6 +2145,11 @@
     "addPrescription": "+ Рецепт",
     "addDocument": "+ Документ",
     "newDocument": "Новый документ",
+    "editDocument": "Изменить документ",
+    "correctDocument": "Исправить документ",
+    "discardTitle": "Отменить изменения?",
+    "discard": "Отменить",
+    "keepEditing": "Продолжить редактирование",
     "typeLabel": "Тип",
     "type": {
       "certificate": "Медицинская справка",

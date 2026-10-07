@@ -2145,6 +2145,11 @@
     "addPrescription": "+ Resep",
     "addDocument": "+ Dokumen",
     "newDocument": "Dokumen baru",
+    "editDocument": "Edit dokumen",
+    "correctDocument": "Koreksi dokumen",
+    "discardTitle": "Buang perubahan?",
+    "discard": "Buang",
+    "keepEditing": "Lanjutkan mengedit",
     "typeLabel": "Jenis",
     "type": {
       "certificate": "Surat keterangan dokter",

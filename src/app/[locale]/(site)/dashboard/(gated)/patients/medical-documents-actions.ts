@@ -12,6 +12,7 @@ import { countryProfile } from "@/lib/country";
 import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
 import { DOC_LANGS, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
@@ -42,6 +43,9 @@ async function checked(me: NonNullable<Awaited<ReturnType<typeof doctor>>>, inpu
   if (!documentTypesFor(lookup.country).includes(input.type)) return { ok: false, code: "check_failed" };
   const lang = fixedLanguage(input.type) ?? input.lang;
   if (!(DOC_LANGS as readonly string[]).includes(lang)) return { ok: false, code: "check_failed" };
+  // Dates are typed in the Gregorian year (ad, 1.8.0); a Buddhist-era-looking
+  // one is refused, never converted (as patients' birth dates).
+  if (documentDatesLookBuddhist(input.fields)) return { ok: false, code: "buddhist_year" };
   const bad = validateFields(input.type, input.fields, input.body ?? "");
   if (bad) return { ok: false, code: `field_${bad}` };
   return { ok: true, lang };

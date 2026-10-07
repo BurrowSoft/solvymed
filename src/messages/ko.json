@@ -2145,6 +2145,11 @@
     "addPrescription": "+ 처방전",
     "addDocument": "+ 문서",
     "newDocument": "새 문서",
+    "editDocument": "문서 편집",
+    "correctDocument": "문서 정정",
+    "discardTitle": "변경 사항을 삭제할까요?",
+    "discard": "삭제",
+    "keepEditing": "계속 편집",
     "typeLabel": "종류",
     "type": {
       "certificate": "진단서",

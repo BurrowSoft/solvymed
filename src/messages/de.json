@@ -2145,6 +2145,11 @@
     "addPrescription": "+ Rezept",
     "addDocument": "+ Dokument",
     "newDocument": "Neues Dokument",
+    "editDocument": "Dokument bearbeiten",
+    "correctDocument": "Dokument berichtigen",
+    "discardTitle": "Änderungen verwerfen?",
+    "discard": "Verwerfen",
+    "keepEditing": "Weiter bearbeiten",
     "typeLabel": "Art",
     "type": {
       "certificate": "Ärztliches Attest",
