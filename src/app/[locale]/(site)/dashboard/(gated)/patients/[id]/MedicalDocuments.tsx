@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, PRINT, docLangsFor, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, validateFields,
+  DOC_LANGS, PRINT, docLangsFor, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -389,7 +389,10 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     patientName: d.patient.name,
     patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
     template: { primaryColor: d.template.primaryColor, footerText: d.template.footerText, logoBytes },
-    brand, signerName: d.doctor.name, signerRegistration: d.doctor.registration,
+    // The name exactly as saved (no title prefix); the registration formatted (cf).
+    brand, signerName: d.doctor.name,
+    signerRegistration: registrationLine(d.country, doc.language, d.doctor.registration, d.doctor.state),
+    licenceNo: d.doctor.registration,
     footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
   }, fonts);
   return { ok: true, bytes };
