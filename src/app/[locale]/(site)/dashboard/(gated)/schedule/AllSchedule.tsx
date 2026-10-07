@@ -5,6 +5,8 @@ import { inRowPractice } from "@/lib/rowPractice";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { normalizePromptPayId } from "@/lib/promptpay";
+import { normalizeCardLink } from "@/lib/cardLink";
+import { conditionMet } from "@/lib/conditions";
 import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { statusReasonLive } from "@/lib/statusReason";
 import { clinicDate, validZone, zoneCity, zonedInstant } from "@/lib/clinicTime";
@@ -40,7 +42,7 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
       supabase.from("procedures").select("id, name, duration_minutes, price, payment_type").eq("professional_id", p.professional_id).eq("active", true).order("name"),
       getTentativeBookings(),
     ]);
-    const clinic = (Array.isArray(clinicResult.data) ? clinicResult.data[0] : null) as { pix_key?: string | null; promptpay_id?: string | null; clinic_name?: string | null; clinic_city?: string | null; time_zone?: string | null } | null;
+    const clinic = (Array.isArray(clinicResult.data) ? clinicResult.data[0] : null) as { pix_key?: string | null; promptpay_id?: string | null; card_payment_url?: string | null; clinic_name?: string | null; clinic_city?: string | null; time_zone?: string | null } | null;
     const name = withBrandTitle(p.title, p.display_name);
     const tag: DoctorTagInfo = {
       id: p.professional_id,
@@ -56,6 +58,8 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
         currency: profile.currency,
         pixKey: profile.paymentQr === "pix" ? clinic?.pix_key ?? null : null,
         promptPayId: profile.paymentQr === "promptpay" ? normalizePromptPayId(clinic?.promptpay_id) : null,
+        // 1.8.0 E: get_my_clinic's card payment link (migration 210).
+        cardLink: conditionMet("card-payment-live") && profile.paymentQr ? normalizeCardLink(clinic?.card_payment_url) : null,
         clinicName: clinic?.clinic_name ?? "",
         clinicCity: clinic?.clinic_city ?? "",
         procedures: (procsResult.data ?? []) as RowPracticeCtx["procedures"],
@@ -119,7 +123,7 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
   const chip = (id: string | null) => `${prefix}/dashboard/schedule?view=${view}${date ? `&date=${date}` : ""}${id ? `&doctor=${id}` : ""}`;
   // G4: the list's phones, only for rows whose practice shares its Pix code.
   const phones = grid ? {} : await patientPhones(supabase, appointments
-    .filter((a) => { const c = byId.get(a.professional_id)!.ctx; return !!c.pixKey && !!countryProfile(c.country).paymentShare && offersPaymentQr(a); })
+    .filter((a) => { const c = byId.get(a.professional_id)!.ctx; return !!(c.pixKey || c.cardLink) && !!countryProfile(c.country).paymentShare && offersPaymentQr(a); })
     .map((a) => a.patient_id));
   const doctors: CalendarDoctors = Object.fromEntries(shown.map((x) => [x.tag.id, { tag: x.tag, ctx: x.ctx }]));
 

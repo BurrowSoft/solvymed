@@ -4,6 +4,8 @@ import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
 import { ScheduleNav, NewAppointmentButton, BlockTimeButton, ViewToggle, ScheduleUndoToast } from "./ScheduleClient";
 import { normalizePromptPayId } from "@/lib/promptpay";
+import { normalizeCardLink } from "@/lib/cardLink";
+import { conditionMet } from "@/lib/conditions";
 import { ScheduleRow, type RowPracticeCtx } from "./ScheduleRow";
 import { AllSchedule } from "./AllSchedule";
 import { ACTING_COOKIE, ALL_PRACTICES } from "@/lib/actingPractice";
@@ -50,6 +52,8 @@ export default async function SchedulePage({
     .maybeSingle();
 
   const isSecretary = userRoleData?.role === "secretary";
+  // 1.8.0 E: card_payment_url exists once migration 210 is live.
+  const cardLive = conditionMet("card-payment-live");
   // A secretary: the doctor chosen in the switcher (1.5.0), else her primary.
   const effectiveProfId = isSecretary
     ? (await actingPracticeFor((userRoleData?.invited_by_professional_id as string | null) ?? null, user.id)) ?? user.id
@@ -101,7 +105,7 @@ export default async function SchedulePage({
     // clinic_city from migration 089. A professional reads their own row.
     isSecretary
       ? supabase.rpc("get_my_clinic")
-      : supabase.from("professionals").select("pix_key, clinic_name, clinic_city, public_invite_code").eq("id", effectiveProfId).maybeSingle(),
+      : supabase.from("professionals").select(`pix_key, clinic_name, clinic_city, public_invite_code${cardLive ? ", card_payment_url" : ""}`).eq("id", effectiveProfId).maybeSingle(),
     // Whether the practice has any appointment at all (first-run empty state).
     supabase.from("appointments").select("id", { count: "exact", head: true }).eq("professional_id", effectiveProfId).neq("status", "blocked"),
   ]);
@@ -123,6 +127,11 @@ export default async function SchedulePage({
       : ((await supabase.from("professionals").select("promptpay_id").eq("id", effectiveProfId).maybeSingle()).data as { promptpay_id?: string | null } | null)?.promptpay_id;
     promptPayId = normalizePromptPayId(stored);
   }
+  // 1.8.0 E: the card payment link, offered with the payment QR (migration
+  // 210: a secretary reads it from get_my_clinic's last column).
+  const cardLink = cardLive && countryProfile(practiceCountry).paymentQr
+    ? normalizeCardLink((pixSource as { card_payment_url?: string | null } | null)?.card_payment_url)
+    : null;
   const clinicName = pixSource?.clinic_name ?? "";
   const clinicCity = pixSource?.clinic_city ?? "";
   // The doctor's public invite code, for "Share invite link" (not for a secretary).
@@ -134,10 +143,10 @@ export default async function SchedulePage({
     .map((a) => (locations.length ? { ...a, location_name: locationNameFor(a.location_id, locations) } : a));
   const procedures = (procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price?: number; payment_type: string }[];
   // G4: the list's phones, only where the Pix code can go to WhatsApp.
-  const phones = view === "list" && pixKey && countryProfile(practiceCountry).paymentShare
+  const phones = view === "list" && (pixKey || cardLink) && countryProfile(practiceCountry).paymentShare
     ? await patientPhones(supabase, appointments.filter(offersPaymentQr).map((a) => a.patient_id))
     : {};
-  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, clinicName, clinicCity, procedures, country: practiceCountry, phones };
+  const rowCtx: RowPracticeCtx = { currency, pixKey, promptPayId, cardLink, clinicName, clinicCity, procedures, country: practiceCountry, phones };
 
   const todayCount = appointments.filter(a => a.date === today && a.status !== "blocked").length;
 
