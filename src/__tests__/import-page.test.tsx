@@ -133,6 +133,37 @@ describe("Importar pacientes", () => {
     expect(screen.queryByText(/iClinic|Prontuário Verde/)).toBeNull();
   });
 
+  it("the system dropdown: Generic only in Thailand, but a real iClinic export is still recognised and named", async () => {
+    const { db } = fakeDb();
+    const options = (c: HTMLElement) => [...(c.querySelector("select")?.options ?? [])].map((o) => o.textContent);
+    const first = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(first.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("ชื่อ-นามสกุล;เบอร์โทร\nสมศรี ใจดี;0812345678\n")] } });
+    await waitFor(() => expect(options(first.container)).toEqual([th.patientImport.sourceGeneric]));
+    first.unmount();
+
+    const second = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(second.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("name;birth_date;civil_name\nSomsri;25/12/2523;Somsri\n")] } });
+    await waitFor(() => expect(options(second.container)).toEqual([th.patientImport.sourceGeneric, "iClinic"]));
+    expect((second.container.querySelector("select") as HTMLSelectElement).value).toBe("iclinic");
+    second.unmount();
+
+    const br = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(br.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("Nome;Celular\nMaria;11987654321\n")] } });
+    await waitFor(() => expect(options(br.container)).toEqual([pt.patientImport.sourceGeneric, "iClinic", "Prontuário Verde"]));
+  });
+
   it("CPFs Excel stripped of the leading zero: 130's count line, the row's warning, and the Excel hint on a 9/10-digit CPF still invalid", async () => {
     const { db } = fakeDb({ total: 3, new: 2, invalid: 1, with_warnings: 1, cpf_zero_padded: 1 }, [
       { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: ["cpf_zero_padded"], errors: [], input: { full_name: "Ana Zero", cpf: "1234567890" } },

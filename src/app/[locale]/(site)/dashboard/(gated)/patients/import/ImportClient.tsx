@@ -68,6 +68,11 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
   const [step, setStep] = useState<Step>("file");
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const [source, setSource] = useState<ImportSource>("generic");
+  // The systems offered (ad): Generic + the country's import presets; a file
+  // detected as another preset still gets it, named, without advertising it.
+  const [detected, setDetected] = useState<ImportSource>("generic");
+  const presets: readonly string[] = countryProfile(country).importPresets;
+  const sourceOptions = SOURCES.filter((s) => s === "generic" || presets.includes(s) || s === detected);
   const [plan, setPlan] = useState<ColumnPlan[]>([]);
   const [onExisting, setOnExisting] = useState<"skip" | "fill_empty">("skip");
   const [importId, setImportId] = useState<string | null>(null);
@@ -119,6 +124,7 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
     const detected = detectSource(r.headers, file.name, [], caps);
     setSheet({ name: file.name, headers: r.headers, rows: r.rows });
     setSource(detected);
+    setDetected(detected);
     setPlan(planColumns(detected, r.headers, caps));
     setStep("map");
   }
@@ -272,7 +278,7 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
               <label className="text-sm text-slate-600">
                 <span className="mr-2 font-semibold">{t("source")}</span>
                 <select value={source} onChange={(e) => changeSource(e.target.value as ImportSource)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm">
-                  {SOURCES.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s, caps).label}</option>)}
+                  {sourceOptions.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s, caps).label}</option>)}
                 </select>
               </label>
             </div>
