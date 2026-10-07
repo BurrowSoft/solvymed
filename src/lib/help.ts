@@ -183,10 +183,11 @@ const WEB_SCREENS: Record<string, string> = {
   "new-patient": "/dashboard/patients?new=1",
   payments: "/dashboard/payments",
   settings: "/dashboard/settings",
-  "settings-profile": "/dashboard/settings",
-  "settings-hours": "/dashboard/settings",
+  // Settings's own sections (their Card ids), as the app opens its sheets (cf).
+  "settings-profile": "/dashboard/settings#profile",
+  "settings-hours": "/dashboard/settings#hours",
   "settings-procedures": "/dashboard/settings#procedures",
-  "settings-team": "/dashboard/settings",
+  "settings-team": "/dashboard/settings#team",
   "settings-financial": "/dashboard/settings#clinic",
 };
 
