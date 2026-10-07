@@ -241,6 +241,7 @@ Na aba **Receitas e documentos** do paciente, **+ Documento** cria um documento 
 Escolha o **Idioma do documento** (muda os rótulos, a data e o calendário; o texto é você quem escreve) e preencha os campos. O CID só entra no atestado se você marcar **Incluir CID** (só com o consentimento do paciente).
 Receitas e documentos aparecem numa só lista, do mais novo ao mais antigo. **Baixar PDF** gera o documento. Você pode editar ou excluir um documento nas primeiras 24 horas; depois, use **Adicionar correção**: o original fica guardado junto com a correção.
 Todo documento termina com a linha para a assinatura (e a sua assinatura, se salva), o seu nome como está no perfil e o seu registro profissional. Um registro só com números sai formatado: no Brasil "CRM 12345/SP" (com a UF da clínica); na Tailândia, o número da licença médica no idioma do documento. Com letras, ele sai como você digitou.
+Se seu CRM for de outro estado, escolha o estado em **Configurações → Cadastros** (app) ou **Configurações → Perfil** (site).
 A **Receita de controle especial** é só impressa: **Imprimir** abre a impressão das duas vias (se a janela de impressão não abrir, use **Abrir PDF** e imprima de lá); assine à mão e entregue as duas ao paciente. Ela precisa do CPF ou do passaporte do paciente.
 Só você vê esses documentos; secretárias(os) não têm acesso. Cada PDF gerado fica registrado no **Registro de acessos**.
 **en**
@@ -248,6 +249,7 @@ In the patient's **Prescriptions & documents** tab, **+ Document** creates a cli
 Choose the **Document language** (it changes the labels, the date and the calendar; you write the text) and fill in the fields. The ICD code is on a certificate only if you tick **Include ICD code** (only with the patient's consent).
 Prescriptions and documents are in one list, newest first. **Download PDF** creates the document. You can edit or delete a document within 24 hours; after that, use **Add correction**: the original is kept with the correction.
 Every document ends with the signature line (and your signature, if saved), your name as it is in your profile and your professional registration. A registration of numbers only is formatted: in Brazil "CRM 12345/SP" (with the clinic's state); in Thailand, the medical licence number in the document's language. With letters, it shows as you typed it.
+If your registration is from another state, choose the state in **Settings → Registrations** (app) or **Settings → Profile** (website).
 The **Special control prescription** is print-only: **Print** opens the print dialog with both copies (if it doesn't open, use **Open PDF** and print from there); sign them by hand and give both to the patient. It needs the patient's CPF or passport.
 Only you see these documents; secretaries have no access. Every PDF created is logged in the **Access log**.
 `open:patients`
