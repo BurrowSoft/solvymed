@@ -249,6 +249,30 @@ export const TH_CERT: Record<"th" | "en", ThCertWords> = {
 };
 export const thCertWords = (lang: DocLang): ThCertWords => (lang === "th" ? TH_CERT.th : TH_CERT.en);
 
+// The registration line under the signer's name (cf, 76's #413 row; app and
+// web identical).  Only a registration of digits is formatted: Brazil
+// "CRM {no.}/{UF}" (no UF saved → "CRM {no.}"); Thailand the medical licence in
+// the document's language.  Anything with a letter is printed as typed; none → null.
+const TH_LICENCE: Record<DocLang, string> = {
+  th: "ใบอนุญาตประกอบวิชาชีพเวชกรรม เลขที่ ว.{no}",
+  en: "Medical licence no. {no}",
+  "pt-BR": "Licença médica nº {no}",
+  es: "Licencia médica n.º {no}",
+  fr: "Licence médicale n° {no}",
+  de: "Ärztliche Approbation Nr. {no}",
+  it: "Licenza medica n. {no}",
+};
+export function registrationLine(
+  country: string | null | undefined, lang: DocLang, registration: string | null | undefined, uf?: string | null,
+): string | null {
+  const r = (registration ?? "").trim();
+  if (!r) return null;
+  if (/\p{L}/u.test(r)) return r;
+  if (country === "BR") return uf?.trim() ? `CRM ${r}/${uf.trim().toUpperCase()}` : `CRM ${r}`;
+  if (country === "TH") return fill(TH_LICENCE[lang], { no: r });
+  return r;
+}
+
 // The patient's ID line for the printed document, by the practice's ID kind.
 export function idLabel(lang: DocLang, kind: "cpf" | "thai_id" | "passport"): string {
   const w = PRINT[lang];
