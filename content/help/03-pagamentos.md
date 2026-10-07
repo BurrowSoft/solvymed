@@ -30,6 +30,11 @@ Thai title: "บันทึกว่าชำระแล้ว"
 {pending:app-1.4.0} Appointments without an amount don't count: they show **No amount · Set amount**, and **Mark as paid** asks for the amount first.
 **No site:** Em **Pagamentos**, os totais se chamam **Pendente**, **Recebido** e **Total**, com os mesmos períodos. Consultas sem valor não entram nos totais nem nas listas: na **Agenda** elas aparecem como **Sem valor · Definir valor**, e uma consulta só é marcada como paga depois de ter um valor.
 **On the website:** In **Payments**, the totals are **Pending**, **Received** and **Total**, with the same periods. Appointments without an amount aren't counted in the totals or the lists: in the **Schedule** they show **No amount · Set amount**, and an appointment is only marked paid once it has an amount.
+Thai title: "รอรับเงินและรับแล้ว"
+**th**
+ยอดรอรับเงินคือผลรวมของนัดหมายที่ยังไม่ได้ชำระในช่วงเวลาที่เลือก ซึ่งมีสถานะนัดแล้ว ยืนยันแล้ว เสร็จสิ้น หรือมาสาย (คำขอที่ยังไม่ได้ตอบรับ นัดที่ยกเลิก ปฏิเสธ และผู้ป่วยไม่มาตามนัดจะไม่นับรวม) ส่วน **รับแล้ว** คือผลรวมของทุกนัดที่ทำเครื่องหมายว่าชำระแล้ว เลือกช่วงเวลาได้: **สัปดาห์นี้** **เดือนนี้** **เดือนที่แล้ว** หรือ **ทั้งหมด**
+{pending:app-1.4.0} นัดหมายที่ไม่มีจำนวนเงินจะไม่นับรวม โดยจะแสดง **ไม่มีจำนวนเงิน** · **กำหนดจำนวนเงิน** และ **ทำเครื่องหมายว่าชำระแล้ว** จะขอจำนวนเงินก่อน
+**ในเว็บไซต์:** ใน **การชำระเงิน** มียอดรอชำระ รับแล้ว และยอดรวม ตามช่วงเวลาเดียวกัน นัดหมายที่ไม่มีจำนวนเงินจะไม่นับรวมในยอดและรายการ ใน **ตารางงาน** นัดเหล่านี้จะแสดง **ไม่มีจำนวนเงิน** · **กำหนดจำนวนเงิน** และนัดจะถูกทำเครื่องหมายว่าชำระแล้วได้ก็ต่อเมื่อมีจำนวนเงิน
 `open:payments`
 
 ---
@@ -109,4 +114,8 @@ Em **Início**, veja o resumo da semana, do mês ou de todo o período, com filt
 On **Home**, see the summary for the week, the month or all time, filtered by private or insurance.
 **No site:** Na **Visão geral** você vê as consultas de hoje, o valor pendente, o número de pacientes e o recebido no mês. O detalhe por período fica em **Pagamentos**, com o filtro **Todos / Particular / Convênio**.
 **On the website:** The **Overview** shows today's appointments, the pending amount, the number of patients and what was received this month. The breakdown by period is in **Payments**, with the **All / Private / Insurance** filter.
+Thai title: "รายงาน"
+**th**
+ในหน้าแรก ดูสรุปของสัปดาห์ เดือน หรือทั้งหมด โดยกรองตามชำระเองหรือประกัน
+**ในเว็บไซต์:** **ภาพรวม** แสดงนัดหมายวันนี้ ยอดรอชำระ จำนวนผู้ป่วย และยอดที่รับแล้วในเดือนนี้ รายละเอียดตามช่วงเวลาอยู่ใน **การชำระเงิน** พร้อมตัวกรอง **ทุกประเภท** / **ชำระเอง** / **ประกัน**
 `open:home`
