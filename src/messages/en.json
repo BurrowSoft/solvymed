@@ -2235,6 +2235,17 @@
     "edit": "Edit",
     "editTitle": "Edit location",
     "dayLocation": "Location",
-    "bookingLine": "Location: {name} · {address}"
+    "bookingLine": "Location: {name} · {address}",
+    "primaryConfirm": "Working days without a chosen location will use {name}. Appointments booked at a location stay there; those without one will show {name}."
+  },
+  "brandCrop": {
+    "title": "Adjust image",
+    "use": "Use image",
+    "small": "Small image: it may print blurry.",
+    "hint": "Drag to move. Use the slider or the mouse wheel to zoom.",
+    "hintTouch": "Drag to move. Pinch with two fingers to zoom.",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "adjust": "Adjust"
   }
 }

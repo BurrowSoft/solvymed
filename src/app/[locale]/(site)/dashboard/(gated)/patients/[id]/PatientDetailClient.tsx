@@ -8,6 +8,7 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
+import { localDay } from "@/lib/patientDocuments";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -186,7 +187,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
       {tab === "access" && accessLog != null && (
-        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} />
+        <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} medicalDocs={medicalDocs?.list ?? null} />
       )}
     </div>
     </TimeZoneContext.Provider>
@@ -195,7 +196,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
 
 // Who opened this patient's record, and when (migration 111). The doctor
 // only; newest first, 50 at a time.
-function AccessLogTab({ patientId, initial, records, prescriptions, locale, documentsOn = false }: {
+function AccessLogTab({ patientId, initial, records, prescriptions, locale, documentsOn = false, medicalDocs = null }: {
   patientId: string;
   initial: AccessLogPage | "failed";
   records: MedRecord[];
@@ -203,8 +204,11 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   locale: string;
   // 1.8.0 A: documents are named by their title (cf), "(removed)" when gone.
   documentsOn?: boolean;
+  // 1.8.0 B: a document's entry names its type (cf), "(removed)" when gone.
+  medicalDocs?: { id: string; doc_type: string }[] | null;
 }) {
   const t = useTranslations("patientDetail");
+  const tMed = useTranslations("documents");
   const practiceCalendar = usePracticeCalendar();
   const [rows, setRows] = useState<AccessLogRow[]>(initial === "failed" ? [] : initial.rows);
   const [hasMore, setHasMore] = useState(initial !== "failed" && initial.hasMore);
@@ -262,6 +266,10 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
     if (r.kind === "prescription") {
       const rx = prescriptions.find((x) => x.id === r.objectRef);
       return rx ? `${t("accessKindPrescription")} · ${formatDateLabel(locale, rx.date, { year: "numeric", month: "short", day: "numeric" }, practiceCalendar)}` : t("accessKindPrescription");
+    }
+    if (medicalDocs && r.kind === "document") {
+      const doc = medicalDocs.find((x) => x.id === r.objectRef);
+      return `${t(accessKindLabelKey(r.kind))} · ${doc ? tMed(`type.${doc.doc_type}`) : td("removedMark")}`;
     }
     if (docTitles && (r.kind === "shared_document" || r.kind === "patient_upload" || r.kind === "patient_upload_removed")) {
       return `${t(accessKindLabelKey(r.kind))} · ${docTitles.byId.get(r.objectRef ?? "") ?? td("removedMark")}`;
@@ -972,7 +980,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     try {
       const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
-      downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${doc.created_at.slice(0, 10)}.pdf`);
+      downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${localDay(doc.created_at)}.pdf`);
     } catch {
       setListError(td("pdfFailed"));
     } finally {
@@ -1004,7 +1012,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
-            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, doc.created_at.slice(0, 10))}</span>
+            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
           </div>
           <div className="flex items-center gap-1">
             <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{td("download")}</button>

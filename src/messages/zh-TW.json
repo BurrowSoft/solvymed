@@ -2205,6 +2205,17 @@
     "edit": "編輯",
     "editTitle": "編輯地點",
     "dayLocation": "地點",
-    "bookingLine": "地點：{name} · {address}"
+    "bookingLine": "地點：{name} · {address}",
+    "primaryConfirm": "未選擇地點的工作日將使用 {name}。已指定地點的預約維持不變；沒有地點的預約將顯示為 {name}。"
+  },
+  "brandCrop": {
+    "title": "調整圖片",
+    "use": "使用圖片",
+    "small": "圖片較小：列印可能不清晰。",
+    "hint": "拖曳以移動。使用滑桿或滑鼠滾輪縮放。",
+    "hintTouch": "拖曳以移動。用兩指縮放。",
+    "zoomIn": "放大",
+    "zoomOut": "縮小",
+    "adjust": "調整"
   }
 }

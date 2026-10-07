@@ -71,6 +71,13 @@ describe("the PDFs", () => {
     }
   });
 
+  it("1.8.0 F: every location in the footer, still one page (Thai shaped too)", async () => {
+    const locationLines = ["Unidade Centro · Rua A, 1, Fortaleza, CE · 85 3333-0000", "Unidade Sul · Rua B, 2, Fortaleza, CE", "สาขาสีลม · ถนนสีลม, กรุงเทพฯ", "Unidade Muito Longa · " + "Avenida Exemplo Comprida, 1234, Sala 567, ".repeat(4) + "Fortaleza, CE · 85 99999-0000"];
+    const bytes = await renderMedicalDocumentPdf({ ...base, type: "declaration", lang: "pt-BR", fields: { date: "2026-10-07", from: "09:00", to: "10:00" }, body: "Declaro…", locationLines }, fonts);
+    expect(isPdf(bytes)).toBe(true);
+    expect((await PDFDocument.load(bytes)).getPageCount()).toBe(1);
+  });
+
   it("the controlled prescription: two copies, one page each", async () => {
     const bytes = await renderControlledPrescriptionPdf({
       doctor: { name: "Vivian", crm: "19408", uf: "CE", address: "Rua A", city: "Fortaleza", cityUf: "CE", phone: null },
@@ -91,5 +98,29 @@ describe("the PDFs", () => {
       notes: "Retorno em 30 dias.", signerName: "Vivian", signerRegistration: null, forPatient: true,
     }, fonts);
     expect((await PDFDocument.load(bytes)).getPageCount()).toBe(2);
+  });
+});
+
+describe("B follow-ups (53's row, cf 6 Oct)", () => {
+  it("the language picker: the practice's language and English first, all 7 kept", async () => {
+    const { docLangsFor } = await import("@/lib/medicalDocuments");
+    expect(docLangsFor("BR")).toEqual(["pt-BR", "en", "th", "es", "de", "fr", "it"]);
+    expect(docLangsFor("TH")).toEqual(["th", "en", "pt-BR", "es", "de", "fr", "it"]);
+    expect(docLangsFor("US").slice(0, 1)).toEqual(["en"]);
+    expect(docLangsFor(null)).toHaveLength(7);
+  });
+
+  it("the footer is in the document's language, for every language", async () => {
+    const { PRINT, DOC_LANGS } = await import("@/lib/medicalDocuments");
+    for (const l of DOC_LANGS) expect(PRINT[l].footer).toMatch(/^SolvyMed — /);
+    expect(PRINT.th.footer).toBe("SolvyMed — ระบบบริหารคลินิก");
+    expect(PRINT["pt-BR"].footer).toBe("SolvyMed — Gestão de clínicas");
+  });
+
+  it("a CPF prints formatted", async () => {
+    const { formatCpfDigits } = await import("@/lib/medicalDocuments");
+    expect(formatCpfDigits("12345678909")).toBe("123.456.789-09");
+    expect(formatCpfDigits("123.456.789-09")).toBe("123.456.789-09");
+    expect(formatCpfDigits("abc")).toBe("abc");
   });
 });

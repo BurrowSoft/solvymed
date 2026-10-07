@@ -75,7 +75,22 @@ export function publicLocationForDate(list: PublicLocation[] | null | undefined,
   return list.find((l) => l.days.includes(key)) ?? list.find((l) => l.is_primary) ?? null;
 }
 
+// A location's initials for a short agenda card: the first letters of its
+// first two words ("Unidade Centro" → "UC"), else its first two letters.
+export function locationInitials(name: string): string {
+  const words = name.trim().split(/\s+/).filter(Boolean);
+  if (words.length >= 2) return (Array.from(words[0])[0] + Array.from(words[1])[0]).toUpperCase();
+  return Array.from(words[0] ?? "").slice(0, 2).join("").toUpperCase();
+}
+
 // "Rua X, 10, Cidade, UF": the address line (empty parts left out).
 export function addressLine(l: Pick<PracticeLocation, "address" | "city" | "state">): string {
   return [l.address, l.city, l.state].filter((x) => x && x.trim()).join(", ");
+}
+
+// The documents' footer lines (the app's template-service): every location,
+// "Name · address, city, state · phone", with 2+ locations; else none.
+export function locationFooterLines(list: PracticeLocation[]): string[] {
+  if (list.length < 2) return [];
+  return list.map((l) => [l.name, addressLine(l), l.phone].filter((x) => x && String(x).trim()).join(" · "));
 }

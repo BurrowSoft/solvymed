@@ -2205,6 +2205,17 @@
     "edit": "Bearbeiten",
     "editTitle": "Standort bearbeiten",
     "dayLocation": "Standort",
-    "bookingLine": "Standort: {name} · {address}"
+    "bookingLine": "Standort: {name} · {address}",
+    "primaryConfirm": "Arbeitstage ohne gewählten Standort verwenden {name}. Termine mit Standort bleiben dort; Termine ohne Standort zeigen {name}."
+  },
+  "brandCrop": {
+    "title": "Bild anpassen",
+    "use": "Bild verwenden",
+    "small": "Kleines Bild: Der Druck kann unscharf sein.",
+    "hint": "Zum Verschieben ziehen. Mit dem Regler oder dem Mausrad zoomen.",
+    "hintTouch": "Zum Verschieben ziehen. Mit zwei Fingern zoomen.",
+    "zoomIn": "Vergrößern",
+    "zoomOut": "Verkleinern",
+    "adjust": "Anpassen"
   }
 }
