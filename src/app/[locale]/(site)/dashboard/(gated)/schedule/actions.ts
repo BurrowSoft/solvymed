@@ -73,6 +73,10 @@ export async function createAppointment(formData: FormData) {
   const type = (formData.get("type") as string) || "in-person";
   const paymentType = (formData.get("payment_type") as string) || "private";
   const notes = formData.get("notes") as string;
+  // 1.8.0 F: a location the user picked (else the database fills the day's,
+  // migration 200; it also refuses one that isn't this doctor's).
+  const locationIn = formData.get("location_id");
+  const locationId = typeof locationIn === "string" && /^[0-9a-f-]{36}$/i.test(locationIn) ? locationIn : null;
 
   if (typeof patientIdIn === "string" && patientIdIn) {
     const { data: byId } = await supabase
@@ -225,6 +229,7 @@ export async function createAppointment(formData: FormData) {
     status: "scheduled",
     notes: notes || null,
     scheduled_by: "professional",
+    ...(locationId ? { location_id: locationId } : {}),
   }));
   // One statement: if any date is taken meanwhile (23P01), none is saved.
   const { data: savedRows, error } = await supabase.from("appointments").insert(rows).select("id, date").order("date");

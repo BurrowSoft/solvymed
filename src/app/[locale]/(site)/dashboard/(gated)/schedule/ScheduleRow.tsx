@@ -67,6 +67,7 @@ export async function ScheduleRow({ appt, ctx, today, doctor, city }: { appt: Ca
             {doctor && <DoctorTag info={doctor} />}
             <p className="text-sm text-slate-500 mt-0.5">
               <ConsultTypeLabel value={appt.consultation_type} />
+              {appt.location_name && <span data-testid="appt-location"> · {appt.location_name}</span>}
               {appt.type === "online" && <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600 font-semibold">{t("onlineBadge")}</span>}
             </p>
             {appt.patient_note && <p className="text-xs text-slate-500 mt-1 truncate"><span className="font-semibold">{t("patientMessage")}:</span> {appt.patient_note}</p>}

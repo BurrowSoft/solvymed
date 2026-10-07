@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -93,9 +93,13 @@ describe("My Clinics with locations on", () => {
     expect(screen.queryByText(pt.locations.edit)).toBeNull();
   });
 
-  it("Make primary moves the badge", async () => {
+  it("Make primary asks first (cf copy), then moves the badge", async () => {
     view([A, B]);
-    await act(async () => { fireEvent.click(screen.getByText(pt.locations.makePrimary)); });
+    fireEvent.click(screen.getByText(pt.locations.makePrimary));
+    const dialog = screen.getByTestId("primary-confirm");
+    expect(dialog).toHaveTextContent("Os dias de atendimento sem local escolhido passam a usar Unidade Sul.");
+    expect(h.makePrimary).not.toHaveBeenCalled();
+    await act(async () => { fireEvent.click(within(dialog).getByRole("button", { name: pt.locations.makePrimary })); });
     expect(h.makePrimary).toHaveBeenCalledWith(B.id);
     const badge = screen.getByTestId("location-primary");
     expect(badge.closest("h3")?.textContent).toContain("Unidade Sul");
@@ -140,5 +144,14 @@ describe("the documents' footer lines (the app's template-service)", () => {
     const b = { ...B, address: null, city: "Olinda", state: null, phone: null };
     expect(locationFooterLines([a, b])).toEqual(["Unidade Centro · Rua A, 1, Recife, PE · 81 3333-0000", "Unidade Sul · Olinda"]);
     expect(locationFooterLines([a])).toEqual([]);
+  });
+});
+
+describe("a short agenda card's location chip", () => {
+  it("initials: two words → their first letters; one word → its first two", async () => {
+    const { locationInitials } = await import("@/lib/locations");
+    expect(locationInitials("Unidade Centro")).toBe("UC");
+    expect(locationInitials("Sul")).toBe("SU");
+    expect(locationInitials("สาขา สีลม")).toBe("สส");
   });
 });

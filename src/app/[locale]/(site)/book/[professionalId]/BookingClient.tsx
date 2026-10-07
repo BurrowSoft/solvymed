@@ -22,6 +22,7 @@ import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
 import { shortDoctorName } from "@/lib/doctorName";
 import { BrandHeader } from "@/components/BrandHeader";
 import type { PublicBrand } from "@/lib/brand";
+import { addressLine, publicLocationForDate, type PublicLocation } from "@/lib/locations";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -152,6 +153,7 @@ export function BookingClient({
   idKind = "BR",
   clinicTz: clinicTzProp,
   brand = null,
+  locations = null,
 }: {
   professionalId: string;
   professionalName: string;
@@ -168,9 +170,12 @@ export function BookingClient({
   clinicTz?: string | null;
   // The doctor's brand (1.5.0, behind the flag); null = the card as before.
   brand?: PublicBrand | null;
+  // 1.8.0 F (UX Q4): the practice's locations with their days; null = one place.
+  locations?: PublicLocation[] | null;
 }) {
   const router = useRouter();
   const t = useTranslations("book");
+  const tl = useTranslations("locations");
   const tEx = useTranslations("countryExamples");
   const tIds = useTranslations("patientIds");
   const tDate = useTranslations("dateInput");
@@ -792,6 +797,17 @@ export function BookingClient({
                 {t("chosenTime", chosenTimeParts(selectedDate, selectedSlot.start, selectedSlot.end, profileOfKind(idKind), locale))}
               </p>
             )}
+            {/* 1.8.0 F: where that day's visit is (2+ locations). */}
+            {selectedDate && (() => {
+              const l = publicLocationForDate(locations, selectedDate);
+              if (!l) return null;
+              const address = addressLine(l);
+              return (
+                <p data-testid="booking-location" className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                  {address ? tl("bookingLine", { name: l.name, address }) : `${tl("dayLocation")}: ${l.name}`}
+                </p>
+              );
+            })()}
 
             {error && (
               <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">

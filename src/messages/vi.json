@@ -2199,6 +2199,17 @@
     "edit": "Sửa",
     "editTitle": "Sửa địa điểm",
     "dayLocation": "Địa điểm",
-    "bookingLine": "Địa điểm: {name} · {address}"
+    "bookingLine": "Địa điểm: {name} · {address}",
+    "primaryConfirm": "Các ngày làm việc chưa chọn địa điểm sẽ dùng {name}. Lịch hẹn đã đặt tại một địa điểm giữ nguyên; lịch hẹn không có địa điểm sẽ hiển thị {name}."
+  },
+  "brandCrop": {
+    "title": "Điều chỉnh ảnh",
+    "use": "Dùng ảnh này",
+    "small": "Ảnh nhỏ: bản in có thể bị mờ.",
+    "hint": "Kéo để di chuyển. Dùng thanh trượt hoặc con lăn chuột để phóng to/thu nhỏ.",
+    "hintTouch": "Kéo để di chuyển. Dùng hai ngón tay để phóng to/thu nhỏ.",
+    "zoomIn": "Phóng to",
+    "zoomOut": "Thu nhỏ",
+    "adjust": "Điều chỉnh"
   }
 }

@@ -14,11 +14,20 @@ export type NewsItem = TourStep & {
   roles: TourRole[];
   live: boolean;
 };
-export type NewsRelease = { release: string; items: NewsItem[] };
+// since: when the release reached production. An account created on or
+// after it is new to everything: the main tour, no "What's new" (cf, 6 Oct).
+export type NewsRelease = { release: string; since: string; items: NewsItem[] };
+
+// Brand-new for this release: created on or after its date (YYYY-MM-DD, UTC).
+export function newForRelease(createdAt: string | null | undefined, release: Pick<NewsRelease, "since">): boolean {
+  return !!createdAt && createdAt.slice(0, 10) >= release.since;
+}
 
 export const NEWS: NewsRelease[] = [
   {
     release: "1.4.0",
+    // 1.4.0 reached Google Play production on 2 Oct 2026.
+    since: "2026-10-02",
     items: [
       // SolvyAI: doctors only, once it exists; the spotlight is its ✦ button.
       {

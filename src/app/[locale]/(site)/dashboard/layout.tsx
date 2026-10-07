@@ -10,7 +10,7 @@ import { greetingFirstName } from "@/lib/doctorName";
 import { TourProvider } from "@/components/tour/TourProvider";
 import { readTourState, tourEntry } from "@/lib/tourState";
 import { SOLVYAI_INTRO_TOUR, solvyAiIntroOn, solvyAiPanelOn } from "@/lib/solvyaiIntro";
-import { CURRENT_NEWS, newsTourId } from "@/lib/news";
+import { CURRENT_NEWS, newForRelease, newsTourId } from "@/lib/news";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { SolvyAi } from "@/components/solvyai/SolvyAi";
 import { assistantApiEnabled } from "@/lib/assistant/server/caller";
@@ -174,7 +174,10 @@ export default async function DashboardLayout({
   const tourState = await readTourState(supabase, user.id);
   // The Novidades popup (liveFeatures.news): pending when this release's
   // announcement has no saved state yet (before 113: unavailable, so never).
+  // A brand-new account (created on this release) gets the tour, not
+  // "What's new" (cf, 6 Oct).
   const newsPending = liveFeatures.news
+    && !newForRelease(user.created_at, CURRENT_NEWS)
     && (await readTourState(supabase, user.id, newsTourId(CURRENT_NEWS.release))).kind === "none";
   // The SolvyAI panel (doctors, not while locked) and "Meet SolvyAI ✦":
   // once SolvyAI is live, where the panel is, until seen (113).
