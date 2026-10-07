@@ -2172,6 +2172,7 @@
     "controlledPrintOnly": "Stampala, firmala a mano e consegna entrambe le copie al paziente.",
     "download": "Scarica PDF",
     "print": "Stampa",
+    "openPdf": "Apri PDF",
     "save": "Salva documento",
     "pdfFailed": "Impossibile creare il PDF. Riprova.",
     "err": {

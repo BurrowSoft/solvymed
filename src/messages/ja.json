@@ -2172,6 +2172,7 @@
     "controlledPrintOnly": "印刷して手書きで署名し、2 部とも患者に渡してください。",
     "download": "PDF をダウンロード",
     "print": "印刷",
+    "openPdf": "PDF を開く",
     "save": "書類を保存",
     "pdfFailed": "PDF を作成できませんでした。もう一度お試しください。",
     "err": {

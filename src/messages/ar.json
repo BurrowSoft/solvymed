@@ -2172,6 +2172,7 @@
     "controlledPrintOnly": "اطبعها ووقّعها بخط اليد وأعطِ النسختين للمريض.",
     "download": "تنزيل PDF",
     "print": "طباعة",
+    "openPdf": "فتح PDF",
     "save": "حفظ المستند",
     "pdfFailed": "تعذّر إنشاء ملف PDF. حاول مرة أخرى.",
     "err": {

@@ -2172,6 +2172,7 @@
     "controlledPrintOnly": "打印后亲笔签名,并将两份都交给患者。",
     "download": "下载 PDF",
     "print": "打印",
+    "openPdf": "打开 PDF",
     "save": "保存文件",
     "pdfFailed": "无法生成 PDF,请重试。",
     "err": {

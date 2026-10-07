@@ -2172,6 +2172,7 @@
     "controlledPrintOnly": "인쇄 후 직접 서명하고 두 부 모두 환자에게 주세요.",
     "download": "PDF 다운로드",
     "print": "인쇄",
+    "openPdf": "PDF 열기",
     "save": "문서 저장",
     "pdfFailed": "PDF를 만들지 못했습니다. 다시 시도하세요.",
     "err": {
