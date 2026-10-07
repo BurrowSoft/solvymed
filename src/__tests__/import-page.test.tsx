@@ -115,6 +115,24 @@ describe("Importar pacientes", () => {
     expect(screen.queryByText(pt.patientImport.beYears)).toBeNull();
   });
 
+  it("the recognised systems follow the country's importPresets: iClinic + Prontuário Verde in Brazil, none in Thailand", () => {
+    const { db } = fakeDb();
+    const { unmount } = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("Exportações reconhecidas automaticamente: iClinic e Prontuário Verde.")).toBeInTheDocument();
+    unmount();
+    render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText(th.patientImport.fileFormats)).toBeInTheDocument();
+    expect(screen.queryByText(/iClinic|Prontuário Verde/)).toBeNull();
+  });
+
   it("CPFs Excel stripped of the leading zero: 130's count line, the row's warning, and the Excel hint on a 9/10-digit CPF still invalid", async () => {
     const { db } = fakeDb({ total: 3, new: 2, invalid: 1, with_warnings: 1, cpf_zero_padded: 1 }, [
       { row_no: 2, outcome: "new", duplicate_of_row: null, warnings: ["cpf_zero_padded"], errors: [], input: { full_name: "Ana Zero", cpf: "1234567890" } },

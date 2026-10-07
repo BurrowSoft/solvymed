@@ -251,6 +251,12 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
               </button>
             </div>
             <p className="text-xs text-slate-500">{t("fileFormats")}</p>
+            {/* The presets named per country (registry importPresets), by their own labels. */}
+            {countryProfile(country).importPresets.length > 0 && (
+              <p className="text-xs text-slate-500">
+                {t("fileFormatsPresets", { systems: new Intl.ListFormat(locale, { type: "conjunction" }).format(countryProfile(country).importPresets.map((s) => presetFor(s).label)) })}
+              </p>
+            )}
             {/* _import_birth_date (130) converts years >= 2400 from the Buddhist era. */}
             {countryProfile(country).calendar === "buddhist" && <p className="text-xs text-slate-500">{t("beYears")}</p>}
           </div>
