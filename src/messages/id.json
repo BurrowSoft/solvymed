@@ -2177,6 +2177,8 @@
     "controlledNeedsId": "Resep obat kontrol khusus memerlukan CPF atau paspor pasien.",
     "controlledPrintOnly": "Cetak, tanda tangani dengan tangan, dan berikan kedua salinan kepada pasien.",
     "download": "Unduh PDF",
+    "print": "Cetak",
+    "openPdf": "Buka PDF",
     "save": "Simpan dokumen",
     "pdfFailed": "Gagal membuat PDF. Silakan coba lagi.",
     "err": {

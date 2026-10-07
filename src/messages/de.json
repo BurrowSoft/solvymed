@@ -2177,6 +2177,8 @@
     "controlledNeedsId": "Das Sonderrezept erfordert die CPF oder den Reisepass des Patienten.",
     "controlledPrintOnly": "Drucken, von Hand unterschreiben und beide Exemplare dem Patienten geben.",
     "download": "PDF herunterladen",
+    "print": "Drucken",
+    "openPdf": "PDF öffnen",
     "save": "Dokument speichern",
     "pdfFailed": "Das PDF konnte nicht erstellt werden. Bitte erneut versuchen.",
     "err": {

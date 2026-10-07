@@ -2177,6 +2177,8 @@
     "controlledNeedsId": "La receta de control especial requiere el CPF o el pasaporte del paciente.",
     "controlledPrintOnly": "Imprímela, fírmala a mano y entrega las dos copias al paciente.",
     "download": "Descargar PDF",
+    "print": "Imprimir",
+    "openPdf": "Abrir PDF",
     "save": "Guardar documento",
     "pdfFailed": "No se pudo crear el PDF. Inténtalo de nuevo.",
     "err": {

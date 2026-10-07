@@ -2177,6 +2177,8 @@
     "controlledNeedsId": "L'ordonnance à contrôle spécial exige le CPF ou le passeport du patient.",
     "controlledPrintOnly": "Imprimez-la, signez à la main et remettez les deux exemplaires au patient.",
     "download": "Télécharger le PDF",
+    "print": "Imprimer",
+    "openPdf": "Ouvrir le PDF",
     "save": "Enregistrer le document",
     "pdfFailed": "Impossible de créer le PDF. Veuillez réessayer.",
     "err": {

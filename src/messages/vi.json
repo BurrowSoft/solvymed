@@ -2177,6 +2177,8 @@
     "controlledNeedsId": "Đơn thuốc kiểm soát đặc biệt cần CPF hoặc hộ chiếu của bệnh nhân.",
     "controlledPrintOnly": "In ra, ký tay và giao cả hai bản cho bệnh nhân.",
     "download": "Tải PDF",
+    "print": "In",
+    "openPdf": "Mở PDF",
     "save": "Lưu tài liệu",
     "pdfFailed": "Không tạo được PDF. Vui lòng thử lại.",
     "err": {

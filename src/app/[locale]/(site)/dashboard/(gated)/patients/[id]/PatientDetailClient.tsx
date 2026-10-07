@@ -15,6 +15,7 @@ import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
 import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type MedDoc } from "./MedicalDocuments";
+import { printPdf } from "@/lib/printPdf";
 import { deleteMedicalDocument } from "../medical-documents-actions";
 import { loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
@@ -973,6 +974,13 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
   const docGroups = groupCorrections(medicalDocs?.list ?? []);
   const [pdfBusy, setPdfBusy] = useState<string | null>(null);
+  // A printed special control prescription keeps an "Abrir PDF" link (ad):
+  // where the browser couldn't print it, the PDF opens in a tab from there.
+  // Kept while the page is open; a new print replaces it.
+  const [printed, setPrinted] = useState<Record<string, string>>({});
+  const printedRef = useRef(printed);
+  printedRef.current = printed;
+  useEffect(() => () => { for (const u of Object.values(printedRef.current)) URL.revokeObjectURL(u); }, []);
 
   async function downloadDoc(doc: MedDoc) {
     setListError("");
@@ -980,7 +988,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     try {
       const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
-      downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${localDay(doc.created_at)}.pdf`);
+      // The special control prescription is print-only (ad, as the app):
+      // the print dialog opens on its two copies; the others download.
+      if (doc.doc_type === "controlled_prescription") {
+        const url = printPdf(r.bytes);
+        setPrinted((p) => { if (p[doc.id]) URL.revokeObjectURL(p[doc.id]); return { ...p, [doc.id]: url }; });
+      } else downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${localDay(doc.created_at)}.pdf`);
     } catch {
       setListError(td("pdfFailed"));
     } finally {
@@ -1015,7 +1028,11 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{td("download")}</button>
+            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
+            {printed[doc.id] && (
+              <a href={printed[doc.id]} target="_blank" rel="noopener noreferrer" data-testid="open-printed-pdf"
+                className="rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 underline hover:bg-slate-50">{td("openPdf")}</a>
+            )}
             <EntryActions
               editable={canEditEntry(doc, currentUserId) && !corrected}
               isArchived={isArchived}

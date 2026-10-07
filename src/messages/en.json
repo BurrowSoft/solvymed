@@ -2207,6 +2207,8 @@
     "controlledNeedsId": "The special control prescription needs the patient's CPF or passport.",
     "controlledPrintOnly": "Print it, sign by hand and give both copies to the patient.",
     "download": "Download PDF",
+    "print": "Print",
+    "openPdf": "Open PDF",
     "save": "Save document",
     "pdfFailed": "Couldn't create the PDF. Please try again.",
     "err": {
