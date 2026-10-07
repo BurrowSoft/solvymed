@@ -15,7 +15,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/settings/actions", () => ({
 }));
 
 import { ProfileForm } from "@/app/[locale]/(site)/dashboard/settings/SettingsClient";
-import { councilRegistration, parseCouncilRegistration } from "@/lib/registration";
+import { councilRegistration, crmIssuer, parseCouncilRegistration } from "@/lib/registration";
 
 const t = pt.settings;
 const show = (registration?: string) => render(
@@ -42,6 +42,17 @@ describe("the app's registration format (lib/registration)", () => {
     expect(parseCouncilRegistration("12345")).toEqual({ crm: "12345", crmState: "" });
     expect(parseCouncilRegistration("12.345")).toEqual({ additionalCouncilNumber: "12.345" });
     expect(parseCouncilRegistration(null)).toEqual({});
+  });
+});
+
+describe("the controlled prescription's issuer box (12's #413 finding, as the app)", () => {
+  it("the CRM number alone in the CRM box; its own UF, else the clinic's state", () => {
+    expect(crmIssuer("CRM 000000/SP", "RJ")).toEqual({ crm: "000000", uf: "SP" });
+    expect(crmIssuer("CRM 12345", "ce")).toEqual({ crm: "12345", uf: "CE" });
+    expect(crmIssuer("12345", "SP")).toEqual({ crm: "12345", uf: "SP" });
+    // Another council or free text: as typed, with the clinic's state.
+    expect(crmIssuer("CRO 999", "SP")).toEqual({ crm: "CRO 999", uf: "SP" });
+    expect(crmIssuer(null, null)).toEqual({ crm: "", uf: "" });
   });
 });
 

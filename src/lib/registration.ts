@@ -33,6 +33,17 @@ export function councilRegistration(c: CouncilFields | null | undefined): string
 // The saved one-line registration back into the fields, so the form shows
 // (and a save keeps) what the account already has: "CRM 12345/SP" → CRM +
 // UF; anything else → another council + number.
+// The controlled prescription's issuer box ("Nº inscrição CRM" + "UF"), as
+// the app (12's #413 finding): a CRM gives its number and its own UF, else
+// the clinic's state; anything else (another council, free text) is printed
+// as typed, with the clinic's state.
+export function crmIssuer(registration: string | null | undefined, clinicState: string | null | undefined): { crm: string; uf: string } {
+  const p = parseCouncilRegistration(registration);
+  const state = (clinicState ?? "").trim().toUpperCase();
+  if (p.crm) return { crm: p.crm, uf: p.crmState || state };
+  return { crm: (registration ?? "").trim(), uf: state };
+}
+
 export function parseCouncilRegistration(reg: string | null | undefined): CouncilFields {
   const s = (reg ?? "").trim();
   if (!s) return {};
