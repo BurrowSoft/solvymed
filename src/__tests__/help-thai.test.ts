@@ -13,7 +13,7 @@ const conditions = readConditions(DIR);
 const files = readdirSync(DIR).filter((f) => /^\d\d-.+\.md$/.test(f)).sort();
 const build = (met: boolean) => files.map((f) => parseBatch(f.replace(/\.md$/, ""), readFileSync(resolve(DIR, f), "utf8"), { ...conditions, "help-th-live": { ...conditions["help-th-live"], met } }));
 // Live articles only (P16 / C15 have Thai drafts too, behind their features). C11: 1.8.0 (ad).
-const DRAFTED = ["A1", "A3", "A4", "A5", "A6", "A8", "P1", "P2", "G1", "G4", "G5", "C4", "C11", "K2", "K4", "K5"];
+const DRAFTED = ["A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "P1", "P2", "G1", "G2", "G4", "G5", "G6", "C1", "C2", "C3", "C4", "C6", "C7", "C8", "C11", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "C5", "P11", "P12", "P13", "P14", "K2", "K3", "K4", "K5", "K6"];
 
 type Built = { titleTh?: string; articles: { id: string; th?: { title: string; body: unknown[]; web: string | null } }[] }[];
 

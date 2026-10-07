@@ -40,6 +40,10 @@ Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o
 On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour).
 **No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.
 **On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**.
+Thai title: "ลืมรหัสผ่าน"
+**th**
+ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)
+**ในเว็บไซต์:** ที่หน้าจอเข้าสู่ระบบ คลิก **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วคลิก **ส่งลิงก์รีเซ็ต**
 `open:none`
 
 ---
@@ -79,4 +83,7 @@ Thai title: "ความเป็นส่วนตัว"
 Escreva para support@solvymed.com. Nunca pedimos sua senha.
 **en**
 Email support@solvymed.com. We never ask for your password.
+Thai title: "ติดต่อฝ่ายสนับสนุน"
+**th**
+ส่งอีเมลมาที่ support@solvymed.com เราไม่เคยขอรหัสผ่านของคุณ
 `open:none`
