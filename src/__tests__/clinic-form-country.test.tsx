@@ -91,7 +91,8 @@ describe("ClinicForm by practice country", () => {
     r.unmount();
     r = profile("BR", "pt-BR", pt);
     expect(screen.getByText(/Dr\., Dra\., Prof\./)).toBeInTheDocument();
-    expect(input("professional_registration", r.container).placeholder).toBe(pt.settings.registrationPlaceholder);
+    // Brazil: the app's council fields (crm-registration.test), not the free text.
+    expect(screen.getByTestId("council-registration")).toBeInTheDocument();
     r.unmount();
     r = profile("US", "pt-BR", pt);
     expect(input("professional_registration", r.container).placeholder).toBe(pt.settings.registrationPlaceholderOther);
