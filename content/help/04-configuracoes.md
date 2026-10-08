@@ -320,5 +320,12 @@ Hiding a detail keeps what's already saved: on the patient's page it stays visib
 In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID.
 {pending:app-1.8.0} In the app too: **Settings → Patient registration**.
 {pending:c2-patient-step-live} Patients with an account see, in **My appointments**, the card "{doctor} asked for a few details" when a required detail is empty in their record: **Complete** opens only those fields (without showing what you already have), and what they fill in goes to the record and to the **Access log**. **Not now** hides the card until you make another detail required. Internal notes are never asked of the patient, and the card never blocks booking.
-`open:settings`
+Thai title: "ข้อมูลผู้ป่วย"
+**th**
+ใน **การตั้งค่า → ข้อมูลผู้ป่วย** เลือกว่าข้อมูลแต่ละรายการเป็น **จำเป็น** **ไม่บังคับ** หรือ **ซ่อน** เมื่อคุณหรือทีมของคุณเพิ่มผู้ป่วย ชื่อจำเป็นเสมอ
+ต้องกรอกข้อมูลที่จำเป็นจึงจะบันทึกผู้ป่วยใหม่ได้ ("กรุณากรอก: …") เมื่อแก้ไข ข้อมูลที่จำเป็นซึ่งว่างอยู่แล้วจะไม่ขัดขวางการบันทึก โดยจะแสดง "ยังขาดข้อมูลที่จำเป็น: …" แต่คุณจะลบข้อมูลที่จำเป็นซึ่งมีค่าอยู่แล้วไม่ได้
+การซ่อนข้อมูลจะไม่ลบสิ่งที่บันทึกไว้แล้ว ในหน้าผู้ป่วย ข้อมูลนั้นยังแสดงอยู่ พร้อมเครื่องหมาย "ซ่อนจากแบบฟอร์ม"
+ในบราซิล RG เริ่มต้นเป็นซ่อน และ CNS มีเฉพาะคลินิกในบราซิล ในประเทศไทย หนังสือเดินทางนับเป็นเลขประจำตัวที่จำเป็นได้
+{pending:app-1.8.0} ในแอปก็มีเช่นกัน: การตั้งค่า → ข้อมูลผู้ป่วย
+`open:settings-patient-fields`
 `requires:patient-fields-live`
