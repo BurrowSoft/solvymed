@@ -7,6 +7,7 @@ import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
 import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/landingRoute";
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
+import { BROWSER_LANGUAGES_HEADER } from "./lib/signupCountry";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -191,6 +192,10 @@ export async function middleware(req: NextRequest) {
     // reach it. A hidden-language cookie is removed from the rebuilt
     // request too, or next-intl would still redirect to it.
     const headers = new Headers(req.headers);
+    // The browser's own list, kept for the signup's country suggestion
+    // (lib/signupCountry): pinning hides it from the page (13, #484).
+    const browserLanguages = req.headers.get("accept-language");
+    if (browserLanguages) headers.set(BROWSER_LANGUAGES_HEADER, browserLanguages);
     headers.set("accept-language", routing.defaultLocale);
     const pinned = new NextRequest(req.url, { headers });
     pinned.cookies.delete("NEXT_LOCALE");
