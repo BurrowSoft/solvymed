@@ -464,7 +464,9 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     ...idFields.map((f) => ({ label: f.label, value: f.value || null, key: idKey(f.name) })),
     ...(idKind === "BR" ? [{ label: tf("rg"), value: patient.rg ?? null, key: "rg_passport" as FieldKey }] : []),
     { label: t("dateOfBirth"), value: patient.birth_date ? `${formatShortDate(locale, patient.birth_date)}${age ? ` (${t("age", { n: age })})` : ""}` : null, key: "birth_date" },
-    { label: t("sex"), value: patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, key: "sex" },
+    // The stored value (male / female / other) in the reader's language, as the
+    // edit form's options show it (13: pt-BR read "Female").
+    { label: t("sex"), value: patient.sex === "male" || patient.sex === "female" || patient.sex === "other" ? t(patient.sex) : patient.sex || null, key: "sex" },
     { label: t("profession"), value: patient.profession, key: "profession" },
     { label: t("emergencyPhone"), value: patient.emergency_phone, key: "emergency_contact" },
     ...(addressLive ? [

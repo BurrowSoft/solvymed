@@ -30,3 +30,18 @@ describe("patient page dates follow the clinic's time zone", () => {
     expect(screen.getByText("1 de outubro de 2026")).toBeInTheDocument();
   });
 });
+
+describe("the Info tab's sex in the reader's language (13: pt-BR read \"Female\")", () => {
+  it("male / female / other → the edit form's own labels", () => {
+    for (const [sex, word] of [["female", "Feminino"], ["male", "Masculino"], ["other", "Outro"]] as const) {
+      const r = render(
+        <NextIntlClientProvider locale="pt-BR" messages={pt}>
+          <PatientTabs patient={{ ...patient, sex }} records={[]} prescriptions={[]} appointments={[]} locale="pt-BR" currentUserId="d1" timeZone="America/Sao_Paulo" />
+        </NextIntlClientProvider>,
+      );
+      expect(screen.getByText(word)).toBeInTheDocument();
+      expect(screen.queryByText(sex.charAt(0).toUpperCase() + sex.slice(1))).toBeNull();
+      r.unmount();
+    }
+  });
+});
