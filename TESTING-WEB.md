@@ -10482,3 +10482,45 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 - Clinical rows were purged first (post-094 order); WT1 verified 0 left for the #434/#440, #439, #446, and #449–#454 sets.
 - The #453/#459/#461 set (2 doctors) was handed to the mobile dev for purge after the #459 row.
 - Two `e2e-smoke` doctors orphaned by network drops were deleted by WT1 (0 clinical rows, verified 404).
+
+## Batch 15: web PRs #451–#488, incl. 1.8.0 C1 (patient registration), the E card link going live, B form fixes and the Thai Help drafts (web tester 1 + web tester 2, 2026-10-07 → 10-08)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; listings, seeds and purges by the mobile dev. Every row below with a Preview also ran the regression suite: "smoke: 57 passed at `<SHA>`" unless noted.
+
+**Smoke and privacy versions:** `public-legal.spec` reads `PRIVACY_VERSION` from its own checkout. So a PR that changes the version (#451, #485), or a branch from before such a change (#455), runs that file with the suite pinned at the PR's head. Each row says so.
+
+**Production database windows:** 10-08 05:00–05:34Z (migrations 206–210) and 08:51Z → all-clear (211–213). No tester writes ran during either; the mobile dev's all-clear gated every row that writes.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #451 | Privacy §3.2 lists every patient field (2026-10-13) | WT1 🟢 `f188c30` (6053212546): en + pt §3.2 13/13 items (incl. RG, emergency contact phone, insurance type, photo, tags, archive status), "13 October 2026"; smoke 54 + public-legal 10/10 pinned at the head. Post-merge on www (6053248342): en / pt / th show the new §3.2 and 13 October | `f97a5b9` into master |
+| #455 | 1.8.0 C1: patient registration rules (migration 207) | WT1 🟢 `b4e28ba` (6053547091): defaults (BR RG hidden, TH no CNS); rules save as made; new patient: asterisks + "Preencha: E-mail, Data de Nascimento", RG saved, the hidden profession not posted; a hidden detail with a value shows read-only with "Campo oculto no cadastro" and an edit keeps it; already-empty required fields don't block (the note shows); clearing a required value blocks; the secretary's form follows the rules (no card); TH: a passport fills the required ID. Smoke 54 + public-legal pinned. The "Salvo" nit was a false alarm (6053965550) | `94d25ed` into master |
+| #459 | B documents: registration line under the signer + French date line | WT1 🟢 `c88cd51` (6041775138): "CRM 12345/SP" / "CRM 12345" / "CRM 999/RJ" as typed; TH "…เลขที่ ว.12345" / "Medical licence no. 12345"; no title added; the signature line drawn; fr "São Paulo, le …" / "Le …"; the controlled Rx unchanged. Carried over to `792c9b7` (master merge, same patch) | `18db0a0` into master |
+| #460 | Settings → Profile (Brazil): CRM number + state | WT2 🟢 `3399ec6` (6042675927), smoke 57 | `3c572d5` into master |
+| #462 | Controlled Rx → Imprimir (+ Abrir PDF) | WT2 🟢 `f3c7132` (6042528634): Chrome 154, Edge 154, Firefox 155 (pdf.js → new-tab fallback); Playwright Chromium / Firefox / WebKit download. Safari mac/iPad not covered. Smoke 57 (undo flake rerun 3/3) | `7cf35f1` into master |
+| #463 | B document form: titles, discard confirm, Thai rest end, dd/mm/yyyy, BE guard | WT1 🟢 `3ecf2c5` (6043007948): BR + TH titles; "Descartar alterações?" only after a change (Cancel / ✕ / backdrop), Continuar keeps; beforeunload on reload; typed dates, no native picker; "พ.ศ. 2569" + "วว/ดด/ปปปป (ค.ศ.)"; a BE year refused, 0 rows; rest 08/10 + 3 → 10/10, end editable. Add-on on www after 24 h, no backdating (6067949567): "Corrigir documento" / "แก้ไขเอกสาร (บันทึกการแก้ไข)" / "Correct document" | `cd72471` into master |
+| #464 | B documents: Thai medical certificate in Thai or English only | WT1 🟢 `0ab92db` (6043583320): only ไทย / English; picking it from fr switches to th; other types keep 7; an older fr certificate keeps fr on edit | `b681a2b` into master |
+| #466 | Help P16: CRM from another state → choose the state | Review-only (CLEAN at `d891bfc`): two Help lines | `064678d` into master |
+| #467 | SolvyAI: one closing line with the other platform's path | WT2 `73e4bf8` (6043390327): merge (pt) 🟢, import 🟢; Thai ❌ before #469 (6043660946), fixed by #469. Smoke 57 | `d460262` into master |
+| #468 | A disallowed dashboard language never renders | WT2 🟢 `b2d0e27` (6044107114); the ❌ at `0cb3e3f` was the smoke test only. Smoke 57 | `1a017c4` into master |
+| #469 | SolvyAI: the other-platform line in Thai | WT2 🟢 `52c0316` (6044108047), smoke 57 | `f661f68` into master |
+| #471 | Help: Thai drafts P16 + C15 (hidden) | WT1 🟢 `38b2f64` (6044712720): P16 / C15 gated (404) in th / pt / en = www; /th/help identical; no draft visible; the Thai labels match `th.json` | `3b6efcb` into master |
+| #472 | Help C15 + App Map: document PDFs list the locations | WT1 🟢 `fa64443` (6045461562): C15 gated (404) = www; the new lines pending clinical-documents-live | `b1c2e56` into master |
+| #474 | Help: Thai draft C11 My brand (hidden) | WT1 🟢 `f94b29e` (6045610075): C11 byte-identical to www in th / pt / en; labels match `th.json` | `fff04e0` into master |
+| #475–#482 | Help: Thai drafts A2, A7, K3, K6, G2, G6, C1–C3, C5–C8, P3–P14 (stacked, hidden) | WT1 🟢 on each at its own SHA (6046355955 … 6046362795): one comparison at the top head, ancestry checked at every step, 78 pages vs www. Only P5 differs (#480's en / pt label "Add correction" / "Adicionar correção"); no Thai visible; smoke 57 at `cceccb9` | `c7bcbbf` … `8271da1` into master |
+| #483 | Import page: BE-years note + recognised systems per country | WT2 🟢 `f1debb4` (6046675516), smoke 57 | `5ae8664` into master |
+| #484 | The signup country step suggests a country | WT2 🟢 `69a130c` (6053773313), smoke 57; the earlier ❌ at `f800a6a` (middleware pinned Accept-Language) is fixed | `6e3da4b` into master |
+| #485 | Privacy 2026-10-16 §3.1 + `card-payment-live` met | WT1 🟢 `6fe60ff` (6068098907): §3.1 card link + "16 October 2026"; card link https check ("Informe um link que comece com https://"); QR dialog "OU PAGUE COM CARTÃO" + Copiar; the Pix WhatsApp text gains the card line; without Pix, the card WhatsApp button; Help G3 / G4 keep the Pix steps + add the card text. Smoke 57 pinned at the head | `ec30ae7` into master |
+| #486 | C1: only the name is always required | WT1 🟢 `2e78b7b` (6053943542): the hint in pt / en / th, no phone mention | `9ba4e34` into master |
+| #487 | Help: Thai draft C16 + C16 opens the card | WT1 🟢 `48dd9a6` (6055161000): C16 identical to www, no Thai; the open button lands on `settings#patient-fields` with the card in view (desktop + phone) | `e543e8c` into master |
+| #488 | `patient-fields-live` met | WT1 🟢 `5de0865` (6054813138): C16 visible (en / pt; th = English); the index lists it; SolvyAI → "Configurações → Cadastro do paciente", Abrir tela → Settings | `93f0e53` into master |
+
+**Still open, so not in this batch:** #470 (1.8.0 B2 share copies; WT2, after migration 211) and #473 (1.8.0 C2; WT2, after 212).
+
+**Fixtures:**
+- Throwaway accounts (`e2e-test-opus-…`, `e2e-smoke-…`).
+- `clinical_documents` listings by the mobile dev, with UX & PM's OK by exact id.
+- Nothing was backdated: the #463 correction title was checked once the certificates were really over 24 h old.
+- The #453 / #459 / #461 set was purged by the mobile dev and verified 0 by WT1.
+- The #463 / #464 / #455 / #485 set (2 doctors, 3 documents, 1 visit, 5 patients, 1 secretary) was handed to the mobile dev for purge on 10-08.
+- Since migration 206 a purge keeps SolvyAI usage rows anonymised (`professional_id` → NULL), by design.
