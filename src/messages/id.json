@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Data pasien",
-    "hint": "Pilih data yang diminta saat menambah pasien. Nama dan telepon selalu wajib. Menyembunyikan kolom tetap menyimpan data yang sudah ada.",
+    "hint": "Pilih data yang diminta saat menambah pasien. Nama selalu wajib. Menyembunyikan kolom tetap menyimpan data yang sudah ada.",
     "required": "Wajib",
     "optional": "Opsional",
     "hidden": "Tersembunyi",

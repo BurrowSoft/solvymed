@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Scheda paziente",
-    "hint": "Scegli quali dati chiedere quando aggiungi un paziente. Nome e telefono sono sempre obbligatori. Nascondere un campo mantiene ciò che è già salvato.",
+    "hint": "Scegli quali dati chiedere quando aggiungi un paziente. Il nome è sempre obbligatorio. Nascondere un campo mantiene ciò che è già salvato.",
     "required": "Obbligatorio",
     "optional": "Facoltativo",
     "hidden": "Nascosto",
