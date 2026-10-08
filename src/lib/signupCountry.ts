@@ -55,6 +55,12 @@ export function countryFromLanguages(acceptLanguage: string | null | undefined):
   return null;
 }
 
+// The browser's own Accept-Language, as the middleware received it. On a
+// first visit picked as English it pins the request's Accept-Language to
+// "en" for next-intl, so the signup reads this one first. Only a hint: a
+// forged value changes nothing but the suggestion.
+export const BROWSER_LANGUAGES_HEADER = "x-solvymed-browser-languages";
+
 // The country the step suggests (shown first, in the primary style), or
 // null. First match wins: a choice already made in this browser (the
 // signup cookie; ?c= skips the step anyway), the browser's languages, the

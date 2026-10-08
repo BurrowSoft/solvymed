@@ -35,6 +35,10 @@ describe("signup layout: the country step's suggestion", () => {
     expect(await guessFor({})).toBe("guess:none");
   });
 
+  it("the browser's own list (kept by the middleware when it pins en) beats the pinned Accept-Language", async () => {
+    expect(await guessFor({ "x-solvymed-browser-languages": "en-US,en;q=0.9,pt-BR;q=0.8", "accept-language": "en", "x-vercel-ip-country": "TH" })).toBe("guess:BR");
+  });
+
   it("a country already tapped in this browser is never replaced by a guess", async () => {
     expect(await guessFor({ "accept-language": "pt-BR", "x-vercel-ip-country": "BR" }, "TH")).toBe("guess:TH");
   });
