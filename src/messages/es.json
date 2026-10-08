@@ -2241,6 +2241,21 @@
     "address": "Dirección",
     "saved": "Guardado"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} pidió algunos datos",
+    "cardBody": "Completa tu registro.",
+    "complete": "Completar",
+    "notNow": "Ahora no",
+    "cancel": "Cancelar",
+    "formTitle": "Completa tu registro",
+    "hint": "Estos datos van a tu registro con {doctor}.",
+    "done": "¡Listo! Tu registro está completo.",
+    "idInUse": "Este documento ya está en otro registro de este consultorio. Contacta a la clínica.",
+    "invalid": "Revisa: {field}.",
+    "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
+    "orPassport": "O tu número de pasaporte:",
+    "emailInUse": "Este correo ya está en otro registro de este consultorio. Contacta a la clínica."
+  },
   "brandCrop": {
     "title": "Ajustar imagen",
     "use": "Usar imagen",

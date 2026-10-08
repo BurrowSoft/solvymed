@@ -2241,6 +2241,21 @@
     "address": "Adresse",
     "saved": "Enregistré"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} a demandé quelques informations",
+    "cardBody": "Complétez votre dossier.",
+    "complete": "Compléter",
+    "notNow": "Plus tard",
+    "cancel": "Annuler",
+    "formTitle": "Complétez votre dossier",
+    "hint": "Ces informations vont dans votre dossier chez {doctor}.",
+    "done": "C'est fait ! Votre dossier est complet.",
+    "idInUse": "Ce document figure déjà sur un autre dossier de ce cabinet. Contactez la clinique.",
+    "invalid": "Vérifiez : {field}.",
+    "saveFailed": "Impossible d'enregistrer. Veuillez réessayer.",
+    "orPassport": "Ou votre numéro de passeport :",
+    "emailInUse": "Cet e-mail figure déjà sur un autre dossier de ce cabinet. Contactez la clinique."
+  },
   "brandCrop": {
     "title": "Ajuster l'image",
     "use": "Utiliser l'image",

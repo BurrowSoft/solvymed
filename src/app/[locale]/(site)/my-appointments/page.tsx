@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
 import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
+import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadMyDocumentDoctors } from "./document-actions";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
@@ -169,6 +170,12 @@ export default async function MyAppointmentsPage({
   const docDoctors = await loadMyDocumentDoctors();
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
   // A newer privacy policy than this account accepted (migration 204).
+  // 1.8.0 C2: the doctors asking for details still empty (212; their switch).
+  const selfDoctors = [
+    ...(myProfessionalId ? [{ id: myProfessionalId, name: myProfessionalMeta?.name ?? "" }] : []),
+    ...(doctors ?? []).filter((d) => d.id !== myProfessionalId).map((d) => ({ id: d.id, name: d.name })),
+  ];
+  const selfPrompts = await loadSelfFieldPrompts(supabase, selfDoctors);
   const privacyNoticeDate = privacyNoticeDue(await readAcceptedPrivacy(supabase))
     ? formatDateLabel(locale, PRIVACY_VERSION, { day: "numeric", month: "long", year: "numeric" })
     : null;
@@ -179,6 +186,7 @@ export default async function MyAppointmentsPage({
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       privacyNoticeDate={privacyNoticeDate}
+      selfPrompts={selfPrompts}
       upcoming={upcoming ?? []}
       past={past ?? []}
       userEmail={user.email ?? ""}

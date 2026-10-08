@@ -2241,6 +2241,21 @@
     "address": "Adresse",
     "saved": "Gespeichert"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} hat um einige Angaben gebeten",
+    "cardBody": "Vervollständigen Sie Ihre Registrierung.",
+    "complete": "Vervollständigen",
+    "notNow": "Nicht jetzt",
+    "cancel": "Abbrechen",
+    "formTitle": "Registrierung vervollständigen",
+    "hint": "Diese Angaben gehen in Ihre Registrierung bei {doctor}.",
+    "done": "Fertig! Ihre Registrierung ist vollständig.",
+    "idInUse": "Dieses Dokument ist bereits in einer anderen Registrierung dieser Praxis. Bitte wenden Sie sich an die Praxis.",
+    "invalid": "Bitte prüfen: {field}.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "orPassport": "Oder Ihre Reisepassnummer:",
+    "emailInUse": "Diese E-Mail ist bereits in einer anderen Registrierung dieser Praxis. Bitte wenden Sie sich an die Praxis."
+  },
   "brandCrop": {
     "title": "Bild anpassen",
     "use": "Bild verwenden",

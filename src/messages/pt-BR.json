@@ -2241,6 +2241,21 @@
     "address": "Endereço",
     "saved": "Salvo"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} pediu alguns dados",
+    "cardBody": "Complete seu cadastro.",
+    "complete": "Completar",
+    "notNow": "Agora não",
+    "cancel": "Cancelar",
+    "formTitle": "Complete seu cadastro",
+    "hint": "Esses dados vão para o seu cadastro com {doctor}.",
+    "done": "Pronto! Seu cadastro está completo.",
+    "idInUse": "Este documento já está em outro cadastro deste consultório. Fale com a clínica.",
+    "invalid": "Confira: {field}.",
+    "saveFailed": "Não foi possível salvar. Tente novamente.",
+    "orPassport": "Ou o número do seu passaporte:",
+    "emailInUse": "Este e-mail já está em outro cadastro deste consultório. Fale com a clínica."
+  },
   "brandCrop": {
     "title": "Ajustar imagem",
     "use": "Usar imagem",

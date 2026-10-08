@@ -312,12 +312,14 @@ Um dado obrigatório precisa ser preenchido para salvar um paciente novo ("Preen
 Ocultar um dado mantém o que já está salvo: na ficha do paciente ele continua visível, com "Campo oculto no cadastro".
 No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório.
 {pending:app-1.8.0} No app também: **Configurações → Cadastro do paciente**.
+{pending:c2-patient-step-live} Pacientes com conta veem, em **Minhas consultas**, o aviso "{médico} pediu alguns dados" quando um dado obrigatório está vazio no cadastro deles: **Completar** abre só esses campos (sem mostrar o que você já tem), e o que o paciente preencher vai para o cadastro e fica no **Registro de acessos**. **Agora não** esconde o aviso até você tornar outro dado obrigatório. Observações internas nunca são pedidas ao paciente, e o aviso nunca impede o agendamento.
 **en**
 In **Settings → Patient registration**, choose for each detail whether it's **Required**, **Optional** or **Hidden** when you or your team add a patient. Name is always required.
 A required detail must be filled in to save a new patient ("Fill in: …"). When editing, a required detail that was already empty doesn't stop the save: "Missing required details: …" shows; you just can't clear a required detail that had a value.
 Hiding a detail keeps what's already saved: on the patient's page it stays visible, marked "Hidden from the form".
 In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID.
 {pending:app-1.8.0} In the app too: **Settings → Patient registration**.
+{pending:c2-patient-step-live} Patients with an account see, in **My appointments**, the card "{doctor} asked for a few details" when a required detail is empty in their record: **Complete** opens only those fields (without showing what you already have), and what they fill in goes to the record and to the **Access log**. **Not now** hides the card until you make another detail required. Internal notes are never asked of the patient, and the card never blocks booking.
 Thai title: "ข้อมูลผู้ป่วย"
 **th**
 ใน **การตั้งค่า → ข้อมูลผู้ป่วย** เลือกว่าข้อมูลแต่ละรายการเป็น **จำเป็น** **ไม่บังคับ** หรือ **ซ่อน** เมื่อคุณหรือทีมของคุณเพิ่มผู้ป่วย ชื่อจำเป็นเสมอ

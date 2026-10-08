@@ -2241,6 +2241,21 @@
     "address": "Alamat",
     "saved": "Tersimpan"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} meminta beberapa data",
+    "cardBody": "Lengkapi pendaftaran Anda.",
+    "complete": "Lengkapi",
+    "notNow": "Nanti saja",
+    "cancel": "Batal",
+    "formTitle": "Lengkapi pendaftaran Anda",
+    "hint": "Data ini masuk ke pendaftaran Anda di {doctor}.",
+    "done": "Selesai! Pendaftaran Anda sudah lengkap.",
+    "idInUse": "Nomor identitas ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik.",
+    "invalid": "Periksa: {field}.",
+    "saveFailed": "Gagal menyimpan. Silakan coba lagi.",
+    "orPassport": "Atau nomor paspor Anda:",
+    "emailInUse": "Email ini sudah ada di pendaftaran lain di praktik ini. Silakan hubungi klinik."
+  },
   "brandCrop": {
     "title": "Sesuaikan gambar",
     "use": "Gunakan gambar",

@@ -2241,6 +2241,21 @@
     "address": "Địa chỉ",
     "saved": "Đã lưu"
   },
+  "selfFields": {
+    "cardTitle": "{doctor} cần thêm một số thông tin",
+    "cardBody": "Hoàn tất đăng ký của bạn.",
+    "complete": "Hoàn tất",
+    "notNow": "Để sau",
+    "cancel": "Hủy",
+    "formTitle": "Hoàn tất đăng ký",
+    "hint": "Thông tin này sẽ được lưu vào hồ sơ của bạn tại {doctor}.",
+    "done": "Xong! Đăng ký của bạn đã đầy đủ.",
+    "idInUse": "Giấy tờ này đã có trong một hồ sơ khác của phòng khám. Vui lòng liên hệ phòng khám.",
+    "invalid": "Vui lòng kiểm tra: {field}.",
+    "saveFailed": "Không lưu được. Vui lòng thử lại.",
+    "orPassport": "Hoặc số hộ chiếu của bạn:",
+    "emailInUse": "Email này đã có trong một hồ sơ khác của phòng khám. Vui lòng liên hệ phòng khám."
+  },
   "brandCrop": {
     "title": "Điều chỉnh ảnh",
     "use": "Dùng ảnh này",
