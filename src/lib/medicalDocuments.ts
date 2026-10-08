@@ -283,6 +283,46 @@ export function registrationLine(
 }
 
 // The patient's ID line for the printed document, by the practice's ID kind.
+// ── The copy shared with the patient (1.8.0 B2; ad, both platforms) ─────────
+// A document made in SolvyMed goes to the patient's folder as a PDF snapshot:
+// its folder by type (ad), its title as printed in the document's own
+// language with its date in that document's calendar, and the unsigned-copy
+// line (the website has no drawn signature). The controlled prescription is
+// print-only: never shared. en / pt-BR / th: the app's pdf.unsignedCopy;
+// es / fr / de / it: drafts for UX review.
+export type SharedDocType = Exclude<MedicalDocType, "controlled_prescription">;
+export const SNAPSHOT_FOLDER: Record<SharedDocType, "certificates" | "exams"> = {
+  certificate: "certificates", declaration: "certificates", th_certificate: "certificates", exam_request: "exams",
+};
+export function sharesSnapshot(type: MedicalDocType): type is SharedDocType {
+  return type !== "controlled_prescription";
+}
+const SNAPSHOT_WORDS: Record<DocLang, { unsignedCopy: string; title: Record<SharedDocType, string> }> = {
+  en: { unsignedCopy: "Unsigned copy, for the patient's reference.",
+    title: { certificate: "Medical certificate", declaration: "Medical declaration", exam_request: "Exam request", th_certificate: "Medical certificate" } },
+  "pt-BR": { unsignedCopy: "Cópia sem assinatura, para consulta do paciente.",
+    title: { certificate: "Atestado médico", declaration: "Declaração médica", exam_request: "Solicitação de exames", th_certificate: "Atestado médico" } },
+  th: { unsignedCopy: "สำเนาไม่มีลายมือชื่อ สำหรับผู้ป่วยใช้อ้างอิง",
+    title: { certificate: "ใบรับรองแพทย์", declaration: "ใบรับรองการมาพบแพทย์", exam_request: "ใบส่งตรวจ", th_certificate: "ใบรับรองแพทย์" } },
+  es: { unsignedCopy: "Copia sin firma, para consulta del paciente.",
+    title: { certificate: "Certificado médico", declaration: "Declaración médica", exam_request: "Solicitud de exámenes", th_certificate: "Certificado médico" } },
+  fr: { unsignedCopy: "Copie non signée, pour information du patient.",
+    title: { certificate: "Certificat médical", declaration: "Déclaration médicale", exam_request: "Demande d'examens", th_certificate: "Certificat médical" } },
+  de: { unsignedCopy: "Unsignierte Kopie, zur Information des Patienten.",
+    title: { certificate: "Ärztliches Attest", declaration: "Ärztliche Bescheinigung", exam_request: "Untersuchungsanforderung", th_certificate: "Ärztliches Attest" } },
+  it: { unsignedCopy: "Copia non firmata, per consultazione del paziente.",
+    title: { certificate: "Certificato medico", declaration: "Dichiarazione medica", exam_request: "Richiesta di esami", th_certificate: "Certificato medico" } },
+};
+export function snapshotUnsignedLine(lang: DocLang): string {
+  return SNAPSHOT_WORDS[lang].unsignedCopy;
+}
+// "Atestado médico 08/10/2026", "ใบรับรองแพทย์ 08/10/2569" (the Buddhist era in Thai).
+export function snapshotTitle(type: SharedDocType, lang: DocLang, iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  const date = m ? `${m[3]}/${m[2]}/${lang === "th" ? Number(m[1]) + 543 : m[1]}` : iso;
+  return `${SNAPSHOT_WORDS[lang].title[type]} ${date}`;
+}
+
 export function idLabel(lang: DocLang, kind: "cpf" | "thai_id" | "passport"): string {
   const w = PRINT[lang];
   return kind === "cpf" ? w.idCpf : kind === "thai_id" ? w.idTh : w.passport;

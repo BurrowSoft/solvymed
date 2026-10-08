@@ -90,7 +90,7 @@ export async function updateMedicalDocument(id: string, patientId: string, input
 }
 
 // After 24 hours: a correction (189's add_document_correction), the original kept.
-export async function correctMedicalDocument(id: string, patientId: string, input: Input & { reason: string }): Promise<Result<null>> {
+export async function correctMedicalDocument(id: string, patientId: string, input: Input & { reason: string }): Promise<Result<string | null>> {
   if (!isUuid(id) || !isUuid(patientId)) return { ok: false, code: "generic" };
   const reason = (input.reason ?? "").trim();
   if (!reason) return { ok: false, code: "reason_required" };
@@ -98,18 +98,21 @@ export async function correctMedicalDocument(id: string, patientId: string, inpu
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
-  const { error } = await me.supabase.rpc("add_document_correction", {
+  const { data: correctionId, error } = await me.supabase.rpc("add_document_correction", {
     p_document_id: id, p_body: (input.body ?? "").trim() || null, p_fields: input.fields, p_reason: reason,
   });
   if (error) return { ok: false, code: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
-  return { ok: true, data: null };
+  // The correction's id: the patient's copy is made from it (1.8.0 B2).
+  return { ok: true, data: (correctionId as string | null) ?? null };
 }
 
 export async function deleteMedicalDocument(id: string, patientId: string): Promise<Result<null>> {
   if (!isUuid(id) || !isUuid(patientId)) return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "not_doctor" };
+  // Its copies shared with the patient go too (ad, 1.8.0 B2): migration 211's
+  // trigger marks them 'removing' in the same delete (the sweep removes them).
   const { error } = await me.supabase.from("medical_documents").delete().eq("id", id).eq("professional_id", me.uid);
   if (error) return { ok: false, code: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);

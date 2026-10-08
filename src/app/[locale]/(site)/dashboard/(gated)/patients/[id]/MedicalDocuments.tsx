@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
+  DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, sharesSnapshot, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -65,7 +65,7 @@ export function restEnd(start: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onDirtyChange, reasonField }: {
+export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onDirtyChange, reasonField, canShare = false }: {
   state: DocDialogState;
   patientId: string;
   patientName: string;
@@ -75,14 +75,18 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // Cancel: the host asks "Descartar alterações?" when something changed.
   onClose: () => void;
   // After a save (nothing to discard).
-  onSaved?: () => void;
+  // After a save; with the new / corrected document to share (1.8.0 B2).
+  onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean }) => void;
   // Whether anything changed since the dialog opened (12's #413 row, ad).
   onDirtyChange?: (dirty: boolean) => void;
   reasonField: React.ReactNode;
+  // 1.8.0 B2: "Compartilhar com o paciente" (flag patient_documents).
+  canShare?: boolean;
 }) {
   const t = useTranslations("documents");
   const tp = useTranslations("patientDetail");
   const tdate = useTranslations("dateInput");
+  const tdocs = useTranslations("docs");
   const uiLocale = useLocale();
   const existing = state.mode !== "new" ? state.doc : null;
   const [type, setType] = useState<MedicalDocType | null>(existing?.doc_type ?? (state.mode === "new" ? state.type : null));
@@ -94,6 +98,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [bodyTouched, setBodyTouched] = useState(!!existing);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
+  // ON by default (the A spec); never for the controlled prescription.
+  const [share, setShare] = useState(true);
   const types = documentTypesFor(country);
   const effLang = (type && fixedLanguage(type)) ?? lang;
 
@@ -159,7 +165,16 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
         setError(k ? t(`err.${k}` as "err.date") : r.code === "buddhist_year" ? tdate("buddhistYear") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));
         return;
       }
-      (onSaved ?? onClose)();
+      // The saved document, as the PDF needs it (the server's copy is the same).
+      // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
+      const id = state.mode === "edit" ? state.doc.id : (r.data as string | null);
+      if (onSaved) {
+        onSaved(id && type ? {
+          doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
+          correctsId: state.mode === "new" ? null : state.doc.id,
+          share: canShare && share && sharesSnapshot(type),
+        } : undefined);
+      } else onClose();
     });
   }
 
@@ -331,6 +346,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           )}
 
           {state.mode === "correct" && reasonField}
+          {canShare && type && sharesSnapshot(type) && (
+            <label className="flex items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} className="h-4 w-4 accent-teal-600" />
+              {tdocs("share")}
+            </label>
+          )}
           {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600">{tp("cancel")}</button>
