@@ -2224,6 +2224,20 @@
     "bookingLine": "Địa điểm: {name} · {address}",
     "primaryConfirm": "Các ngày làm việc chưa chọn địa điểm sẽ dùng {name}. Lịch hẹn đã đặt tại một địa điểm giữ nguyên; lịch hẹn không có địa điểm sẽ hiển thị {name}."
   },
+  "patientFields": {
+    "title": "Hồ sơ bệnh nhân",
+    "hint": "Chọn thông tin cần hỏi khi thêm bệnh nhân. Họ tên và số điện thoại luôn bắt buộc. Ẩn một trường vẫn giữ dữ liệu đã lưu.",
+    "required": "Bắt buộc",
+    "optional": "Tùy chọn",
+    "hidden": "Ẩn",
+    "missing": "Vui lòng điền: {fields}",
+    "missingNote": "Thiếu thông tin bắt buộc: {fields}",
+    "hiddenBadge": "Đã ẩn trong biểu mẫu",
+    "rg": "RG",
+    "orPassport": "{id} hoặc hộ chiếu",
+    "address": "Địa chỉ",
+    "saved": "Đã lưu"
+  },
   "brandCrop": {
     "title": "Điều chỉnh ảnh",
     "use": "Dùng ảnh này",

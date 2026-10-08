@@ -2224,6 +2224,20 @@
     "bookingLine": "地点：{name} · {address}",
     "primaryConfirm": "未选择地点的工作日将使用 {name}。已指定地点的预约保持不变；没有地点的预约将显示为 {name}。"
   },
+  "patientFields": {
+    "title": "患者登记",
+    "hint": "选择添加患者时需要填写的信息。姓名和电话始终必填。隐藏某一项会保留已保存的内容。",
+    "required": "必填",
+    "optional": "选填",
+    "hidden": "隐藏",
+    "missing": "请填写：{fields}",
+    "missingNote": "缺少必填信息：{fields}",
+    "hiddenBadge": "已在表单中隐藏",
+    "rg": "RG",
+    "orPassport": "{id}或护照",
+    "address": "地址",
+    "saved": "已保存"
+  },
   "brandCrop": {
     "title": "调整图片",
     "use": "使用图片",

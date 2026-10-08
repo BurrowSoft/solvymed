@@ -2224,6 +2224,20 @@
     "bookingLine": "地點：{name} · {address}",
     "primaryConfirm": "未選擇地點的工作日將使用 {name}。已指定地點的預約維持不變；沒有地點的預約將顯示為 {name}。"
   },
+  "patientFields": {
+    "title": "患者登記",
+    "hint": "選擇新增患者時需要填寫的資料。姓名與電話一律必填。隱藏某一欄會保留已儲存的內容。",
+    "required": "必填",
+    "optional": "選填",
+    "hidden": "隱藏",
+    "missing": "請填寫：{fields}",
+    "missingNote": "缺少必填資料：{fields}",
+    "hiddenBadge": "已在表單中隱藏",
+    "rg": "RG",
+    "orPassport": "{id}或護照",
+    "address": "地址",
+    "saved": "已儲存"
+  },
   "brandCrop": {
     "title": "調整圖片",
     "use": "使用圖片",

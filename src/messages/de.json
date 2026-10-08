@@ -2224,6 +2224,20 @@
     "bookingLine": "Standort: {name} · {address}",
     "primaryConfirm": "Arbeitstage ohne gewählten Standort verwenden {name}. Termine mit Standort bleiben dort; Termine ohne Standort zeigen {name}."
   },
+  "patientFields": {
+    "title": "Patientendaten",
+    "hint": "Wählen Sie, welche Angaben Sie beim Anlegen eines Patienten abfragen. Name und Telefon sind immer Pflicht. Ein ausgeblendetes Feld behält bereits Gespeichertes.",
+    "required": "Pflicht",
+    "optional": "Optional",
+    "hidden": "Ausgeblendet",
+    "missing": "Bitte ausfüllen: {fields}",
+    "missingNote": "Fehlende Pflichtangaben: {fields}",
+    "hiddenBadge": "Im Formular ausgeblendet",
+    "rg": "RG",
+    "orPassport": "{id} oder Reisepass",
+    "address": "Adresse",
+    "saved": "Gespeichert"
+  },
   "brandCrop": {
     "title": "Bild anpassen",
     "use": "Bild verwenden",

@@ -2224,6 +2224,20 @@
     "bookingLine": "Lugar: {name} · {address}",
     "primaryConfirm": "Los días de atención sin lugar elegido pasarán a usar {name}. Las citas reservadas en un lugar siguen allí; las que no tienen lugar mostrarán {name}."
   },
+  "patientFields": {
+    "title": "Registro del paciente",
+    "hint": "Elige qué datos pides al registrar un paciente. El nombre y el teléfono son siempre obligatorios. Ocultar un campo conserva lo ya guardado.",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "hidden": "Oculto",
+    "missing": "Completa: {fields}",
+    "missingNote": "Faltan datos obligatorios: {fields}",
+    "hiddenBadge": "Campo oculto en el registro",
+    "rg": "RG",
+    "orPassport": "{id} o pasaporte",
+    "address": "Dirección",
+    "saved": "Guardado"
+  },
   "brandCrop": {
     "title": "Ajustar imagen",
     "use": "Usar imagen",
