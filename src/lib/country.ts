@@ -81,6 +81,9 @@ export type CountryProfile = {
   calendar: "gregorian" | "buddhist";
   // The public health card the patient form takes (Brazil's CNS), if any.
   healthCard: "cns" | null;
+  // The other-system import presets the import page names as recognised
+  // automatically (lib/import/presets): Brazilian systems in Brazil only.
+  importPresets: readonly ("iclinic" | "prontuario_verde")[];
   // A new practice's working hours until the doctor saves their own (cf):
   // these days, start to end. The app's WorkingHoursModal uses the same.
   defaultHours: { days: readonly WeekdayKey[]; start: string; end: string };
@@ -90,6 +93,10 @@ export type CountryProfile = {
   zoneCities: Readonly<Record<string, string>>;
   // The order of a printed/one-line address (lib/patientAddress addressLine).
   addressFormat: "br" | "th" | "intl";
+  // Settings → Profile's registration: Brazil's council fields (CRM + state,
+  // else another council; lib/registration, the app's Registrations form) or
+  // one free-text field.
+  registrationForm: "brCouncil" | "free";
   // Examples and labels in the practice's forms (UX: they follow the
   // practice country, never the UI language). null = the generic wording.
   examples: {
@@ -114,7 +121,7 @@ const BR: CountryProfile = {
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: "cns", addressFormat: "br", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
+  healthCard: "cns", importPresets: ["iclinic", "prontuario_verde"], addressFormat: "br", registrationForm: "brCouncil", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
   zoneCities: {
     "America/Sao_Paulo": "São Paulo", "America/Belem": "Belém", "America/Araguaina": "Araguaína", "America/Maceio": "Maceió",
     "America/Cuiaba": "Cuiabá", "America/Santarem": "Santarém", "America/Eirunepe": "Eirunepé",
@@ -134,7 +141,7 @@ const TH: CountryProfile = {
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
-  healthCard: null, addressFormat: "th", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  healthCard: null, importPresets: [], addressFormat: "th", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
   examples: {
     titles: { th: THAI_TITLES.join(", "), other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -148,7 +155,7 @@ const OTHER: CountryProfile = {
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: null, addressFormat: "intl", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  healthCard: null, importPresets: [], addressFormat: "intl", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",

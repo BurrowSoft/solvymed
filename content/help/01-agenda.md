@@ -58,6 +58,13 @@ Se alguma das datas tiver conflito, nenhuma é salva, e o app mostra qual data c
 If any date conflicts, none are saved, and the app shows which date conflicts.
 **No site:** Em **Nova Consulta**, escolha **Repetir** (semanal, a cada 2 semanas ou mensal) e **Quantas consultas** (de 2 a 52), e clique em **Salvar ×N**. Todas as datas são verificadas: se alguma conflitar com outra consulta, nenhuma é salva e o site mostra qual data; horário bloqueado ou fora do atendimento é perguntado uma vez, com a data.
 **On the website:** In **New Appointment**, choose **Repeat** (weekly, every 2 weeks or monthly) and **Number of appointments** (2 to 52), and click **Save ×N**. Every date is checked: if any conflicts with another appointment, none is saved and the website shows which date; blocked time or outside the working hours is asked once, with the date.
+Thai title: "นัดหมายซ้ำ"
+**th**
+1. ใน **นัดหมายใหม่** กรอกข้อมูลนัดหมายครั้งแรก
+2. เปิด **การนัดซ้ำ** แล้วเลือก **ทุกสัปดาห์** **ทุก 2 สัปดาห์** หรือ **ทุกเดือน** และ **จำนวนครั้ง**
+3. แตะ **บันทึก**
+หากมีวันใดชนกับนัดหมายอื่น จะไม่มีนัดใดถูกบันทึกเลย และแอปจะแสดงว่าวันไหนที่ชนกัน
+**ในเว็บไซต์:** ใน **นัดหมายใหม่** เลือก **นัดซ้ำ** (**ทุกสัปดาห์** **ทุก 2 สัปดาห์** หรือ **ทุกเดือน**) และ **จำนวนนัดหมาย** (2 ถึง 52) แล้วคลิกปุ่ม บันทึก ×จำนวนครั้ง ระบบจะตรวจทุกวัน หากวันใดชนกับนัดหมายอื่น จะไม่มีนัดใดถูกบันทึก และเว็บไซต์จะแสดงว่าวันไหน ส่วนช่วงเวลาที่ถูกบล็อกหรืออยู่นอกเวลาทำงาน ระบบจะถามยืนยันหนึ่งครั้งพร้อมระบุวันที่
 `open:new-appointment`
 
 ---
@@ -161,6 +168,10 @@ Na **Agenda**, use os botões **Dia**, **Semana** e **Mês**. Use as setas para 
 In the **Schedule**, use **Day**, **Week** and **Month**. Use the arrows to move forward or back, and tap a day in the month view to open that day.
 **No site:** Igual, com **Dia**, **Semana** e **Mês**, as setas e **Hoje**; clique num dia do mês para abri-lo.
 **On the website:** The same, with **Day**, **Week** and **Month**, the arrows and **Today**; click a day in the month view to open it.
+Thai title: "ดูแบบรายวัน รายสัปดาห์ หรือรายเดือน"
+**th**
+ใน **ตารางงาน** ใช้ **วัน** **สัปดาห์** และ **เดือน** ใช้ลูกศรเพื่อเลื่อนไปข้างหน้าหรือย้อนกลับ และแตะวันที่ในมุมมองรายเดือนเพื่อเปิดวันนั้น
+**ในเว็บไซต์:** เหมือนกัน มี **วัน** **สัปดาห์** และ **เดือน** ลูกศร และ **วันนี้** คลิกวันที่ในมุมมองรายเดือนเพื่อเปิดวันนั้น
 `open:schedule`
 
 ---

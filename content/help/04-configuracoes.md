@@ -10,8 +10,14 @@
 1. **Settings → My profile**: name and specialty.
 2. **Settings → Registrations**: your professional registration (e.g. "CRM 12345/SP"). It appears on prescriptions and PDF documents.
 {pending:app-1.4.0} The first time you open the app, it asks **Where are you?**: tap **Brasil** or **ประเทศไทย**. For doctors, that's the clinic's country. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice.
-**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é o primeiro passo do cadastro (**Onde você está?** → **Brasil** ou **ประเทศไทย**; a seta ← volta a essa escolha) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.
-**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is the first step of signing up (**Where are you?** → **Brasil** or **ประเทศไทย**; the ← arrow goes back to that choice) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com.
+**No site:** **Configurações → Perfil**: nome, especialidade e **Registro profissional** (ex.: "CRM 12345/SP"), no mesmo cartão. Clínicas no Brasil: como no app, **Conselho de Classe** com **Número** e **Estado** (salvo como "CRM 12345/SP"), ou **Outro conselho** com **Conselho** e **Número**. Se seu CRM for de outro estado, escolha o estado ali. Em **Configurações → Clínica**: o **CNPJ** (clínicas no Brasil) ou o **Nº de identificação fiscal (13 dígitos)** (clínicas na Tailândia). O país da clínica é o primeiro passo do cadastro (**Onde você está?** → **Brasil** ou **ประเทศไทย**; a seta ← volta a essa escolha) e aparece em **Configurações → País do consultório**; ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar, fale com support@solvymed.com.
+**On the website:** **Settings → Profile**: name, specialty and **Professional registration** (e.g. "CRM 12345/SP"), on the same card. Clinics in Brazil: as in the app, **Professional council** with **Number** and **State** (saved as "CRM 12345/SP"), or **Other council** with **Council** and **Number**. If your registration is from another state, choose the state there. In **Settings → Clinic**: the **CNPJ** (clinics in Brazil) or the **Tax ID (13 digits)** (clinics in Thailand). The clinic's country is the first step of signing up (**Where are you?** → **Brasil** or **ประเทศไทย**; the ← arrow goes back to that choice) and shows in **Settings → Practice country**; it sets the currency, the plan price, the patient ID field and the payment QR. To change it, contact support@solvymed.com.
+Thai title: "โปรไฟล์และเลขทะเบียนวิชาชีพ"
+**th**
+1. **การตั้งค่า → โปรไฟล์ของฉัน**: ชื่อและสาขาความเชี่ยวชาญ
+2. **การตั้งค่า → เลขทะเบียน**: เลขที่ใบอนุญาตประกอบวิชาชีพของคุณ (เช่น ว.12345) จะแสดงในใบสั่งยาและเอกสาร PDF
+{pending:app-1.4.0} เมื่อเปิดแอปครั้งแรก แอปจะถามว่าคุณอยู่ที่ไหน: แตะ Brasil หรือ ประเทศไทย สำหรับแพทย์ นี่คือประเทศของคลินิก ซึ่งกำหนดสกุลเงิน ราคาแพ็กเกจ ช่องเลขประจำตัวของผู้ป่วย และ QR สำหรับชำระเงิน หากต้องการเปลี่ยนภายหลัง ติดต่อ support@solvymed.com ผู้ป่วยและเลขานุการไม่ต้องเลือก
+**ในเว็บไซต์:** **การตั้งค่า → โปรไฟล์**: ชื่อ สาขาความเชี่ยวชาญ และ **เลขทะเบียนวิชาชีพ** อยู่ในการ์ดเดียวกัน ใน **การตั้งค่า → คลินิก** มี **เลขประจำตัวผู้เสียภาษี (13 หลัก)** (คลินิกในประเทศไทย) ประเทศของคลินิกเลือกเป็นขั้นตอนแรกตอนสมัคร และแสดงใน **การตั้งค่า → ประเทศของคลินิก** ซึ่งกำหนดสกุลเงิน ราคาแพ็กเกจ ช่องเลขประจำตัวของผู้ป่วย และ QR สำหรับชำระเงิน หากต้องการเปลี่ยน ติดต่อ support@solvymed.com
 `open:settings-profile`
 
 ---
@@ -24,6 +30,11 @@
 {pending:app-1.7.0} A new practice starts with Monday to Friday, 08:00–18:00, until you save your own hours.
 **No site:** **Configurações → Horário de atendimento**: igual ao app. Uma clínica nova já começa com segunda a sexta, das 08:00 às 18:00, até você salvar o seu horário; os pacientes podem pedir consultas nesses horários.
 **On the website:** **Settings → Working hours**: the same as in the app. A new practice already starts with Monday to Friday, 08:00–18:00, until you save your own hours; patients can request appointments in those hours.
+Thai title: "เวลาทำงาน"
+**th**
+**การตั้งค่า → เวลาทำการ** เลือกวันและเวลา ผู้ป่วยจะขอนัดได้เฉพาะในช่วงเวลานี้
+{pending:app-1.7.0} คลินิกใหม่จะเริ่มต้นที่วันจันทร์ถึงวันศุกร์ เวลา 08:00–18:00 จนกว่าคุณจะบันทึกเวลาของคุณเอง
+**ในเว็บไซต์:** **การตั้งค่า → เวลาทำงาน** เหมือนในแอป คลินิกใหม่เริ่มต้นที่วันจันทร์ถึงวันศุกร์ เวลา 08:00–18:00 จนกว่าคุณจะบันทึกเวลาของคุณเอง และผู้ป่วยขอนัดในช่วงเวลานั้นได้
 `open:settings-hours`
 
 ---
@@ -34,6 +45,10 @@
 **Settings → Procedures**. Add each procedure (e.g. "Consultation") with its duration and price. They show up when you book an appointment.
 **No site:** **Configurações → Procedimentos**: clique em **Novo procedimento**, preencha nome, duração e preço (ex.: 89,90) e clique em **Adicionar procedimento**.
 **On the website:** **Settings → Procedures**: click **New procedure**, fill in the name, duration and price (e.g. 89.90) and click **Add procedure**.
+Thai title: "หัตถการและราคา"
+**th**
+**การตั้งค่า → จัดการหัตถการ** เพิ่มหัตถการแต่ละรายการ (เช่น "ตรวจรักษา") พร้อมระยะเวลาและราคา รายการเหล่านี้จะแสดงเมื่อคุณสร้างนัดหมาย
+**ในเว็บไซต์:** **การตั้งค่า → หัตถการ** คลิก **หัตถการใหม่** กรอกชื่อ ระยะเวลา และราคา (เช่น 500) แล้วคลิก **เพิ่มหัตถการ**
 `open:settings-procedures`
 
 ---
@@ -95,6 +110,16 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **No site:** {pending:invited-patients-live} Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações. Quem entra com o código aparece logo em **Pacientes** com o selo **Novo, via convite**; na **Visão geral**, **Manter** fica com o paciente e **Remover** desconecta a conta (o cadastro é arquivado). Com o e-mail de outro cadastro, aparece **Mesmo e-mail de {nome}: mesclar?**, que abre a mesclagem.
 **On the website:** {unless:invited-patients-live} In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings.
 **On the website:** {pending:invited-patients-live} In the **Schedule**, click **Share invite link**, or in **Settings → Your invite code**, use **Copy** or **Copy link**. **Regenerate** creates a new code and the old one stops working. While the subscription is inactive, the invite code isn't shown in Settings. Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge; on the **Overview**, **Keep** keeps the patient and **Remove** disconnects the account (the record is archived). With another record's email, you see **Same email as {name}: merge?**, which opens the merge.
+Thai title: "ลิงก์เชิญผู้ป่วย"
+**th**
+ใน **หน้าแรก** ในรายการตั้งค่าคลินิก แตะ **แชร์ลิงก์คำเชิญ** หรือใน **การตั้งค่า → รหัสเชิญผู้ป่วยของคุณ** แตะ **แชร์** (ยังไม่มีรหัส? แตะ **สร้างรหัสเชิญ**) ผู้ที่เปิดลิงก์จะดาวน์โหลดแอปหรือเข้าทางเว็บไซต์ และขอนัดหมายกับคุณได้ **ใหม่** จะสร้างรหัสใหม่ และรหัสเดิมจะใช้ไม่ได้อีก
+{pending:invited-patients-live,app-1.4.0} ผู้ที่เข้าร่วมด้วยรหัสจะแสดงใน **ผู้ป่วย** ทันที พร้อมป้าย **ใหม่ ผ่านคำเชิญ** ใน **หน้าแรก** แตะ **เก็บไว้** เพื่อเก็บผู้ป่วยไว้ หรือ **นำออก** เพื่อยกเลิกการเชื่อมต่อบัญชี (แฟ้มจะถูกเก็บถาวร) หากอีเมลนี้อยู่ในแฟ้มอื่นแล้ว จะแสดง **อีเมลเดียวกับ {name}: รวมประวัติ?**
+{pending:invite-same-practice-live} หากผู้ป่วยของคุณป้อนรหัสส่วนตัวของอีกแฟ้มหนึ่งในคลินิกของคุณ ผู้ป่วยจะเห็น "คุณเชื่อมต่อกับ {doctor} แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ": รวมสองแฟ้มด้วย **รวมกับผู้ป่วยอีกคน…** หากใช้รหัสของคลินิกอื่น ผู้ป่วยจะได้รับคำแนะนำให้ติดต่อฝ่ายสนับสนุน
+{pending:invite-joined-push-live} เมื่อมีคนเข้าร่วมด้วยรหัสของคุณ คุณและเลขานุการจะได้รับการแจ้งเตือน **ผู้ป่วยใหม่**: **{name} เข้าร่วมผ่านคำเชิญของคุณ**
+{pending:invite-connect-live} หลังจาก **นำออก** บุคคลนั้นจะกลับมาด้วยรหัสเชิญของคลินิกไม่ได้ หากต้องการให้กลับมา ให้กู้คืนแฟ้มจาก **เก็บถาวร** แล้วส่งรหัสส่วนตัวของแฟ้มนั้น
+{pending:multi-doctor-live} ผู้ป่วยหนึ่งคนเชื่อมต่อกับแพทย์ได้หลายคน ในแอป ผู้ป่วยจะเห็น **แพทย์ของฉัน** ใน **หน้าแรก** (หนึ่งการ์ดต่อแพทย์หนึ่งคน) และใน **การตั้งค่า → แพทย์ของฉัน** ในเว็บไซต์ จะเห็นในหน้านัดหมายของฉัน ผู้ป่วยเพิ่มแพทย์คนอื่นได้ด้วย **+ เพิ่มแพทย์** และรหัสที่แพทย์คนนั้นแชร์ให้: ไม่มีรายชื่อแพทย์ให้ค้นหา แพทย์แต่ละคนเห็นเฉพาะข้อมูลของตนเอง ผู้ป่วย **ยกเลิกการเชื่อมต่อ** จากคุณได้ ยกเว้นขณะที่ยังมีนัดหมายที่นัดไว้หรือยืนยันแล้วกับคุณ (ต้องติดต่อคลินิกเพื่อยกเลิกก่อน) คำขอที่รอดำเนินการจะถูกยกเลิก คุณจะได้รับแจ้ง และแฟ้มของผู้ป่วยยังคงอยู่ในคลินิกของคุณ
+**ในเว็บไซต์:** {unless:invited-patients-live} ใน **ตารางงาน** คลิก **แชร์ลิงก์คำเชิญ** หรือใน **การตั้งค่า → รหัสเชิญของคุณ** ใช้ **คัดลอก** หรือ **คัดลอกลิงก์** **สร้างใหม่** จะสร้างรหัสใหม่ และรหัสเดิมจะใช้ไม่ได้อีก ขณะที่การสมัครสมาชิกไม่ได้ใช้งาน รหัสเชิญจะไม่แสดงในการตั้งค่า
+**ในเว็บไซต์:** {pending:invited-patients-live} ใน **ตารางงาน** คลิก **แชร์ลิงก์คำเชิญ** หรือใน **การตั้งค่า → รหัสเชิญของคุณ** ใช้ **คัดลอก** หรือ **คัดลอกลิงก์** **สร้างใหม่** จะสร้างรหัสใหม่ และรหัสเดิมจะใช้ไม่ได้อีก ขณะที่การสมัครสมาชิกไม่ได้ใช้งาน รหัสเชิญจะไม่แสดงในการตั้งค่า ผู้ที่เข้าร่วมด้วยรหัสจะแสดงใน **ผู้ป่วย** ทันที พร้อมป้าย **ใหม่ ผ่านคำเชิญ** ใน **ภาพรวม** **เก็บไว้** จะเก็บผู้ป่วยไว้ และ **นำออก** จะยกเลิกการเชื่อมต่อบัญชี (แฟ้มจะถูกเก็บถาวร) หากเป็นอีเมลของแฟ้มอื่น จะแสดง **อีเมลเดียวกับ {name}: รวมประวัติ?** ซึ่งจะเปิดการรวมประวัติ
 `open:home`
 
 ---
@@ -105,6 +130,10 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **Settings → Security**: turn on the **Biometric lock** (fingerprint or Face ID; if it fails, your phone's own passcode works) and choose the **auto-lock** (5, 15 or 30 minutes).
 **No site:** Não se aplica ao site: o bloqueio biométrico é do app. No site, saia da conta em computadores compartilhados.
 **On the website:** Doesn't apply to the website: the biometric lock is an app feature. On the website, sign out on shared computers.
+Thai title: "ล็อกแอป"
+**th**
+ใน **การตั้งค่า** ส่วนความปลอดภัย เปิดการล็อกด้วยไบโอเมตริก (ลายนิ้วมือหรือ Face ID หากใช้ไม่ได้ ให้ใช้รหัสผ่านของโทรศัพท์แทน) และเลือกเวลาล็อกอัตโนมัติ (5, 15 หรือ 30 นาที)
+**ในเว็บไซต์:** ไม่มีในเว็บไซต์ การล็อกด้วยไบโอเมตริกเป็นฟีเจอร์ของแอป หากใช้คอมพิวเตอร์ร่วมกับผู้อื่น ให้ออกจากระบบทุกครั้ง
 `open:settings-security`
 
 ---
@@ -115,6 +144,10 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 **Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
 **No site:** Os lembretes e notificações são do app; o site não envia notificações.
 **On the website:** Reminders and notifications are app features; the website doesn't send notifications.
+Thai title: "การเตือนและการแจ้งเตือน"
+**th**
+ใน **การตั้งค่า** ส่วนการแจ้งเตือน เปิดการเตือนนัดหมาย เลือกว่าจะเตือนล่วงหน้าเท่าใด (15 นาที 1 ชั่วโมง 2 ชั่วโมง หรือ 24 ชั่วโมง) และสรุปประจำวัน
+**ในเว็บไซต์:** การเตือนและการแจ้งเตือนเป็นฟีเจอร์ของแอป เว็บไซต์ไม่ส่งการแจ้งเตือน
 `open:settings-notifications`
 
 ---
@@ -129,6 +162,12 @@ On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings
 {pending:saved-locale-live} The notifications you receive arrive in the language you last chose, in the app or on the website: your country's language or English.
 **No site:** O idioma muda no seletor de idioma do menu lateral: português ou inglês (clínicas no Brasil), tailandês ou inglês (clínicas na Tailândia). No cadastro, marque **Use SolvyMed in English** para usar em inglês. O tema fica em **Configurações → Aparência** (Automático, Claro ou Escuro) e vale para este navegador; impressões e e-mails ficam sempre claros.
 **On the website:** Change the language with the language selector in the side menu: Portuguese or English (clinics in Brazil), Thai or English (clinics in Thailand). When signing up, tick **Use SolvyMed in English** to use it in English. The theme is in **Settings → Appearance** (Automatic, Light or Dark) and applies to this browser; prints and emails always stay light.
+Thai title: "ภาษาและธีม"
+**th**
+**การตั้งค่า → ภาษา** และธีม (สว่าง มืด หรือตามระบบ) บางส่วนจะเปลี่ยนภาษาหลังจากเปิดแอปใหม่
+{pending:app-1.4.0} ภาษาเป็นไปตามประเทศ: ในประเทศไทยใช้ภาษาไทยหรือภาษาอังกฤษ ในบราซิลใช้ภาษาโปรตุเกสหรือภาษาอังกฤษ ที่คำถามว่าคุณอยู่ที่ไหน ให้เลือกใช้แอปเป็นภาษาอังกฤษหากต้องการ และเปลี่ยนภายหลังได้ใน **การตั้งค่า → ภาษา**
+{pending:saved-locale-live} การแจ้งเตือนที่คุณได้รับจะเป็นภาษาที่คุณเลือกล่าสุด ไม่ว่าในแอปหรือในเว็บไซต์: ภาษาของประเทศคุณหรือภาษาอังกฤษ
+**ในเว็บไซต์:** เปลี่ยนภาษาได้จากตัวเลือกภาษาในเมนูด้านข้าง: ภาษาไทยหรือภาษาอังกฤษ (คลินิกในประเทศไทย) ภาษาโปรตุเกสหรือภาษาอังกฤษ (คลินิกในบราซิล) ธีมอยู่ใน **การตั้งค่า → รูปลักษณ์** (**อัตโนมัติ** **สว่าง** หรือ **มืด**) และใช้กับเบราว์เซอร์นี้เท่านั้น งานพิมพ์และอีเมลเป็นโหมดสว่างเสมอ
 `open:settings`
 
 ---
@@ -166,17 +205,28 @@ Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before ea
 **pt-BR**
 Em **Configurações → Minha marca**, escolha como os pacientes veem você: **Nome de exibição**, **Título**, **Especialidade**, **Registro profissional**, **Cor da marca**, **Logo (quadrado)**, **Logo horizontal (documentos)** e **Foto**.
 Campos vazios usam o nome, a especialidade e o registro do seu perfil. Sem logo, aparecem as suas iniciais na sua cor; sem cor, o azul do SolvyMed.
-Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. O logo inteiro é sempre mantido. **Remover** pede confirmação.
+Envie cada imagem em PNG ou JPG, com até 5 MB e no máximo 4096 px de lado: o logo quadrado, o logo horizontal (usado nos documentos) e, se quiser, uma foto. No site, depois de escolher a imagem, ajuste o recorte em **Ajustar imagem** (arraste e use o zoom) e clique em **Usar imagem**: o logo quadrado e a foto ficam quadrados (a foto aparece redonda) e o logo horizontal fica em 3:1. Uma imagem pequena mostra "Imagem pequena: pode ficar sem nitidez na impressão.", mas pode ser usada; **Ajustar** refaz o recorte enquanto você está na página. **Remover** pede confirmação.
+{pending:app-1.8.0} No app também: **Ajustar imagem** antes de usar a imagem, com dois dedos para o zoom.
 Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica.
 A sua marca aparece no seu link de convite público, na sua página de agendamento (para os pacientes conectados a você) e nos documentos impressos (receitas, recibos, histórico). Depois de salvos, o logo e a foto são públicos: quem tiver o link de uma imagem consegue abri-la.
 No app, **Modelos de documentos** avisa que a cor e o logo dos documentos vêm de **Minha marca**, com o atalho **Abrir Minha marca**.
 **en**
 In **Settings → My brand**, choose how patients see you: **Display name**, **Title**, **Specialty**, **Professional registration**, **Brand colour**, **Logo (square)**, **Wide logo (documents)** and **Photo**.
 Empty fields use your profile's name, specialty and registration. With no logo, your initials show in your colour; with no colour, SolvyMed's blue.
-Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. The whole logo is always kept. **Remove** asks for confirmation.
+Upload each image as PNG or JPG, up to 5 MB and at most 4096 px per side: the square logo, the wide logo (used on documents) and, if you like, a photo. On the website, after choosing the image, adjust the crop in **Adjust image** (drag and zoom) and click **Use image**: the square logo and the photo are square (the photo shows round) and the wide logo is 3:1. A small image shows "Small image: it may print blurry." but can still be used; **Adjust** redoes the crop while you stay on the page. **Remove** asks for confirmation.
+{pending:app-1.8.0} In the app too: **Adjust image** before using the image, pinching with two fingers to zoom.
 If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks.
 Your brand shows on your public invite link, on your booking page (to the patients connected to you) and on printed documents (prescriptions, receipts, history). Once saved, the logo and photo are public: anyone who has an image's link can open it.
 In the app, **Document Templates** says the documents' colour and logo come from **My brand**, with a shortcut to **Open My brand**.
+Thai title: "แบรนด์ของฉัน"
+**th**
+ใน **การตั้งค่า → แบรนด์ของฉัน** เลือกว่าผู้ป่วยจะเห็นคุณอย่างไร: **ชื่อที่แสดง** **คำนำหน้า (นพ., พญ.…)** **สาขาความเชี่ยวชาญ** **เลขที่ใบอนุญาต** **สีแบรนด์** **โลโก้ (สี่เหลี่ยมจัตุรัส)** **โลโก้แนวนอน (สำหรับเอกสาร)** และ **รูปถ่าย**
+ช่องที่เว้นว่างจะใช้ชื่อ สาขาความเชี่ยวชาญ และเลขทะเบียนจากโปรไฟล์ของคุณ หากไม่มีโลโก้ จะแสดงอักษรย่อของคุณด้วยสีของคุณ หากไม่ได้เลือกสี จะใช้สีน้ำเงินของ SolvyMed
+อัปโหลดรูปแต่ละรูปเป็น PNG หรือ JPG ขนาดไม่เกิน 5 MB และไม่เกิน 4096 พิกเซลต่อด้าน ได้แก่ โลโก้สี่เหลี่ยมจัตุรัส โลโก้แนวนอน (ใช้ในเอกสาร) และรูปถ่าย (ถ้าต้องการ) ในเว็บไซต์ หลังเลือกรูปแล้ว ให้ปรับการครอปใน **ปรับรูปภาพ** (ลากและซูม) แล้วคลิก **ใช้รูปนี้** โลโก้สี่เหลี่ยมจัตุรัสและรูปถ่ายเป็นสี่เหลี่ยมจัตุรัส (รูปถ่ายแสดงเป็นวงกลม) ส่วนโลโก้แนวนอนเป็นสัดส่วน 3:1 หากรูปมีขนาดเล็ก จะแสดง "รูปมีขนาดเล็ก อาจไม่คมชัดเมื่อพิมพ์" แต่ยังใช้ได้ **ปรับ** ใช้ครอปใหม่ได้ระหว่างที่ยังอยู่ในหน้านี้ ส่วน **ลบ** จะถามยืนยันก่อน
+{pending:app-1.8.0} ในแอปก็ปรับรูปภาพได้ก่อนใช้ โดยใช้สองนิ้วเพื่อซูม
+หากสีที่เลือกอ่อนหรือเข้มเกินไปสำหรับตัวอักษร ระบบจะปรับเฉพาะจุดที่แสดง และตัวอย่างจะแสดงให้เห็นว่าออกมาเป็นอย่างไร
+แบรนด์ของคุณจะแสดงในลิงก์เชิญสาธารณะ หน้าจองนัด (สำหรับผู้ป่วยที่เชื่อมต่อกับคุณ) และเอกสารที่พิมพ์ (ใบสั่งยา ใบเสร็จ และประวัติการรักษา) เมื่อบันทึกแล้ว โลโก้และรูปถ่ายจะเป็นสาธารณะ ใครก็ตามที่มีลิงก์ของรูปจะเปิดดูได้
+ในแอป หน้า **แม่แบบเอกสาร** จะบอกว่าสีและโลโก้ของเอกสารมาจากแบรนด์ของฉัน พร้อมทางลัดไปยังแบรนด์ของฉัน
 `open:settings`
 `requires:brand-live`
 
@@ -222,15 +272,34 @@ You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delet
 ## C15. Locais de atendimento / Practice locations
 **pt-BR**
 Se você atende em mais de um lugar, cadastre cada um como um local. Os locais só aparecem para você e para os pacientes quando há dois ou mais; com um só, nada muda.
-O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes.
+O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes. **Tornar principal** pede confirmação: os dias de atendimento sem local escolhido passam a usar o novo principal; consultas marcadas com um local continuam nele, e as sem local passam a mostrar o novo principal.
+Os pacientes veem onde é cada consulta: ao marcar pelo seu link, o dia escolhido mostra "Local: nome · endereço"; em **Minhas consultas**, cada consulta mostra o local.
 Em **Horário de atendimento**, cada dia tem um **Local**: as consultas desse dia ficam nesse local (sem escolha, no principal).
+Na **Agenda**, cada consulta mostra o seu local. Em **Nova Consulta**, o local do dia já vem marcado; toque em outro local para mudar. Se uma consulta muda de dia, ela passa para o local do novo dia.
 {pending:app-1.8.0} No app: **Configurações → Minha clínica** mostra os locais, com **Adicionar local**, editar e **Tornar principal**; no **Horário de atendimento**, escolha o **Local** de cada dia.
+{pending:app-1.8.0} No app, com dois ou mais locais, os documentos em PDF (receitas, recibos e o histórico) listam todos os locais no rodapé (nome, endereço e telefone).
 **en**
 If you see patients in more than one place, add each one as a location. Locations show to you and to patients only when there are two or more; with one, nothing changes.
-The **Primary** location is the default. To delete it, make another location primary first.
+The **Primary** location is the default. To delete it, make another location primary first. **Make primary** asks first: working days without a chosen location will use the new primary; appointments booked at a location stay there, and those without one will show the new primary.
+Patients see where each visit is: when booking from your link, the chosen day shows "Location: name · address"; in **My appointments**, each visit shows its location.
 In **Working hours**, each day has a **Location**: that day's appointments are at that location (the primary when none is chosen).
+In the **Schedule**, each appointment shows its location. In **New Appointment**, the day's location is already selected; tap another location to change it. When an appointment moves to another day, it takes that day's location.
 {pending:app-1.8.0} In the app: **Settings → My Clinic** lists the locations, with **Add location**, edit and **Make primary**; in **Working hours**, choose each day's **Location**.
-**No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia.
-**On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**.
+{pending:app-1.8.0} In the app, with two or more locations, the PDF documents (prescriptions, receipts and the history) list every location in the footer (name, address and phone).
+**No site:** em **Minhas Clínicas**, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia. Com dois ou mais locais, receitas, recibos e o histórico impressos listam todos os locais no rodapé (nome, endereço e telefone).
+**On the website:** in **My Clinics**, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**. With two or more locations, printed prescriptions, receipts and the history list every location in the footer (name, address and phone).
+**No site:** {pending:clinical-documents-live} Os documentos clínicos em PDF (atestados, declarações e solicitações de exames) também listam todos os locais no rodapé.
+**On the website:** {pending:clinical-documents-live} Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer.
+Thai title: "สถานที่ให้บริการ"
+**th**
+หากคุณตรวจผู้ป่วยมากกว่าหนึ่งแห่ง ให้เพิ่มแต่ละแห่งเป็นสถานที่ สถานที่จะแสดงให้คุณและผู้ป่วยเห็นเมื่อมีตั้งแต่สองแห่งขึ้นไป ถ้ามีแห่งเดียวจะไม่มีอะไรเปลี่ยน
+สถานที่ **หลัก** เป็นค่าเริ่มต้น หากต้องการลบ ให้ตั้งสถานที่อื่นเป็นหลักก่อน **ตั้งเป็นหลัก** จะถามยืนยันก่อน: วันทำงานที่ไม่ได้เลือกสถานที่จะใช้สถานที่หลักใหม่ นัดหมายที่ระบุสถานที่ไว้แล้วจะไม่เปลี่ยน ส่วนนัดที่ไม่มีสถานที่จะแสดงเป็นสถานที่หลักใหม่
+ผู้ป่วยเห็นว่าแต่ละนัดอยู่ที่ไหน: เมื่อจองผ่านลิงก์ของคุณ วันที่เลือกจะแสดง "สถานที่: ชื่อ · ที่อยู่" และใน **นัดหมายของฉัน** แต่ละนัดจะแสดงสถานที่
+ใน **เวลาทำงาน** (ในแอป: **เวลาทำการ**) แต่ละวันมี **สถานที่**: นัดหมายของวันนั้นจะอยู่ที่สถานที่นั้น (ถ้าไม่ได้เลือก จะเป็นสถานที่หลัก)
+ใน **ตารางงาน** แต่ละนัดจะแสดงสถานที่ ใน **นัดหมายใหม่** สถานที่ของวันนั้นจะถูกเลือกไว้แล้ว แตะสถานที่อื่นเพื่อเปลี่ยน หากย้ายนัดไปวันอื่น นัดจะใช้สถานที่ของวันใหม่
+{pending:app-1.8.0} ในแอป: **การตั้งค่า → คลินิกของฉัน** แสดงรายการสถานที่ พร้อม **เพิ่มสถานที่** การแก้ไข และ **ตั้งเป็นหลัก** และใน **เวลาทำการ** ให้เลือก **สถานที่** ของแต่ละวัน
+{pending:app-1.8.0} ในแอป เมื่อมีตั้งแต่สองสถานที่ขึ้นไป เอกสาร PDF (ใบสั่งยา ใบเสร็จ และประวัติการรักษา) จะแสดงทุกสถานที่ที่ส่วนท้าย (ชื่อ ที่อยู่ และโทรศัพท์)
+{pending:clinical-documents-live} ในเว็บไซต์ เอกสารทางการแพทย์ที่เป็น PDF (ใบรับรองแพทย์ ใบรับรองการมาพบแพทย์ และใบส่งตรวจ) จะแสดงทุกสถานที่ที่ส่วนท้ายด้วย
+**ในเว็บไซต์:** ใน **คลินิกของฉัน** แต่ละสถานที่มี **แก้ไข** (ชื่อ ที่อยู่ เมือง จังหวัด และโทรศัพท์) และ **ตั้งเป็นหลัก** ใน **การตั้งค่า → เวลาทำงาน** ให้เลือก **สถานที่** ของแต่ละวัน เมื่อมีตั้งแต่สองสถานที่ขึ้นไป ใบสั่งยา ใบเสร็จ และประวัติการรักษาที่พิมพ์จะแสดงทุกสถานที่ที่ส่วนท้าย (ชื่อ ที่อยู่ และโทรศัพท์)
 `open:none`
 `requires:practice-locations-live`

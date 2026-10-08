@@ -6,6 +6,7 @@ import { isProfessionalRole, getEffectiveProfId } from "@/lib/effectiveProfId";
 import { normalizePromptPayId } from "@/lib/promptpay";
 import { isValidThaiId } from "@/lib/patientIds";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
+import { cardLinkInput } from "@/lib/cardLink";
 import { parseMoney } from "@/lib/money";
 
 export async function updateProfile(formData: FormData) {
@@ -71,6 +72,15 @@ export async function updateClinic(formData: FormData) {
     }
   }
 
+  // 1.8.0 E: the card payment link (migration 210), only when the form has
+  // the field; https only, ≤ 500 (the database checks the same).
+  let cardLink: { card_payment_url?: string | null } = {};
+  if (formData.has("card_payment_url")) {
+    const v = cardLinkInput(formData.get("card_payment_url") as string);
+    if (!v.ok) return { error: "invalid_card_link" };
+    cardLink = { card_payment_url: v.value };
+  }
+
   const { error } = await supabase.from("professionals").update({
     clinic_name: (formData.get("clinic_name") as string)?.trim() || null,
     ...cnpj,
@@ -84,9 +94,10 @@ export async function updateClinic(formData: FormData) {
     ...(formData.has("pix_key") ? { pix_key: (formData.get("pix_key") as string)?.trim() || null } : {}),
     ...promptPay,
     ...taxId,
+    ...cardLink,
   }).eq("id", user.id);
 
-  if (error) return { error: error.message?.includes("invalid_tax_id") ? "invalid_tax_id" : error.message };
+  if (error) return { error: error.message?.includes("invalid_tax_id") ? "invalid_tax_id" : error.message?.includes("card_payment_url") ? "invalid_card_link" : error.message };
   revalidatePath("/dashboard/settings");
   return { success: true };
 }

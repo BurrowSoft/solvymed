@@ -62,7 +62,8 @@ describe("the mock follows the spec's rules", () => {
     expect(bestArticle("Como bloquear horário na agenda?", "pt")?.id).toBe("A3");
     const blocks = mockAnswer("Como convido minha secretária?", "pt", "/pt-BR");
     expect(blocks[0]).toMatchObject({ type: "text" });
-    expect(blocks.some((b) => b.type === "open" && b.href === "/pt-BR/dashboard/settings")).toBe(true);
+    // The Team section of Settings (cf: the website opens the section too).
+    expect(blocks.some((b) => b.type === "open" && b.href === "/pt-BR/dashboard/settings#team")).toBe(true);
     expect(blocks[blocks.length - 1]).toEqual({ type: "feedback" });
   });
 

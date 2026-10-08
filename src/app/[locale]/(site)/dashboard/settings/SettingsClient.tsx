@@ -9,6 +9,8 @@ import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 import { withCountryHint } from "@/lib/signupCountry";
 import { dayLocationValue } from "@/lib/locations";
+import { BR_STATES, councilRegistration, parseCouncilRegistration, type CouncilFields } from "@/lib/registration";
+import { cardLinkInput } from "@/lib/cardLink";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -99,14 +101,64 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
             <Input name="specialty" defaultValue={specialty ?? ""} placeholder={t("specialtyPlaceholder")} />
           </div>
           {/* The council registration shown on documents (e.g. CRM 12345/SP). Optional. */}
-          <div className="sm:col-span-2">
-            <Label>{t("registration")}</Label>
-            <Input name="professional_registration" defaultValue={registration ?? ""} placeholder={registrationExample} />
-          </div>
+          {countryProfile(country).registrationForm === "brCouncil" ? (
+            <CouncilRegistrationFields saved={registration ?? ""} />
+          ) : (
+            <div className="sm:col-span-2">
+              <Label>{t("registration")}</Label>
+              <Input name="professional_registration" defaultValue={registration ?? ""} placeholder={registrationExample} />
+            </div>
+          )}
         </div>
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
+  );
+}
+
+// Brazil (cf): the app's Registrations form, CRM number + state (else another
+// council + number), saved as one line ("CRM 12345/SP"). Until the doctor
+// edits a field, the saved value goes back exactly as it is.
+function CouncilRegistrationFields({ saved }: { saved: string }) {
+  const t = useTranslations("settings");
+  const [f, setF] = useState<CouncilFields>(() => parseCouncilRegistration(saved));
+  const [edited, setEdited] = useState(false);
+  const set = (k: keyof CouncilFields, v: string) => { setEdited(true); setF((p) => ({ ...p, [k]: v })); };
+  const box = "w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-100 transition";
+  const small = "block text-xs font-semibold text-slate-600 mb-1";
+  return (
+    <div className="sm:col-span-2 space-y-3" data-testid="council-registration">
+      <input type="hidden" name="professional_registration" value={edited ? councilRegistration(f) ?? "" : saved} />
+      <fieldset>
+        <legend className="mb-1.5 text-sm font-semibold text-slate-700">{t("regCouncilSection")}</legend>
+        <div className="grid grid-cols-3 gap-3">
+          <label className="col-span-2 block">
+            <span className={small}>{t("regNumber")}</span>
+            <input value={f.crm ?? ""} onChange={(e) => set("crm", e.target.value)} placeholder="123456" inputMode="numeric" maxLength={20} className={box} />
+          </label>
+          <label className="block">
+            <span className={small}>{t("regState")}</span>
+            <select value={(f.crmState ?? "").toUpperCase()} onChange={(e) => set("crmState", e.target.value)} className={box}>
+              <option value="">{t("regSelectState")}</option>
+              {BR_STATES.map((uf) => <option key={uf} value={uf}>{uf}</option>)}
+            </select>
+          </label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend className="mb-1.5 text-sm font-semibold text-slate-700">{t("regOtherCouncil")}</legend>
+        <div className="grid grid-cols-3 gap-3">
+          <label className="block">
+            <span className={small}>{t("regCouncil")}</span>
+            <input value={f.additionalCouncil ?? ""} onChange={(e) => set("additionalCouncil", e.target.value.toUpperCase())} placeholder="CRN" maxLength={5} className={box} />
+          </label>
+          <label className="col-span-2 block">
+            <span className={small}>{t("regNumber")}</span>
+            <input value={f.additionalCouncilNumber ?? ""} onChange={(e) => set("additionalCouncilNumber", e.target.value)} placeholder={t("regNumberPlaceholder")} maxLength={40} className={box} />
+          </label>
+        </div>
+      </fieldset>
+    </div>
   );
 }
 
@@ -203,6 +255,7 @@ type ClinicData = {
   clinic_website?: string; clinic_address?: string; clinic_city?: string; clinic_state?: string;
   pix_key?: string;
   promptpay_id?: string;
+  card_payment_url?: string;
 };
 
 // showPix / showPromptPay: the practice country's payment QR is Pix
@@ -210,7 +263,8 @@ type ClinicData = {
 // state label, the sample placeholders and the business ID: CNPJ in BR,
 // the clinic tax ID in TH (showTaxId: only when it could be read, or an
 // empty field would clear it), none elsewhere (UX).
-export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; country?: string }) {
+// showCardLink: 1.8.0 E's card payment link (only when it could be read).
+export function ClinicForm({ data, showPix = true, showPromptPay = false, showTaxId = false, showCardLink = false, country = "BR" }: { data: ClinicData; showPix?: boolean; showPromptPay?: boolean; showTaxId?: boolean; showCardLink?: boolean; country?: string }) {
   const t = useTranslations("settings");
   // Everything country-specific comes from the practice's profile
   // (lib/country), never an if/else on the country (UX).
@@ -235,10 +289,11 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
     setError("");
     const cnpj = ((fd.get("clinic_cnpj") as string | null) ?? "").trim();
     if (cnpjField && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
+    if (fd.has("card_payment_url") && !cardLinkInput(fd.get("card_payment_url") as string).ok) { setError(t("cardLinkInvalid")); return; }
     start(async () => {
       const result = await updateClinic(fd);
       if ("error" in result && result.error) {
-        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : t("saveFailed"));
+        setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : result.error === "invalid_card_link" ? t("cardLinkInvalid") : t("saveFailed"));
         return;
       }
       setSaved(true);
@@ -299,6 +354,14 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
               <Label>{t("promptPay")}</Label>
               <Input name="promptpay_id" defaultValue={data.promptpay_id ?? ""} placeholder="08X-XXX-XXXX" />
               <p className="mt-1 text-xs text-slate-400">{t("promptPayHint")}</p>
+            </div>
+          )}
+          {/* 1.8.0 E: offered next to the Pix / PromptPay code. */}
+          {showCardLink && (
+            <div className="sm:col-span-2">
+              <Label>{t("cardLink")}</Label>
+              <Input name="card_payment_url" defaultValue={data.card_payment_url ?? ""} placeholder="https://" />
+              <p className="mt-1 text-xs text-slate-400">{t("cardLinkHint")}</p>
             </div>
           )}
         </div>

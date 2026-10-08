@@ -14,6 +14,7 @@ import {
   type CommitSummary, type ImportDb, type LastImport, type PreviewRow, type ValidateSummary,
 } from "@/lib/import/api";
 import { templateCsv } from "@/lib/import/template";
+import { countryProfile } from "@/lib/country";
 import { errorListCsv, lostLeadingZero } from "@/lib/import/errorList";
 
 // Importar pacientes (UX, migrations 130/131): the file is read in the
@@ -67,6 +68,11 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
   const [step, setStep] = useState<Step>("file");
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const [source, setSource] = useState<ImportSource>("generic");
+  // The systems offered (ad): Generic + the country's import presets; a file
+  // detected as another preset still gets it, named, without advertising it.
+  const [detected, setDetected] = useState<ImportSource>("generic");
+  const presets: readonly string[] = countryProfile(country).importPresets;
+  const sourceOptions = SOURCES.filter((s) => s === "generic" || presets.includes(s) || s === detected);
   const [plan, setPlan] = useState<ColumnPlan[]>([]);
   const [onExisting, setOnExisting] = useState<"skip" | "fill_empty">("skip");
   const [importId, setImportId] = useState<string | null>(null);
@@ -118,6 +124,7 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
     const detected = detectSource(r.headers, file.name, [], caps);
     setSheet({ name: file.name, headers: r.headers, rows: r.rows });
     setSource(detected);
+    setDetected(detected);
     setPlan(planColumns(detected, r.headers, caps));
     setStep("map");
   }
@@ -250,6 +257,14 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
               </button>
             </div>
             <p className="text-xs text-slate-500">{t("fileFormats")}</p>
+            {/* The presets named per country (registry importPresets), by their own labels. */}
+            {countryProfile(country).importPresets.length > 0 && (
+              <p className="text-xs text-slate-500">
+                {t("fileFormatsPresets", { systems: new Intl.ListFormat(locale, { type: "conjunction" }).format(countryProfile(country).importPresets.map((s) => presetFor(s).label)) })}
+              </p>
+            )}
+            {/* _import_birth_date (130) converts years >= 2400 from the Buddhist era. */}
+            {countryProfile(country).calendar === "buddhist" && <p className="text-xs text-slate-500">{t("beYears")}</p>}
           </div>
         )}
 
@@ -263,7 +278,7 @@ export function ImportClient({ locale, country, canMerge = false, addressLive = 
               <label className="text-sm text-slate-600">
                 <span className="mr-2 font-semibold">{t("source")}</span>
                 <select value={source} onChange={(e) => changeSource(e.target.value as ImportSource)} className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm">
-                  {SOURCES.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s, caps).label}</option>)}
+                  {sourceOptions.map((s) => <option key={s} value={s}>{s === "generic" ? t("sourceGeneric") : presetFor(s, caps).label}</option>)}
                 </select>
               </label>
             </div>
