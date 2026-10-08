@@ -147,7 +147,7 @@ export default async function PatientDetailPage({
             )}
           </div>
           <p className="text-sm text-slate-500 mt-0.5">
-            {[patient.sex ? patient.sex.charAt(0).toUpperCase() + patient.sex.slice(1) : null, age ? t("age", { n: age }) : null, patient.email].filter(Boolean).join(" · ")}
+            {[patient.sex === "male" || patient.sex === "female" || patient.sex === "other" ? t(patient.sex) : patient.sex || null, age ? t("age", { n: age }) : null, patient.email].filter(Boolean).join(" · ")}
           </p>
         </div>
         {/* The history print view (Help P8): clinical, so doctor only. "Indicar
