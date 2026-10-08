@@ -46,7 +46,12 @@
 // profession, emergency contact phone, insurance type, photo, tags, archive status; c6/cf, text =
 // enforcement). Mobile's accepting migration for ('privacy','2026-10-13')
 // applied FIRST.
-export const PRIVACY_VERSION = "2026-10-13";
+// 2026-10-16: §3.1 names a tax ID per country (CNPJ / the Thai 13-digit tax
+// ID), the Pix key or PromptPay ID, and the card payment link (1.8.0 E;
+// Vitor's "OK privacy 3.1 B", via b2). Merged with the card-payment-live
+// flip, so the link can be entered from the moment the text says so.
+// Mobile's accepting migration for ('privacy','2026-10-16') applied FIRST.
+export const PRIVACY_VERSION = "2026-10-16";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
