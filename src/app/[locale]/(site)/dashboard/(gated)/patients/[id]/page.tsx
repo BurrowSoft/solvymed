@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { readPatientFieldRules } from "@/lib/patientFields";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientIdKind } from "@/lib/patientIds";
 import { conditionMet } from "@/lib/conditions";
@@ -203,6 +204,7 @@ export default async function PatientDetailPage({
           accessLog={accessLog}
           timeZone={timeZone}
           recordTemplates={recordTemplates}
+          fieldRules={await readPatientFieldRules(supabase, effectiveProfId)}
           medicalDocs={docsResult && !docsResult.error ? {
             list: (docsResult.data ?? []) as MedDoc[],
             country: practiceCountry,

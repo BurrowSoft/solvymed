@@ -20,10 +20,59 @@ export function parseCountryChoice(raw: string | null | undefined): CountryChoic
 
 // The country step's buttons: the flag, the name in its own language, and
 // the language the signup continues in (unless "Use SolvyMed in English").
-export const COUNTRY_STEP: readonly { code: CountryChoice; flag: string; label: string; locale: string }[] = [
-  { code: "BR", flag: "🇧🇷", label: "Brasil", locale: "pt-BR" },
-  { code: "TH", flag: "🇹🇭", label: "ประเทศไทย", locale: "th" },
+// bareLanguage: a browser language without a region that still means this
+// country for the guess (Thai; a bare "pt" could be Portugal, so none).
+export const COUNTRY_STEP: readonly { code: CountryChoice; flag: string; label: string; locale: string; bareLanguage: string | null }[] = [
+  { code: "BR", flag: "🇧🇷", label: "Brasil", locale: "pt-BR", bareLanguage: null },
+  { code: "TH", flag: "🇹🇭", label: "ประเทศไทย", locale: "th", bareLanguage: "th" },
 ];
+
+const stepCountry = (code: string | null | undefined): CountryChoice | null =>
+  COUNTRY_STEP.find((c) => c.code === (code ?? "").trim().toUpperCase())?.code ?? null;
+
+// The browser's languages (Accept-Language), in priority order: the first
+// one that names a step country wins (country-preselect spec, b2). A region
+// counts in any language (en-TH → TH, en-BR → BR); without a region only a
+// bareLanguage does (th → TH). pt and pt-PT give nothing. q=0 is ignored.
+export function countryFromLanguages(acceptLanguage: string | null | undefined): CountryChoice | null {
+  const tags = (acceptLanguage ?? "")
+    .split(",")
+    .map((part, i) => {
+      const [tag, ...params] = part.trim().split(";");
+      const q = params.map((p) => p.trim().match(/^q=([\d.]+)$/)?.[1]).find(Boolean);
+      return { tag: tag.trim(), q: q === undefined ? 1 : Number(q), i };
+    })
+    .filter((x) => x.tag && x.tag !== "*" && x.q > 0)
+    .sort((a, b) => b.q - a.q || a.i - b.i);
+  for (const { tag } of tags) {
+    const [language, ...rest] = tag.split(/[-_]/);
+    const region = rest.find((s) => /^[A-Za-z]{2}$/.test(s));
+    const hit = region
+      ? stepCountry(region)
+      : COUNTRY_STEP.find((c) => c.bareLanguage === language.toLowerCase())?.code ?? null;
+    if (hit) return hit;
+  }
+  return null;
+}
+
+// The browser's own Accept-Language, as the middleware received it. On a
+// first visit picked as English it pins the request's Accept-Language to
+// "en" for next-intl, so the signup reads this one first. Only a hint: a
+// forged value changes nothing but the suggestion.
+export const BROWSER_LANGUAGES_HEADER = "x-solvymed-browser-languages";
+
+// The country the step suggests (shown first, in the primary style), or
+// null. First match wins: a choice already made in this browser (the
+// signup cookie; ?c= skips the step anyway), the browser's languages, the
+// IP country. Only step countries count. Never stored: only a tap is.
+export function guessSignupCountry(s: { saved?: string | null; acceptLanguage?: string | null; ipCountry?: string | null }): CountryChoice | null {
+  return stepCountry(s.saved) ?? countryFromLanguages(s.acceptLanguage) ?? stepCountry(s.ipCountry);
+}
+
+// The step's buttons with the guess first (no guess: as listed, Brasil first).
+export function orderedCountryStep(guess: CountryChoice | null) {
+  return guess ? [...COUNTRY_STEP].sort((a, b) => Number(b.code === guess) - Number(a.code === guess)) : COUNTRY_STEP;
+}
 
 // The signup page in a language, keeping its query, with ?c= set (a
 // choice) or removed (back to the step).

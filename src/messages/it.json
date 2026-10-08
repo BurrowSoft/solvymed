@@ -2224,6 +2224,20 @@
     "bookingLine": "Sede: {name} · {address}",
     "primaryConfirm": "I giorni di lavoro senza una sede scelta useranno {name}. Gli appuntamenti prenotati in una sede restano lì; quelli senza sede mostreranno {name}."
   },
+  "patientFields": {
+    "title": "Scheda paziente",
+    "hint": "Scegli quali dati chiedere quando aggiungi un paziente. Il nome è sempre obbligatorio. Nascondere un campo mantiene ciò che è già salvato.",
+    "required": "Obbligatorio",
+    "optional": "Facoltativo",
+    "hidden": "Nascosto",
+    "missing": "Compila: {fields}",
+    "missingNote": "Dati obbligatori mancanti: {fields}",
+    "hiddenBadge": "Campo nascosto nella scheda",
+    "rg": "RG",
+    "orPassport": "{id} o passaporto",
+    "address": "Indirizzo",
+    "saved": "Salvato"
+  },
   "brandCrop": {
     "title": "Regola immagine",
     "use": "Usa immagine",

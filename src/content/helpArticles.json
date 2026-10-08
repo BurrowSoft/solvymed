@@ -1725,6 +1725,57 @@
         "open": "settings",
         "appOnly": null,
         "appTitle": null
+      },
+      {
+        "id": "C16",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Cadastro do paciente",
+          "en": "Patient registration"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Cadastro do paciente**, escolha para cada dado se ele é **Obrigatório**, **Opcional** ou **Oculto** quando você ou sua equipe cadastram um paciente. O nome é sempre obrigatório."
+            },
+            {
+              "type": "p",
+              "text": "Um dado obrigatório precisa ser preenchido para salvar um paciente novo (\"Preencha: …\"). Ao editar, um dado obrigatório que já estava vazio não impede salvar: aparece \"Faltam dados obrigatórios: …\"; só não dá para apagar um dado obrigatório que estava preenchido."
+            },
+            {
+              "type": "p",
+              "text": "Ocultar um dado mantém o que já está salvo: na ficha do paciente ele continua visível, com \"Campo oculto no cadastro\"."
+            },
+            {
+              "type": "p",
+              "text": "No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → Patient registration**, choose for each detail whether it's **Required**, **Optional** or **Hidden** when you or your team add a patient. Name is always required."
+            },
+            {
+              "type": "p",
+              "text": "A required detail must be filled in to save a new patient (\"Fill in: …\"). When editing, a required detail that was already empty doesn't stop the save: \"Missing required details: …\" shows; you just can't clear a required detail that had a value."
+            },
+            {
+              "type": "p",
+              "text": "Hiding a detail keeps what's already saved: on the patient's page it stays visible, marked \"Hidden from the form\"."
+            },
+            {
+              "type": "p",
+              "text": "In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": "settings-patient-fields",
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },

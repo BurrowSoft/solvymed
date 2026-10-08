@@ -20,7 +20,13 @@ const LABEL_KEY: Record<(typeof ADDRESS_FIELDS)[number]["name"], string> = {
 const inputClass = "w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 const labelClass = "block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1.5";
 
-export function AddressFields({ kind, values = {} }: { kind: PatientIdKind; values?: AddressColumns }) {
+// show / required: 1.8.0 C1, the practice's rules for the address, the CNS
+// and the notes (a hidden part isn't rendered, so its saved value stays).
+type Part = "address" | "cns" | "notes";
+export function AddressFields({ kind, values = {}, show = { address: true, cns: true, notes: true }, required = {} }: {
+  kind: PatientIdKind; values?: AddressColumns;
+  show?: Partial<Record<Part, boolean>>; required?: Partial<Record<Part, boolean>>;
+}) {
   const t = useTranslations("patientAddress");
   const hasAddress = ADDRESS_FIELDS.some((f) => !!values[f.name]);
   const [notes, setNotes] = useState(values.notes_admin ?? "");
@@ -29,8 +35,8 @@ export function AddressFields({ kind, values = {} }: { kind: PatientIdKind; valu
   return (
     <div className="space-y-4">
       <input type="hidden" name={ADDRESS_MARKER} value="1" />
-      <details open={hasAddress} className="rounded-xl border border-slate-200 px-4 py-3">
-        <summary className="cursor-pointer text-sm font-semibold text-slate-800">{t("section")}</summary>
+      {show.address && <details open={hasAddress || !!required.address} className="rounded-xl border border-slate-200 px-4 py-3">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-800">{t("section")}{required.address ? " *" : ""}</summary>
         <div className="mt-3 grid grid-cols-2 gap-3">
           {ADDRESS_FIELDS.map((f) => (
             <div key={f.name} className={SHORT.has(f.name) ? "" : "col-span-2"}>
@@ -40,25 +46,25 @@ export function AddressFields({ kind, values = {} }: { kind: PatientIdKind; valu
             </div>
           ))}
         </div>
-      </details>
-      {profileOfKind(kind).healthCard === "cns" && (
+      </details>}
+      {show.cns && profileOfKind(kind).healthCard === "cns" && (
         <div>
-          <label htmlFor="pa-cns" className={labelClass}>{t("cns")}</label>
+          <label htmlFor="pa-cns" className={labelClass}>{t("cns")}{required.cns ? " *" : ""}</label>
           <input id="pa-cns" name="cns" defaultValue={values.cns ?? ""} inputMode="numeric" maxLength={20} className={inputClass}
             aria-invalid={cnsBad} aria-describedby="pa-cns-hint"
             onBlur={(e) => setCnsBad(!!e.target.value.trim() && !isValidCns(e.target.value))} onChange={() => setCnsBad(false)} />
           <p id="pa-cns-hint" className={`mt-1 text-xs ${cnsBad ? "text-red-600" : "text-slate-500"}`}>{cnsBad ? t("invalidCns") : t("cnsHint")}</p>
         </div>
       )}
-      <div>
-        <label htmlFor="pa-notes" className={labelClass}>{t("notes")}</label>
+      {show.notes && <div>
+        <label htmlFor="pa-notes" className={labelClass}>{t("notes")}{required.notes ? " *" : ""}</label>
         <textarea id="pa-notes" name="notes_admin" value={notes} onChange={(e) => setNotes(e.target.value)} maxLength={NOTES_ADMIN_MAX} rows={3}
           aria-describedby="pa-notes-hint" className={inputClass} />
         <div className="mt-1 flex justify-between gap-3 text-xs text-slate-500">
           <p id="pa-notes-hint">{t("notesHint")}</p>
           <span className="shrink-0 tabular-nums">{t("notesCount", { n: notes.length, max: NOTES_ADMIN_MAX })}</span>
         </div>
-      </div>
+      </div>}
     </div>
   );
 }

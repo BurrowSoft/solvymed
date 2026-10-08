@@ -303,3 +303,27 @@ Thai title: "สถานที่ให้บริการ"
 **ในเว็บไซต์:** ใน **คลินิกของฉัน** แต่ละสถานที่มี **แก้ไข** (ชื่อ ที่อยู่ เมือง จังหวัด และโทรศัพท์) และ **ตั้งเป็นหลัก** ใน **การตั้งค่า → เวลาทำงาน** ให้เลือก **สถานที่** ของแต่ละวัน เมื่อมีตั้งแต่สองสถานที่ขึ้นไป ใบสั่งยา ใบเสร็จ และประวัติการรักษาที่พิมพ์จะแสดงทุกสถานที่ที่ส่วนท้าย (ชื่อ ที่อยู่ และโทรศัพท์)
 `open:none`
 `requires:practice-locations-live`
+
+---
+## C16. Cadastro do paciente / Patient registration
+**pt-BR**
+Em **Configurações → Cadastro do paciente**, escolha para cada dado se ele é **Obrigatório**, **Opcional** ou **Oculto** quando você ou sua equipe cadastram um paciente. O nome é sempre obrigatório.
+Um dado obrigatório precisa ser preenchido para salvar um paciente novo ("Preencha: …"). Ao editar, um dado obrigatório que já estava vazio não impede salvar: aparece "Faltam dados obrigatórios: …"; só não dá para apagar um dado obrigatório que estava preenchido.
+Ocultar um dado mantém o que já está salvo: na ficha do paciente ele continua visível, com "Campo oculto no cadastro".
+No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório.
+{pending:app-1.8.0} No app também: **Configurações → Cadastro do paciente**.
+**en**
+In **Settings → Patient registration**, choose for each detail whether it's **Required**, **Optional** or **Hidden** when you or your team add a patient. Name is always required.
+A required detail must be filled in to save a new patient ("Fill in: …"). When editing, a required detail that was already empty doesn't stop the save: "Missing required details: …" shows; you just can't clear a required detail that had a value.
+Hiding a detail keeps what's already saved: on the patient's page it stays visible, marked "Hidden from the form".
+In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID.
+{pending:app-1.8.0} In the app too: **Settings → Patient registration**.
+Thai title: "ข้อมูลผู้ป่วย"
+**th**
+ใน **การตั้งค่า → ข้อมูลผู้ป่วย** เลือกว่าข้อมูลแต่ละรายการเป็น **จำเป็น** **ไม่บังคับ** หรือ **ซ่อน** เมื่อคุณหรือทีมของคุณเพิ่มผู้ป่วย ชื่อจำเป็นเสมอ
+ต้องกรอกข้อมูลที่จำเป็นจึงจะบันทึกผู้ป่วยใหม่ได้ ("กรุณากรอก: …") เมื่อแก้ไข ข้อมูลที่จำเป็นซึ่งว่างอยู่แล้วจะไม่ขัดขวางการบันทึก โดยจะแสดง "ยังขาดข้อมูลที่จำเป็น: …" แต่คุณจะลบข้อมูลที่จำเป็นซึ่งมีค่าอยู่แล้วไม่ได้
+การซ่อนข้อมูลจะไม่ลบสิ่งที่บันทึกไว้แล้ว ในหน้าผู้ป่วย ข้อมูลนั้นยังแสดงอยู่ พร้อมเครื่องหมาย "ซ่อนจากแบบฟอร์ม"
+ในบราซิล RG เริ่มต้นเป็นซ่อน และ CNS มีเฉพาะคลินิกในบราซิล ในประเทศไทย หนังสือเดินทางนับเป็นเลขประจำตัวที่จำเป็นได้
+{pending:app-1.8.0} ในแอปก็มีเช่นกัน: การตั้งค่า → ข้อมูลผู้ป่วย
+`open:settings-patient-fields`
+`requires:patient-fields-live`

@@ -2224,6 +2224,20 @@
     "bookingLine": "Lieu : {name} · {address}",
     "primaryConfirm": "Les jours de consultation sans lieu choisi utiliseront {name}. Les rendez-vous pris dans un lieu y restent ; ceux sans lieu afficheront {name}."
   },
+  "patientFields": {
+    "title": "Fiche patient",
+    "hint": "Choisissez les informations demandées à l'ajout d'un patient. Le nom est toujours obligatoire. Masquer un champ conserve ce qui est déjà enregistré.",
+    "required": "Obligatoire",
+    "optional": "Facultatif",
+    "hidden": "Masqué",
+    "missing": "À remplir : {fields}",
+    "missingNote": "Informations obligatoires manquantes : {fields}",
+    "hiddenBadge": "Champ masqué dans la fiche",
+    "rg": "RG",
+    "orPassport": "{id} ou passeport",
+    "address": "Adresse",
+    "saved": "Enregistré"
+  },
   "brandCrop": {
     "title": "Ajuster l'image",
     "use": "Utiliser l'image",
