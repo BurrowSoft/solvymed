@@ -1773,7 +1773,7 @@
         },
         "web": null,
         "webUnavailable": false,
-        "open": "settings",
+        "open": "settings-patient-fields",
         "appOnly": null,
         "appTitle": null
       }
