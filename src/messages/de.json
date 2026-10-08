@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Patientendaten",
-    "hint": "Wählen Sie, welche Angaben Sie beim Anlegen eines Patienten abfragen. Name und Telefon sind immer Pflicht. Ein ausgeblendetes Feld behält bereits Gespeichertes.",
+    "hint": "Wählen Sie, welche Angaben Sie beim Anlegen eines Patienten abfragen. Der Name ist immer Pflicht. Ein ausgeblendetes Feld behält bereits Gespeichertes.",
     "required": "Pflicht",
     "optional": "Optional",
     "hidden": "Ausgeblendet",

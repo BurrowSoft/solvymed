@@ -2256,7 +2256,7 @@
   },
   "patientFields": {
     "title": "Patient registration",
-    "hint": "Choose which details you ask for when adding a patient. Name and phone are always required. Hiding a field keeps what's already saved.",
+    "hint": "Choose which details you ask for when adding a patient. Name is always required. Hiding a field keeps what's already saved.",
     "required": "Required",
     "optional": "Optional",
     "hidden": "Hidden",

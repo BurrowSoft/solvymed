@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Fiche patient",
-    "hint": "Choisissez les informations demandées à l'ajout d'un patient. Le nom et le téléphone sont toujours obligatoires. Masquer un champ conserve ce qui est déjà enregistré.",
+    "hint": "Choisissez les informations demandées à l'ajout d'un patient. Le nom est toujours obligatoire. Masquer un champ conserve ce qui est déjà enregistré.",
     "required": "Obligatoire",
     "optional": "Facultatif",
     "hidden": "Masqué",

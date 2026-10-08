@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Registro del paciente",
-    "hint": "Elige qué datos pides al registrar un paciente. El nombre y el teléfono son siempre obligatorios. Ocultar un campo conserva lo ya guardado.",
+    "hint": "Elige qué datos pides al registrar un paciente. El nombre es siempre obligatorio. Ocultar un campo conserva lo ya guardado.",
     "required": "Obligatorio",
     "optional": "Opcional",
     "hidden": "Oculto",

@@ -2226,7 +2226,7 @@
   },
   "patientFields": {
     "title": "Hồ sơ bệnh nhân",
-    "hint": "Chọn thông tin cần hỏi khi thêm bệnh nhân. Họ tên và số điện thoại luôn bắt buộc. Ẩn một trường vẫn giữ dữ liệu đã lưu.",
+    "hint": "Chọn thông tin cần hỏi khi thêm bệnh nhân. Họ tên luôn bắt buộc. Ẩn một trường vẫn giữ dữ liệu đã lưu.",
     "required": "Bắt buộc",
     "optional": "Tùy chọn",
     "hidden": "Ẩn",
