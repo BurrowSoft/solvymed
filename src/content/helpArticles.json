@@ -1124,8 +1124,8 @@
           ]
         },
         "web": {
-          "pt": "**Configurações → Clínica**: preencha a **Chave Pix** e salve.",
-          "en": "**Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save."
+          "pt": "**Configurações → Clínica**: preencha a **Chave Pix** e salve. O **Link de pagamento (cartão)** fica logo abaixo (clínicas no Brasil e na Tailândia). Um link que não comece com https:// não é salvo: aparece \"Informe um link que comece com https://\".",
+          "en": "**Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save. The **Card payment link** is just below (clinics in Brazil and Thailand). A link that doesn't start with https:// isn't saved: \"Enter a link that starts with https://\" shows."
         },
         "webUnavailable": false,
         "open": "settings-financial",
@@ -1178,8 +1178,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). Com o telefone do paciente cadastrado, **Enviar Pix por WhatsApp** (na mesma janela) abre o seu WhatsApp com a mensagem do Pix para o paciente, a mesma do app; ela só sai quando você clicar em enviar no WhatsApp. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes.",
-          "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. With the patient's phone on file, **Send Pix via WhatsApp** (in the same window) opens your WhatsApp with the Pix message for the patient, the same as the app's; it's only sent when you click send in WhatsApp. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice."
+          "pt": "Em **Agenda**, clique no ícone de QR ao lado da consulta: aparece o **QR Code Pix** e o **Pix Copia e Cola** (botão **Copiar**). Com o telefone do paciente cadastrado, **Enviar Pix por WhatsApp** (na mesma janela) abre o seu WhatsApp com a mensagem do Pix para o paciente, a mesma do app; ela só sai quando você clicar em enviar no WhatsApp. Quando o pagamento cair, marque como pago em **Pagamentos**: a consulta fica **Pago** e o QR deixa de aparecer, para o paciente não pagar duas vezes. Na janela do QR, **Ou pague com cartão** mostra o link com **Copiar** e **Compartilhar link do cartão** (quando o navegador permite compartilhar). Sem chave Pix, o ícone de cartão ao lado da consulta (**Enviar link do cartão por WhatsApp**) abre o seu WhatsApp com \"Olá! Para pagar sua consulta em {data} às {hora} com cartão, use este link: {link}\".",
+          "en": "In the **Schedule**, click the QR icon next to the appointment: the **Pix QR code** and the **Pix Copia e Cola** code (with **Copy**) appear. With the patient's phone on file, **Send Pix via WhatsApp** (in the same window) opens your WhatsApp with the Pix message for the patient, the same as the app's; it's only sent when you click send in WhatsApp. When the payment arrives, mark it as paid in **Payments**: the appointment shows **Paid** and the QR is no longer offered, so the patient can't pay twice. In the QR window, **Or pay by card** shows the link with **Copy** and **Share card link** (when the browser can share). Without a Pix key, the card icon next to the appointment (**Send card link via WhatsApp**) opens your WhatsApp with the message (in Portuguese) giving the patient the link to pay for that visit by card."
         },
         "webUnavailable": false,
         "open": "payments",
@@ -1723,6 +1723,57 @@
         "web": null,
         "webUnavailable": false,
         "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C16",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Cadastro do paciente",
+          "en": "Patient registration"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Cadastro do paciente**, escolha para cada dado se ele é **Obrigatório**, **Opcional** ou **Oculto** quando você ou sua equipe cadastram um paciente. O nome é sempre obrigatório."
+            },
+            {
+              "type": "p",
+              "text": "Um dado obrigatório precisa ser preenchido para salvar um paciente novo (\"Preencha: …\"). Ao editar, um dado obrigatório que já estava vazio não impede salvar: aparece \"Faltam dados obrigatórios: …\"; só não dá para apagar um dado obrigatório que estava preenchido."
+            },
+            {
+              "type": "p",
+              "text": "Ocultar um dado mantém o que já está salvo: na ficha do paciente ele continua visível, com \"Campo oculto no cadastro\"."
+            },
+            {
+              "type": "p",
+              "text": "No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → Patient registration**, choose for each detail whether it's **Required**, **Optional** or **Hidden** when you or your team add a patient. Name is always required."
+            },
+            {
+              "type": "p",
+              "text": "A required detail must be filled in to save a new patient (\"Fill in: …\"). When editing, a required detail that was already empty doesn't stop the save: \"Missing required details: …\" shows; you just can't clear a required detail that had a value."
+            },
+            {
+              "type": "p",
+              "text": "Hiding a detail keeps what's already saved: on the patient's page it stays visible, marked \"Hidden from the form\"."
+            },
+            {
+              "type": "p",
+              "text": "In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": "settings-patient-fields",
         "appOnly": null,
         "appTitle": null
       }

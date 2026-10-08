@@ -170,4 +170,10 @@ describe("helpers", () => {
     expect(webScreen("settings-security")).toBeNull();
     expect(webScreen(null)).toBeNull();
   });
+
+  it("C16 opens Settings at the Patient registration card (49 on #488)", () => {
+    expect(webScreen("settings-patient-fields")).toBe("/dashboard/settings#patient-fields");
+    const c16 = HELP.flatMap((c) => c.articles).find((a) => a.id === "C16");
+    if (c16) expect(webScreen(c16.open)).toBe("/dashboard/settings#patient-fields");
+  });
 });
