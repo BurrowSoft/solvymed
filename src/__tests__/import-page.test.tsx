@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
+import th from "@/messages/th.json";
 import type { ImportDb } from "@/lib/import/api";
 
 // Importar pacientes, end to end in the browser against a fake database:
@@ -95,6 +96,72 @@ describe("Importar pacientes", () => {
     fireEvent.change(container.querySelector('input[type="file"]')!, { target: { files: [csvFile("x", "export.zip")] } });
     expect(await screen.findByText(pt.patientImport.file_zip)).toBeInTheDocument();
     expect(calls).toEqual([]);
+  });
+
+  it("Buddhist-calendar practice (TH): the page says BE years are converted (130); not in Brazil", () => {
+    const { db } = fakeDb();
+    const { unmount } = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("ปี พ.ศ. จะถูกแปลงเป็น ค.ศ. ให้อัตโนมัติ")).toBeInTheDocument();
+    unmount();
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.queryByText(pt.patientImport.beYears)).toBeNull();
+  });
+
+  it("the recognised systems follow the country's importPresets: iClinic + Prontuário Verde in Brazil, none in Thailand", () => {
+    const { db } = fakeDb();
+    const { unmount } = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText("Exportações reconhecidas automaticamente: iClinic e Prontuário Verde.")).toBeInTheDocument();
+    unmount();
+    render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByText(th.patientImport.fileFormats)).toBeInTheDocument();
+    expect(screen.queryByText(/iClinic|Prontuário Verde/)).toBeNull();
+  });
+
+  it("the system dropdown: Generic only in Thailand, but a real iClinic export is still recognised and named", async () => {
+    const { db } = fakeDb();
+    const options = (c: HTMLElement) => [...(c.querySelector("select")?.options ?? [])].map((o) => o.textContent);
+    const first = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(first.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("ชื่อ-นามสกุล;เบอร์โทร\nสมศรี ใจดี;0812345678\n")] } });
+    await waitFor(() => expect(options(first.container)).toEqual([th.patientImport.sourceGeneric]));
+    first.unmount();
+
+    const second = render(
+      <NextIntlClientProvider locale="th" messages={th}>
+        <ImportClient locale="th" country="TH" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(second.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("name;birth_date;civil_name\nSomsri;25/12/2523;Somsri\n")] } });
+    await waitFor(() => expect(options(second.container)).toEqual([th.patientImport.sourceGeneric, "iClinic"]));
+    expect((second.container.querySelector("select") as HTMLSelectElement).value).toBe("iclinic");
+    second.unmount();
+
+    const br = render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ImportClient locale="pt-BR" country="BR" db={db} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.change(br.container.querySelector('input[type="file"]')!, { target: { files: [csvFile("Nome;Celular\nMaria;11987654321\n")] } });
+    await waitFor(() => expect(options(br.container)).toEqual([pt.patientImport.sourceGeneric, "iClinic", "Prontuário Verde"]));
   });
 
   it("CPFs Excel stripped of the leading zero: 130's count line, the row's warning, and the Excel hint on a 9/10-digit CPF still invalid", async () => {

@@ -1652,7 +1652,9 @@
     "fileHint": "The file is read in your browser. Only the patients' data is sent to SolvyMed to be checked, and nobody becomes a patient until you confirm.",
     "chooseFile": "Choose a file",
     "template": "Download the spreadsheet template",
-    "fileFormats": "CSV or Excel (.xlsx, .xls), up to 20 MB and 20,000 patients. Exports from iClinic and Prontuário Verde are recognised automatically.",
+    "fileFormats": "CSV or Excel (.xlsx, .xls), up to 20 MB and 20,000 patients.",
+    "fileFormatsPresets": "Exports recognised automatically: {systems}.",
+    "beYears": "Buddhist-era years are converted automatically.",
     "reading": "Reading the file…",
     "file_too_big": "The file is larger than 20 MB.",
     "file_unsupported": "Upload a CSV or Excel file (.csv, .xlsx, .xls).",
@@ -2254,6 +2256,20 @@
     "dayLocation": "Location",
     "bookingLine": "Location: {name} · {address}",
     "primaryConfirm": "Working days without a chosen location will use {name}. Appointments booked at a location stay there; those without one will show {name}."
+  },
+  "patientFields": {
+    "title": "Patient registration",
+    "hint": "Choose which details you ask for when adding a patient. Name is always required. Hiding a field keeps what's already saved.",
+    "required": "Required",
+    "optional": "Optional",
+    "hidden": "Hidden",
+    "missing": "Fill in: {fields}",
+    "missingNote": "Missing required details: {fields}",
+    "hiddenBadge": "Hidden from the form",
+    "rg": "RG",
+    "orPassport": "{id} or passport",
+    "address": "Address",
+    "saved": "Saved"
   },
   "brandCrop": {
     "title": "Adjust image",

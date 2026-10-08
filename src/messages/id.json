@@ -1622,7 +1622,9 @@
     "fileHint": "File dibaca di browser Anda. Hanya data pasien yang dikirim ke SolvyMed untuk diperiksa, dan belum ada pasien yang dibuat sampai Anda mengonfirmasi.",
     "chooseFile": "Pilih file",
     "template": "Unduh templat spreadsheet",
-    "fileFormats": "CSV atau Excel (.xlsx, .xls), hingga 20 MB dan 20.000 pasien. Ekspor dari iClinic dan Prontuário Verde dikenali otomatis.",
+    "fileFormats": "CSV atau Excel (.xlsx, .xls), hingga 20 MB dan 20.000 pasien.",
+    "fileFormatsPresets": "Ekspor yang dikenali otomatis: {systems}.",
+    "beYears": "Tahun Era Buddha dikonversi secara otomatis.",
     "reading": "Membaca file…",
     "file_too_big": "File lebih dari 20 MB.",
     "file_unsupported": "Unggah file CSV atau Excel (.csv, .xlsx, .xls).",
@@ -2224,6 +2226,20 @@
     "dayLocation": "Lokasi",
     "bookingLine": "Lokasi: {name} · {address}",
     "primaryConfirm": "Hari kerja tanpa lokasi yang dipilih akan memakai {name}. Janji temu yang dipesan di suatu lokasi tetap di sana; yang tanpa lokasi akan menampilkan {name}."
+  },
+  "patientFields": {
+    "title": "Data pasien",
+    "hint": "Pilih data yang diminta saat menambah pasien. Nama selalu wajib. Menyembunyikan kolom tetap menyimpan data yang sudah ada.",
+    "required": "Wajib",
+    "optional": "Opsional",
+    "hidden": "Tersembunyi",
+    "missing": "Isi: {fields}",
+    "missingNote": "Data wajib belum lengkap: {fields}",
+    "hiddenBadge": "Tersembunyi di formulir",
+    "rg": "RG",
+    "orPassport": "{id} atau paspor",
+    "address": "Alamat",
+    "saved": "Tersimpan"
   },
   "brandCrop": {
     "title": "Sesuaikan gambar",

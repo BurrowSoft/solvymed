@@ -53,10 +53,12 @@ const profileOf = (kind: string) => profileOfKind(kind as PatientIdKind);
 // it elsewhere); an empty field clears it.
 export function readAddress(formData: FormData, kind: string): AddressColumns | null {
   if (formData.get(ADDRESS_MARKER) !== "1") return null;
+  // Only the fields the form showed (1.8.0 C1: a hidden field keeps what's
+  // saved); a shown field left empty is cleared.
   const out: AddressColumns = {};
-  for (const f of ADDRESS_FIELDS) out[f.name] = clean(formData.get(f.name), f.max);
-  out.notes_admin = clean(formData.get("notes_admin"), NOTES_ADMIN_MAX);
-  if (profileOf(kind).healthCard === "cns") {
+  for (const f of ADDRESS_FIELDS) if (formData.has(f.name)) out[f.name] = clean(formData.get(f.name), f.max);
+  if (formData.has("notes_admin")) out.notes_admin = clean(formData.get("notes_admin"), NOTES_ADMIN_MAX);
+  if (profileOf(kind).healthCard === "cns" && formData.has("cns")) {
     const cns = clean(formData.get("cns"), 40);
     out.cns = cns ? cnsDigits(cns) : null;
   }

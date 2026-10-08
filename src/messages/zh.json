@@ -1622,7 +1622,9 @@
     "fileHint": "文件在你的浏览器中读取。只有患者数据会发送到 SolvyMed 进行检查,在你确认之前不会创建任何患者。",
     "chooseFile": "选择文件",
     "template": "下载电子表格模板",
-    "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 名患者。可自动识别 iClinic 和 Prontuário Verde 的导出文件。",
+    "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 名患者。",
+    "fileFormatsPresets": "可自动识别的导出文件:{systems}",
+    "beYears": "佛历年份会自动转换为公历。",
     "reading": "正在读取文件…",
     "file_too_big": "文件超过 20 MB。",
     "file_unsupported": "请上传 CSV 或 Excel 文件(.csv、.xlsx、.xls)。",
@@ -2224,6 +2226,20 @@
     "dayLocation": "地点",
     "bookingLine": "地点：{name} · {address}",
     "primaryConfirm": "未选择地点的工作日将使用 {name}。已指定地点的预约保持不变；没有地点的预约将显示为 {name}。"
+  },
+  "patientFields": {
+    "title": "患者登记",
+    "hint": "选择添加患者时需要填写的信息。姓名始终必填。隐藏某一项会保留已保存的内容。",
+    "required": "必填",
+    "optional": "选填",
+    "hidden": "隐藏",
+    "missing": "请填写：{fields}",
+    "missingNote": "缺少必填信息：{fields}",
+    "hiddenBadge": "已在表单中隐藏",
+    "rg": "RG",
+    "orPassport": "{id}或护照",
+    "address": "地址",
+    "saved": "已保存"
   },
   "brandCrop": {
     "title": "调整图片",

@@ -1622,7 +1622,9 @@
     "fileHint": "Tệp được đọc trong trình duyệt của bạn. Chỉ dữ liệu bệnh nhân được gửi đến SolvyMed để kiểm tra, và chưa ai được tạo hồ sơ cho đến khi bạn xác nhận.",
     "chooseFile": "Chọn tệp",
     "template": "Tải mẫu bảng tính",
-    "fileFormats": "CSV hoặc Excel (.xlsx, .xls), tối đa 20 MB và 20.000 bệnh nhân. Tệp xuất từ iClinic và Prontuário Verde được nhận diện tự động.",
+    "fileFormats": "CSV hoặc Excel (.xlsx, .xls), tối đa 20 MB và 20.000 bệnh nhân.",
+    "fileFormatsPresets": "Tệp xuất được nhận diện tự động: {systems}.",
+    "beYears": "Năm theo Phật lịch được chuyển đổi tự động.",
     "reading": "Đang đọc tệp…",
     "file_too_big": "Tệp lớn hơn 20 MB.",
     "file_unsupported": "Hãy tải lên tệp CSV hoặc Excel (.csv, .xlsx, .xls).",
@@ -2224,6 +2226,20 @@
     "dayLocation": "Địa điểm",
     "bookingLine": "Địa điểm: {name} · {address}",
     "primaryConfirm": "Các ngày làm việc chưa chọn địa điểm sẽ dùng {name}. Lịch hẹn đã đặt tại một địa điểm giữ nguyên; lịch hẹn không có địa điểm sẽ hiển thị {name}."
+  },
+  "patientFields": {
+    "title": "Hồ sơ bệnh nhân",
+    "hint": "Chọn thông tin cần hỏi khi thêm bệnh nhân. Họ tên luôn bắt buộc. Ẩn một trường vẫn giữ dữ liệu đã lưu.",
+    "required": "Bắt buộc",
+    "optional": "Tùy chọn",
+    "hidden": "Ẩn",
+    "missing": "Vui lòng điền: {fields}",
+    "missingNote": "Thiếu thông tin bắt buộc: {fields}",
+    "hiddenBadge": "Đã ẩn trong biểu mẫu",
+    "rg": "RG",
+    "orPassport": "{id} hoặc hộ chiếu",
+    "address": "Địa chỉ",
+    "saved": "Đã lưu"
   },
   "brandCrop": {
     "title": "Điều chỉnh ảnh",

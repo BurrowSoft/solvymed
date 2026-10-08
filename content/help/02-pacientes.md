@@ -57,6 +57,15 @@ Patients with a record, prescription or file can only be archived, never deleted
 {pending:migration-134} You can't delete a patient who has appointments (any status): the server refuses it, in any app version and on the website. Archive them instead.
 **No site:** Abra o paciente e, na aba **Informações**, clique em **Arquivar cadastro** e confirme. Para ver arquivados: em **Pacientes**, clique em **Arquivados**; abra o paciente e clique em **Restaurar**. **Excluir cadastro** só aparece para pacientes sem prontuário, receita ou arquivo. Se o paciente tiver consultas, ao clicar o site explica que ele não pode ser excluído e oferece **Arquivar**.
 **On the website:** Open the patient and, on the **Info** tab, click **Archive patient** and confirm. To see archived patients: in **Patients**, click **Archived**; open the patient and click **Restore**. **Delete patient** shows only for patients with no record, prescription or file. If the patient has appointments, clicking it explains they can't be deleted and offers **Archive**.
+Thai title: "เก็บถาวรและกู้คืนผู้ป่วย"
+**th**
+1. เปิดผู้ป่วย แล้วแตะเมนู (⋯)
+2. แตะ **เก็บประวัติผู้ป่วยเข้าคลัง** แล้วแตะ **เก็บถาวร** นัดหมายที่กำลังจะมาถึงของผู้ป่วยจะถูกยกเลิก ประวัติยังคงอยู่
+3. ดูแฟ้มที่เก็บถาวร: ใน **ผู้ป่วย** เปิด **เก็บถาวร** เปิดผู้ป่วย แล้วแตะ **กู้คืน**
+ผู้ป่วยที่มีเวชระเบียน ใบสั่งยา หรือไฟล์ เก็บถาวรได้เท่านั้น ลบไม่ได้ (ต้องเก็บเวชระเบียนไว้ตามกฎหมาย)
+{pending:app-1.4.0} ผู้ป่วยที่มีนัดหมายก็ลบไม่ได้เช่นกัน: เมื่อแตะ **ลบประวัติผู้ป่วย** แอปจะอธิบายเหตุผลและเสนอให้เก็บถาวรแทน
+{pending:migration-134} ลบผู้ป่วยที่มีนัดหมาย (ทุกสถานะ) ไม่ได้: เซิร์ฟเวอร์จะปฏิเสธ ไม่ว่าในแอปเวอร์ชันใดหรือในเว็บไซต์ ให้เก็บถาวรแทน
+**ในเว็บไซต์:** เปิดผู้ป่วย ในแท็บ **ข้อมูล** คลิก **เก็บประวัติผู้ป่วยเข้าคลัง** แล้วคลิก **เก็บถาวร** ดูแฟ้มที่เก็บถาวร: ใน **ผู้ป่วย** คลิก **เก็บถาวร** เปิดผู้ป่วย แล้วคลิก **กู้คืน** **ลบประวัติผู้ป่วย** จะแสดงเฉพาะผู้ป่วยที่ไม่มีเวชระเบียน ใบสั่งยา หรือไฟล์ หากผู้ป่วยมีนัดหมาย เมื่อคลิก เว็บไซต์จะอธิบายว่าลบไม่ได้และเสนอให้เก็บถาวรแทน
 `open:patients`
 
 ---
@@ -71,16 +80,26 @@ Só você vê os prontuários; secretárias(os) não têm acesso.
 Only you can see records; secretaries have no access.
 **No site:** Abra o paciente, a aba **Registros** e clique em **Novo Registro**. Escolha o **Tipo de Registro**, escreva e clique em **Salvar Registro**.
 **On the website:** Open the patient, the **Records** tab, and click **New Record**. Choose the **Record Type**, write and click **Save Record**.
+Thai title: "เขียนเวชระเบียน"
+**th**
+1. เปิดผู้ป่วย แล้วเปิดแท็บ **เวชระเบียน**
+2. แตะ **+** เขียน (ข้อความอิสระหรือแม่แบบ) แล้วแตะ **บันทึก**
+เฉพาะคุณเท่านั้นที่เห็นเวชระเบียน เลขานุการเข้าถึงไม่ได้
+**ในเว็บไซต์:** เปิดผู้ป่วย แท็บ **บันทึก** แล้วคลิก **บันทึกใหม่** เลือก **ประเภทบันทึก** เขียน แล้วคลิก **บันทึก**
 `open:patients`
 
 ---
 ## P5. Corrigir um prontuário ou receita / Correct a record or prescription
 **pt-BR**
-Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Corrigir**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido.
+Nas primeiras 24 horas você pode editar ou apagar. Depois disso, o registro fica protegido: toque em **Adicionar correção**, escreva a correção e salve. O texto original continua guardado e visível, marcado como corrigido.
 **en**
-In the first 24 hours you can edit or delete. After that the entry is protected: tap **Correct**, write the correction and save. The original text stays saved and visible, marked as corrected.
+In the first 24 hours you can edit or delete. After that the entry is protected: tap **Add correction**, write the correction and save. The original text stays saved and visible, marked as corrected.
 **No site:** Nas primeiras 24 horas aparecem **Editar** e **Excluir**. Depois, clique em **Adicionar correção**, escreva a correção e o motivo, e salve.
 **On the website:** In the first 24 hours you'll see **Edit** and **Delete**. After that, click **Add correction**, write the correction and the reason, and save.
+Thai title: "แก้ไขเวชระเบียนหรือใบสั่งยา"
+**th**
+ภายใน 24 ชั่วโมงแรก คุณแก้ไขหรือลบได้ หลังจากนั้นรายการจะถูกป้องกัน: แตะ **เพิ่มรายการแก้ไข** เขียนรายการแก้ไขแล้วบันทึก ข้อความเดิมยังคงอยู่และมองเห็นได้ โดยมีเครื่องหมายว่าแก้ไขแล้ว
+**ในเว็บไซต์:** ภายใน 24 ชั่วโมงแรกจะเห็น **แก้ไข** และ **ลบ** หลังจากนั้น คลิก **เพิ่มรายการแก้ไข** เขียนรายการแก้ไขและเหตุผล แล้วบันทึก
 `open:patients`
 
 ---
@@ -99,6 +118,14 @@ For the prescription to show your details, fill in your professional registratio
 {pending:app-1.7.0} The PDF is on A4 paper.
 **No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo. A impressão sai em papel A4.
 **On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it. It prints on A4 paper.
+Thai title: "เขียนใบสั่งยา"
+**th**
+1. เปิดผู้ป่วย แล้วเปิดแท็บ **ใบสั่งยา**
+2. แตะ **+** เพิ่มรายการยา แล้วแตะ **บันทึก**
+3. แตะ PDF เพื่อสร้างใบสั่งยาพร้อมลายเซ็นของคุณและแชร์
+เพื่อให้ใบสั่งยาแสดงข้อมูลของคุณ ให้กรอกเลขที่ใบอนุญาตประกอบวิชาชีพ (เช่น ว.12345) ใน **การตั้งค่า → เลขทะเบียน** และลายเซ็นใน **การตั้งค่า**
+{pending:app-1.7.0} PDF เป็นกระดาษขนาด A4
+**ในเว็บไซต์:** เปิดผู้ป่วย แท็บ **ใบสั่งยา** แล้วคลิก **ใบสั่งยาใหม่** ใช้ **+ เพิ่มยา** แล้วคลิก **บันทึกใบสั่งยา** หากต้องการพิมพ์หรือบันทึกเป็น PDF ให้คลิก PDF ที่ใบสั่งยา แล้วคลิก **พิมพ์ / บันทึกเป็น PDF** หากต้องการไฟล์ ให้เลือก "บันทึกเป็น PDF" ในหน้าต่างการพิมพ์ ในเว็บไซต์ ใบสั่งยามีเส้นว่างสำหรับเซ็นด้วยมือ โดยมีชื่อและเลขทะเบียนของคุณอยู่ด้านล่าง พิมพ์บนกระดาษขนาด A4
 `open:patients`
 
 ---
@@ -113,6 +140,12 @@ Os arquivos são privados: só você acessa, por links temporários.
 Files are private: only you can open them, through temporary links.
 **No site:** Abra o paciente, a aba **Exames** (ou **Arquivos**) e clique em **Enviar**. Nas primeiras 24 horas depois do envio você pode excluir o arquivo em **Remover**; depois disso, ele só pode ser ocultado, informando o motivo.
 **On the website:** Open the patient, the **Exams** (or **Files**) tab, and click **Upload**. For 24 hours after the upload you can delete the file with **Remove**; after that it can only be hidden, with a reason.
+Thai title: "ผลตรวจและไฟล์"
+**th**
+1. เปิดผู้ป่วย แล้วเปิดแท็บ **ผลตรวจ** (หรือ **ไฟล์**)
+2. แตะ **อัปโหลดผลตรวจ** (หรือ **อัปโหลดไฟล์**) แล้วเลือกรูปภาพหรือ PDF
+ไฟล์เป็นข้อมูลส่วนตัว: เฉพาะคุณเท่านั้นที่เปิดได้ ผ่านลิงก์ชั่วคราว
+**ในเว็บไซต์:** เปิดผู้ป่วย แท็บ **ผลตรวจ** (หรือ **ไฟล์**) แล้วคลิก **อัปโหลด** ภายใน 24 ชั่วโมงหลังอัปโหลด คุณลบไฟล์ได้ด้วย **นำออก** หลังจากนั้นทำได้เพียงซ่อนไฟล์ โดยต้องระบุเหตุผล
 `open:patients`
 
 ---
@@ -125,6 +158,11 @@ Open the patient and tap the export-history icon. The PDF comes out in the app's
 {pending:app-1.7.0} The PDF is on A4 paper.
 **No site:** Abra o paciente e clique em **PDF do histórico** (no topo), depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. Sai no idioma do site, com as datas no formato do país da clínica (na Tailândia, na era budista), com todos os registros e receitas e uma linha em branco para assinar à mão. A impressão sai em papel A4.
 **On the website:** Open the patient and click **History PDF** (at the top), then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. It comes out in the website's language, with dates in the clinic country’s format (in Thailand, the Buddhist era), with every record and prescription and a blank line to sign by hand. It prints on A4 paper.
+Thai title: "ส่งออกประวัติผู้ป่วยเป็น PDF"
+**th**
+เปิดผู้ป่วย แล้วแตะไอคอนส่งออกประวัติ PDF จะเป็นภาษาของแอป โดยใช้รูปแบบวันที่และสกุลเงินท้องถิ่น
+{pending:app-1.7.0} PDF เป็นกระดาษขนาด A4
+**ในเว็บไซต์:** เปิดผู้ป่วย แล้วคลิก **PDF ประวัติการรักษา** (ด้านบน) จากนั้นคลิก **พิมพ์ / บันทึกเป็น PDF** หากต้องการไฟล์ ให้เลือก "บันทึกเป็น PDF" ในหน้าต่างการพิมพ์ เอกสารจะเป็นภาษาของเว็บไซต์ วันที่ใช้รูปแบบของประเทศของคลินิก (ในประเทศไทยเป็นพุทธศักราช) มีทุกบันทึกและใบสั่งยา พร้อมเส้นว่างสำหรับเซ็นด้วยมือ พิมพ์บนกระดาษขนาด A4
 `open:patients`
 
 ---
@@ -135,6 +173,10 @@ Abra o paciente e toque em **Convidar para o app**. Envie o código pessoal (ou 
 Open the patient and tap **Invite to the app**. Send the personal code (or link) by WhatsApp or another app. When the patient signs up with it, they're connected to this record and can request appointments.
 **No site:** Abra o paciente e, na aba **Informações**, em **Código de Convite**, clique em **Gerar código** e depois em **Copiar** para enviar ao paciente.
 **On the website:** Open the patient and, on the **Info** tab, under **Invite Code**, click **Generate code** and then **Copy** to send it to the patient.
+Thai title: "เชิญผู้ป่วยเข้าแอป"
+**th**
+เปิดผู้ป่วย แล้วแตะ **เชิญเข้าแอป** ส่งรหัสส่วนตัว (หรือลิงก์) ทาง WhatsApp หรือแอปอื่น เมื่อผู้ป่วยสมัครด้วยรหัสนี้ บัญชีจะเชื่อมกับแฟ้มนี้และขอนัดหมายได้
+**ในเว็บไซต์:** เปิดผู้ป่วย ในแท็บ **ข้อมูล** ใต้ **รหัสเชิญ** คลิก **สร้างรหัส** แล้วคลิก **คัดลอก** เพื่อส่งให้ผู้ป่วย
 `open:patients`
 
 ---
@@ -147,6 +189,11 @@ Open the patient and tap **Invite to the app**. Send the personal code (or link)
 **On the website:** {unless:migration-126} Not available on the website yet; use the app.
 **No site:** {pending:migration-126} Em **Configurações → Exportar pacientes (CSV)** (só para médicos) o site baixa a planilha com todos os pacientes, ativos e arquivados. O registro de acesso de cada paciente anota "Exportado na lista de pacientes (CSV)"; se esse registro não puder ser gravado, nada é baixado e aparece "Não foi possível registrar o acesso. Tente novamente."
 **On the website:** {pending:migration-126} In **Settings → Export patients (CSV)** (doctors only) the website downloads the spreadsheet with every patient, active and archived. Each patient's access log records "Exported in the patient list (CSV)"; if that can't be recorded, nothing is downloaded and you see "Couldn't record the access. Please try again."
+Thai title: "ส่งออกรายชื่อผู้ป่วย (CSV)"
+**th**
+**การตั้งค่า → ส่งออกรายชื่อผู้ป่วย (CSV)** ไฟล์เปิดใน Excel ได้ทันที แอปจะลบสำเนาออกจากโทรศัพท์เมื่อส่งออกครั้งถัดไป เมื่อเปิดแอปครั้งถัดไป หรือเมื่อออกจากระบบ
+**ในเว็บไซต์:** {unless:migration-126} ยังไม่มีในเว็บไซต์ ให้ใช้แอป
+**ในเว็บไซต์:** {pending:migration-126} ใน **การตั้งค่า → ส่งออกผู้ป่วย (CSV)** (เฉพาะแพทย์) เว็บไซต์จะดาวน์โหลดสเปรดชีตที่มีผู้ป่วยทุกคน ทั้งที่ใช้งานอยู่และที่เก็บถาวร บันทึกการเข้าถึงของผู้ป่วยแต่ละคนจะบันทึกว่า "ส่งออกในรายชื่อผู้ป่วย (CSV)" หากบันทึกไม่ได้ จะไม่มีการดาวน์โหลด และคุณจะเห็น "ไม่สามารถบันทึกการเข้าถึงได้ กรุณาลองอีกครั้ง"
 `open:settings`
 
 ---
@@ -159,6 +206,11 @@ Patients brought from another system may have **Imported data**: the spreadsheet
 Only you (the doctor) can see imported data; secretaries and the patient can't. When you open it, it's recorded in the patient's **Access** tab ("Opened the imported data"); repeated openings within a minute count once.
 **No site:** Em **Pacientes**, abra o paciente: abaixo das abas, clique em **Dados importados** para ver os campos e de onde vieram ("Importado de … em …"). Só o médico vê essa seção, e a abertura fica registrada na aba **Registro de acessos** do paciente, como no app.
 **On the website:** In **Patients**, open the patient: below the tabs, click **Imported data** to see the fields and where they came from ("Imported from … on …"). Only the doctor sees this section, and opening it is recorded in the patient's **Access log** tab, as in the app.
+Thai title: "ข้อมูลที่นำเข้า"
+**th**
+ผู้ป่วยที่นำมาจากระบบอื่นอาจมี **ข้อมูลที่นำเข้า**: คอลัมน์ในสเปรดชีตที่ไม่ได้กลายเป็นช่องข้อมูลของ SolvyMed ในแอป เปิดผู้ป่วยแล้วแตะ **ข้อมูลที่นำเข้า** เพื่อดูข้อมูลและแหล่งที่มา ("นำเข้าจาก … เมื่อ …")
+เฉพาะคุณ (แพทย์) เท่านั้นที่เห็นข้อมูลที่นำเข้า เลขานุการและผู้ป่วยมองไม่เห็น เมื่อคุณเปิดดู จะมีการบันทึกในแท็บ **การเข้าถึง** ของผู้ป่วย ("เปิดข้อมูลที่นำเข้า") การเปิดซ้ำภายในหนึ่งนาทีนับเป็นครั้งเดียว
+**ในเว็บไซต์:** ใน **ผู้ป่วย** เปิดผู้ป่วย ใต้แท็บต่างๆ คลิก **ข้อมูลที่นำเข้า** เพื่อดูข้อมูลและแหล่งที่มา ("นำเข้าจาก … เมื่อ …") เฉพาะแพทย์เท่านั้นที่เห็นส่วนนี้ และการเปิดดูจะถูกบันทึกในแท็บ **บันทึกการเข้าถึง** ของผู้ป่วย เหมือนในแอป
 `open:patients`
 `requires:import-extras-live`
 
@@ -184,6 +236,17 @@ If either record had booking blocked, the one that stays remains blocked. A reco
 {pending:patient-address-live} The **Address** is chosen as a whole, from one record or the other; the **CNS** like the other fields. When the **Notes** differ, **Both, joined** is preselected (the kept record's first); if together they exceed 2,000 characters, pick one (and edit it afterwards if you like).
 **No site:** Abra o paciente e, na aba **Informações**, clique em **Mesclar com outro paciente…** (só o médico). Busque o outro cadastro (os arquivados também aparecem), escolha em **Manter este cadastro** qual fica, marque o valor que quer manter em cada campo diferente e clique em **Mesclar**; se um dos cadastros usa o app, confirme em **São a mesma pessoa**. Cada cadastro mostra a data de nascimento, o final do telefone e quando foi cadastrado ou importado; ao trocar qual fica, os valores marcados continuam marcados. Dois cadastros com o mesmo nome aparecem na confirmação com o que os diferencia, por exemplo «Maria Silva (nasc. 12/03/1980)».
 **On the website:** Open the patient and, on the **Info** tab, click **Merge with another patient…** (doctor only). Search for the other record (archived ones are listed too), choose under **Keep this record** which one stays, mark the value to keep in each field that differs and click **Merge**; if either record uses the app, confirm with **Same person**. Each record shows its birth date, the end of its phone number and when it was added or imported; switching which one stays keeps the values you marked. Two records with the same name are named in the confirmation by what tells them apart, for example «Maria Silva (born 12/03/1980)».
+Thai title: "รวมแฟ้มผู้ป่วยที่ซ้ำกัน"
+**th**
+เมื่อบุคคลเดียวกันมีสองแฟ้ม คุณรวมแฟ้มได้: ทุกอย่างจะย้ายไปยังแฟ้มที่เก็บไว้
+{pending:merge-patients-live} 1. ใน **ผู้ป่วย** แตะเมนู (⋯) ของผู้ป่วย แล้วแตะ **รวมกับผู้ป่วยอีกคน…** (เฉพาะแพทย์)
+{pending:merge-patients-live} 2. ค้นหาอีกแฟ้มหนึ่ง (แฟ้มที่เก็บถาวรก็แสดงด้วย)
+{pending:merge-patients-live} 3. จะแสดงเฉพาะช่องที่ต่างกัน: แตะค่าที่ต้องการเก็บไว้ ใต้ **เก็บประวัตินี้ไว้** เลือกแฟ้มที่จะเก็บไว้ (แฟ้มที่ใช้แอปจะถูกเลือกไว้ก่อน) แต่ละแฟ้มแสดงวันเกิด เลขท้ายของหมายเลขโทรศัพท์ และวันที่เพิ่มหรือนำเข้า หากสลับแฟ้มที่จะเก็บไว้ ค่าที่คุณเลือกจะยังคงอยู่
+{pending:merge-patients-live} 4. ยืนยัน (หากสองแฟ้มมีชื่อเดียวกัน จะระบุด้วยสิ่งที่แตกต่างกัน เช่น วันเกิด) หากแฟ้มใดแฟ้มหนึ่งใช้แอป ให้ยืนยันอีกครั้งด้วย **เป็นคนเดียวกัน**
+นัดหมาย เวชระเบียน ใบสั่งยา และไฟล์ จะย้ายไปยังแฟ้มที่เก็บไว้ (ไฟล์อาจใช้เวลาสองสามวินาที) การรวมแฟ้มยกเลิกไม่ได้ แท็บ **การเข้าถึง** จะบันทึก "รวมกับ «ชื่อ»"
+หากแฟ้มใดแฟ้มหนึ่งถูกปิดการขอนัด แฟ้มที่เก็บไว้จะยังถูกปิดการขอนัด แฟ้มที่นำเข้าในสถานะเสียชีวิตต้องกู้คืนก่อนจึงจะรวมได้ รหัสเชิญของแฟ้มที่ถูกรวมออกจะใช้ไม่ได้อีก เพื่อการตรวจสอบ ระบบจะเก็บสำเนาของแฟ้มที่ถูกรวมออกไว้ตราบเท่าที่คลินิกยังอยู่
+{pending:patient-address-live} **ที่อยู่** จะเลือกทั้งชุด จากแฟ้มใดแฟ้มหนึ่ง ส่วน CNS (คลินิกในบราซิล) เลือกเหมือนช่องอื่น เมื่อ **หมายเหตุ** ต่างกัน จะเลือก **ทั้งสอง รวมกัน** ไว้ก่อน (หมายเหตุของแฟ้มที่เก็บไว้อยู่ก่อน) หากรวมกันเกิน 2,000 ตัวอักษร ให้เลือกอย่างใดอย่างหนึ่ง (และแก้ไขภายหลังได้)
+**ในเว็บไซต์:** เปิดผู้ป่วย ในแท็บ **ข้อมูล** คลิก **รวมกับผู้ป่วยอีกคน…** (เฉพาะแพทย์) ค้นหาอีกแฟ้มหนึ่ง (แฟ้มที่เก็บถาวรก็แสดงด้วย) เลือกแฟ้มที่จะเก็บไว้ใต้ **เก็บประวัตินี้ไว้** ทำเครื่องหมายค่าที่ต้องการเก็บในแต่ละช่องที่ต่างกัน แล้วคลิก **รวม** หากแฟ้มใดแฟ้มหนึ่งใช้แอป ให้ยืนยันด้วย **เป็นคนเดียวกัน** แต่ละแฟ้มแสดงวันเกิด เลขท้ายของหมายเลขโทรศัพท์ และวันที่เพิ่มหรือนำเข้า หากสลับแฟ้มที่จะเก็บไว้ ค่าที่คุณทำเครื่องหมายจะยังคงอยู่ หากสองแฟ้มมีชื่อเดียวกัน ในการยืนยันจะระบุด้วยสิ่งที่แตกต่างกัน เช่น วันเกิด
 `open:patients`
 `requires:merge-web-live`
 
@@ -197,10 +260,17 @@ Os pacientes importados aparecem no app normalmente.
 The import is done on the website (doctor only), from a CSV or Excel spreadsheet: your previous system's export (iClinic and Prontuário Verde are recognised automatically) or our spreadsheet template.
 Imported patients show up in the app as usual.
 {pending:app-361-batch} In the app (doctors only): in **Settings → Integrations**, under **Import**, **Import patients** explains that importing is done on the website, on a computer (solvymed.com → Patients → Import patients). An empty **Patients** list shows "Coming from another system? Import your patients on the website.".
-**No site:** Em **Pacientes**, clique em **Importar pacientes** e escolha o arquivo (ou baixe o **modelo de planilha**). Confira para onde vai cada coluna: as que não têm campo no SolvyMed ficam como **dados importados**, visíveis só para você; nome e sobrenome em colunas separadas viram o nome completo. Escolha o que fazer com **pacientes que já existem** (**Pular** ou **Preencher campos vazios**) e clique em **Verificar planilha**: aparece o resumo de novos, já existentes e com erro, e você pode baixar a lista de erros. Nada é salvo até você clicar em **Importar**. Por 24 horas, **Desfazer importação** remove os pacientes novos que ainda não foram editados nem usados; depois de sair da página, ele fica em **Importar pacientes**, no quadro **Última importação** (a importação mais recente). Pacientes inativos ou falecidos no sistema anterior entram como arquivados. Um CPF que perdeu o zero inicial no Excel (ficou com 9 ou 10 dígitos) é completado quando os dígitos verificadores conferem; se não conferirem, formate a coluna do CPF como Texto no Excel e exporte de novo.
-**On the website:** In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet; after you leave the page, it's in **Import patients**, under **Last import** (the most recent import). Patients inactive or deceased in the previous system come in archived. A CPF that lost its leading zero in Excel (left with 9 or 10 digits) is completed when its check digits match; if they don't, format the CPF column as Text in Excel and export again.
-**No site:** {pending:patient-address-live} Em **Pacientes**, clique em **Importar pacientes** e escolha o arquivo (ou baixe o **modelo de planilha**). Confira para onde vai cada coluna: as que não têm campo no SolvyMed ficam como **dados importados**, visíveis só para você; nome e sobrenome em colunas separadas viram o nome completo. Escolha o que fazer com **pacientes que já existem** (**Pular** ou **Preencher campos vazios**) e clique em **Verificar planilha**: aparece o resumo de novos, já existentes e com erro, e você pode baixar a lista de erros. Nada é salvo até você clicar em **Importar**. Por 24 horas, **Desfazer importação** remove os pacientes novos que ainda não foram editados nem usados; depois de sair da página, ele fica em **Importar pacientes**, no quadro **Última importação** (a importação mais recente). Pacientes inativos ou falecidos no sistema anterior entram como arquivados. Um CPF que perdeu o zero inicial no Excel (ficou com 9 ou 10 dígitos) é completado quando os dígitos verificadores conferem; se não conferirem, formate a coluna do CPF como Texto no Excel e exporte de novo. O endereço (CEP, rua, número, complemento, bairro, cidade, UF) e o CNS também são importados; um CEP que perdeu o zero inicial no Excel é completado. As observações do sistema anterior ficam como dados importados.
-**On the website:** {pending:patient-address-live} In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet; after you leave the page, it's in **Import patients**, under **Last import** (the most recent import). Patients inactive or deceased in the previous system come in archived. A CPF that lost its leading zero in Excel (left with 9 or 10 digits) is completed when its check digits match; if they don't, format the CPF column as Text in Excel and export again. The address (postal code, street, number, complement, neighbourhood, city, state) and the CNS are imported too; a CEP that lost its leading zero in Excel is completed. The previous system's notes are kept as imported data.
+**No site:** Em **Pacientes**, clique em **Importar pacientes** e escolha o arquivo (ou baixe o **modelo de planilha**). Confira para onde vai cada coluna: as que não têm campo no SolvyMed ficam como **dados importados**, visíveis só para você; nome e sobrenome em colunas separadas viram o nome completo. Escolha o que fazer com **pacientes que já existem** (**Pular** ou **Preencher campos vazios**) e clique em **Verificar planilha**: aparece o resumo de novos, já existentes e com erro, e você pode baixar a lista de erros. Nada é salvo até você clicar em **Importar**. Por 24 horas, **Desfazer importação** remove os pacientes novos que ainda não foram editados nem usados; depois de sair da página, ele fica em **Importar pacientes**, no quadro **Última importação** (a importação mais recente). Pacientes inativos ou falecidos no sistema anterior entram como arquivados. Anos no calendário budista são convertidos automaticamente. Um CPF que perdeu o zero inicial no Excel (ficou com 9 ou 10 dígitos) é completado quando os dígitos verificadores conferem; se não conferirem, formate a coluna do CPF como Texto no Excel e exporte de novo.
+**On the website:** In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet; after you leave the page, it's in **Import patients**, under **Last import** (the most recent import). Patients inactive or deceased in the previous system come in archived. Buddhist-era years are converted automatically. A CPF that lost its leading zero in Excel (left with 9 or 10 digits) is completed when its check digits match; if they don't, format the CPF column as Text in Excel and export again.
+**No site:** {pending:patient-address-live} Em **Pacientes**, clique em **Importar pacientes** e escolha o arquivo (ou baixe o **modelo de planilha**). Confira para onde vai cada coluna: as que não têm campo no SolvyMed ficam como **dados importados**, visíveis só para você; nome e sobrenome em colunas separadas viram o nome completo. Escolha o que fazer com **pacientes que já existem** (**Pular** ou **Preencher campos vazios**) e clique em **Verificar planilha**: aparece o resumo de novos, já existentes e com erro, e você pode baixar a lista de erros. Nada é salvo até você clicar em **Importar**. Por 24 horas, **Desfazer importação** remove os pacientes novos que ainda não foram editados nem usados; depois de sair da página, ele fica em **Importar pacientes**, no quadro **Última importação** (a importação mais recente). Pacientes inativos ou falecidos no sistema anterior entram como arquivados. Anos no calendário budista são convertidos automaticamente. Um CPF que perdeu o zero inicial no Excel (ficou com 9 ou 10 dígitos) é completado quando os dígitos verificadores conferem; se não conferirem, formate a coluna do CPF como Texto no Excel e exporte de novo. O endereço (CEP, rua, número, complemento, bairro, cidade, UF) e o CNS também são importados; um CEP que perdeu o zero inicial no Excel é completado. As observações do sistema anterior ficam como dados importados.
+**On the website:** {pending:patient-address-live} In **Patients**, click **Import patients** and choose the file (or download the **spreadsheet template**). Check where each column goes: the ones with no SolvyMed field are kept as **imported data**, visible only to you; first and last name in separate columns become the full name. Choose what to do with **patients who already exist** (**Skip** or **Fill in empty fields**) and click **Check the spreadsheet**: you see how many are new, already exist or have errors, and you can download the error list. Nothing is saved until you click **Import**. For 24 hours, **Undo the import** removes the new patients that haven't been edited or used yet; after you leave the page, it's in **Import patients**, under **Last import** (the most recent import). Patients inactive or deceased in the previous system come in archived. Buddhist-era years are converted automatically. A CPF that lost its leading zero in Excel (left with 9 or 10 digits) is completed when its check digits match; if they don't, format the CPF column as Text in Excel and export again. The address (postal code, street, number, complement, neighbourhood, city, state) and the CNS are imported too; a CEP that lost its leading zero in Excel is completed. The previous system's notes are kept as imported data.
+Thai title: "นำเข้าผู้ป่วยจากระบบอื่น"
+**th**
+การนำเข้าทำในเว็บไซต์ (เฉพาะแพทย์) จากสเปรดชีต CSV หรือ Excel: ไฟล์ที่ส่งออกจากระบบเดิมของคุณ หรือแม่แบบสเปรดชีตของเรา
+ผู้ป่วยที่นำเข้าจะแสดงในแอปตามปกติ
+{pending:app-361-batch} ในแอป (เฉพาะแพทย์): ใน **การตั้งค่า → การเชื่อมต่อ** ใต้ **การนำเข้า** **นำเข้าผู้ป่วย** จะอธิบายว่าการนำเข้าทำในเว็บไซต์ บนคอมพิวเตอร์ (solvymed.com → ผู้ป่วย → นำเข้าผู้ป่วย) เมื่อรายการ **ผู้ป่วย** ว่างอยู่ จะแสดง "ย้ายมาจากระบบอื่น? นำเข้าผู้ป่วยได้ทางเว็บไซต์"
+**ในเว็บไซต์:** ใน **ผู้ป่วย** คลิก **นำเข้าผู้ป่วย** แล้วเลือกไฟล์ (หรือ **ดาวน์โหลดแม่แบบสเปรดชีต** ซึ่งสำหรับคลินิกในประเทศไทยมีคอลัมน์เลขประจำตัวประชาชนและหนังสือเดินทาง) ตรวจสอบว่าแต่ละคอลัมน์จะไปอยู่ที่ช่องใด คอลัมน์ที่ไม่มีช่องใน SolvyMed จะเก็บไว้เป็น **ข้อมูลที่นำเข้า** ซึ่งเห็นได้เฉพาะคุณ ชื่อและนามสกุลที่อยู่คนละคอลัมน์จะรวมเป็นชื่อ-นามสกุล เลือกว่าจะทำอย่างไรกับ **ผู้ป่วยที่มีอยู่แล้ว** (**ข้าม** หรือ **เติมช่องที่ว่าง**) แล้วคลิก **ตรวจสอบสเปรดชีต**: คุณจะเห็นจำนวนผู้ป่วยใหม่ ที่มีอยู่แล้ว และที่มีข้อผิดพลาด และดาวน์โหลดรายการข้อผิดพลาดได้ จะยังไม่มีการบันทึกใดๆ จนกว่าคุณจะคลิกปุ่มนำเข้า ภายใน 24 ชั่วโมง **ย้อนการนำเข้า** จะลบผู้ป่วยใหม่ที่ยังไม่ได้แก้ไขหรือใช้งาน หลังจากออกจากหน้านี้ ปุ่มนี้อยู่ใน **นำเข้าผู้ป่วย** ใต้ **การนำเข้าครั้งล่าสุด** ผู้ป่วยที่ไม่ใช้งานหรือเสียชีวิตในระบบเดิมจะนำเข้าเป็นแฟ้มที่เก็บถาวร ปี พ.ศ. จะถูกแปลงเป็น ค.ศ. ให้อัตโนมัติ
+**ในเว็บไซต์:** {pending:patient-address-live} ใน **ผู้ป่วย** คลิก **นำเข้าผู้ป่วย** แล้วเลือกไฟล์ (หรือ **ดาวน์โหลดแม่แบบสเปรดชีต** ซึ่งสำหรับคลินิกในประเทศไทยมีคอลัมน์เลขประจำตัวประชาชนและหนังสือเดินทาง) ตรวจสอบว่าแต่ละคอลัมน์จะไปอยู่ที่ช่องใด คอลัมน์ที่ไม่มีช่องใน SolvyMed จะเก็บไว้เป็น **ข้อมูลที่นำเข้า** ซึ่งเห็นได้เฉพาะคุณ ชื่อและนามสกุลที่อยู่คนละคอลัมน์จะรวมเป็นชื่อ-นามสกุล เลือกว่าจะทำอย่างไรกับ **ผู้ป่วยที่มีอยู่แล้ว** (**ข้าม** หรือ **เติมช่องที่ว่าง**) แล้วคลิก **ตรวจสอบสเปรดชีต**: คุณจะเห็นจำนวนผู้ป่วยใหม่ ที่มีอยู่แล้ว และที่มีข้อผิดพลาด และดาวน์โหลดรายการข้อผิดพลาดได้ จะยังไม่มีการบันทึกใดๆ จนกว่าคุณจะคลิกปุ่มนำเข้า ภายใน 24 ชั่วโมง **ย้อนการนำเข้า** จะลบผู้ป่วยใหม่ที่ยังไม่ได้แก้ไขหรือใช้งาน หลังจากออกจากหน้านี้ ปุ่มนี้อยู่ใน **นำเข้าผู้ป่วย** ใต้ **การนำเข้าครั้งล่าสุด** ผู้ป่วยที่ไม่ใช้งานหรือเสียชีวิตในระบบเดิมจะนำเข้าเป็นแฟ้มที่เก็บถาวร ปี พ.ศ. จะถูกแปลงเป็น ค.ศ. ให้อัตโนมัติ ที่อยู่ (รหัสไปรษณีย์ ถนน/ซอย บ้านเลขที่ อาคาร ชั้น ห้อง แขวง/ตำบล เขต/อำเภอ จังหวัด) นำเข้าได้ด้วย หมายเหตุจากระบบเดิมจะเก็บไว้เป็นข้อมูลที่นำเข้า
 `open:patients`
 `requires:patient-import-live`
 ---
@@ -211,6 +281,10 @@ Em **Início**, toque em **Enviar para Pacientes** (só o médico): escreva um *
 On **Home**, tap **Send to Patients** (doctor only): write a **Notification Title** (up to 100 characters) and a **Message** (up to 500) and tap **Send Notification**. It goes to the patients connected to you, and only those with SolvyMed notifications on receive it; the message can't be blank. Don't include patient details. You can send at most 10 notices every 24 hours.
 **No site:** Em **Visão geral**, clique em **Enviar para Pacientes** (só o médico): o mesmo título, mensagem e limites; **Enviar Notificação** só fica disponível com título e mensagem preenchidos.
 **On the website:** On **Overview**, click **Send to Patients** (doctor only): the same title, message and limits; **Send Notification** is only available once both the title and the message are filled in.
+Thai title: "ส่งถึงผู้ป่วย"
+**th**
+ใน **หน้าแรก** แตะ **ส่งถึงผู้ป่วย** (เฉพาะแพทย์): เขียน **หัวข้อการแจ้งเตือน** (ไม่เกิน 100 ตัวอักษร) และ **ข้อความ** (ไม่เกิน 500 ตัวอักษร) แล้วแตะ **ส่งการแจ้งเตือน** ข้อความจะส่งถึงผู้ป่วยที่เชื่อมต่อกับคุณ และจะได้รับเฉพาะผู้ที่เปิดการแจ้งเตือนของ SolvyMed ไว้ ข้อความต้องไม่ว่างเปล่า อย่าใส่ข้อมูลของผู้ป่วย คุณส่งได้ไม่เกิน 10 ครั้งทุก 24 ชั่วโมง
+**ในเว็บไซต์:** ใน **ภาพรวม** คลิก **ส่งถึงผู้ป่วย** (เฉพาะแพทย์): หัวข้อ ข้อความ และขีดจำกัดเหมือนในแอป **ส่งการแจ้งเตือน** จะกดได้เมื่อกรอกทั้งหัวข้อและข้อความแล้วเท่านั้น
 `open:home`
 `requires:broadcast-live`
 ---
@@ -256,5 +330,13 @@ Every document ends with the signature line (and your signature, if saved), your
 If your registration is from another state, choose the state in **Settings → Registrations** (app) or **Settings → Profile** (website).
 The **Special control prescription** is print-only: **Print** opens the print dialog with both copies (if it doesn't open, use **Open PDF** and print from there); sign them by hand and give both to the patient. It needs the patient's CPF or passport.
 Only you see these documents; secretaries have no access. Every PDF created is logged in the **Access log**.
+Thai title: "ใบรับรองแพทย์ ใบรับรองการมาพบแพทย์ และใบส่งตรวจ"
+**th**
+ในแท็บ **ใบสั่งยาและเอกสาร** ของผู้ป่วย กด **+ เอกสาร** เพื่อสร้างเอกสารทางการแพทย์ (เฉพาะแพทย์) ประเภทเอกสารเป็นไปตามประเทศของคลินิก สำหรับคลินิกในประเทศไทยมี **ใบรับรองแพทย์** (แบบฟอร์มของไทย) **ใบรับรองการมาพบแพทย์** และ **ใบส่งตรวจ**
+เลือก **ภาษาของเอกสาร** (ภาษาจะเปลี่ยนป้ายกำกับ วันที่ และปฏิทิน ส่วนข้อความคุณเป็นผู้เขียนเอง) แล้วกรอกข้อมูล ใบรับรองแพทย์ของไทยออกได้เป็นภาษาไทยหรือภาษาอังกฤษเท่านั้น (แบบฟอร์มของแพทยสภามีสองภาษานี้)
+วันที่พิมพ์เป็น วว/ดด/ปปปป โดยใช้ปี ค.ศ. (ปี พ.ศ. จะแสดงอยู่ด้านล่าง และระบบไม่รับปีที่พิมพ์เป็น พ.ศ.) ในใบรับรองแพทย์ วันที่สิ้นสุดการพักรักษาตัวจะคำนวณจากจำนวนวันและวันที่เริ่ม และยังแก้ไขได้ หากปิดเอกสารที่ยังไม่ได้บันทึก ระบบจะถาม **ทิ้งการเปลี่ยนแปลงหรือไม่** (**ทิ้ง** / **แก้ไขต่อ**)
+ใบสั่งยาและเอกสารอยู่ในรายการเดียวกัน เรียงจากใหม่ไปเก่า **ดาวน์โหลด PDF** จะสร้างเอกสาร คุณแก้ไขหรือลบเอกสารได้ภายใน 24 ชั่วโมง หลังจากนั้นให้ใช้ **เพิ่มรายการแก้ไข** โดยต้นฉบับจะยังเก็บไว้คู่กับรายการแก้ไข
+เอกสารทุกฉบับปิดท้ายด้วยเส้นสำหรับลงชื่อ (และลายมือชื่อของคุณ หากบันทึกไว้) ชื่อของคุณตามโปรไฟล์ และเลขทะเบียนวิชาชีพ หากเลขทะเบียนเป็นตัวเลขล้วน จะแสดงเป็นเลขที่ใบอนุญาตประกอบวิชาชีพเวชกรรมในภาษาของเอกสาร หากมีตัวอักษร จะแสดงตามที่คุณพิมพ์
+มีเพียงคุณที่เห็นเอกสารเหล่านี้ เลขานุการเข้าถึงไม่ได้ และทุกครั้งที่สร้าง PDF จะถูกบันทึกไว้ใน **บันทึกการเข้าถึง**
 `open:patients`
 `requires:clinical-documents-live`

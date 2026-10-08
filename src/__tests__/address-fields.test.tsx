@@ -58,10 +58,10 @@ describe("privacy §3.2: address, CNS and notes only once 138 is live", () => {
     expect(r.container.textContent).not.toContain("CNS");
     r.unmount();
     r = render(<PrivacyEn turnstile={false} address />);
-    expect(r.container.textContent).toContain("phone, email, address, CNS (the Brazilian national health card number, Brazilian clinics only) and administrative notes) and health data");
+    expect(r.container.textContent).toContain("; address, CNS (the Brazilian national health card number, Brazilian clinics only) and administrative notes) and health data");
     r.unmount();
     r = render(<PrivacyPtBR turnstile={false} address />);
-    expect(r.container.textContent).toContain("telefone, e-mail, endereço, CNS (Cartão Nacional de Saúde, só clínicas no Brasil) e observações administrativas) e dados de saúde");
+    expect(r.container.textContent).toContain("; endereço, CNS (Cartão Nacional de Saúde, só clínicas no Brasil) e observações administrativas) e dados de saúde");
     r.unmount();
   });
 });

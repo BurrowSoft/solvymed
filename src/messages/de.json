@@ -1622,7 +1622,9 @@
     "fileHint": "Die Datei wird in Ihrem Browser gelesen. Nur die Patientendaten werden zur Prüfung an SolvyMed gesendet, und niemand wird angelegt, bevor Sie bestätigen.",
     "chooseFile": "Datei auswählen",
     "template": "Tabellenvorlage herunterladen",
-    "fileFormats": "CSV oder Excel (.xlsx, .xls), bis 20 MB und 20.000 Patienten. Exporte aus iClinic und Prontuário Verde werden automatisch erkannt.",
+    "fileFormats": "CSV oder Excel (.xlsx, .xls), bis 20 MB und 20.000 Patienten.",
+    "fileFormatsPresets": "Automatisch erkannte Exporte: {systems}.",
+    "beYears": "Jahre im buddhistischen Kalender werden automatisch umgerechnet.",
     "reading": "Datei wird gelesen…",
     "file_too_big": "Die Datei ist größer als 20 MB.",
     "file_unsupported": "Laden Sie eine CSV- oder Excel-Datei hoch (.csv, .xlsx, .xls).",
@@ -2224,6 +2226,20 @@
     "dayLocation": "Standort",
     "bookingLine": "Standort: {name} · {address}",
     "primaryConfirm": "Arbeitstage ohne gewählten Standort verwenden {name}. Termine mit Standort bleiben dort; Termine ohne Standort zeigen {name}."
+  },
+  "patientFields": {
+    "title": "Patientendaten",
+    "hint": "Wählen Sie, welche Angaben Sie beim Anlegen eines Patienten abfragen. Der Name ist immer Pflicht. Ein ausgeblendetes Feld behält bereits Gespeichertes.",
+    "required": "Pflicht",
+    "optional": "Optional",
+    "hidden": "Ausgeblendet",
+    "missing": "Bitte ausfüllen: {fields}",
+    "missingNote": "Fehlende Pflichtangaben: {fields}",
+    "hiddenBadge": "Im Formular ausgeblendet",
+    "rg": "RG",
+    "orPassport": "{id} oder Reisepass",
+    "address": "Adresse",
+    "saved": "Gespeichert"
   },
   "brandCrop": {
     "title": "Bild anpassen",

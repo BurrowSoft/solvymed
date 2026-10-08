@@ -1622,7 +1622,9 @@
     "fileHint": "Le fichier est lu dans votre navigateur. Seules les données des patients sont envoyées à SolvyMed pour vérification, et aucun patient n'est créé avant votre confirmation.",
     "chooseFile": "Choisir un fichier",
     "template": "Télécharger le modèle de tableur",
-    "fileFormats": "CSV ou Excel (.xlsx, .xls), jusqu'à 20 Mo et 20 000 patients. Les exports d'iClinic et de Prontuário Verde sont reconnus automatiquement.",
+    "fileFormats": "CSV ou Excel (.xlsx, .xls), jusqu'à 20 Mo et 20 000 patients.",
+    "fileFormatsPresets": "Exports reconnus automatiquement : {systems}.",
+    "beYears": "Les années de l'ère bouddhique sont converties automatiquement.",
     "reading": "Lecture du fichier…",
     "file_too_big": "Le fichier dépasse 20 Mo.",
     "file_unsupported": "Envoyez un fichier CSV ou Excel (.csv, .xlsx, .xls).",
@@ -2224,6 +2226,20 @@
     "dayLocation": "Lieu",
     "bookingLine": "Lieu : {name} · {address}",
     "primaryConfirm": "Les jours de consultation sans lieu choisi utiliseront {name}. Les rendez-vous pris dans un lieu y restent ; ceux sans lieu afficheront {name}."
+  },
+  "patientFields": {
+    "title": "Fiche patient",
+    "hint": "Choisissez les informations demandées à l'ajout d'un patient. Le nom est toujours obligatoire. Masquer un champ conserve ce qui est déjà enregistré.",
+    "required": "Obligatoire",
+    "optional": "Facultatif",
+    "hidden": "Masqué",
+    "missing": "À remplir : {fields}",
+    "missingNote": "Informations obligatoires manquantes : {fields}",
+    "hiddenBadge": "Champ masqué dans la fiche",
+    "rg": "RG",
+    "orPassport": "{id} ou passeport",
+    "address": "Adresse",
+    "saved": "Enregistré"
   },
   "brandCrop": {
     "title": "Ajuster l'image",

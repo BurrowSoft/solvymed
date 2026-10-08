@@ -1622,7 +1622,9 @@
     "fileHint": "El archivo se lee en tu navegador. Solo los datos de los pacientes se envían a SolvyMed para verificarlos, y nadie se registra hasta que confirmes.",
     "chooseFile": "Elegir archivo",
     "template": "Descargar plantilla de hoja de cálculo",
-    "fileFormats": "CSV o Excel (.xlsx, .xls), hasta 20 MB y 20.000 pacientes. Las exportaciones de iClinic y Prontuário Verde se reconocen automáticamente.",
+    "fileFormats": "CSV o Excel (.xlsx, .xls), hasta 20 MB y 20.000 pacientes.",
+    "fileFormatsPresets": "Exportaciones reconocidas automáticamente: {systems}.",
+    "beYears": "Los años de la era budista se convierten automáticamente.",
     "reading": "Leyendo el archivo…",
     "file_too_big": "El archivo supera los 20 MB.",
     "file_unsupported": "Sube un archivo CSV o Excel (.csv, .xlsx, .xls).",
@@ -2224,6 +2226,20 @@
     "dayLocation": "Lugar",
     "bookingLine": "Lugar: {name} · {address}",
     "primaryConfirm": "Los días de atención sin lugar elegido pasarán a usar {name}. Las citas reservadas en un lugar siguen allí; las que no tienen lugar mostrarán {name}."
+  },
+  "patientFields": {
+    "title": "Registro del paciente",
+    "hint": "Elige qué datos pides al registrar un paciente. El nombre es siempre obligatorio. Ocultar un campo conserva lo ya guardado.",
+    "required": "Obligatorio",
+    "optional": "Opcional",
+    "hidden": "Oculto",
+    "missing": "Completa: {fields}",
+    "missingNote": "Faltan datos obligatorios: {fields}",
+    "hiddenBadge": "Campo oculto en el registro",
+    "rg": "RG",
+    "orPassport": "{id} o pasaporte",
+    "address": "Dirección",
+    "saved": "Guardado"
   },
   "brandCrop": {
     "title": "Ajustar imagen",

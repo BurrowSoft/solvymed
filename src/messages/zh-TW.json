@@ -1622,7 +1622,9 @@
     "fileHint": "檔案在你的瀏覽器中讀取。只有病患資料會傳送到 SolvyMed 進行檢查,在你確認之前不會建立任何病患。",
     "chooseFile": "選擇檔案",
     "template": "下載試算表範本",
-    "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 位病患。可自動辨識 iClinic 與 Prontuário Verde 的匯出檔。",
+    "fileFormats": "CSV 或 Excel(.xlsx、.xls),最大 20 MB、20,000 位病患。",
+    "fileFormatsPresets": "可自動辨識的匯出檔:{systems}",
+    "beYears": "佛曆年份會自動轉換為西元。",
     "reading": "正在讀取檔案…",
     "file_too_big": "檔案超過 20 MB。",
     "file_unsupported": "請上傳 CSV 或 Excel 檔(.csv、.xlsx、.xls)。",
@@ -2224,6 +2226,20 @@
     "dayLocation": "地點",
     "bookingLine": "地點：{name} · {address}",
     "primaryConfirm": "未選擇地點的工作日將使用 {name}。已指定地點的預約維持不變；沒有地點的預約將顯示為 {name}。"
+  },
+  "patientFields": {
+    "title": "患者登記",
+    "hint": "選擇新增患者時需要填寫的資料。姓名一律必填。隱藏某一欄會保留已儲存的內容。",
+    "required": "必填",
+    "optional": "選填",
+    "hidden": "隱藏",
+    "missing": "請填寫：{fields}",
+    "missingNote": "缺少必填資料：{fields}",
+    "hiddenBadge": "已在表單中隱藏",
+    "rg": "RG",
+    "orPassport": "{id}或護照",
+    "address": "地址",
+    "saved": "已儲存"
   },
   "brandCrop": {
     "title": "調整圖片",

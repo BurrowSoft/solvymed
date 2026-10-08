@@ -39,7 +39,9 @@ beforeEach(() => { h.live = true; h.updates = []; h.error = null; h.country = "B
 describe("updatePatient × 138", () => {
   it("writes the section when shown and live", async () => {
     expect(await updatePatient("p1", form({ address_fields: "1", address_city: " Santos ", cns: "700 0000 0000 0005", notes_admin: "Prefere manhã" }))).toEqual({ success: true });
-    expect(h.updates[0]).toMatchObject({ address_city: "Santos", address_street: null, cns: "700000000000005", notes_admin: "Prefere manhã" });
+    expect(h.updates[0]).toMatchObject({ address_city: "Santos", cns: "700000000000005", notes_admin: "Prefere manhã" });
+    // 1.8.0 C1: an input the form didn't post (hidden) keeps what's saved.
+    expect(h.updates[0]).not.toHaveProperty("address_street");
   });
 
   it("never touches the columns before 138, or when the form didn't show them", async () => {
