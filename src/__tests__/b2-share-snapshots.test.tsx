@@ -13,32 +13,37 @@ const h = vi.hoisted(() => ({
   folders: [] as { id: string; default_key: string | null }[],
   docs: [] as Record<string, unknown>[],
   fnCalls: [] as Record<string, unknown>[],
+  log: [] as string[],
   fnResult: { ok: true, data: { document_id: "new-doc" } } as { ok: boolean; data?: unknown; code?: string },
   flag: true,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "11111111-1111-4111-8111-111111111111" } } }) },
-    rpc: async (fn: string) => fn === "get_document_folders" ? { data: h.folders, error: null } : fn === "list_patient_documents" ? { data: h.docs, error: null } : { data: null, error: null },
+    rpc: async (fn: string) => { h.log.push(`rpc:${fn}`); return fn === "get_document_folders" ? { data: h.folders, error: null } : fn === "list_patient_documents" ? { data: h.docs, error: null } : { data: null, error: null }; },
   }),
+}));
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({ storage: { from: () => ({ upload: async () => { h.log.push("upload"); return { error: null }; } }) } }),
 }));
 vi.mock("@/lib/activeAccess", () => ({ isActiveProfessional: async () => true }));
 vi.mock("@/lib/myDoctors", () => ({ serverFlag: async () => h.flag }));
-vi.mock("@/lib/patientDocumentFn", () => ({ patientDocumentFn: async (_s: unknown, body: Record<string, unknown>) => { h.fnCalls.push(body); return h.fnResult; } }));
+vi.mock("@/lib/patientDocumentFn", () => ({ patientDocumentFn: async (_s: unknown, body: Record<string, unknown>) => { h.log.push(`fn:${body.action}`); h.fnCalls.push(body); return h.fnResult; } }));
 
-import { registerSnapshot } from "@/app/[locale]/(site)/dashboard/(gated)/patients/snapshot-actions";
+import { prepareSnapshot, registerSnapshot } from "@/app/[locale]/(site)/dashboard/(gated)/patients/snapshot-actions";
+import { shareSnapshot } from "@/lib/shareSnapshot";
 
 const PAT = "22222222-2222-4222-8222-222222222222";
 const RX1 = "33333333-3333-4333-8333-333333333333";
 const RX2 = "44444444-4444-4444-8444-444444444444";
 const input = (o: Partial<Parameters<typeof registerSnapshot>[1]> = {}) => ({
   path: `11111111-1111-4111-8111-111111111111/${PAT}/x.pdf`, source: "prescription" as const, sourceId: RX2,
-  replacesSourceId: null, folderKey: "prescriptions" as const, title: "Receita 08/10/2026", ...o,
+  replacesId: null, folderId: "55555555-5555-4555-8555-555555555555", title: "Receita 08/10/2026", ...o,
 });
 
 beforeEach(() => {
-  h.folders = [{ id: "f-start", default_key: "start" }, { id: "f-rx", default_key: "prescriptions" }, { id: "f-cert", default_key: "certificates" }];
-  h.docs = []; h.fnCalls = []; h.flag = true;
+  h.folders = [{ id: "a0000000-0000-4000-8000-00000000000a", default_key: "start" }, { id: "b0000000-0000-4000-8000-00000000000b", default_key: "prescriptions" }, { id: "c0000000-0000-4000-8000-00000000000c", default_key: "certificates" }];
+  h.docs = []; h.fnCalls = []; h.log = []; h.flag = true;
   h.fnResult = { ok: true, data: { document_id: "new-doc" } };
 });
 
@@ -71,25 +76,32 @@ describe("the shared rules (lib/medicalDocuments, the app pastes them)", () => {
   });
 });
 
-describe("registerSnapshot", () => {
-  it("registers it shared, in the type's folder, from its source", async () => {
-    expect(await registerSnapshot(PAT, input())).toEqual({ ok: true, data: "new-doc" });
-    expect(h.fnCalls[0]).toMatchObject({ action: "register", patient_id: PAT, folder_id: "f-rx", shared: true, source: "prescription", source_id: RX2, replaces_id: null, title: "Receita 08/10/2026" });
+describe("prepareSnapshot: looked up before the upload", () => {
+  it("the type's folder, else \"Comece aqui\"", async () => {
+    expect(await prepareSnapshot(PAT, { source: "prescription", replacesSourceId: null, folderKey: "prescriptions" })).toEqual({ ok: true, data: { folderId: "b0000000-0000-4000-8000-00000000000b", replacesId: null } });
+    expect(await prepareSnapshot(PAT, { source: "medical_document", replacesSourceId: null, folderKey: "exams" })).toEqual({ ok: true, data: { folderId: "a0000000-0000-4000-8000-00000000000a", replacesId: null } });
   });
 
-  it("a missing default folder falls back to \"Comece aqui\"", async () => {
-    await registerSnapshot(PAT, input({ source: "medical_document", folderKey: "exams" }));
-    expect(h.fnCalls[0]).toMatchObject({ folder_id: "f-start", source: "medical_document" });
-  });
-
-  it("a correction replaces the live copy of the document it corrects, matched by its source (86)", async () => {
+  it("an edit or correction replaces the live copy of its document, matched by its source (86)", async () => {
     h.docs = [
       { id: "old-other", source: "medical_document", medical_document_id: RX1, replaced: false },
       { id: "old-gone", source: "prescription", prescription_id: RX1, replaced: true },
-      { id: "old-live", source: "prescription", prescription_id: RX1, replaced: false },
+      { id: "d0000000-0000-4000-8000-00000000000d", source: "prescription", prescription_id: RX1, replaced: false },
     ];
-    await registerSnapshot(PAT, input({ replacesSourceId: RX1 }));
-    expect(h.fnCalls[0]).toMatchObject({ replaces_id: "old-live" });
+    expect(await prepareSnapshot(PAT, { source: "prescription", replacesSourceId: RX1, folderKey: "prescriptions" })).toEqual({ ok: true, data: { folderId: "b0000000-0000-4000-8000-00000000000b", replacesId: "d0000000-0000-4000-8000-00000000000d" } });
+  });
+
+  it("off when the flag is off", async () => {
+    h.flag = false;
+    expect(await prepareSnapshot(PAT, { source: "prescription", replacesSourceId: null, folderKey: "prescriptions" })).toEqual({ ok: false, code: "noAccess" });
+  });
+});
+
+describe("registerSnapshot", () => {
+  it("registers it shared, with the prepared folder and replaced copy, and lists nothing (it would adopt the upload)", async () => {
+    expect(await registerSnapshot(PAT, input({ replacesId: "66666666-6666-4666-8666-666666666666" }))).toEqual({ ok: true, data: "new-doc" });
+    expect(h.fnCalls[0]).toMatchObject({ action: "register", patient_id: PAT, folder_id: "55555555-5555-4555-8555-555555555555", shared: true, source: "prescription", source_id: RX2, replaces_id: "66666666-6666-4666-8666-666666666666", title: "Receita 08/10/2026" });
+    expect(h.log.filter((x) => x.startsWith("rpc:"))).toEqual([]);
   });
 
   it("storage full comes back as storageFull; off when the flag is off", async () => {
@@ -101,4 +113,21 @@ describe("registerSnapshot", () => {
     expect(await registerSnapshot(PAT, input())).toEqual({ ok: false, code: "noAccess" });
   });
 });
+
+describe("shareSnapshot: an edit's new copy replaces the old one (13 on #470)", () => {
+  it("lists the patient's documents BEFORE uploading, never between the upload and the register", async () => {
+    h.docs = [{ id: "d0000000-0000-4000-8000-00000000000d", source: "prescription", prescription_id: RX1, replaced: false }];
+    const out = await shareSnapshot({ doctorId: "11111111-1111-4111-8111-111111111111", patientId: PAT, bytes: new Uint8Array([37, 80, 68, 70]), source: "prescription", sourceId: RX1, replacesSourceId: RX1, folderKey: "prescriptions", title: "Receita 08/10/2026" });
+    expect(out).toBe("shared");
+    expect(h.log).toEqual(["rpc:get_document_folders", "rpc:list_patient_documents", "upload", "fn:register"]);
+    expect(h.fnCalls[0]).toMatchObject({ source_id: RX1, replaces_id: "d0000000-0000-4000-8000-00000000000d", folder_id: "b0000000-0000-4000-8000-00000000000b" });
+  });
+
+  it("a failed lookup uploads nothing (no orphan to adopt)", async () => {
+    h.flag = false;
+    expect(await shareSnapshot({ doctorId: "11111111-1111-4111-8111-111111111111", patientId: PAT, bytes: new Uint8Array([1]), source: "prescription", sourceId: RX1, replacesSourceId: null, folderKey: "prescriptions", title: "x" })).toBe("failed");
+    expect(h.log).not.toContain("upload");
+  });
+});
+
 

@@ -85,17 +85,19 @@ export async function prescriptionSnapshotData(patientId: string, rxId: string):
 
 export type SnapshotSource = "prescription" | "medical_document";
 
-// Registers the uploaded snapshot: shared, in the type's default folder
-// (else "Comece aqui"). A correction replaces the snapshot of the document
-// it corrects, if one was shared: the RPC doesn't check where the replaced
-// row came from, so it's picked here by its source (86).
-export async function registerSnapshot(patientId: string, input: {
-  path: string; source: SnapshotSource; sourceId: string; replacesSourceId: string | null; folderKey: DefaultFolderKey; title: string;
-}): Promise<Result<string>> {
-  if (!isUuid(patientId) || !isUuid(input.sourceId) || (input.replacesSourceId !== null && !isUuid(input.replacesSourceId))) return { ok: false, code: "generic" };
+// Everything the snapshot's registration needs, looked up BEFORE the PDF is
+// uploaded (13 on #470): list_patient_documents adopts the doctor's
+// unregistered files (190), so listing after the upload adopted the fresh
+// PDF itself and its register then failed, leaving it as an internal
+// "adopted" file. Returns the type's default folder (else "Comece aqui")
+// and, for an edit or a correction, the shared snapshot it replaces: the
+// RPC doesn't check where the replaced row came from, so it's picked here
+// by its source (86).
+export async function prepareSnapshot(patientId: string, input: {
+  source: SnapshotSource; replacesSourceId: string | null; folderKey: DefaultFolderKey;
+}): Promise<Result<{ folderId: string; replacesId: string | null }>> {
+  if (!isUuid(patientId) || (input.replacesSourceId !== null && !isUuid(input.replacesSourceId))) return { ok: false, code: "generic" };
   if (input.source !== "prescription" && input.source !== "medical_document") return { ok: false, code: "generic" };
-  const title = (input.title ?? "").trim().slice(0, DOC_TITLE_MAX);
-  if (!title || typeof input.path !== "string") return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "noAccess" };
   const f = await me.supabase.rpc("get_document_folders");
@@ -112,9 +114,24 @@ export async function registerSnapshot(patientId: string, input: {
       .find((r) => r.source === input.source && r[col] === input.replacesSourceId && r.replaced !== true);
     replacesId = (old?.id as string | undefined) ?? null;
   }
+  return { ok: true, data: { folderId: folder.id, replacesId } };
+}
+
+// Registers the uploaded snapshot, shared, with what prepareSnapshot found.
+// Nothing here lists the patient's documents (that would adopt the upload);
+// if the register fails, the function removes the caller's fresh upload.
+export async function registerSnapshot(patientId: string, input: {
+  path: string; source: SnapshotSource; sourceId: string; replacesId: string | null; folderId: string; title: string;
+}): Promise<Result<string>> {
+  if (!isUuid(patientId) || !isUuid(input.sourceId) || !isUuid(input.folderId) || (input.replacesId !== null && !isUuid(input.replacesId))) return { ok: false, code: "generic" };
+  if (input.source !== "prescription" && input.source !== "medical_document") return { ok: false, code: "generic" };
+  const title = (input.title ?? "").trim().slice(0, DOC_TITLE_MAX);
+  if (!title || typeof input.path !== "string") return { ok: false, code: "generic" };
+  const me = await doctor();
+  if (!me) return { ok: false, code: "noAccess" };
   const r = await patientDocumentFn<{ document_id?: string }>(me.supabase, {
-    action: "register", patient_id: patientId, path: input.path, folder_id: folder.id, title,
-    shared: true, source: input.source, source_id: input.sourceId, replaces_id: replacesId,
+    action: "register", patient_id: patientId, path: input.path, folder_id: input.folderId, title,
+    shared: true, source: input.source, source_id: input.sourceId, replaces_id: input.replacesId,
   });
   if (!r.ok || !r.data?.document_id) return { ok: false, code: r.ok ? "generic" : docErrorKey(r.code, true) };
   return { ok: true, data: r.data.document_id };
