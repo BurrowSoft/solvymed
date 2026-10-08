@@ -2246,6 +2246,7 @@
     "cardBody": "Completa tu registro.",
     "complete": "Completar",
     "notNow": "Ahora no",
+    "cancel": "Cancelar",
     "formTitle": "Completa tu registro",
     "hint": "Estos datos van a tu registro con {doctor}.",
     "done": "¡Listo! Tu registro está completo.",

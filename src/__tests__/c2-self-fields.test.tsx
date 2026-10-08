@@ -79,6 +79,32 @@ describe("the card", () => {
     expect(h.saves[0]).toEqual([D, { email: "me@x.com", national_id: { cpf: "11144477735" }, sex: "female" }]);
   });
 
+  it("Pronto! stays after the save's revalidation drops that doctor's prompt (13 on #473)", async () => {
+    const view = (prompts: SelfPrompt[]) => <NextIntlClientProvider locale="pt-BR" messages={pt}><CompleteRegistrationCards prompts={prompts} /></NextIntlClientProvider>;
+    const { rerender } = render(view([prompt]));
+    fireEvent.click(screen.getByRole("button", { name: T.complete }));
+    const form = screen.getByTestId("self-fields-form");
+    fireEvent.change(form.querySelector("input[name=cpf]")!, { target: { value: "111.444.777-35" } });
+    fireEvent.change(form.querySelector("select[name=sex]")!, { target: { value: "female" } });
+    fireEvent.submit(form);
+    await waitFor(() => expect(screen.getByTestId("self-fields-done")).toHaveTextContent(T.done));
+    // The server re-renders the page: nothing is missing any more, so no prompt.
+    rerender(view([]));
+    expect(screen.getByTestId("self-fields-done")).toHaveTextContent(T.done);
+    expect(screen.queryByTestId("self-fields-card")).toBeNull();
+  });
+
+  it("the form's Cancel is a real string in en / pt / th (not the raw key; 13 on #473), and goes back to the card", () => {
+    for (const [msgs, locale, word] of [[pt, "pt-BR", "Cancelar"], [en, "en", "Cancel"], [th, "th", "ยกเลิก"]] as const) {
+      const { unmount } = show(prompt, msgs as typeof pt, locale);
+      fireEvent.click(screen.getByRole("button", { name: (msgs as typeof pt).selfFields.complete }));
+      fireEvent.click(screen.getByRole("button", { name: word }));
+      expect(screen.queryByTestId("self-fields-form")).toBeNull();
+      expect(screen.getByTestId("self-fields-card")).toBeInTheDocument();
+      unmount();
+    }
+  });
+
   it("a field left empty says so; nothing is sent", () => {
     show();
     fireEvent.click(screen.getByRole("button", { name: T.complete }));

@@ -19,18 +19,27 @@ import { dismissSelfFields, saveSelfFields } from "./self-fields-actions";
 const input = "w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 const labelCls = "block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1.5";
 
+// "Pronto!" lives here, not in the card: the save revalidates the page and
+// that doctor's prompt is gone from the next render, which would unmount the
+// card before its message showed (13 on #473). Always rendered by the page.
 export function CompleteRegistrationCards({ prompts }: { prompts: SelfPrompt[] }) {
-  return <>{prompts.map((p) => <CompleteRegistrationCard key={p.doctorId} prompt={p} />)}</>;
+  const t = useTranslations("selfFields");
+  const [done, setDone] = useState<string[]>([]);
+  return (
+    <>
+      {done.map((id) => <p key={`done-${id}`} role="status" data-testid="self-fields-done" className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{t("done")}</p>)}
+      {prompts.filter((p) => !done.includes(p.doctorId)).map((p) => (
+        <CompleteRegistrationCard key={p.doctorId} prompt={p} onDone={() => setDone((d) => (d.includes(p.doctorId) ? d : [...d, p.doctorId]))} />
+      ))}
+    </>
+  );
 }
 
-function CompleteRegistrationCard({ prompt }: { prompt: SelfPrompt }) {
+function CompleteRegistrationCard({ prompt, onDone }: { prompt: SelfPrompt; onDone: () => void }) {
   const t = useTranslations("selfFields");
-  const [state, setState] = useState<"card" | "form" | "done" | "gone">("card");
+  const [state, setState] = useState<"card" | "form" | "gone">("card");
   const [pending, start] = useTransition();
   if (state === "gone") return null;
-  if (state === "done") {
-    return <p role="status" data-testid="self-fields-done" className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{t("done")}</p>;
-  }
   return (
     <div data-testid="self-fields-card" className="mb-4 rounded-2xl border border-teal-200 bg-teal-50/60 p-4">
       <p className="text-sm font-bold text-slate-900">{t("cardTitle", { doctor: prompt.doctorName })}</p>
@@ -42,7 +51,7 @@ function CompleteRegistrationCard({ prompt }: { prompt: SelfPrompt }) {
             className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">{t("notNow")}</button>
         </div>
       ) : (
-        <SelfFieldsForm prompt={prompt} onDone={() => setState("done")} onCancel={() => setState("card")} />
+        <SelfFieldsForm prompt={prompt} onDone={onDone} onCancel={() => setState("card")} />
       )}
     </div>
   );
@@ -156,7 +165,7 @@ function SelfFieldsForm({ prompt, onDone, onCancel }: { prompt: SelfPrompt; onDo
       )}{errFor("address")}{errFor("cns")}
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
       <div className="flex gap-2">
-        <button type="button" onClick={onCancel} className="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600">{tp("cancel")}</button>
+        <button type="button" onClick={onCancel} className="flex-1 rounded-xl border border-slate-200 py-2 text-sm font-semibold text-slate-600">{t("cancel")}</button>
         <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2 text-sm font-bold text-white disabled:opacity-60">{pending ? tp("saving") : t("complete")}</button>
       </div>
     </form>

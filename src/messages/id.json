@@ -2246,6 +2246,7 @@
     "cardBody": "Lengkapi pendaftaran Anda.",
     "complete": "Lengkapi",
     "notNow": "Nanti saja",
+    "cancel": "Batal",
     "formTitle": "Lengkapi pendaftaran Anda",
     "hint": "Data ini masuk ke pendaftaran Anda di {doctor}.",
     "done": "Selesai! Pendaftaran Anda sudah lengkap.",

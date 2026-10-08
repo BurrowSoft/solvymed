@@ -514,7 +514,7 @@ export function MyAppointmentsClient({
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
         {privacyNoticeDate && <PrivacyNoticeCard locale={locale} date={privacyNoticeDate} />}
-        {selfPrompts.length > 0 && <CompleteRegistrationCards prompts={selfPrompts} />}
+        <CompleteRegistrationCards prompts={selfPrompts} />
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />
         )}

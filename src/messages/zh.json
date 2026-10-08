@@ -2246,6 +2246,7 @@
     "cardBody": "请完善您的登记信息。",
     "complete": "完善",
     "notNow": "以后再说",
+    "cancel": "取消",
     "formTitle": "完善登记信息",
     "hint": "这些资料将保存到您在{doctor}处的登记中。",
     "done": "完成！您的登记信息已完整。",

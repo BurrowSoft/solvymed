@@ -2246,6 +2246,7 @@
     "cardBody": "Complete seu cadastro.",
     "complete": "Completar",
     "notNow": "Agora não",
+    "cancel": "Cancelar",
     "formTitle": "Complete seu cadastro",
     "hint": "Esses dados vão para o seu cadastro com {doctor}.",
     "done": "Pronto! Seu cadastro está completo.",

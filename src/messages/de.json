@@ -2246,6 +2246,7 @@
     "cardBody": "Vervollständigen Sie Ihre Registrierung.",
     "complete": "Vervollständigen",
     "notNow": "Nicht jetzt",
+    "cancel": "Abbrechen",
     "formTitle": "Registrierung vervollständigen",
     "hint": "Diese Angaben gehen in Ihre Registrierung bei {doctor}.",
     "done": "Fertig! Ihre Registrierung ist vollständig.",

@@ -2276,6 +2276,7 @@
     "cardBody": "Complete your registration.",
     "complete": "Complete",
     "notNow": "Not now",
+    "cancel": "Cancel",
     "formTitle": "Complete your registration",
     "hint": "These details go to your registration with {doctor}.",
     "done": "Done! Your registration is complete.",
