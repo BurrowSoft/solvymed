@@ -189,6 +189,7 @@ const WEB_SCREENS: Record<string, string> = {
   "settings-procedures": "/dashboard/settings#procedures",
   "settings-team": "/dashboard/settings#team",
   "settings-financial": "/dashboard/settings#clinic",
+  "settings-patient-fields": "/dashboard/settings#patient-fields",
 };
 
 export function webScreen(open: string | null): string | null {
