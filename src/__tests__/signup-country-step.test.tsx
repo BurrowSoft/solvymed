@@ -18,16 +18,22 @@ vi.mock("next/navigation", async (orig) => ({
 vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({ rpc: async () => ({ data: null, error: null }) }) }));
 
 import SignupPage from "@/app/[locale]/(site)/auth/signup/page";
+import { CountryGuessProvider } from "@/app/[locale]/(site)/auth/signup/CountryGuess";
+import type { CountryChoice } from "@/lib/signupCountry";
 
-function show(query: string) {
+function show(query: string, guess: CountryChoice | null = null) {
   h.params = new URLSearchParams(query);
   h.push.mockReset();
   return render(
     <NextIntlClientProvider locale="pt-BR" messages={pt}>
-      <SignupPage />
+      <CountryGuessProvider guess={guess}>
+        <SignupPage />
+      </CountryGuessProvider>
     </NextIntlClientProvider>,
   );
 }
+
+const stepButtons = () => screen.getAllByRole("button").filter((b) => /Brasil|ประเทศไทย/.test(b.textContent ?? ""));
 
 describe("signup: country first", () => {
   it("starts with the two countries; a tap continues in that country's language", () => {
@@ -53,6 +59,33 @@ describe("signup: country first", () => {
     const back = screen.getByRole("link", { name: pt.auth.signup.backToCountry });
     expect(back).toHaveAttribute("href", "/pt-BR/auth/signup");
     expect(document.querySelector("select#signup-country")).toBeNull();
+    unmount();
+  });
+
+  it("a suggested country goes first in the primary style; nothing is chosen or stored until a tap", () => {
+    document.cookie = "solvymed_signup_country=; path=/; max-age=0";
+    const { unmount } = show("", "TH");
+    const [first, second] = stepButtons();
+    expect(first).toHaveTextContent("ประเทศไทย");
+    expect(first).toHaveAttribute("data-suggested", "true");
+    expect(first.className).toContain("bg-teal-600");
+    expect(second).toHaveTextContent("Brasil");
+    expect(second).not.toHaveAttribute("data-suggested");
+    expect(second.className).toContain("bg-white");
+    expect(h.push).not.toHaveBeenCalled();
+    expect(document.cookie).not.toContain("solvymed_signup_country=TH");
+    // The other country is still one tap.
+    fireEvent.click(second);
+    expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/signup?c=BR");
+    expect(document.cookie).toContain("solvymed_signup_country=BR");
+    unmount();
+  });
+
+  it("no suggestion: as before, Brasil first and both outlined", () => {
+    const { unmount } = show("");
+    const buttons = stepButtons();
+    expect(buttons.map((b) => b.textContent)).toEqual(["🇧🇷Brasil", "🇹🇭ประเทศไทย"]);
+    expect(buttons.every((b) => !b.hasAttribute("data-suggested") && b.className.includes("bg-white"))).toBe(true);
     unmount();
   });
 

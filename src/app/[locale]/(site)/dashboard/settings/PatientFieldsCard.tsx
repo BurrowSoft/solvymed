@@ -7,7 +7,7 @@ import { fieldsFor, ruleOf, type FieldKey, type FieldRule, type PatientFieldRule
 import { savePatientFields } from "./patient-fields-actions";
 
 // 1.8.0 C1: Settings → "Cadastro do paciente" (doctors). A choice per detail:
-// Required / Optional / Hidden; name and phone are always required.
+// Required / Optional / Hidden; name is always required (phone stays optional).
 export function PatientFieldsCard({ rules, country }: { rules: PatientFieldRules; country: string }) {
   const tf = useTranslations("patientFields");
   const ts = useTranslations("settings");

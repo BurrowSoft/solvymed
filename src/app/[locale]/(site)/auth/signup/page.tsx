@@ -15,7 +15,8 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
-import { browserTimeZone, COUNTRY_STEP, countryStepHref, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
+import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
+import { useCountryGuess } from "./CountryGuess";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
 import { signupAttributionMetadata } from "@/lib/signupAttribution";
@@ -95,6 +96,9 @@ export default function SignupPage() {
   const country = parseCountryChoice(searchParams.get("c"));
   const countryStep = thaiEnabled && !isSecretaryFlow && !isJoinFlow;
   const [english, setEnglish] = useState(locale === "en");
+  // The step's suggested country (layout, from the request): first and
+  // primary, still one tap; null = as listed.
+  const countryGuess = useCountryGuess();
   const goTo = (href: string, newLocale: string) => {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
     router.push(href);
@@ -270,17 +274,22 @@ export default function SignupPage() {
           <BrandMark />
           <h1 className="mb-6 text-center text-lg font-bold text-slate-900">Onde você está? · คุณอยู่ที่ไหน? · Where are you?</h1>
           <div className="grid gap-3">
-            {COUNTRY_STEP.map((c) => (
+            {orderedCountryStep(countryGuess).map((c) => (
               <button
                 key={c.code}
                 type="button"
+                data-suggested={c.code === countryGuess ? "true" : undefined}
                 onClick={() => {
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);
                   const next = english ? "en" : c.locale;
                   goTo(countryStepHref(c.code, next, searchParams), next);
                 }}
-                className="flex items-center justify-center gap-3 rounded-2xl border-2 border-teal-200 bg-white px-6 py-5 text-xl font-bold text-slate-900 transition hover:border-teal-500 hover:bg-teal-50"
+                className={
+                  c.code === countryGuess
+                    ? "flex items-center justify-center gap-3 rounded-2xl border-2 border-teal-600 bg-teal-600 px-6 py-5 text-xl font-bold text-white shadow-md transition hover:border-teal-700 hover:bg-teal-700"
+                    : "flex items-center justify-center gap-3 rounded-2xl border-2 border-teal-200 bg-white px-6 py-5 text-xl font-bold text-slate-900 transition hover:border-teal-500 hover:bg-teal-50"
+                }
               >
                 <span aria-hidden="true">{c.flag}</span>
                 {c.label}

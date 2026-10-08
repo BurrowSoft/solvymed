@@ -2,7 +2,7 @@
 // professionals.patient_fields = { field: 'required' | 'optional' | 'hidden' };
 // get_patient_fields returns the full map for the practice's country with
 // defaults filled in (a missing key = optional, except Brazil's
-// rg_passport = hidden). Name and phone are always required and not listed.
+// rg_passport = hidden). Name is always required and not listed; phone is optional everywhere (b2 10-08).
 // Forms only: hidden = not shown (what's saved stays), required = an
 // asterisk and checked on save; imports and merges are untouched.
 
