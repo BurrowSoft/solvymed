@@ -2119,6 +2119,9 @@
     },
     "storageNotice": "文件已使用 {used},共 5 GB。",
     "snapshotNotShared": "已儲存,但未分享:您的文件儲存空間已滿。",
+    "snapshotFailed": "已儲存，但無法與病患分享副本。",
+    "tryAgain": "重試",
+    "unsignedCopy": "無簽名副本，供病患參考。",
     "settings": {
       "title": "文件資料夾",
       "add": "新增資料夾",
