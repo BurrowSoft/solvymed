@@ -188,7 +188,7 @@
     "what": "1.8.0 C1 is live on the website: migration 207 (professionals.patient_fields, get_patient_fields / set_patient_fields) applied on production with the web's Settings card and forms merged. Gates Help C16 and the App Map's registration-rules rule; the app's half also needs app-1.8.0."
   },
   "card-payment-live": {
-    "met": false,
+    "met": true,
     "what": "1.8.0 E is live on the website: migration 210 (professionals.card_payment_url, get_my_clinic ends with it; mobile #420) applied on production, and the privacy §3.1 words \"card payment link\" live with a PRIVACY_VERSION bump the app accepts first. Gates the Settings field, the link in the Pix / PromptPay dialogs, the card-only WhatsApp button, that privacy text and E's Help / App Map lines. The app's part ships with its build (app-1.8.0)."
   },
   "clinical-documents-live": {
