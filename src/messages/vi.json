@@ -2094,6 +2094,7 @@
     "share": "Chia sẻ với bệnh nhân",
     "shared": "Đã chia sẻ với bệnh nhân",
     "notShared": "Chỉ bạn xem được",
+    "replacedByNewer": "Đã được thay bằng bản mới hơn",
     "internalNote": "Tài liệu trong thư mục này không bao giờ được chia sẻ.",
     "hideFromPatient": "Ẩn với bệnh nhân",
     "uploadedByPatient": "Bệnh nhân gửi",
@@ -2138,6 +2139,7 @@
       "moveDown": "Xuống dưới"
     },
     "correctedOn": "Đã sửa ngày {date}",
+    "updatedOn": "Cập nhật ngày {date}",
     "removeUpload": "Gỡ",
     "removeUploadHint": "Bạn có thể gỡ cho đến khi bác sĩ mở (trong vòng 24 giờ).",
     "removeUploadConfirm": "Gỡ tài liệu này? Tài liệu sẽ bị xóa.",

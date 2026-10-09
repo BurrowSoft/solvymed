@@ -126,7 +126,9 @@ export function MyDocuments({ doctors }: { doctors: DocDoctor[] }) {
                                 <div className="min-w-0">
                                   <p className="truncate text-sm font-semibold text-slate-800">{doc.title}</p>
                                   <p className="text-xs text-slate-400">
-                                    {doc.corrected ? t("correctedOn", { date: formatShortDate(locale, localDay(doc.createdAt)) }) : formatShortDate(locale, localDay(doc.createdAt))}
+                                    {doc.replaceKind === "updated" ? t("updatedOn", { date: formatShortDate(locale, localDay(doc.createdAt)) })
+                                      : doc.replaceKind === "corrected" ? t("correctedOn", { date: formatShortDate(locale, localDay(doc.createdAt)) })
+                                      : formatShortDate(locale, localDay(doc.createdAt))}
                                     {" · "}{formatBytes(doc.sizeBytes)}
                                     {doc.sentByMe && <> · {t("sentByYou")}</>}
                                   </p>

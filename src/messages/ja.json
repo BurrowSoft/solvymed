@@ -2094,6 +2094,7 @@
     "share": "患者と共有",
     "shared": "患者と共有済み",
     "notShared": "あなただけが表示できます",
+    "replacedByNewer": "新しいコピーに置き換えられました",
     "internalNote": "このフォルダーの書類は共有されません。",
     "hideFromPatient": "患者に非表示",
     "uploadedByPatient": "患者から送信",
@@ -2138,6 +2139,7 @@
       "moveDown": "下へ移動"
     },
     "correctedOn": "{date} に訂正",
+    "updatedOn": "{date} に更新",
     "removeUpload": "取り消す",
     "removeUploadHint": "担当医が開くまで(24 時間以内)取り消せます。",
     "removeUploadConfirm": "この書類を取り消しますか?削除されます。",

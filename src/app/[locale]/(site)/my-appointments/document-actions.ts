@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { replaceKindOf, type ReplaceKind } from "@/lib/replaceKind";
 import { isUuid } from "@/lib/patientFiles";
 import { DOC_MAX_BYTES, DOC_TITLE_MAX, docErrorKey, type DocErrorKey, type DocMime } from "@/lib/patientDocuments";
 import { patientDocumentFn } from "@/lib/patientDocumentFn";
@@ -16,7 +17,7 @@ type Result<T> = { ok: true; data: T } | { ok: false; code: DocErrorKey };
 export type DocDoctor = { professionalId: string; doctor: string; documentCount: number; canUpload: boolean };
 export type MyDocFolder = {
   id: string; defaultKey: string | null; name: string | null; canUpload: boolean;
-  documents: { id: string; title: string; mime: string; sizeBytes: number; createdAt: string; corrected: boolean; sentByMe: boolean; canRemove: boolean }[];
+  documents: { id: string; title: string; mime: string; sizeBytes: number; createdAt: string; corrected: boolean; replaceKind: ReplaceKind; sentByMe: boolean; canRemove: boolean }[];
 };
 
 async function patient() {
@@ -54,7 +55,7 @@ export async function loadMyDocuments(professionalId: string): Promise<Result<My
     if (r.document_id) {
       f.documents.push({
         id: r.document_id as string, title: r.title as string, mime: r.mime as string, sizeBytes: Number(r.size_bytes ?? 0),
-        createdAt: r.created_at as string, corrected: r.corrected === true, sentByMe: r.sent_by_me === true, canRemove: r.can_remove === true,
+        createdAt: r.created_at as string, corrected: r.corrected === true, replaceKind: replaceKindOf(r), sentByMe: r.sent_by_me === true, canRemove: r.can_remove === true,
       });
     }
   }
