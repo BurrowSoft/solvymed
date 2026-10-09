@@ -2094,6 +2094,7 @@
     "share": "与患者共享",
     "shared": "已与患者共享",
     "notShared": "仅您可见",
+    "replacedByNewer": "已被较新的副本替换",
     "internalNote": "此文件夹中的文件永不共享。",
     "hideFromPatient": "对患者隐藏",
     "uploadedByPatient": "患者发送",
@@ -2138,6 +2139,7 @@
       "moveDown": "下移"
     },
     "correctedOn": "已于 {date} 更正",
+    "updatedOn": "更新于 {date}",
     "removeUpload": "移除",
     "removeUploadHint": "在医生打开之前(24 小时内)可以移除。",
     "removeUploadConfirm": "移除此文件?文件将被删除。",

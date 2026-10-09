@@ -50,6 +50,8 @@ const DOCS: PatientDocument[] = [
   doc({}),
   doc({ id: "d2", title: "Foto da lesão", uploadedByRole: "patient", source: "patient_upload", shared: true, storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d2.jpg" }),
   doc({ id: "d3", folderId: "f-int", title: "Nota interna", shared: false, storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d3.pdf" }),
+  // A superseded copy (an edit re-shared it): kept as history, no longer the patient's.
+  doc({ id: "d4", title: "Receita 07/10/2026", source: "prescription", replaced: true, shared: true, storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d4.pdf" }),
 ];
 
 import { DocumentFoldersCard } from "@/app/[locale]/(site)/dashboard/settings/DocumentFoldersCard";
@@ -103,6 +105,10 @@ describe("Documents tab", () => {
     const exams = await screen.findByRole("region", { name: T.folder.exams });
     expect(within(exams).getByText("Hemograma")).toBeInTheDocument();
     expect(within(exams).getAllByText(T.shared)).toHaveLength(2);
+    // b2: a replaced copy says so instead of "Compartilhado com o paciente", and no longer "Corrigido".
+    expect(within(exams).getByText(T.replacedByNewer)).toBeInTheDocument();
+    expect(T.replacedByNewer).toBe("Substituído por uma cópia mais recente");
+    expect(within(exams).queryByText(/Corrigido/)).toBeNull();
     expect(within(exams).getByText(T.uploadedByPatient)).toBeInTheDocument();
     const internal = screen.getByRole("region", { name: T.folder.internal });
     expect(within(internal).queryByText(T.notShared)).toBeNull();

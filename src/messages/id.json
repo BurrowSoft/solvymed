@@ -2094,6 +2094,7 @@
     "share": "Bagikan ke pasien",
     "shared": "Dibagikan ke pasien",
     "notShared": "Hanya Anda yang dapat melihat ini",
+    "replacedByNewer": "Diganti dengan salinan yang lebih baru",
     "internalNote": "Dokumen di folder ini tidak pernah dibagikan.",
     "hideFromPatient": "Sembunyikan dari pasien",
     "uploadedByPatient": "Dikirim oleh pasien",
@@ -2138,6 +2139,7 @@
       "moveDown": "Pindah ke bawah"
     },
     "correctedOn": "Dikoreksi pada {date}",
+    "updatedOn": "Diperbarui pada {date}",
     "removeUpload": "Hapus",
     "removeUploadHint": "Anda dapat menghapusnya sampai dokter membukanya (dalam 24 jam).",
     "removeUploadConfirm": "Hapus dokumen ini? Dokumen akan dihapus.",

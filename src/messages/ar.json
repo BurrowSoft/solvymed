@@ -2094,6 +2094,7 @@
     "share": "مشاركة مع المريض",
     "shared": "تمت المشاركة مع المريض",
     "notShared": "أنت فقط من يراه",
+    "replacedByNewer": "استُبدلت بنسخة أحدث",
     "internalNote": "لا تتم مشاركة المستندات في هذا المجلد أبدًا.",
     "hideFromPatient": "إخفاء عن المريض",
     "uploadedByPatient": "أرسله المريض",
@@ -2138,6 +2139,7 @@
       "moveDown": "تحريك لأسفل"
     },
     "correctedOn": "صُحّح في {date}",
+    "updatedOn": "حُدِّث في {date}",
     "removeUpload": "إزالة",
     "removeUploadHint": "يمكنك إزالته إلى أن يفتحه طبيبك (خلال 24 ساعة).",
     "removeUploadConfirm": "إزالة هذا المستند؟ سيُحذف نهائيًا.",

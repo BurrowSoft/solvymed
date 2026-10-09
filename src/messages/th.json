@@ -2124,6 +2124,7 @@
     "share": "แชร์ให้ผู้ป่วย",
     "shared": "แชร์ให้ผู้ป่วยแล้ว",
     "notShared": "เฉพาะคุณที่เห็นเอกสารนี้",
+    "replacedByNewer": "ถูกแทนที่ด้วยฉบับใหม่กว่า",
     "internalNote": "เอกสารในโฟลเดอร์นี้จะไม่ถูกแชร์",
     "hideFromPatient": "ซ่อนจากผู้ป่วย",
     "uploadedByPatient": "ผู้ป่วยส่งมา",
@@ -2168,6 +2169,7 @@
       "moveDown": "เลื่อนลง"
     },
     "correctedOn": "แก้ไขเมื่อ {date}",
+    "updatedOn": "อัปเดตเมื่อ {date}",
     "removeUpload": "ลบ",
     "removeUploadHint": "คุณลบได้จนกว่าแพทย์จะเปิดดู (ภายใน 24 ชม.)",
     "removeUploadConfirm": "ลบเอกสารนี้หรือไม่ เอกสารจะถูกลบถาวร",

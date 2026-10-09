@@ -2094,6 +2094,7 @@
     "share": "Compartir con el paciente",
     "shared": "Compartido con el paciente",
     "notShared": "Solo tú puedes verlo",
+    "replacedByNewer": "Reemplazado por una copia más reciente",
     "internalNote": "Los documentos de esta carpeta nunca se comparten.",
     "hideFromPatient": "Ocultar al paciente",
     "uploadedByPatient": "Enviado por el paciente",
@@ -2138,6 +2139,7 @@
       "moveDown": "Bajar"
     },
     "correctedOn": "Corregido el {date}",
+    "updatedOn": "Actualizado el {date}",
     "removeUpload": "Quitar",
     "removeUploadHint": "Puedes quitarlo hasta que tu médico lo abra (en 24 h).",
     "removeUploadConfirm": "¿Quitar este documento? Se eliminará.",

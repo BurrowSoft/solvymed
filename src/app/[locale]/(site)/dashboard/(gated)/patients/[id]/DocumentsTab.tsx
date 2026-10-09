@@ -224,10 +224,10 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
                       <p className="text-xs text-slate-400">
                         {formatShortDate(locale, localDay(d.createdAt))} · {formatBytes(d.sizeBytes)}
                         {d.uploadedByRole === "patient" && <> · <span className="font-semibold text-amber-700">{t("uploadedByPatient")}</span></>}
-                        {d.replaced && <> · {t("corrected")}</>}
                       </p>
+                      {/* A superseded copy stays as history; the patient no longer sees it (b2). */}
                       {f.defaultKey !== "internal" && (
-                        <p className={`text-xs ${d.shared ? "text-teal-700" : "text-slate-500"}`}>{d.shared ? t("shared") : t("notShared")}</p>
+                        <p className={`text-xs ${d.replaced ? "text-slate-500" : d.shared ? "text-teal-700" : "text-slate-500"}`}>{d.replaced ? t("replacedByNewer") : d.shared ? t("shared") : t("notShared")}</p>
                       )}
                     </div>
                     <button type="button" onClick={() => void open(d)} className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50">{t("open")}</button>

@@ -2094,6 +2094,7 @@
     "share": "Mit dem Patienten teilen",
     "shared": "Mit dem Patienten geteilt",
     "notShared": "Nur Sie sehen dies",
+    "replacedByNewer": "Durch eine neuere Kopie ersetzt",
     "internalNote": "Dokumente in diesem Ordner werden nie geteilt.",
     "hideFromPatient": "Vor dem Patienten verbergen",
     "uploadedByPatient": "Vom Patienten gesendet",
@@ -2138,6 +2139,7 @@
       "moveDown": "Nach unten"
     },
     "correctedOn": "Korrigiert am {date}",
+    "updatedOn": "Aktualisiert am {date}",
     "removeUpload": "Entfernen",
     "removeUploadHint": "Sie können es entfernen, bis Ihr Arzt es öffnet (innerhalb von 24 h).",
     "removeUploadConfirm": "Dieses Dokument entfernen? Es wird gelöscht.",

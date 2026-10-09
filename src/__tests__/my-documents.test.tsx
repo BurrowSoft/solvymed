@@ -25,17 +25,18 @@ vi.mock("@/lib/supabase/client", () => ({
 
 const FOLDERS = [
   { id: "f-start", defaultKey: "start", name: null, canUpload: false, documents: [
-    { id: "d1", title: "Orientações", mime: "application/pdf", sizeBytes: 4096, createdAt: "2026-10-05T10:00:00Z", corrected: true, sentByMe: false, canRemove: false },
+    { id: "d1", title: "Orientações", mime: "application/pdf", sizeBytes: 4096, createdAt: "2026-10-05T10:00:00Z", corrected: true, replaceKind: "corrected", sentByMe: false, canRemove: false },
+    { id: "d3", title: "Receita 08/10/2026", mime: "application/pdf", sizeBytes: 1024, createdAt: "2026-10-08T10:00:00Z", corrected: true, replaceKind: "updated", sentByMe: false, canRemove: false },
   ] },
   { id: "f-exams", defaultKey: "exams", name: null, canUpload: true, documents: [
-    { id: "d2", title: "Meu exame", mime: "image/jpeg", sizeBytes: 2048, createdAt: "2026-10-07T10:00:00Z", corrected: false, sentByMe: true, canRemove: true },
+    { id: "d2", title: "Meu exame", mime: "image/jpeg", sizeBytes: 2048, createdAt: "2026-10-07T10:00:00Z", corrected: false, replaceKind: null, sentByMe: true, canRemove: true },
   ] },
 ];
 
 import { MyDocuments } from "@/app/[locale]/(site)/my-appointments/MyDocuments";
 
 const T = pt.docs;
-const doctor = { professionalId: "00000000-0000-4000-8000-000000000001", doctor: "Dra. Ana", documentCount: 2, canUpload: true };
+const doctor = { professionalId: "00000000-0000-4000-8000-000000000001", doctor: "Dra. Ana", documentCount: 3, canUpload: true };
 const view = () => render(
   <NextIntlClientProvider locale="pt-BR" messages={pt}>
     <MyDocuments doctors={[doctor]} />
@@ -49,6 +50,9 @@ describe("Minhas consultas → Documentos", () => {
     const start = await screen.findByRole("group", { name: T.folder.start });
     expect(within(start).getByText("Orientações")).toBeInTheDocument();
     expect(within(start).getByText(/Corrigido em/)).toBeInTheDocument();
+    // An edit's new copy says Atualizado, never Corrigido (b2; 214 replace_kind).
+    expect(within(start).getByText(/Atualizado em/)).toBeInTheDocument();
+    expect(within(start).getAllByText(/Corrigido em/)).toHaveLength(1);
     expect(within(start).queryByRole("button", { name: T.removeUpload })).toBeNull();
     const exams = screen.getByRole("group", { name: T.folder.exams });
     expect(within(exams).getByText(T.removeUploadHint)).toBeInTheDocument();
@@ -79,5 +83,17 @@ describe("Minhas consultas → Documentos", () => {
     fireEvent.change(screen.getByLabelText(T.upload, { selector: "input" }), { target: { files: [new File(["x"], "nota.txt", { type: "text/plain" })] } });
     expect(screen.getByRole("alert")).toHaveTextContent(T.err.type);
     expect(h.calls.some((c) => c.fn === "startUpload")).toBe(false);
+  });
+});
+
+describe("214's replace_kind (and the fallback before 214 is live)", () => {
+  it("updated / corrected from replace_kind; without it, corrected → corrected; else null", async () => {
+    const { replaceKindOf } = await import("@/lib/replaceKind");
+    expect(replaceKindOf({ replace_kind: "updated", corrected: true })).toBe("updated");
+    expect(replaceKindOf({ replace_kind: "corrected", corrected: true })).toBe("corrected");
+    expect(replaceKindOf({ replace_kind: null, corrected: false })).toBeNull();
+    expect(replaceKindOf({ corrected: true })).toBe("corrected");
+    expect(replaceKindOf({ corrected: false })).toBeNull();
+    expect(replaceKindOf({ replace_kind: "weird", corrected: false })).toBeNull();
   });
 });
