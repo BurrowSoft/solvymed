@@ -2145,8 +2145,7 @@
     "removeUploadHint": "Bạn có thể gỡ cho đến khi bác sĩ mở (trong vòng 24 giờ).",
     "removeUploadConfirm": "Gỡ tài liệu này? Tài liệu sẽ bị xóa.",
     "titleLabel": "Tiêu đề",
-    "move": "Chuyển vào thư mục",
-    "corrected": "Đã sửa"
+    "move": "Chuyển vào thư mục"
   },
   "documents": {
     "tabTitle": "Đơn thuốc và tài liệu ({n})",

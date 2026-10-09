@@ -2145,8 +2145,7 @@
     "removeUploadHint": "在医生打开之前(24 小时内)可以移除。",
     "removeUploadConfirm": "移除此文件?文件将被删除。",
     "titleLabel": "标题",
-    "move": "移到文件夹",
-    "corrected": "已更正"
+    "move": "移到文件夹"
   },
   "documents": {
     "tabTitle": "处方和文件 ({n})",

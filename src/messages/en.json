@@ -2175,8 +2175,7 @@
     "removeUploadHint": "You can remove this until your doctor opens it (within 24 h).",
     "removeUploadConfirm": "Remove this document? It will be deleted.",
     "titleLabel": "Title",
-    "move": "Move to folder",
-    "corrected": "Corrected"
+    "move": "Move to folder"
   },
   "documents": {
     "tabTitle": "Prescriptions & documents ({n})",

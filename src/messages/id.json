@@ -2145,8 +2145,7 @@
     "removeUploadHint": "Anda dapat menghapusnya sampai dokter membukanya (dalam 24 jam).",
     "removeUploadConfirm": "Hapus dokumen ini? Dokumen akan dihapus.",
     "titleLabel": "Judul",
-    "move": "Pindahkan ke folder",
-    "corrected": "Dikoreksi"
+    "move": "Pindahkan ke folder"
   },
   "documents": {
     "tabTitle": "Resep dan dokumen ({n})",

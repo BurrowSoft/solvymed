@@ -2145,8 +2145,7 @@
     "removeUploadHint": "Puedes quitarlo hasta que tu médico lo abra (en 24 h).",
     "removeUploadConfirm": "¿Quitar este documento? Se eliminará.",
     "titleLabel": "Título",
-    "move": "Mover a la carpeta",
-    "corrected": "Corregido"
+    "move": "Mover a la carpeta"
   },
   "documents": {
     "tabTitle": "Recetas y documentos ({n})",
