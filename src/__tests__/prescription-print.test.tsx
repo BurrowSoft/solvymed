@@ -75,12 +75,13 @@ const h = vi.hoisted(() => ({
   rpcs: [] as unknown[],
   // The access-log write fails: no document (UX 36, fail closed).
   logFails: false,
+  logNetwork: false,
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "doc-1" } } }) },
     // Reads (the brand, server flags) aren't access-log writes.
-    rpc: async (fn: string, args: unknown) => { if (fn !== "get_practice_brand" && fn !== "get_server_flags") h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed" } : null }; },
+    rpc: async (fn: string, args: unknown) => { if (fn !== "get_practice_brand" && fn !== "get_server_flags") h.rpcs.push({ fn, args }); return { data: null, error: h.logFails ? { message: "not_allowed", code: "P0001" } : h.logNetwork ? { message: "TypeError: fetch failed", code: "" } : null }; },
     from: (table: string) => {
       const q: Record<string, unknown> = {};
       q.select = () => q;
@@ -129,7 +130,7 @@ describe("document dates", () => {
 
 describe("print page", () => {
   const params = Promise.resolve({ locale: "pt-BR", id: "p-1", rxId: "rx-1" });
-  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; h.logFails = false; });
+  beforeEach(() => { h.role = "professional"; h.patient = { id: "p-1", full_name: "Maria" }; h.rx = { id: "rx-1", date: "2026-10-01", notes: null, prescription_items: [] }; h.filters = []; h.rpcs = []; h.logFails = false; h.logNetwork = false; });
 
   it("a secretary never gets it", async () => {
     h.role = "secretary";
@@ -161,6 +162,14 @@ describe("print page", () => {
     const { container } = render(await PrintPage({ params }));
     expect(container.querySelector("#print-doc")).toBeNull();
     expect(container.querySelector("[role=alert]")?.textContent).toContain("accessLogFailed");
+  });
+
+  it("a network failure of the log: still no document, but the generic PDF error (b2, as app #449)", async () => {
+    h.logNetwork = true;
+    const { container } = render(await PrintPage({ params }));
+    expect(container.querySelector("#print-doc")).toBeNull();
+    expect(container.querySelector("[role=alert]")?.textContent).toContain("pdfFailed");
+    expect(container.querySelector("[role=alert]")?.textContent).not.toContain("accessLogFailed");
   });
 
   it("an unknown practice country: an error, not a guessed calendar, and no access logged", async () => {

@@ -65,7 +65,10 @@ export default async function HistoryPrintPage({
     ...records.map((r) => ({ kind: "record", ref: r.id })),
     ...rxs.map((rx) => ({ kind: "prescription", ref: rx.id })),
   ]);
-  if (!logged) return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
+  if (!logged.ok) {
+    const text = logged.refused ? t("accessLogFailed") : (await getTranslations({ locale, namespace: "documents" }))("pdfFailed");
+    return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${id}`} text={text} backLabel={t("back")} />;
+  }
   const correctedRecords = new Set(records.map((r) => r.corrects_id).filter(Boolean));
   const correctedRx = new Set(rxs.map((r) => r.corrects_id).filter(Boolean));
 

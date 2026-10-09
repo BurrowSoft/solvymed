@@ -54,8 +54,10 @@ export default async function PrescriptionPrintPage({
 
   // The access log (migration 111). Fail closed (UX 36): no print unless
   // the access was recorded.
-  if (!(await logAccesses(supabase, patient.id, [{ kind: "prescription", ref: rx.id }]))) {
-    return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={t("accessLogFailed")} backLabel={t("back")} />;
+  const logged = await logAccesses(supabase, patient.id, [{ kind: "prescription", ref: rx.id }]);
+  if (!logged.ok) {
+    const text = logged.refused ? t("accessLogFailed") : (await getTranslations({ locale, namespace: "documents" }))("pdfFailed");
+    return <AccessLogFailed backHref={`${prefix}/dashboard/patients/${patient.id}`} text={text} backLabel={t("back")} />;
   }
 
   const prof = profResult.data as { full_name: string | null; professional_registration: string | null } | null;
