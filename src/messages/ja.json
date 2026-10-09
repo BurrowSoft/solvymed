@@ -2121,6 +2121,7 @@
     "storageNotice": "書類に 5 GB 中 {used} を使用しています。",
     "snapshotNotShared": "保存しましたが共有されていません: 書類保存容量がいっぱいです。",
     "snapshotFailed": "保存しましたが、写しを患者さんと共有できませんでした。",
+    "sharingWithPatient": "患者さんと共有しています…",
     "tryAgain": "再試行",
     "unsignedCopy": "署名のない写し（患者さんの参照用）",
     "settings": {

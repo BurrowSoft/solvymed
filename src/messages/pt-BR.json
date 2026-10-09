@@ -2121,6 +2121,7 @@
     "storageNotice": "Você usou {used} de 5 GB em documentos.",
     "snapshotNotShared": "Salvo, mas não compartilhado: seu espaço de documentos está cheio.",
     "snapshotFailed": "Salvo, mas não foi possível compartilhar a cópia com o paciente.",
+    "sharingWithPatient": "Compartilhando com o paciente…",
     "tryAgain": "Tentar de novo",
     "unsignedCopy": "Cópia sem assinatura, para consulta do paciente.",
     "settings": {
