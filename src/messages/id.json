@@ -2121,6 +2121,7 @@
     "storageNotice": "Anda telah memakai {used} dari 5 GB untuk dokumen.",
     "snapshotNotShared": "Tersimpan, tetapi tidak dibagikan: ruang dokumen Anda penuh.",
     "snapshotFailed": "Tersimpan, tetapi salinan tidak dapat dibagikan kepada pasien.",
+    "sharingWithPatient": "Membagikan ke pasien…",
     "tryAgain": "Coba lagi",
     "unsignedCopy": "Salinan tanpa tanda tangan, untuk referensi pasien.",
     "settings": {

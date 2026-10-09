@@ -2121,6 +2121,7 @@
     "storageNotice": "文件已使用 {used},共 5 GB。",
     "snapshotNotShared": "已保存,但未共享:您的文件存储空间已满。",
     "snapshotFailed": "已保存，但无法与患者共享副本。",
+    "sharingWithPatient": "正在与患者共享…",
     "tryAgain": "重试",
     "unsignedCopy": "无签名副本，供患者参考。",
     "settings": {

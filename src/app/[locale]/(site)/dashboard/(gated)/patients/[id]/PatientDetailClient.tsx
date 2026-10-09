@@ -1023,9 +1023,21 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   // 1.8.0 B2: the patient's copy is made after the save; a failure only
   // says so (the document is saved), with "Tentar de novo" (ad).
   const [shareIssue, setShareIssue] = useState<{ text: string; retry: (() => void) | null } | null>(null);
+  // The copy is made in this page, so leaving mid-share would lose it
+  // silently (13 on #470). Until the outcome: a modal nothing can dismiss
+  // (no in-app navigation) and the browser's own leave-page prompt (b2).
+  const [sharing, setSharing] = useState(false);
+  useEffect(() => {
+    if (!sharing) return;
+    const hold = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    window.addEventListener("beforeunload", hold);
+    return () => window.removeEventListener("beforeunload", hold);
+  }, [sharing]);
   async function runShare(make: () => Promise<string>) {
     setShareIssue(null);
-    const outcome = await make();
+    setSharing(true);
+    let outcome: string;
+    try { outcome = await make(); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
@@ -1246,6 +1258,14 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         </button>)}
       </div>
       {listError && <p className="mb-3 text-sm text-red-600">{listError}</p>}
+      {sharing && (
+        <div role="dialog" aria-modal="true" aria-labelledby="sharing-progress" data-testid="sharing-progress" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/30 p-4">
+          <div className="flex items-center gap-3 rounded-2xl bg-white px-6 py-5 shadow-xl">
+            <span aria-hidden="true" className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
+            <p id="sharing-progress" role="status" className="text-sm font-semibold text-slate-800">{tdocs("sharingWithPatient")}</p>
+          </div>
+        </div>
+      )}
       {shareIssue && (
         <div role="alert" data-testid="share-issue" className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
           <span>{shareIssue.text}</span>
