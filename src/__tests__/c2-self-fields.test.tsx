@@ -9,8 +9,8 @@ import th from "@/messages/th.json";
 // doctor requires that are still empty, once, from a non-blocking card on
 // My appointments; the record's values are never shown.
 
-const h = vi.hoisted(() => ({ saves: [] as unknown[][], dismissed: [] as string[], saveResult: { ok: true } as Record<string, unknown> }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
+const h = vi.hoisted(() => ({ saves: [] as unknown[][], dismissed: [] as string[], saveResult: { ok: true } as Record<string, unknown>, refresh: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: h.refresh }) }));
 vi.mock("@/app/[locale]/(site)/my-appointments/self-fields-actions", () => ({
   saveSelfFields: vi.fn(async (...a: unknown[]) => { h.saves.push(a); return h.saveResult; }),
   dismissSelfFields: vi.fn(async (id: string) => { h.dismissed.push(id); return true; }),
@@ -24,7 +24,7 @@ import { PrivacyPtBR } from "@/app/[locale]/(site)/privacy/PrivacyPtBR";
 const D = "55555555-5555-4555-8555-555555555555";
 const T = pt.selfFields;
 
-beforeEach(() => { h.saves = []; h.dismissed = []; h.saveResult = { ok: true }; });
+beforeEach(() => { h.saves = []; h.dismissed = []; h.saveResult = { ok: true }; h.refresh.mockClear(); });
 
 describe("212's values", () => {
   const form = (o: Record<string, string>) => (n: string) => o[n] ?? "";
@@ -103,6 +103,20 @@ describe("the card", () => {
       expect(screen.getByTestId("self-fields-card")).toBeInTheDocument();
       unmount();
     }
+  });
+
+  it("the save doesn't re-render the page: Pronto! at once, then one background refresh (13: ~12 s)", async () => {
+    show();
+    fireEvent.click(screen.getByRole("button", { name: T.complete }));
+    const form = screen.getByTestId("self-fields-form");
+    fireEvent.change(form.querySelector("input[name=cpf]")!, { target: { value: "111.444.777-35" } });
+    fireEvent.change(form.querySelector("select[name=sex]")!, { target: { value: "female" } });
+    fireEvent.submit(form);
+    await waitFor(() => expect(screen.getByTestId("self-fields-done")).toHaveTextContent(T.done));
+    expect(h.refresh).toHaveBeenCalledTimes(1);
+    const fs = await import("node:fs");
+    const src = fs.readFileSync("src/app/[locale]/(site)/my-appointments/self-fields-actions.ts", "utf8");
+    expect(src).not.toContain("revalidatePath(");
   });
 
   it("a field left empty says so; nothing is sent", () => {

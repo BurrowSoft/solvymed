@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { DateInput } from "@/components/DateInput";
 import { AddressFields } from "@/components/patient/AddressFields";
@@ -19,17 +20,25 @@ import { dismissSelfFields, saveSelfFields } from "./self-fields-actions";
 const input = "w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 const labelCls = "block text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1.5";
 
-// "Pronto!" lives here, not in the card: the save revalidates the page and
-// that doctor's prompt is gone from the next render, which would unmount the
-// card before its message showed (13 on #473). Always rendered by the page.
+// "Pronto!" lives here, not in the card: once saved, that doctor's prompt is
+// gone from the page's next render, which would unmount the card before its
+// message showed (13 on #473). Always rendered by the page. The save itself
+// doesn't re-render the page (that held "Pronto!" ~12 s): it shows at once and
+// the page refreshes in the background.
 export function CompleteRegistrationCards({ prompts }: { prompts: SelfPrompt[] }) {
   const t = useTranslations("selfFields");
   const [done, setDone] = useState<string[]>([]);
+  const router = useRouter();
+  const [, startRefresh] = useTransition();
+  const markDone = (id: string) => {
+    setDone((d) => (d.includes(id) ? d : [...d, id]));
+    startRefresh(() => router.refresh());
+  };
   return (
     <>
       {done.map((id) => <p key={`done-${id}`} role="status" data-testid="self-fields-done" className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">{t("done")}</p>)}
       {prompts.filter((p) => !done.includes(p.doctorId)).map((p) => (
-        <CompleteRegistrationCard key={p.doctorId} prompt={p} onDone={() => setDone((d) => (d.includes(p.doctorId) ? d : [...d, p.doctorId]))} />
+        <CompleteRegistrationCard key={p.doctorId} prompt={p} onDone={() => markDone(p.doctorId)} />
       ))}
     </>
   );
