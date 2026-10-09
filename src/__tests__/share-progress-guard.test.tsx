@@ -41,12 +41,19 @@ describe("sharing the patient's copy holds the page until it's done", () => {
   it("a modal with the progress line and the leave-page prompt while pending; both go once shared", async () => {
     await saveRx();
     expect(screen.getByTestId("sharing-progress")).toHaveTextContent("Compartilhando com o paciente…");
+    // 4f: nothing behind the modal can take focus; the modal has it.
+    const overlay = screen.getByTestId("sharing-progress");
+    const page = [...document.body.children].filter((el) => el !== overlay);
+    expect(page.length).toBeGreaterThan(0);
+    expect(page.every((el) => el.hasAttribute("inert"))).toBe(true);
+    expect(document.activeElement).toBe(overlay);
     const e = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(e);
     expect(e.defaultPrevented).toBe(true);
 
     await act(async () => { h.resolve!("shared"); });
     expect(screen.queryByTestId("sharing-progress")).toBeNull();
+    expect([...document.body.children].some((el) => el.hasAttribute("inert"))).toBe(false);
     const after = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(after);
     expect(after.defaultPrevented).toBe(false);

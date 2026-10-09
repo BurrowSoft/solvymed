@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useTransition, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
 import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
 import { MergePatientButton } from "./MergePatient";
@@ -1027,11 +1028,21 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   // silently (13 on #470). Until the outcome: a modal nothing can dismiss
   // (no in-app navigation) and the browser's own leave-page prompt (b2).
   const [sharing, setSharing] = useState(false);
+  const sharingRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!sharing) return;
     const hold = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
     window.addEventListener("beforeunload", hold);
-    return () => window.removeEventListener("beforeunload", hold);
+    // The rest of the page can't take focus or clicks either (4f): the modal
+    // is portalled to <body> and every other child of <body> goes inert.
+    const host = sharingRef.current;
+    const others = [...document.body.children].filter((el) => el !== host && !el.hasAttribute("inert"));
+    for (const el of others) el.setAttribute("inert", "");
+    host?.focus();
+    return () => {
+      window.removeEventListener("beforeunload", hold);
+      for (const el of others) el.removeAttribute("inert");
+    };
   }, [sharing]);
   async function runShare(make: () => Promise<string>) {
     setShareIssue(null);
@@ -1258,13 +1269,14 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         </button>)}
       </div>
       {listError && <p className="mb-3 text-sm text-red-600">{listError}</p>}
-      {sharing && (
-        <div role="dialog" aria-modal="true" aria-labelledby="sharing-progress" data-testid="sharing-progress" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/30 p-4">
+      {sharing && createPortal(
+        <div ref={sharingRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="sharing-progress" data-testid="sharing-progress" className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/30 p-4 outline-none">
           <div className="flex items-center gap-3 rounded-2xl bg-white px-6 py-5 shadow-xl">
             <span aria-hidden="true" className="h-5 w-5 animate-spin rounded-full border-2 border-teal-600 border-t-transparent" />
             <p id="sharing-progress" role="status" className="text-sm font-semibold text-slate-800">{tdocs("sharingWithPatient")}</p>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
       {shareIssue && (
         <div role="alert" data-testid="share-issue" className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
