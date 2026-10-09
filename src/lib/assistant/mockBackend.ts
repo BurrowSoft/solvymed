@@ -107,6 +107,8 @@ export function plusMinutes(hhmm: string, minutes: number): string {
 
 // A Help article's web screen path → its screen name, for the app.
 function targetOf(path: string): TargetScreen {
+  // As the server's (handle.ts): the web's clinics page is part of Settings in the app.
+  if (/^\/dashboard\/clinics/.test(path)) return "settings";
   const m = path.match(/^\/dashboard\/(schedule|patients|payments|settings)/);
   return (m?.[1] as TargetScreen | undefined) ?? "home";
 }

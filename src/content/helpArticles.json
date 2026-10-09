@@ -2061,7 +2061,7 @@
           "en": "Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer."
         },
         "webUnavailable": false,
-        "open": null,
+        "open": "settings-clinic",
         "appOnly": null,
         "appTitle": null
       },
