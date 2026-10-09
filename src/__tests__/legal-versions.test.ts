@@ -59,3 +59,12 @@ describe("privacy 2026-10-16: §3.1 card payment link (1.8.0 E), with the card-p
     expect(en + pt).not.toContain("cardLink");
   });
 });
+
+describe("privacy 2026-10-17: the 1.8.0 release (documents, clinical documents, C2)", () => {
+  it("the three flips and the version go together (mobile 215 accepts 2026-10-17 first)", async () => {
+    const { conditionMet } = await import("@/lib/conditions");
+    for (const c of ["patient-documents-live", "clinical-documents-live", "c2-patient-step-live"] as const) {
+      if (conditionMet(c)) expect(PRIVACY_VERSION >= "2026-10-17").toBe(true);
+    }
+  });
+});
