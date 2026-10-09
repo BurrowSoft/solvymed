@@ -8,6 +8,7 @@ import { csvColumns, patientsCsv, type CsvPatient } from "@/lib/patientsCsv";
 import { patientIdKind } from "@/lib/patientIds";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
+import { isAccessLogRefusal } from "@/lib/accessLog";
 
 // The patient list as CSV (Help P10): doctor only, every patient (active
 // and archived). Fail closed (UX 36): each exported patient's access log
@@ -55,7 +56,11 @@ export async function GET(request: NextRequest) {
   for (let i = 0; i < patients.length; i += LOG_CHUNK) {
     const ids = patients.slice(i, i + LOG_CHUNK).map((p) => p.id);
     const { error } = await supabase.rpc("log_record_access_batch", { p_patient_ids: ids, p_kind: "export", p_object_ref: "csv" });
-    if (error) return NextResponse.json({ code: "access_log_failed" }, { status: 503 });
+    // Nothing is exported unless logged; only a refusal says "couldn't record
+    // the access" (b2): a network failure is the generic export error.
+    if (error) return isAccessLogRefusal(error)
+      ? NextResponse.json({ code: "access_log_failed" }, { status: 503 })
+      : NextResponse.json({ code: "generic" }, { status: 500 });
   }
 
   const [t, tIds, tSet, tAddr] = await Promise.all([

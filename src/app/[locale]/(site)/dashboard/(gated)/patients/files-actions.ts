@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { isActiveProfessional } from "@/lib/activeAccess";
+import { isAccessLogRefusal } from "@/lib/accessLog";
 import {
   BUCKET, SIGNED_URL_SECONDS, folderFor, isFileDeletable, isUuid, pathBelongs,
   type FileKind, type PatientFile,
@@ -68,13 +69,17 @@ export async function openPatientFile(patientId: string, path: string): Promise<
   if (!me) return { ok: false, code: "not_doctor" };
   if (!pathBelongs(path, me.uid, patientId)) return { ok: false, code: "generic" };
   let logged = false;
+  let refused = false;
   try {
     const { error: logError } = await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "file", p_object_ref: path });
     logged = !logError;
+    refused = isAccessLogRefusal(logError);
   } catch {
     logged = false;
   }
-  if (!logged) return { ok: false, code: "access_log_failed" };
+  // Still fail closed; only a refusal says "couldn't record the access" (b2):
+  // a network failure is the generic error.
+  if (!logged) return { ok: false, code: refused ? "access_log_failed" : "generic" };
   const { data, error } = await me.supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_SECONDS);
   if (error || !data?.signedUrl) return { ok: false, code: "generic" };
   return { ok: true, data: data.signedUrl };

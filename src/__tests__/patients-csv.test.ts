@@ -125,10 +125,17 @@ describe("GET /api/patients/export", () => {
   });
 
   it("no file when the access log fails (fail closed)", async () => {
-    h.logError = { message: "not_allowed" };
+    h.logError = { message: "not_allowed", code: "P0001" };
     const res = await GET(req());
     expect(res.status).toBe(503);
     expect(await res.json()).toEqual({ code: "access_log_failed" });
+  });
+
+  it("a network failure of the log: still no file, but the generic error (b2: only a refusal says 'couldn't record')", async () => {
+    h.logError = { message: "TypeError: fetch failed", code: "" };
+    const res = await GET(req());
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ code: "generic" });
   });
 
   it("no patients: just the header, and no log call (126 refuses an empty list)", async () => {

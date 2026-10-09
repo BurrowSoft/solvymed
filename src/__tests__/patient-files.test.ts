@@ -14,7 +14,7 @@ const h = vi.hoisted(() => {
     rpcs: [] as { fn: string; args: Record<string, unknown> }[],
     rpcError: null as null | { message: string },
     // The access-log write fails (fail closed: no link).
-    logError: null as null | { message: string },
+    logError: null as null | { message: string; code?: string },
     signed: [] as string[],
     states: [] as Record<string, unknown>[],
   };
@@ -121,9 +121,16 @@ describe("files actions", () => {
   });
 
   it("no link unless the access was recorded (fail closed, UX 36)", async () => {
-    h.state.logError = { message: "not_allowed" };
+    h.state.logError = { message: "not_allowed", code: "P0001" };
     const r = await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf");
     expect(r).toEqual({ ok: false, code: "access_log_failed" });
+    expect(h.state.signed).toEqual([]);
+  });
+
+  it("a network failure of the log: still no link, but the generic error (b2)", async () => {
+    h.state.logError = { message: "TypeError: fetch failed", code: "" };
+    const r = await openPatientFile("11111111-1111-4111-8111-111111111111", "doc-1/11111111-1111-4111-8111-111111111111/a.pdf");
+    expect(r).toEqual({ ok: false, code: "generic" });
     expect(h.state.signed).toEqual([]);
   });
 
