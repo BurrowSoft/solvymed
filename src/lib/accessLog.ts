@@ -15,6 +15,15 @@ export function isMissingFunction(error: { code?: string } | null | undefined): 
   return error?.code === "PGRST202" || error?.code === "42883";
 }
 
+// A genuine refusal to log the access: the database answered with an error
+// code (Postgres / PostgREST, e.g. 42501, P0001). A network failure, such as
+// a fetch that never reached the database, has no code: then the caller shows
+// its generic failure (with "Tentar de novo"), not "couldn't record the
+// access" (b2, 1.8.1; the app's logAccessStrict uses the same rule).
+export function isAccessLogRefusal(error: { code?: string | null } | null | undefined): boolean {
+  return !!error && typeof error.code === "string" && error.code.trim() !== "";
+}
+
 // Logs the opening of a patient's chart. Never blocks the page: a failure
 // is reported to Sentry (the code only, no patient data) instead.
 export async function logPatientOpen(db: unknown, patientId: string): Promise<void> {

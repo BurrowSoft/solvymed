@@ -16,21 +16,23 @@ const h = vi.hoisted(() => ({
   log: [] as string[],
   fnResult: { ok: true, data: { document_id: "new-doc" } } as { ok: boolean; data?: unknown; code?: string },
   flag: true,
+  logError: null as null | { message: string; code?: string },
 }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "11111111-1111-4111-8111-111111111111" } } }) },
-    rpc: async (fn: string) => { h.log.push(`rpc:${fn}`); return fn === "get_document_folders" ? { data: h.folders, error: null } : fn === "list_patient_documents" ? { data: h.docs, error: null } : { data: null, error: null }; },
+    rpc: async (fn: string) => { h.log.push(`rpc:${fn}`); return fn === "get_document_folders" ? { data: h.folders, error: null } : fn === "list_patient_documents" ? { data: h.docs, error: null } : fn === "log_record_access" ? { data: null, error: h.logError } : { data: null, error: null }; },
   }),
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({ storage: { from: () => ({ upload: async () => { h.log.push("upload"); return { error: null }; } }) } }),
 }));
 vi.mock("@/lib/activeAccess", () => ({ isActiveProfessional: async () => true }));
+vi.mock("@/lib/practiceCountry", () => ({ lookupPracticeCountry: async () => ({ ok: true, country: "BR" }) }));
 vi.mock("@/lib/myDoctors", () => ({ serverFlag: async () => h.flag }));
 vi.mock("@/lib/patientDocumentFn", () => ({ patientDocumentFn: async (_s: unknown, body: Record<string, unknown>) => { h.log.push(`fn:${body.action}`); h.fnCalls.push(body); return h.fnResult; } }));
 
-import { prepareSnapshot, registerSnapshot } from "@/app/[locale]/(site)/dashboard/(gated)/patients/snapshot-actions";
+import { prepareSnapshot, prescriptionSnapshotData, registerSnapshot } from "@/app/[locale]/(site)/dashboard/(gated)/patients/snapshot-actions";
 import { shareSnapshot } from "@/lib/shareSnapshot";
 
 const PAT = "22222222-2222-4222-8222-222222222222";
@@ -43,7 +45,7 @@ const input = (o: Partial<Parameters<typeof registerSnapshot>[1]> = {}) => ({
 
 beforeEach(() => {
   h.folders = [{ id: "a0000000-0000-4000-8000-00000000000a", default_key: "start" }, { id: "b0000000-0000-4000-8000-00000000000b", default_key: "prescriptions" }, { id: "c0000000-0000-4000-8000-00000000000c", default_key: "certificates" }];
-  h.docs = []; h.fnCalls = []; h.log = []; h.flag = true;
+  h.docs = []; h.fnCalls = []; h.log = []; h.flag = true; h.logError = null;
   h.fnResult = { ok: true, data: { document_id: "new-doc" } };
 });
 
@@ -131,3 +133,23 @@ describe("shareSnapshot: an edit's new copy replaces the old one (13 on #470)", 
 });
 
 
+
+describe("a network error in the share step is the generic failure, not the access-log message (b2, 1.8.1)", () => {
+  it("isAccessLogRefusal: only an error carrying a database code is a refusal", async () => {
+    const { isAccessLogRefusal } = await import("@/lib/accessLog");
+    expect(isAccessLogRefusal({ code: "42501" })).toBe(true);
+    expect(isAccessLogRefusal({ code: "P0001" })).toBe(true);
+    expect(isAccessLogRefusal({ code: "" })).toBe(false);
+    expect(isAccessLogRefusal({ code: undefined })).toBe(false);
+    expect(isAccessLogRefusal(null)).toBe(false);
+  });
+
+  it("prescriptionSnapshotData: a coded refusal → access_log_failed; a fetch failure (no code) → generic", async () => {
+    h.logError = { message: "permission denied", code: "42501" };
+    expect(await prescriptionSnapshotData(PAT, RX1)).toEqual({ ok: false, code: "access_log_failed" });
+    h.logError = { message: "TypeError: fetch failed", code: "" };
+    expect(await prescriptionSnapshotData(PAT, RX1)).toEqual({ ok: false, code: "generic" });
+    h.logError = { message: "TypeError: fetch failed" };
+    expect(await prescriptionSnapshotData(PAT, RX1)).toEqual({ ok: false, code: "generic" });
+  });
+});

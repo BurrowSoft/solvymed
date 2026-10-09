@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { isAccessLogRefusal } from "@/lib/accessLog";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
 import { patientDocumentFn } from "@/lib/patientDocumentFn";
@@ -50,7 +51,8 @@ export async function prescriptionSnapshotData(patientId: string, rxId: string):
   const lookup = await lookupPracticeCountry(me.supabase, me.uid, me.uid);
   if (!lookup.ok) return { ok: false, code: "generic" };
   const { error: logError } = await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "prescription", p_object_ref: rxId });
-  if (logError) return { ok: false, code: "access_log_failed" };
+  // A network failure is the generic failure; only a refusal is "access_log_failed".
+  if (logError) return { ok: false, code: isAccessLogRefusal(logError) ? "access_log_failed" : "generic" };
   const [p, rx, prof, tpl] = await Promise.all([
     me.supabase.from("patients").select(conditionMet("patient-address-live") ? `id, full_name, ${ADDRESS_FIELDS.map((f) => f.name).join(", ")}` : "id, full_name").eq("id", patientId).eq("professional_id", me.uid).maybeSingle(),
     me.supabase.from("prescriptions").select("id, date, notes, prescription_items(name, dosage, frequency, duration)").eq("id", rxId).eq("patient_id", patientId).maybeSingle(),
