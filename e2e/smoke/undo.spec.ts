@@ -13,7 +13,9 @@ const PATIENT = "Smoke Desfazer";
 let doctor: { id: string; email: string };
 let patientId: string;
 
-test.describe.configure({ mode: "serial" });
+// A cold Preview (sign-in + agenda + save + poll) can pass the default 30 s
+// whole-test budget while every step is within its own wait (13, 49).
+test.describe.configure({ mode: "serial", timeout: 120_000 });
 
 test.beforeAll(async () => {
   doctor = await mkDoctor("undo", "Dra Smoke Desfazer");

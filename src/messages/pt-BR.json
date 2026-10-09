@@ -2145,8 +2145,7 @@
     "removeUploadHint": "Você pode remover até o seu médico abrir o documento (em até 24 h).",
     "removeUploadConfirm": "Remover este documento? Ele será excluído.",
     "titleLabel": "Título",
-    "move": "Mover para pasta",
-    "corrected": "Corrigido"
+    "move": "Mover para pasta"
   },
   "documents": {
     "tabTitle": "Receitas e documentos ({n})",

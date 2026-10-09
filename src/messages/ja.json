@@ -2145,8 +2145,7 @@
     "removeUploadHint": "担当医が開くまで(24 時間以内)取り消せます。",
     "removeUploadConfirm": "この書類を取り消しますか?削除されます。",
     "titleLabel": "タイトル",
-    "move": "フォルダーに移動",
-    "corrected": "訂正済み"
+    "move": "フォルダーに移動"
   },
   "documents": {
     "tabTitle": "処方箋と書類 ({n})",

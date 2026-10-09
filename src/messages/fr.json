@@ -2145,8 +2145,7 @@
     "removeUploadHint": "Vous pouvez le retirer tant que votre médecin ne l’a pas ouvert (sous 24 h).",
     "removeUploadConfirm": "Retirer ce document ? Il sera supprimé.",
     "titleLabel": "Titre",
-    "move": "Déplacer vers le dossier",
-    "corrected": "Corrigé"
+    "move": "Déplacer vers le dossier"
   },
   "documents": {
     "tabTitle": "Ordonnances et documents ({n})",
