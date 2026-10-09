@@ -2121,6 +2121,7 @@
     "storageNotice": "Sie haben {used} von 5 GB für Dokumente belegt.",
     "snapshotNotShared": "Gespeichert, aber nicht geteilt: Ihr Dokumentenspeicher ist voll.",
     "snapshotFailed": "Gespeichert, aber die Kopie konnte nicht mit dem Patienten geteilt werden.",
+    "sharingWithPatient": "Wird mit dem Patienten geteilt…",
     "tryAgain": "Erneut versuchen",
     "unsignedCopy": "Unsignierte Kopie, zur Information des Patienten.",
     "settings": {

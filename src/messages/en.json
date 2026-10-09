@@ -2151,6 +2151,7 @@
     "storageNotice": "You've used {used} of 5 GB for documents.",
     "snapshotNotShared": "Saved, but not shared: your document storage is full.",
     "snapshotFailed": "Saved, but the copy couldn't be shared with the patient.",
+    "sharingWithPatient": "Sharing with the patient…",
     "tryAgain": "Try again",
     "unsignedCopy": "Unsigned copy, for the patient's reference.",
     "settings": {
