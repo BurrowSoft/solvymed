@@ -996,6 +996,159 @@
         "open": "home",
         "appOnly": null,
         "appTitle": null
+      },
+      {
+        "id": "P15",
+        "category": "pacientes",
+        "title": {
+          "pt": "Documentos do paciente",
+          "en": "Patient documents"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "A aba **Documentos** do paciente reúne exames, receitas, atestados e outros arquivos em pastas (as mesmas para todos os seus pacientes): **Comece aqui**, **Exames**, **Prescrições**, **Atestados e laudos**, **Termos** e **Documentos internos**. Ela substitui as abas Exames e Arquivos; os arquivos que já estavam lá aparecem em **Exames** ou em **Documentos internos**, sem compartilhar."
+            },
+            {
+              "type": "p",
+              "text": "Ao adicionar um arquivo (PDF, JPG, PNG ou HEIC, até 20 MB), dê um **Título**, escolha a pasta e decida se quer **Compartilhar com o paciente**. Um documento compartilhado aparece para o paciente no app enquanto ele estiver conectado a você; ele recebe uma notificação com o seu nome, nunca com o título. **Documentos internos** nunca são compartilhados."
+            },
+            {
+              "type": "p",
+              "text": "Em cada documento: **Abrir**, **Ocultar do paciente** (ou **Compartilhar com o paciente**), **Renomear**, **Mover para pasta** (mover para Documentos internos deixa de compartilhar) e **Remover**. Um arquivo que você enviou pode ser excluído nas primeiras 24 horas; depois disso, e para qualquer outro documento, **Remover** oculta com um motivo (também do paciente) e o documento fica guardado no prontuário."
+            },
+            {
+              "type": "p",
+              "text": "Documentos **Enviado pelo paciente** chegam nas pastas em que você permite envios (Exames, de início); você recebe uma notificação só com o nome do paciente. Só você vê os documentos do paciente; secretárias(os) não têm acesso. Cada abertura fica no registro de acessos."
+            },
+            {
+              "type": "p",
+              "text": "O paciente vê os documentos compartilhados no app e no site (**Minhas consultas → Documentos**), por médico e por pasta, e pode **Enviar documento** nas pastas que permitem envios (PDF, JPG, PNG ou HEIC, até 20 MB; até 10 por dia e 200 MB no total para cada médico). Ele pode remover um documento que enviou até você abri-lo, em até 24 horas; depois disso, o documento fica no prontuário. Se ele se desconectar de você ou encerrar a conta, deixa de ver os documentos, que continuam no seu prontuário."
+            },
+            {
+              "type": "p",
+              "text": "No app, uma receita nova tem **Compartilhar com o paciente** (ligado de início): ao salvar, uma cópia em PDF vai para a pasta **Prescrições** do paciente. Uma cópia sem a sua assinatura desenhada traz \"Cópia sem assinatura, para consulta do paciente.\"; uma edição ou uma correção da receita substitui a cópia, e o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção). Depois de salvar com o compartilhamento ligado, o app mostra **Compartilhando com o paciente…** e espera: o X e o voltar ficam bloqueados até o compartilhamento terminar; se falhar, o aviso oferece **Tentar de novo**. Se o seu espaço de documentos estiver cheio, a receita é salva mas não compartilhada."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "The patient's **Documents** tab keeps exams, prescriptions, certificates and other files in folders (the same for all your patients): **Start here**, **Exams**, **Prescriptions**, **Certificates and reports**, **Consent terms** and **Internal documents**. It replaces the Exams and Files tabs; the files already there show in **Exams** or **Internal documents**, not shared."
+            },
+            {
+              "type": "p",
+              "text": "When you add a file (PDF, JPG, PNG or HEIC, up to 20 MB), give it a **Title**, pick the folder and choose whether to **Share with the patient**. A shared document shows to the patient in the app while they are connected to you; they get a notification with your name, never the title. **Internal documents** are never shared."
+            },
+            {
+              "type": "p",
+              "text": "On each document: **Open**, **Hide from the patient** (or **Share with the patient**), **Rename**, **Move to folder** (moving it to Internal documents stops sharing it) and **Remove**. A file you uploaded can be deleted within 24 hours; after that, and for any other document, **Remove** hides it with a reason (from the patient too) and the document stays in the record."
+            },
+            {
+              "type": "p",
+              "text": "Documents **Sent by the patient** arrive in the folders where you allow uploads (Exams, to start with); you get a notification with the patient's name only. Only you see the patient's documents; secretaries have no access. Every opening is in the access log."
+            },
+            {
+              "type": "p",
+              "text": "The patient sees the shared documents in the app and on the website (**My appointments → Documents**), by doctor and by folder, and can **Send a document** to the folders that allow uploads (PDF, JPG, PNG or HEIC, up to 20 MB; up to 10 a day and 200 MB in total for each doctor). They can remove a document they sent until you open it, within 24 hours; after that it stays in the record. If they disconnect from you or close their account, they no longer see the documents, which stay in your record."
+            },
+            {
+              "type": "p",
+              "text": "In the app, a new prescription has **Share with the patient** (on by default): when you save, a PDF copy goes to the patient's **Prescriptions** folder. A copy without your drawn signature says \"Unsigned copy, for the patient's reference.\"; an edit or a correction of the prescription replaces the copy, and the patient sees **Updated on** (an edit) or **Corrected on** (a correction). After saving with sharing on, the app shows **Sharing with the patient…** and waits: X and back are blocked until the share finishes; if it fails, the alert offers **Try again**. If your document storage is full, the prescription is saved but not shared."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Abra o paciente e a aba **Documentos**. **Enviar** adiciona um arquivo: escolha o **Título**, **Enviar para a pasta** e **Compartilhar com o paciente**. Os botões de cada documento são os mesmos do app; **Remover** pede o motivo quando o documento não pode mais ser excluído. Ao salvar uma receita, ou um atestado, declaração ou solicitação de exames (aba **Receitas e documentos**), **Compartilhar com o paciente** (ligado) coloca uma cópia em PDF na pasta do paciente: receitas em **Receitas**, atestados e declarações em **Atestados e laudos**, solicitações de exames em **Exames**. A cópia diz \"Cópia sem assinatura, para consulta do paciente.\" (no idioma do documento). Uma edição (nas primeiras 24 horas) ou uma correção substitui a cópia anterior: o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção), e na aba **Documentos** a cópia anterior fica como histórico, marcada **Substituído por uma cópia mais recente**; excluir o documento (nas primeiras 24 horas) também apaga a cópia do paciente. Enquanto a cópia é compartilhada, aparece **Compartilhando com o paciente…**: espere terminar antes de sair da página. A receita de controle especial nunca é compartilhada. Se o seu espaço de documentos estiver cheio, o documento é salvo, mas não compartilhado; se o compartilhamento falhar por outro motivo, **Tentar de novo** refaz a cópia.",
+          "en": "Open the patient and the **Documents** tab. **Upload** adds a file: choose the **Title**, **Send to folder** and **Share with the patient**. Each document has the same buttons as in the app; **Remove** asks for a reason when the document can no longer be deleted. When you save a prescription, or a certificate, declaration or exam request (**Prescriptions & documents** tab), **Share with the patient** (on) puts a PDF copy in the patient's folder: prescriptions in **Prescriptions**, certificates and declarations in **Certificates and reports**, exam requests in **Exams**. The copy says \"Unsigned copy, for the patient's reference.\" (in the document's language). An edit (within 24 hours) or a correction replaces the earlier copy: the patient sees **Updated on** (an edit) or **Corrected on** (a correction), and in the **Documents** tab the earlier copy stays as history, marked **Replaced by a newer copy**; deleting the document (within 24 hours) also removes the patient's copy. While the copy is being shared, **Sharing with the patient…** shows: wait for it to finish before leaving the page. A special control prescription is never shared. If your document storage is full, the document is saved but not shared; if sharing fails for another reason, **Try again** makes the copy again."
+        },
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "P16",
+        "category": "pacientes",
+        "title": {
+          "pt": "Atestados, declarações e solicitações de exames",
+          "en": "Certificates, declarations and exam requests"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Na aba **Receitas e documentos** do paciente, **+ Documento** cria um documento clínico (só o médico). Os tipos seguem o país da clínica: no Brasil, **Atestado médico**, **Declaração médica**, **Solicitação de exames** e **Receita de controle especial (impressa)**; na Tailândia, **Atestado médico** (o modelo tailandês), **Declaração médica** e **Solicitação de exames**."
+            },
+            {
+              "type": "p",
+              "text": "Escolha o **Idioma do documento** (muda os rótulos, a data e o calendário; o texto é você quem escreve) e preencha os campos. O atestado tailandês sai em tailandês ou inglês (o modelo do Conselho Médico existe nesses dois). O CID só entra no atestado se você marcar **Incluir CID** (só com o consentimento do paciente)."
+            },
+            {
+              "type": "p",
+              "text": "As datas são digitadas como dd/mm/aaaa, com o ano no calendário gregoriano (em tailandês, o ano budista aparece logo abaixo; um ano budista digitado não é aceito). No atestado tailandês, o fim do afastamento é preenchido pelos dias e pelo início, e pode ser alterado. Ao fechar o documento com alterações não salvas, aparece **Descartar alterações?** (**Descartar** / **Continuar editando**)."
+            },
+            {
+              "type": "p",
+              "text": "Receitas e documentos aparecem numa só lista, do mais novo ao mais antigo. **Baixar PDF** gera o documento. Você pode editar ou excluir um documento nas primeiras 24 horas; depois, use **Adicionar correção**: o original fica guardado junto com a correção."
+            },
+            {
+              "type": "p",
+              "text": "Todo documento termina com a linha para a assinatura (e a sua assinatura, se salva), o seu nome como está no perfil e o seu registro profissional. Um registro só com números sai formatado: no Brasil \"CRM 12345/SP\" (com a UF da clínica); na Tailândia, o número da licença médica no idioma do documento. Com letras, ele sai como você digitou."
+            },
+            {
+              "type": "p",
+              "text": "Se seu CRM for de outro estado, escolha o estado em **Configurações → Cadastros** (app) ou **Configurações → Perfil** (site)."
+            },
+            {
+              "type": "p",
+              "text": "A **Receita de controle especial** é só impressa: **Imprimir** abre a impressão das duas vias (se a janela de impressão não abrir, use **Abrir PDF** e imprima de lá); assine à mão e entregue as duas ao paciente. Ela precisa do CPF ou do passaporte do paciente."
+            },
+            {
+              "type": "p",
+              "text": "Só você vê esses documentos; secretárias(os) não têm acesso. Cada PDF gerado fica registrado no **Registro de acessos**."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In the patient's **Prescriptions & documents** tab, **+ Document** creates a clinical document (doctors only). The types follow the practice country: in Brazil, **Medical certificate**, **Medical declaration**, **Exam request** and **Special control prescription (print)**; in Thailand, **Medical certificate** (the Thai form), **Medical declaration** and **Exam request**."
+            },
+            {
+              "type": "p",
+              "text": "Choose the **Document language** (it changes the labels, the date and the calendar; you write the text) and fill in the fields. The Thai medical certificate is in Thai or English (the Medical Council form exists in those two). The ICD code is on a certificate only if you tick **Include ICD code** (only with the patient's consent)."
+            },
+            {
+              "type": "p",
+              "text": "Dates are typed as dd/mm/yyyy, in the Gregorian year (in Thai, the Buddhist-era year shows just below; a Buddhist-era year typed in isn't accepted). On the Thai medical certificate, the rest period's end date is filled from the days and the start, and can be changed. Closing a document with unsaved changes asks **Discard changes?** (**Discard** / **Keep editing**)."
+            },
+            {
+              "type": "p",
+              "text": "Prescriptions and documents are in one list, newest first. **Download PDF** creates the document. You can edit or delete a document within 24 hours; after that, use **Add correction**: the original is kept with the correction."
+            },
+            {
+              "type": "p",
+              "text": "Every document ends with the signature line (and your signature, if saved), your name as it is in your profile and your professional registration. A registration of numbers only is formatted: in Brazil \"CRM 12345/SP\" (with the clinic's state); in Thailand, the medical licence number in the document's language. With letters, it shows as you typed it."
+            },
+            {
+              "type": "p",
+              "text": "If your registration is from another state, choose the state in **Settings → Registrations** (app) or **Settings → Profile** (website)."
+            },
+            {
+              "type": "p",
+              "text": "The **Special control prescription** is print-only: **Print** opens the print dialog with both copies (if it doesn't open, use **Open PDF** and print from there); sign them by hand and give both to the patient. It needs the patient's CPF or passport."
+            },
+            {
+              "type": "p",
+              "text": "Only you see these documents; secretaries have no access. Every PDF created is logged in the **Access log**."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": "patients",
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -1107,6 +1260,10 @@
             {
               "type": "p",
               "text": "A partir daí, cada consulta com valor mostra o QR Code Pix e o Pix Copia e Cola com o valor certo."
+            },
+            {
+              "type": "p",
+              "text": "Em **Configurações → Financeiro** também há o **Link de pagamento (cartão)**: a página onde o paciente paga com cartão, do seu provedor de pagamentos. Ele deve começar com https://."
             }
           ],
           "en": [
@@ -1120,6 +1277,10 @@
             {
               "type": "p",
               "text": "From then on, each appointment with a value shows the Pix QR code and the Pix Copia e Cola code with the right amount."
+            },
+            {
+              "type": "p",
+              "text": "**Settings → Financial** also has the **Card payment link**: the page where patients pay by card, from your payment provider. It must start with https://."
             }
           ]
         },
@@ -1156,6 +1317,10 @@
             {
               "type": "p",
               "text": "O SolvyMed não recebe o dinheiro: o Pix vai direto para a sua conta."
+            },
+            {
+              "type": "p",
+              "text": "Com o **Link de pagamento (cartão)** salvo, a janela do QR mostra **Ou pague com cartão** com o link, e a mensagem do Pix por WhatsApp ganha a linha \"Ou pague com cartão: {link}\". Sem chave Pix, **Enviar link do cartão por WhatsApp** envia só o link."
             }
           ],
           "en": [
@@ -1174,6 +1339,10 @@
             {
               "type": "p",
               "text": "SolvyMed doesn't receive the money: Pix goes straight to your account."
+            },
+            {
+              "type": "p",
+              "text": "With a **Card payment link** saved, the QR window shows **Or pay by card** with the link, and the Pix WhatsApp message gets the line \"Ou pague com cartão: {link}\" (Portuguese, like the rest of the message). Without a Pix key, **Send card link via WhatsApp** sends the link alone."
             }
           ]
         },
@@ -1418,6 +1587,10 @@
             },
             {
               "type": "p",
+              "text": "No app também: em até 2 minutos, ou ao voltar ao app, quem foi removido(a) da última equipe vê a mesma tela; quem ainda trabalha para outro médico passa para a equipe dele."
+            },
+            {
+              "type": "p",
               "text": "O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido."
             }
           ],
@@ -1437,6 +1610,10 @@
             {
               "type": "p",
               "text": "On the website, someone removed from their last team sees \"You're not part of any team right now.\" when they return to the dashboard, with **Join with an invite code** and **Sign out**."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: within 2 minutes, or on returning to the app, someone removed from their last team sees the same screen; someone still working for another doctor moves to that doctor's team."
             },
             {
               "type": "p",
@@ -1682,6 +1859,10 @@
             },
             {
               "type": "p",
+              "text": "No app também: **Ajustar imagem** antes de usar a imagem, com dois dedos para o zoom."
+            },
+            {
+              "type": "p",
               "text": "Se a cor escolhida for clara ou escura demais para ler um texto, ela é ajustada só na exibição, e a prévia mostra como fica."
             },
             {
@@ -1708,6 +1889,10 @@
             },
             {
               "type": "p",
+              "text": "In the app too: **Adjust image** before using the image, pinching with two fingers to zoom."
+            },
+            {
+              "type": "p",
               "text": "If the colour you choose is too light or too dark for text, it's adjusted only where it's shown, and the preview shows how it looks."
             },
             {
@@ -1723,6 +1908,160 @@
         "web": null,
         "webUnavailable": false,
         "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C13",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Modelos de prontuário",
+          "en": "Record templates"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Modelos de prontuário**, crie modelos com as seções que você preenche ao escrever um registro (por exemplo Queixa principal, HDA, Conduta). Use **Criar do zero**, ou **Começar por uma especialidade** para copiar um modelo pronto (Psiquiatria, Clínica geral, Cardiologia, Psicologia, Odontologia, Nutrição, Fisioterapia ou Pediatria) e ajustá-lo. Cada seção tem um título e uma **Dica (opcional)**, que aparece como exemplo no campo. Você pode ter até 50 modelos, com até 30 seções cada."
+            },
+            {
+              "type": "p",
+              "text": "Ao escrever um registro, escolha o **Modelo** (ou **Sem modelo**, para escrever em texto livre como antes; a opção aparece quando você já tem um modelo) e preencha as seções; as vazias não aparecem no registro. Trocar de modelo não apaga o que você já escreveu: o texto livre vai para a primeira seção do modelo, seções com o mesmo título mantêm o texto e o restante vai para a primeira seção (um aviso diz para onde foi); voltar para **Sem modelo** junta as seções no texto livre. Se você trocar e voltar logo em seguida, sem editar nada, o texto volta exatamente como estava. Os registros já feitos mantêm suas seções: mudar ou excluir um modelo não altera nada do que já foi escrito. Só você vê seus modelos e prontuários."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → Record templates**, create templates with the sections you fill in when you write a record (for example Chief complaint, History of present illness, Plan). Use **Create from scratch**, or **Start from a specialty** to copy a ready-made one (Psychiatry, General practice, Cardiology, Psychology, Dentistry, Nutrition, Physiotherapy or Paediatrics) and adjust it. Each section has a title and a **Hint (optional)**, shown as an example in the field. You can have up to 50 templates, with up to 30 sections each."
+            },
+            {
+              "type": "p",
+              "text": "When you write a record, pick the **Template** (or **No template** to write free text as before; it shows once you have a template) and fill in the sections; empty ones are left out of the record. Switching templates never erases what you've written: free text goes into the template's first section, sections with the same title keep their text and anything else goes into the first section (a message says where it went); going back to **No template** joins the sections into free text. If you switch and go straight back without editing anything, your text returns exactly as it was. Records already written keep their sections: changing or deleting a template doesn't change anything already written. Only you see your templates and records."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Configurações → Modelos de prontuário**, clique em **Começar por uma especialidade** (e escolha a especialidade) ou em **Criar do zero**, ajuste o **Nome do modelo** e as seções (↑ ↓ para reordenar, ✕ para remover, **Adicionar seção**) e clique em **Salvar modelo**. No paciente, aba **Registros** → **Novo Registro**, escolha o **Modelo** e clique em **Salvar Registro**.",
+          "en": "In **Settings → Record templates**, click **Start from a specialty** (and pick one) or **Create from scratch**, adjust the **Template name** and the sections (↑ ↓ to reorder, ✕ to remove, **Add section**) and click **Save template**. On the patient, **Records** tab → **New Record**, pick the **Template** and click **Save Record**."
+        },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C14",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Pastas de documentos",
+          "en": "Document folders"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Pastas de documentos**, organize as pastas da aba Documentos; elas valem para todos os seus pacientes. Em cada pasta: **Visível para os pacientes** e **Pacientes podem enviar documentos aqui**. Desligar **Visível para os pacientes** deixa de mostrar aos pacientes os documentos já compartilhados daquela pasta (você confirma antes, com o número de documentos); religar volta a mostrar esses mesmos documentos, sem notificação. **Documentos internos** nunca são compartilhados."
+            },
+            {
+              "type": "p",
+              "text": "Você pode **Renomear** e reordenar qualquer pasta, **Adicionar pasta** (até 30) e **Excluir pasta** que você criou, se estiver vazia; as pastas padrão não podem ser excluídas. Cada médico tem 5 GB para documentos; perto do limite, um aviso mostra quanto já foi usado."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → Document folders**, organise the folders of the Documents tab; they apply to all your patients. On each folder: **Visible to patients** and **Patients can send documents here**. Turning **Visible to patients** off stops showing that folder's already-shared documents to patients (you confirm first, with the number of documents); turning it back on shows those same documents again, without a notification. **Internal documents** are never shared."
+            },
+            {
+              "type": "p",
+              "text": "You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delete folder** for one you created, if it is empty; the default folders can't be deleted. Each doctor has 5 GB for documents; near the limit, a notice shows how much is used."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Em **Configurações → Pastas de documentos**, as mesmas opções; as setas ↑ ↓ reordenam.",
+          "en": "In **Settings → Document folders**, the same options; the ↑ ↓ arrows reorder."
+        },
+        "webUnavailable": false,
+        "open": "settings",
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "C15",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Locais de atendimento",
+          "en": "Practice locations"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Se você atende em mais de um lugar, cadastre cada um como um local. Os locais só aparecem para você e para os pacientes quando há dois ou mais; com um só, nada muda."
+            },
+            {
+              "type": "p",
+              "text": "O local **Principal** é o padrão. Para excluí-lo, defina outro local como principal antes. **Tornar principal** pede confirmação: os dias de atendimento sem local escolhido passam a usar o novo principal; consultas marcadas com um local continuam nele, e as sem local passam a mostrar o novo principal."
+            },
+            {
+              "type": "p",
+              "text": "Os pacientes veem onde é cada consulta: ao marcar pelo seu link, o dia escolhido mostra \"Local: nome · endereço\"; em **Minhas consultas**, cada consulta mostra o local."
+            },
+            {
+              "type": "p",
+              "text": "Em **Horário de atendimento**, cada dia tem um **Local**: as consultas desse dia ficam nesse local (sem escolha, no principal)."
+            },
+            {
+              "type": "p",
+              "text": "Na **Agenda**, cada consulta mostra o seu local. Em **Nova Consulta**, o local do dia já vem marcado; toque em outro local para mudar. Se uma consulta muda de dia, ela passa para o local do novo dia."
+            },
+            {
+              "type": "p",
+              "text": "No app: **Configurações → Minha clínica** mostra os locais, com **Adicionar local**, editar e **Tornar principal**; no **Horário de atendimento**, escolha o **Local** de cada dia."
+            },
+            {
+              "type": "p",
+              "text": "No app, com dois ou mais locais, os documentos em PDF (receitas, recibos e o histórico) listam todos os locais no rodapé (nome, endereço e telefone)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "If you see patients in more than one place, add each one as a location. Locations show to you and to patients only when there are two or more; with one, nothing changes."
+            },
+            {
+              "type": "p",
+              "text": "The **Primary** location is the default. To delete it, make another location primary first. **Make primary** asks first: working days without a chosen location will use the new primary; appointments booked at a location stay there, and those without one will show the new primary."
+            },
+            {
+              "type": "p",
+              "text": "Patients see where each visit is: when booking from your link, the chosen day shows \"Location: name · address\"; in **My appointments**, each visit shows its location."
+            },
+            {
+              "type": "p",
+              "text": "In **Working hours**, each day has a **Location**: that day's appointments are at that location (the primary when none is chosen)."
+            },
+            {
+              "type": "p",
+              "text": "In the **Schedule**, each appointment shows its location. In **New Appointment**, the day's location is already selected; tap another location to change it. When an appointment moves to another day, it takes that day's location."
+            },
+            {
+              "type": "p",
+              "text": "In the app: **Settings → My Clinic** lists the locations, with **Add location**, edit and **Make primary**; in **Working hours**, choose each day's **Location**."
+            },
+            {
+              "type": "p",
+              "text": "In the app, with two or more locations, the PDF documents (prescriptions, receipts and the history) list every location in the footer (name, address and phone)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "Os documentos clínicos em PDF (atestados, declarações e solicitações de exames) também listam todos os locais no rodapé.",
+          "en": "Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer."
+        },
+        "webUnavailable": false,
+        "open": null,
         "appOnly": null,
         "appTitle": null
       },
@@ -1750,6 +2089,14 @@
             {
               "type": "p",
               "text": "No Brasil, o **RG** começa oculto e o **CNS** só existe para clínicas no Brasil. Na Tailândia, o passaporte vale como documento de identidade obrigatório."
+            },
+            {
+              "type": "p",
+              "text": "No app também: **Configurações → Cadastro do paciente**."
+            },
+            {
+              "type": "p",
+              "text": "Pacientes com conta veem, em **Minhas consultas**, o aviso \"{médico} pediu alguns dados\" quando um dado obrigatório está vazio no cadastro deles: **Completar** abre só esses campos (sem mostrar o que você já tem), e o que o paciente preencher vai para o cadastro e fica no **Registro de acessos**. **Agora não** esconde o aviso até você tornar outro dado obrigatório. Observações internas nunca são pedidas ao paciente, e o aviso nunca impede o agendamento."
             }
           ],
           "en": [
@@ -1768,6 +2115,14 @@
             {
               "type": "p",
               "text": "In Brazil, **RG** starts hidden and **CNS** exists only for Brazilian clinics. In Thailand, a passport counts as the required ID."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: **Settings → Patient registration**."
+            },
+            {
+              "type": "p",
+              "text": "Patients with an account see, in **My appointments**, the card \"{doctor} asked for a few details\" when a required detail is empty in their record: **Complete** opens only those fields (without showing what you already have), and what they fill in goes to the record and to the **Access log**. **Not now** hides the card until you make another detail required. Internal notes are never asked of the patient, and the card never blocks booking."
             }
           ]
         },
@@ -1936,6 +2291,10 @@
             {
               "type": "p",
               "text": "Quando atualizamos a Política de Privacidade, um aviso aparece uma vez no topo do **Início** no site (e de **Minhas consultas** para pacientes): **Ler a política** abre o texto, **OK** fecha o aviso de vez e o **×** só nesta aba."
+            },
+            {
+              "type": "p",
+              "text": "No app, o mesmo aviso aparece no topo do **Início** (pacientes e equipe): **OK** fecha de vez e o **×** até você reabrir o app."
             }
           ],
           "en": [
@@ -1946,6 +2305,10 @@
             {
               "type": "p",
               "text": "When we update the Privacy Policy, a notice shows once at the top of **Home** on the website (and of **My appointments** for patients): **Read the policy** opens it, **OK** closes the notice for good, and the **×** only in this tab."
+            },
+            {
+              "type": "p",
+              "text": "In the app, the same notice shows at the top of **Home** (patients and staff): **OK** closes it for good, and the **×** until you reopen the app."
             }
           ]
         },

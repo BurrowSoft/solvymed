@@ -35,8 +35,9 @@ describe("the App Map states the corrected facts", () => {
   it("the website can send the Pix message by WhatsApp", () => {
     expect(text).toContain("Never say the website can't send it.");
   });
-  it("no templates while record templates are hidden", () => {
-    expect(text).toContain("There are no record or document templates yet");
+  it("record templates are live with the 1.8.0 flip: the templates rule replaces \"no templates yet\"", () => {
+    expect(text).not.toContain("There are no record or document templates yet");
+    expect(text).toContain("Record templates (website, doctors only)");
   });
   it("the Founders Program page exists", () => {
     expect(text).toContain("/founders");

@@ -60,10 +60,10 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
               <li>Only the patient&rsquo;s own professional sees the patient&rsquo;s documents, including the ones the patient sends. Secretaries and other professionals in the same practice do not.</li>
               <li>The patient sees only the documents their professional shares with them and the documents they sent, and only while they are connected to that professional. Turning the feature on does not share any existing file: a professional shares each document themselves.</li>
               <li>Documents are stored in the same private storage, in the same region, as other patient files, and are opened through links that expire after 5 minutes.</li>
-              <li>Shared and sent documents are part of the medical record and are kept for the same period (see section 9). The professional can hide a document from the patient, or hide it entirely with a reason, but cannot delete it, except a file they uploaded themselves, within 24 hours of uploading it.</li>
+              <li>Shared and sent documents are part of the medical record and are kept for the same period (see section 9). The professional can hide a document from the patient, or hide it entirely with a reason, but cannot delete it, except a file they uploaded themselves, within 24 hours of uploading it. Deleting a prescription or document within its first 24 hours also removes the copy shared with the patient (the access log keeps the views).</li>
               <li>A patient can remove a document they sent until their professional first opens it, at most 24 hours after sending. It is then deleted, and the removal is recorded in the access log. After that it is kept like any other document in the record.</li>
               <li>When the patient disconnects or closes their account, their access ends at once, but the documents stay in the professional&rsquo;s record.</li>
-              <li>We record each time a patient opens or downloads a shared document and each time the professional opens a document the patient sent. The professional can see this log; the patient can request it.</li>
+              <li>We record when a patient opens or downloads a shared document and when the professional opens a document the patient sent (repeated opens within a minute are recorded once). The professional can see this log; the patient can request it.</li>
             </ul>
           </div>
         )}

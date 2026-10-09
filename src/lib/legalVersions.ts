@@ -51,7 +51,13 @@
 // Vitor's "OK privacy 3.1 B", via b2). Merged with the card-payment-live
 // flip, so the link can be entered from the moment the text says so.
 // Mobile's accepting migration for ('privacy','2026-10-16') applied FIRST.
-export const PRIVACY_VERSION = "2026-10-16";
+// 2026-10-17: the 1.8.0 release (Vitor's "OK privacy 1.8.0", via b2): §3.8
+// documents shared with patients + the §6g / §7 lines (patient-documents-live),
+// certificates, declarations and exam requests among clinical records
+// (clinical-documents-live), and §3.2's patients completing their own details
+// (c2-patient-step-live; "OK privacy C2"). One version for all three, merged
+// with their flips. Mobile's accepting migration (215) applied FIRST.
+export const PRIVACY_VERSION = "2026-10-17";
 export const TERMS_VERSION = "2026-10-01";
 
 // Sent with every web signup (the checkbox is required, so it's sent only
