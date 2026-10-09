@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { readLocationLines } from "@/lib/locationLines";
 import { createClient } from "@/lib/supabase/server";
+import { isAccessLogRefusal } from "@/lib/accessLog";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
 import { actionError } from "@/lib/dbErrors";
@@ -139,7 +140,8 @@ export async function documentPrintData(patientId: string, documentId: string): 
   const lookup = await lookupPracticeCountry(me.supabase, me.uid, me.uid);
   if (!lookup.ok) return { ok: false, code: "generic" };
   const { error: logError } = await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "document", p_object_ref: documentId });
-  if (logError) return { ok: false, code: "access_log_failed" };
+  // A network failure is the generic failure; only a refusal is "access_log_failed".
+  if (logError) return { ok: false, code: isAccessLogRefusal(logError) ? "access_log_failed" : "generic" };
   const [p, prof, tpl] = await Promise.all([
     me.supabase.from("patients").select("full_name, cpf, th_national_id, passport_number").eq("id", patientId).eq("professional_id", me.uid).maybeSingle(),
     me.supabase.from("professionals").select("full_name, professional_registration, clinic_name, clinic_address, clinic_city, clinic_state, clinic_phone").eq("id", me.uid).maybeSingle(),
