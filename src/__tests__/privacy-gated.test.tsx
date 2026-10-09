@@ -178,8 +178,8 @@ describe("Z-API row lists every send-whatsapp message (c6 B1)", () => {
 describe("privacy 1.8.0: clinical documents (189) and documents shared with patients (190), hidden until live", () => {
   const text = (el: React.ReactElement) => { const r = render(el); const t = r.container.textContent ?? ""; r.unmount(); return t.replace(/\s+/g, " "); };
 
-  it("both conditions are unmet today, and the page reads exactly as before", () => {
-    expect([conditionMet("clinical-documents-live"), conditionMet("patient-documents-live")]).toEqual([false, false]);
+  it("both go live with the 1.8.0 flip; without their props the components read as before", () => {
+    expect([conditionMet("clinical-documents-live"), conditionMet("patient-documents-live")]).toEqual([true, true]);
     const en = text(<PrivacyEn turnstile={false} />);
     expect(en).toContain("(clinical notes, prescriptions, exams, files, appointments), the professional or clinic is the controller");
     expect(en).toContain("They cannot see medical records, prescriptions, exams or clinical files.");
@@ -207,6 +207,10 @@ describe("privacy 1.8.0: clinical documents (189) and documents shared with pati
     expect(en).toContain("3.8 Documents shared with patients:");
     expect(en).toContain("Only the patient’s own professional sees the patient’s documents, including the ones the patient sends.");
     expect(en).toContain("but cannot delete it, except a file they uploaded themselves, within 24 hours of uploading it.");
+    // 4f's audit (b2, for the 1.8.0 flip): no "each time"; the B2 copy goes with the document.
+    expect(en).toContain("We record when a patient opens or downloads a shared document and when the professional opens a document the patient sent (repeated opens within a minute are recorded once).");
+    expect(en).not.toContain("each time a patient opens");
+    expect(en).toContain("Deleting a prescription or document within its first 24 hours also removes the copy shared with the patient (the access log keeps the views).");
     expect(en).toContain("A notification never includes a document’s title or content.");
     expect(en).toContain("and the documents their professional shares with them and the documents they send (see 3.8).");
     expect(en).toContain("including documents shared with or sent by patients.");
@@ -214,6 +218,8 @@ describe("privacy 1.8.0: clinical documents (189) and documents shared with pati
     expect(pt).toContain("3.8 Documentos compartilhados com pacientes:");
     expect(pt).toContain("Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia.");
     expect(pt).toContain("mas não pode excluí-lo, exceto um arquivo que ele mesmo enviou, em até 24 horas após o envio.");
+    expect(pt).toContain("Registramos quando um paciente abre ou baixa um documento compartilhado e quando o profissional abre um documento enviado pelo paciente (aberturas repetidas em menos de um minuto são registradas uma vez).");
+    expect(pt).toContain("Excluir uma receita ou um documento nas primeiras 24 horas também remove a cópia compartilhada com o paciente (o registro de acessos mantém as visualizações).");
     expect(pt).toContain("A notificação nunca inclui o título nem o conteúdo do documento.");
     // cf: true after d1's 196 too (old adopted files are checked only when shared).
     expect(en).toContain("Every file shared with a patient or sent by a patient is checked by its real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.");
