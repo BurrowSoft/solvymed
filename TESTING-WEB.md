@@ -5020,8 +5020,8 @@ unchanged.
   reached a stored row.
 - **Immutable:** the PATCH of `date`/`time` answered 200 and left the row
   unchanged, while the content edit still applied, in every run.
-- **Not covered:** the export and PDF weren't opened, so they stay ⏳ on the
-  row.
+- **Not covered here:** the export and PDF. Closed 2026-10-09 (Batch 16, "B-7c
+  close-out"): the history and prescription PDFs show the practice date.
 - **Cleanup:** the practices' clinical rows went to mob dev for purge.
 
 ### A-15: web-origin real emails after the template switch ✅
@@ -10524,3 +10524,44 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 - The #453 / #459 / #461 set was purged by the mobile dev and verified 0 by WT1.
 - The #463 / #464 / #455 / #485 set (2 doctors, 3 documents, 1 visit, 5 patients, 1 secretary) was handed to the mobile dev for purge on 10-08.
 - Since migration 206 a purge keeps SolvyAI usage rows anonymised (`professional_id` → NULL), by design.
+
+## Batch 16: web PRs #470–#499, incl. 1.8.0 B2 (patient copies of documents), C2 (patients complete their details), the share overlay and the B-7c close-out (web tester 1 + web tester 2, 2026-10-08 → 10-09)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; listings, seeds and purges by the mobile dev. Every row below with a Preview also ran the regression suite: "smoke: 57 passed at `<SHA>`" unless noted.
+
+**Help-only rows (#497–#499):** P15 is still `requires:patient-documents-live`, so it is 404 on both the Preview and www. Its text was checked through the Help build (`parseBatch` with the condition forced met) and by comparing every Help page against www.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #470 | 1.8.0 B2: share prescriptions + clinical documents with the patient (migration 211) | WT2 🟢 `8ed9487` (6068788928), checked in the DB, on the patient's **My appointments → Documentos** and in the copy's PDF: a new Rx gets one copy (practice date, Prescrições); switch off = no copy; an edit within 24 h replaces the copy (`replaces_id`); certificate / declaration / exam request in their folders; TH certificate "ใบรับรองแพทย์ 09/10/2569"; controlled Rx never shared; delete within 24 h removes the copies; the doctor's Documentos tab + access log. The correction path (> 24 h) relies on the unit tests. The TH check was corrected (6072272309): a new TH certificate's own copy was re-verified on #491's Preview | `682780e` into master |
+| #473 | 1.8.0 C2: patients complete the doctor's required details (migration 212) | WT2 ❌ `d741f68` (6069493943): the Cancel button showed a raw key, and "Pronto!" never appeared. Then 🟢 `580f0b1` (6069906318): "Cancel" / "Cancelar" / "ยกเลิก"; "Pronto! Seu cadastro está completo." stays after the revalidation; the other checks stand (card / Agora não / only required + empty keys / CPF errors / BR + TH saves / access log) | `35c6ba0` into master |
+| #490 | The patient's sex in the page language (header + Info tab) | WT1 🟢 `7e74390` (6070190577): BR pt-BR / en and TH th / en; no raw "Female" | `40d6529` into master |
+| #491 | Documents "Atualizado em" / "Substituído por uma cópia mais recente" (migration 214) | WT2 🟢 `782a0a6` (6072271795): App Map + Help P15, Thai labels, Thai file name marks | `ac6685b` into master |
+| #492 | Hold the page while the patient's copy is shared | WT1 🟢 `7698eae` (6072592533): "Compartilhando com o paciente…" for an Rx and a certificate (the upload held in the test); sidebar clicks blocked; reload asks to leave; a forced failure (upload aborted) shows the banner, and **Tentar de novo** shows the overlay again; pt / en. Smoke 56 + undo 3/3 | `56dc9f0` into master |
+| #493 | C2: "Pronto!" at once | WT2 🟢 `5a642b7` (6072735781) | `e70f4fd` into master |
+| #494 | Help P15 + App Map: the app waits while sharing | WT2 🟢 `f514361`: CI unit tests; smoke 57 (undo rerun) | `5696d9d` into master |
+| #495 | a11y: the page behind the share overlay is inert | WT1 🟢 `782ef46` (6072836519): 28/28 other `<body>` children inert, focus in the overlay, Tab never reaches the page, inert cleared after | `332a2c9` into master |
+| #496 | Drop the unused `docs.corrected`; smoke undo tests get 120 s | WT2 🟢 `bb3ff9e`: smoke 57 on the first run (undo 3/3) | `eba05b4` into master |
+| #497 | Help: Thai P15 draft + P15 kept only one of its two website notes | WT1 🟢 `5c8ce55` (6073359153): forced met, `web.en` / `web.pt` hold both parts (master kept only the last); Thai hidden; 6 Help pages = www | `d1f7db1` into master |
+| #498 | Help: Thai C16, C2's patient-card line (hidden) | WT1 🟢 `24758d2` (6073359516): C16 identical to www in th / pt / en; the Thai labels match `th.json` | `4b1af8f` into master |
+| #499 | Help: Thai P15 uses "ใบรับรองการมาพบแพทย์" for the declaration | WT1 🟢 `ac4bcec` (6073619160): no "หนังสือรับรอง" left in P15; 6 Help pages = www | `8fb5ca3` into master |
+
+**Post-merge on www:**
+- **#485:** the card link field and the QR dialog's "Ou pague com cartão" 🟢. Throwaway `4abe99fc` deleted, verified 0.
+
+**B-7c close-out (www, 2026-10-09 03:06Z, WT1):** the export and PDF, the last ⏳ of B-7c in the prod addendum.
+- **Setup:** a throwaway BR doctor whose practice time zone is `Pacific/Pago_Pago`. It was 08/10 there, while UTC and the browser (`America/Sao_Paulo`) were on 09/10.
+- **Created via the UI:** a record (stored 2026-10-08 16:07) and a prescription (stored 2026-10-08).
+- **Every view shows 08/10/2026, and 09/10/2026 appears nowhere:**
+  - the patient page (Registros, Receitas);
+  - the history print view (each entry, and "Exportado por … em 08/10/2026");
+  - the prescription print view ("DATA 08/10/2026").
+- **The correction was not run again.** The UI offers it only after 24 h, and nothing is backdated. UX & PM: corrections were proven in the 09-26/27 runs (stored date + chart, stamped by the same server trigger), and the PDFs render the same stored date field checked here.
+- **B-7c is closed** (UX & PM, 10-09). The mobile dev purged the set, and WT1 verified 0 (auth, rows, Storage).
+
+**Fixtures:**
+- Throwaway accounts only (`e2e-test-opus-…`, `e2e-smoke-…`).
+- Listings by the mobile dev with UX & PM's OK, by exact id.
+- The #492 and #495 sets were purged by the mobile dev (10-09 ~02:10Z / ~02:35Z) and verified 0 by WT1, Storage included.
+- The #490 throwaways were deleted and verified 0.
+- Nothing was backdated.
