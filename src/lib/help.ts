@@ -190,6 +190,9 @@ const WEB_SCREENS: Record<string, string> = {
   "settings-team": "/dashboard/settings#team",
   "settings-financial": "/dashboard/settings#clinic",
   "settings-patient-fields": "/dashboard/settings#patient-fields",
+  // The practice's clinics and locations (C15): their own page on the web;
+  // the app opens Settings → My Clinic ({ section: "clinic" }, 42).
+  "settings-clinic": "/dashboard/clinics",
 };
 
 export function webScreen(open: string | null): string | null {

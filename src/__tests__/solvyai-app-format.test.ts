@@ -80,3 +80,14 @@ describe("the website's Open screen goes to the Settings section too (cf)", () =
     expect(await href("C2")).toBe("/pt-BR/dashboard/settings#hours");
   });
 });
+
+describe("C15 (practice locations) has an Open screen on both platforms (49 / b2, 42)", () => {
+  it("web → /pt-BR/dashboard/clinics; app → Settings with section clinic", async () => {
+    const open = async (client: "web" | "app") => {
+      const o = (await run(client, "Veja.\n[[open:C15]]")).find((c) => c.kind === "block" && c.block.type === "open");
+      return o && o.kind === "block" && o.block.type === "open" ? o.block : null;
+    };
+    expect((await open("web"))?.href).toBe("/pt-BR/dashboard/clinics");
+    expect((await open("app"))?.target).toEqual({ screen: "settings", params: { section: "clinic" } });
+  });
+});

@@ -152,11 +152,16 @@ const APP_PARAMS: Record<string, Record<string, string>> = {
   "settings-procedures": { section: "procedures" },
   "settings-team": { section: "team" },
   "settings-financial": { section: "financial" },
+  // Settings → My Clinic in the app (42; until its 1.8.x opener lands, the
+  // app just opens Settings).
+  "settings-clinic": { section: "clinic" },
   "new-appointment": { new: "1" },
 };
 
 // A Help article's screen, for the app (web paths mean nothing there).
 function targetOf(path: string): TargetScreen {
+  // The web's own clinics page is part of Settings in the app.
+  if (/^\/dashboard\/clinics/.test(path)) return "settings";
   const m = path.match(/^\/dashboard\/(schedule|patients|payments|settings)/);
   return (m?.[1] as TargetScreen | undefined) ?? "home";
 }
