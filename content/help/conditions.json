@@ -189,7 +189,7 @@
   },
   "c2-patient-step-live": {
     "met": false,
-    "what": "1.8.0 C2 is live: migration 212 (get_my_missing_fields / save_my_fields / mark_fields_prompted, mobile #433) applied, server_flags.patient_self_fields on for doctors, the app build RELEASED, and the privacy §3.2 change (patients completing their own details) live with Vitor's quoted go and a PRIVACY_VERSION bump the app accepts first. Gates that privacy text and C2's Help / App Map lines."
+    "what": "1.8.0 C2 is live: migration 212 (get_my_missing_fields / save_my_fields / mark_fields_prompted, mobile #433) applied, server_flags.patient_self_fields on for doctors, the app build RELEASED, and the privacy §3.2 change (patients completing their own details) live with Vitor's quoted go and a PRIVACY_VERSION bump the app accepts first. Gates that privacy text and C2's Help / App Map lines. Before the flip (b2, 10-09): the save must show \"Pronto!\" promptly (it waited ~12 s for a page re-render; fixed by not revalidating in the action), confirmed by a tester row on www."
   },
   "card-payment-live": {
     "met": true,

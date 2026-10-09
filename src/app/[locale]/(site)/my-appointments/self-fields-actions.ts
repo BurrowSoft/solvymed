@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isUuid } from "@/lib/patientFiles";
 import { SELF_KEYS } from "@/lib/selfFields";
@@ -19,10 +18,10 @@ export async function saveSelfFields(doctorId: string, values: Record<string, un
   const { data, error } = await supabase.rpc("save_my_fields", { p_professional_id: doctorId, p_values: clean });
   if (error) return { ok: false, error: "generic" };
   const r = (data ?? {}) as { ok?: boolean; error?: string; key?: string };
-  if (r.ok) {
-    revalidatePath("/my-appointments");
-    return { ok: true };
-  }
+  // No revalidatePath here: it made this call wait for the whole page to
+  // render again (~12 s on a Preview, 13). The card says "Pronto!" at once and
+  // refreshes the page in the background (CompleteRegistrationCards).
+  if (r.ok) return { ok: true };
   return { ok: false, error: r.error === "id_in_use" ? "id_in_use" : r.error === "invalid" ? "invalid" : "generic", key: typeof r.key === "string" ? r.key : undefined };
 }
 
@@ -31,6 +30,6 @@ export async function dismissSelfFields(doctorId: string): Promise<boolean> {
   if (!isUuid(doctorId)) return false;
   const supabase = await createClient();
   const { error } = await supabase.rpc("mark_fields_prompted", { p_professional_id: doctorId });
-  if (!error) revalidatePath("/my-appointments");
+  // The card hides itself; the next load already knows (no page re-render).
   return !error;
 }
