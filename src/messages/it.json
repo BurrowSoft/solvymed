@@ -2187,6 +2187,7 @@
     "findings": "Esito / parere",
     "rest": "Deve riposare",
     "refill": "Compila di nuovo il testo",
+    "textMayNotMatch": "The text may not match the fields you changed.",
     "items": "Farmaci",
     "itemName": "Farmaco",
     "dose": "Dose",
@@ -2270,5 +2271,8 @@
   },
   "save": {
     "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
+  "offline": {
+    "banner": "Nessuna connessione a Internet. Puoi vedere ciò che è aperto, ma le modifiche non verranno salvate."
   }
 }

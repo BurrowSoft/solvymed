@@ -98,8 +98,13 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [lang, setLang] = useState<DocLang>(existing?.language ?? defaultLang);
   const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type) : null);
   const [body, setBody] = useState(existing?.body ?? "");
-  // The prefilled text follows the fields until the doctor edits it.
-  const [bodyTouched, setBodyTouched] = useState(!!existing);
+  // The prefilled text follows the fields until the doctor edits it (1.9.0,
+  // c5's rule, the same in the app): no stored flag; the text counts as
+  // untouched while it equals (trimmed) what the fields generate. A field
+  // change refills untouched text; edited text is kept, with a note that it
+  // may no longer match (a certificate saying 3 days in its field and 2 in
+  // its text was found while filming).
+  const [fieldsChanged, setFieldsChanged] = useState(false);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
   // ON by default (the A spec); never for the controlled prescription.
@@ -124,12 +129,16 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
 
+  const generated = type && fields ? prefilledBody(type, fields, effLang, patientName) : "";
+  const edited = body.trim() !== generated.trim();
+  // Refill only text that was the previous generated text.
+  const follow = (oldGen: string, newGen: string) => setBody((b) => (b.trim() === oldGen.trim() ? newGen : b));
   const setF = (patch: Partial<DocFields>) => {
-    setFields((f) => {
-      const next = { ...(f as object), ...patch } as DocFields;
-      if (type && !bodyTouched) setBody(prefilledBody(type, next, effLang, patientName));
-      return next;
-    });
+    if (!fields) return;
+    const next = { ...(fields as object), ...patch } as DocFields;
+    setFields(next);
+    setFieldsChanged(true);
+    if (type) follow(prefilledBody(type, fields, effLang, patientName), prefilledBody(type, next, effLang, patientName));
   };
   // The rest period (Thai certificate): changing the days or the start sets
   // the end to start + days − 1, as the app (12's #413 row); the end stays
@@ -143,7 +152,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     setType(ty);
     const f = emptyFields(ty);
     setFields(f);
-    setBodyTouched(false);
+    setFieldsChanged(false);
     // A type that doesn't offer the chosen language (the Thai certificate:
     // th / en only) starts in its first one.
     const offered = docLangsForType(ty, docLangsFor(country));
@@ -153,7 +162,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   };
   const changeLang = (l: DocLang) => {
     setLang(l);
-    if (type && fields && !bodyTouched) setBody(prefilledBody(type, fields, l, patientName));
+    if (type && fields) follow(prefilledBody(type, fields, effLang, patientName), prefilledBody(type, fields, fixedLanguage(type) ?? l, patientName));
   };
 
   function save(e: React.FormEvent) {
@@ -348,9 +357,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           {type !== "exam_request" && type !== "controlled_prescription" && (
             <label className="block">
               <span className={label}>{type === "th_certificate" ? t("findings") : t("body")}</span>
-              <textarea rows={5} value={body} onChange={(e) => { setBody(e.target.value); setBodyTouched(true); }} className={`${input} resize-y`} />
-              {bodyTouched && (type === "certificate" || type === "declaration") && (
-                <button type="button" onClick={() => { setBodyTouched(false); setBody(prefilledBody(type, fields, effLang, patientName)); }} className="mt-1 text-xs font-semibold text-teal-700 underline">{t("refill")}</button>
+              <textarea rows={5} value={body} onChange={(e) => setBody(e.target.value)} className={`${input} resize-y`} />
+              {edited && (type === "certificate" || type === "declaration") && (
+                <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+                  {fieldsChanged && <span role="status" data-testid="text-mismatch" className="text-xs text-amber-700">{t("textMayNotMatch")}</span>}
+                  <button type="button" onClick={() => setBody(generated)} className="text-xs font-semibold text-teal-700 underline">{t("refill")}</button>
+                </span>
               )}
             </label>
           )}

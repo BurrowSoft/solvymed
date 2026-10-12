@@ -2217,6 +2217,7 @@
     "findings": "Findings / opinion",
     "rest": "Should rest",
     "refill": "Fill in the text again",
+    "textMayNotMatch": "The text may not match the fields you changed.",
     "items": "Medications",
     "itemName": "Medication",
     "dose": "Dose",
@@ -2300,5 +2301,8 @@
   },
   "save": {
     "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
+  "offline": {
+    "banner": "No internet connection. You can view what's open, but changes won't be saved."
   }
 }
