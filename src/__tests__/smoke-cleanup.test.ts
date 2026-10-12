@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { addToLedger, deleteAccounts, ledgerPath, readLedger, SMOKE_EMAIL_RE, staleSmokeAccounts } from "../../e2e/smoke/admin";
+import { addToLedger, deleteAccounts, ledgerPath, readLedger, runTime, SMOKE_EMAIL_RE, staleSmokeAccounts } from "../../e2e/smoke/admin";
 
 // The smoke suite's cleanup (7e, 10-12): exact-tag sweep, and a failure that
 // never stops the loop.
@@ -29,6 +29,11 @@ describe("the sweep's account choice", () => {
       "x-e2e-smoke-20261008101500ab12-doc@burrowsoft.com",
       "e2e-smoke-20261008101500AB12-doc@burrowsoft.com",
     ]) expect(SMOKE_EMAIL_RE.test(e), e).toBe(false);
+  });
+
+  it("reads a run tag's time only when it is a real date", () => {
+    expect(runTime("20261008101500")).toBe(Date.UTC(2026, 9, 8, 10, 15, 0));
+    for (const t of ["20261308101500", "20260230101500", "20261008241500", "20261008106000", "2026100810150"]) expect(runTime(t), t).toBeNull();
   });
 
   it("takes other runs older than 2 h (by tag AND creation), never the current run or a younger one", () => {
