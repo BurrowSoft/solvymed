@@ -55,10 +55,22 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
-  function handleAdd(formData: FormData) {
+  // onSubmit, not <form action>: React 19 resets a form after its action
+  // returns, which cleared the typed fields even when the save failed
+  // (1.9.0). The form is reset only after a save.
+  function handleAdd(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     setError("");
     startTransition(async () => {
-      const result = await addClinic(formData);
+      let result: Awaited<ReturnType<typeof addClinic>>;
+      try {
+        result = await addClinic(formData);
+      } catch {
+        // No answer (the network): the form stays as typed.
+        setError(t("genericError"));
+        return;
+      }
       if (result.error) {
         setError(errorMessage(t, result.code));
       } else {
@@ -128,10 +140,18 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   const [editError, setEditError] = useState("");
   const several = locationsOn && clinics.length >= 2;
 
-  function handleEdit(id: string, formData: FormData) {
+  function handleEdit(id: string, e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     setEditError("");
     startTransition(async () => {
-      const result = await updateClinic(id, formData);
+      let result: Awaited<ReturnType<typeof updateClinic>>;
+      try {
+        result = await updateClinic(id, formData);
+      } catch {
+        setEditError(t("genericError"));
+        return;
+      }
       if (result.error) {
         setEditError(errorMessage(t, result.code));
         return;
@@ -204,7 +224,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
               {error}
             </div>
           )}
-          <form ref={formRef} action={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form ref={formRef} onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-sm font-semibold text-slate-700 mb-1">{t("nameLabel")} <span className="text-red-400">*</span></label>
               <input name="name" required placeholder={t("namePlaceholder")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
@@ -326,7 +346,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                   )}
                 </div>
                 {editingId === clinic.id && (
-                  <form action={(fd) => handleEdit(clinic.id, fd)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <form onSubmit={(e) => handleEdit(clinic.id, e)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {editError && <div role="alert" data-testid="location-edit-error" className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">{editError}</div>}
                     <div className="sm:col-span-2">
                       <label className="mb-1 block text-sm font-semibold text-slate-700">{t("nameLabel")} <span className="text-red-400">*</span></label>
