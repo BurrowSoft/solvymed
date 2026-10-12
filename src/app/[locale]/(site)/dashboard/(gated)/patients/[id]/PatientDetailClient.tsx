@@ -31,6 +31,7 @@ import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
+import { safeCall, NETWORK_ERROR, NETWORK_FAILURE } from "@/lib/netError";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -230,7 +231,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   useEffect(() => {
     if (!documentsOn) return;
     let alive = true;
-    void loadPatientDocuments(patientId).then((r) => {
+    // Titles only: without an answer the refs show as before (1.9.0).
+    void safeCall(() => loadPatientDocuments(patientId), NETWORK_FAILURE).then((r) => {
       if (!alive || !r.ok) return;
       setDocTitles({ byId: new Map(r.data.documents.map((d) => [d.id, d.title])), byPath: new Map(r.data.documents.map((d) => [d.storagePath, d.title])) });
     });
@@ -243,7 +245,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
     const last = rows[rows.length - 1];
     if (!last) return;
     startTransition(async () => {
-      const next = await loadAccessLog(patientId, last.at, locale);
+      const next = await safeCall(() => loadAccessLog(patientId, last.at, locale), "failed" as const);
       if (next === "failed" || next === null) { setFailed(true); return; }
       setRows((r) => [...r, ...next.rows]);
       setHasMore(next.hasMore);
@@ -387,9 +389,9 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
   function handleGenerateCode() {
     setCodeError("");
     startCodeTransition(async () => {
-      const result = await generatePatientInviteCode(patient.id);
+      const result = await safeCall(() => generatePatientInviteCode(patient.id), NETWORK_ERROR);
       if (result.error) { setCodeError(errorText(result.error)); return; }
-      if (result.code) setInviteCode(result.code);
+      if ("code" in result && result.code) setInviteCode(result.code);
     });
   }
 
@@ -402,8 +404,10 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
   }
 
   function handleToggleBlock() {
+    setError("");
     startBlockTransition(async () => {
-      await toggleBookingBlock(patient.id, !patient.booking_blocked);
+      const r = await safeCall(() => toggleBookingBlock(patient.id, !patient.booking_blocked), NETWORK_ERROR);
+      if (r && "error" in r && r.error) setError(errorText(r.error));
     });
   }
 
@@ -416,7 +420,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     const { blocking } = missingRequired(rules, { ...stored, ...typed }, idKind, stored);
     if (blocking.length) { setError(tf("missing", { fields: blocking.map(fieldLabels.missing).join(", ") })); return; }
     startTransition(async () => {
-      const result = await updatePatient(patient.id, formData);
+      const result = await safeCall(() => updatePatient(patient.id, formData), NETWORK_ERROR);
       if (result?.error === "missing_fields" && "fields" in result && Array.isArray(result.fields)) {
         setError(tf("missing", { fields: (result.fields as FieldKey[]).map(fieldLabels.missing).join(", ") }));
         return;
@@ -440,7 +444,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     setError("");
     setOfferArchive(false);
     startTransition(async () => {
-      const result = await deletePatient(patient.id);
+      const result = await safeCall(() => deletePatient(patient.id), NETWORK_ERROR);
       if (result?.error) {
         // History or an appointment was added since the page loaded:
         // archive instead.
@@ -847,9 +851,9 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
     setError("");
     startTransition(async () => {
       const result =
-        dialog.mode === "new" ? await createRecord(patientId, formData)
-        : dialog.mode === "edit" ? await updateRecord(dialog.record.id, patientId, formData)
-        : await addRecordCorrection(dialog.record.id, patientId, formData);
+        dialog.mode === "new" ? await safeCall(() => createRecord(patientId, formData), NETWORK_ERROR)
+        : dialog.mode === "edit" ? await safeCall(() => updateRecord(dialog.record.id, patientId, formData), NETWORK_ERROR)
+        : await safeCall(() => addRecordCorrection(dialog.record.id, patientId, formData), NETWORK_ERROR);
       if (result?.error) { setError(errorText(result.error)); return; }
       setDialog(null);
     });
@@ -859,7 +863,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
     if (!confirm(t("deleteRecordConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const result = await deleteRecord(id, patientId);
+      const result = await safeCall(() => deleteRecord(id, patientId), NETWORK_ERROR);
       if (result?.error) setListError(errorText(result.error));
     });
   }
@@ -1107,7 +1111,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (!confirm(t("deleteRecordConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const r = await deleteMedicalDocument(id, patientId);
+      const r = await safeCall(() => deleteMedicalDocument(id, patientId), NETWORK_FAILURE);
       if (!r.ok) setListError(errorText(r.code));
     });
   }
@@ -1182,9 +1186,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setError("");
     startTransition(async () => {
       const result =
-        dialog.mode === "new" ? await createPrescription(patientId, formData)
-        : dialog.mode === "edit" ? await updatePrescription(dialog.rx.id, patientId, formData)
-        : await addPrescriptionCorrection(dialog.rx.id, patientId, formData);
+        dialog.mode === "new" ? await safeCall(() => createPrescription(patientId, formData), NETWORK_ERROR)
+        : dialog.mode === "edit" ? await safeCall(() => updatePrescription(dialog.rx.id, patientId, formData), NETWORK_ERROR)
+        : await safeCall(() => addPrescriptionCorrection(dialog.rx.id, patientId, formData), NETWORK_ERROR);
       if (result?.error) { setError(errorText(result.error)); return; }
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
@@ -1198,7 +1202,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (!confirm(t("deletePrescriptionConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const result = await deletePrescription(id, patientId);
+      const result = await safeCall(() => deletePrescription(id, patientId), NETWORK_ERROR);
       if (result?.error) setListError(errorText(result.error));
     });
   }
@@ -1446,7 +1450,8 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
     setError("");
     setUpcoming(null);
     setLoadingPreview(true);
-    getArchivePreview(patient.id).then((preview) => {
+    // No answer: no count, and Arquivar stays usable (it was disabled for good).
+    safeCall(() => getArchivePreview(patient.id), null).then((preview) => {
       if (cancelled) return;
       setUpcoming(preview?.upcomingAppointments ?? null);
       setLoadingPreview(false);
@@ -1457,7 +1462,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
   function handleArchive() {
     setError("");
     startTransition(async () => {
-      const result = await archivePatient(patient.id);
+      const result = await safeCall(() => archivePatient(patient.id), NETWORK_ERROR);
       if ("error" in result && result.error !== "already_archived") {
         setError(t("archiveError"));
         return;
@@ -1502,7 +1507,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, archived
   function handleRestore() {
     setError("");
     startTransition(async () => {
-      const result = await restorePatient(patientId);
+      const result = await safeCall(() => restorePatient(patientId), NETWORK_ERROR);
       if ("error" in result) { setError(tPatients("restoreError")); return; }
       router.refresh();
     });

@@ -11,6 +11,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { acceptProposal, declineProposal } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
 import { signOutHere } from "@/lib/signOut";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 
 type ProfessionalInfo = { name: string; specialty: string; clinicName?: string } | null;
@@ -107,7 +108,7 @@ export default function PendingConfirmationPage() {
   async function handleAccept(id: string) {
     setActingId(id);
     setActionError("");
-    const result = await acceptProposal(id);
+    const result = await safeCall(() => acceptProposal(id), NETWORK_ERROR);
     setActingId(null);
     if (result?.error) { setActionError(actionErrorText(result.error)); return; }
     // A successful accept links the patient (accept_appointment_proposal
@@ -119,7 +120,7 @@ export default function PendingConfirmationPage() {
   async function handleDecline(id: string) {
     setActingId(id);
     setActionError("");
-    const result = await declineProposal(id);
+    const result = await safeCall(() => declineProposal(id), NETWORK_ERROR);
     setActingId(null);
     if (result?.error) { setActionError(actionErrorText(result.error)); return; }
     await load(false);

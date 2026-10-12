@@ -5,6 +5,30 @@ import { signOutHere } from "@/lib/signOut";
 // and the auth client kept the session: this browser stayed signed in.
 
 describe("signOutHere", () => {
+  const AUTH = ["sb-abc-auth-token", "sb-abc-auth-token.0", "sb-abc-auth-token.1", "sb-abc-auth-token-code-verifier"];
+  const cookies = () => document.cookie.split(";").map((c) => c.split("=")[0].trim()).filter(Boolean);
+
+  it("offline, the auth cookies go at once even though auth-js's local sign-out fails too (7e's ❌)", async () => {
+    for (const n of [...AUTH, "NEXT_LOCALE"]) document.cookie = `${n}=v; path=/`;
+    // As auth-js: "local" also calls the server first, and keeps the session when it can't.
+    const offline = vi.fn(async () => ({ error: { name: "AuthRetryableFetchError" } }));
+    const stopAutoRefresh = vi.fn();
+    await signOutHere({ signOut: offline, stopAutoRefresh });
+    expect(offline.mock.calls).toEqual([[], [{ scope: "local" }]]);
+    expect(stopAutoRefresh).toHaveBeenCalled();
+    expect(cookies().filter((n) => AUTH.includes(n))).toEqual([]);
+    // Other cookies stay.
+    expect(cookies()).toContain("NEXT_LOCALE");
+    document.cookie = "NEXT_LOCALE=; Max-Age=0; path=/";
+  });
+  it("online, nothing extra: the server sign-out has already removed the session", async () => {
+    document.cookie = "sb-abc-auth-token=v; path=/";
+    await signOutHere({ signOut: vi.fn(async () => ({ error: null })) });
+    // (auth-js removed it itself; this fake doesn't, so it's still here)
+    expect(cookies()).toContain("sb-abc-auth-token");
+    document.cookie = "sb-abc-auth-token=; Max-Age=0; path=/";
+  });
+
   it("the server answers: one sign-out, everywhere", async () => {
     const signOut = vi.fn(async () => ({ error: null }));
     await signOutHere({ signOut });

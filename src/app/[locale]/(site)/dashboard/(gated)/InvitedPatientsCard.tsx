@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { NETWORK_FAILURE, safeCall } from "@/lib/netError";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { keepInvitedPatient, removeInvitedPatient } from "./patients/actions";
@@ -25,7 +26,8 @@ export function InvitedPatientsCard({ patients, total, prefix }: { patients: Inv
     setErrors((e) => ({ ...e, [id]: "" }));
     setPendingId(id);
     start(async () => {
-      const r = kind === "keep" ? await keepInvitedPatient(id) : await removeInvitedPatient(id);
+      // No answer (1.9.0): the row's error, and its buttons come back.
+      const r = await safeCall(() => (kind === "keep" ? keepInvitedPatient(id) : removeInvitedPatient(id)), NETWORK_FAILURE);
       setPendingId(null);
       if (r.ok) setDone((d) => ({ ...d, [id]: kind === "keep" ? "kept" : "removed" }));
       else setErrors((e) => ({ ...e, [id]: t("invitedError") }));

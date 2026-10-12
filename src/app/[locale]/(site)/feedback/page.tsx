@@ -9,6 +9,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { IconBadge } from "@/components/IconBadge";
+import { safeCall,  } from "@/lib/netError";
 
 const RATINGS = [
   { value: 1, label: "😞" },
@@ -41,7 +42,7 @@ export default function FeedbackPage() {
     fd.set("email", email);
     fd.set("message", message);
     if (rating) fd.set("rating", String(rating));
-    const result = await submitFeedback(fd);
+    const result = await safeCall(() => submitFeedback(fd), { error: "failed" } as const);
     setLoading(false);
     if (result?.error) {
       setError(t(`errors.${result.error}`));
