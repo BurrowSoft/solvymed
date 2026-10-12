@@ -66,7 +66,7 @@ export function restEnd(start: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onDirtyChange, reasonField, canShare = false }: {
+export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onAlreadySaved, onDirtyChange, reasonField, canShare = false }: {
   state: DocDialogState;
   patientId: string;
   patientName: string;
@@ -78,6 +78,9 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // After a save (nothing to discard).
   // After a save; with the new / corrected document to share (1.8.0 B2).
   onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean }) => void;
+  // Saved before the doctor's last changes (216, a retry): the host closes
+  // the dialog and shows the stored version with a message.
+  onAlreadySaved?: () => void;
   // Whether anything changed since the dialog opened (12's #413 row, ad).
   onDirtyChange?: (dirty: boolean) => void;
   reasonField: React.ReactNode;
@@ -113,6 +116,10 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // the page asks too (the browser's own prompt).
   const snapshot = JSON.stringify({ type, lang, fields, body });
   const opened = useRef(snapshot);
+  // Saved once (216): one id for this dialog, sent with every try (a retry
+  // after a lost answer finds the first save); a new one only on id_conflict.
+  const [clientId, setClientId] = useState(() => crypto.randomUUID());
+  const tries = useRef(0);
   const dirty = snapshot !== opened.current;
   useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
   useEffect(() => {
@@ -166,11 +173,13 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
     setError("");
     start(async () => {
-      const payload = { type, lang: effLang, fields, body };
+      const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
       const r = state.mode === "new" ? await safeCall(() => createMedicalDocument(patientId, payload), NETWORK_FAILURE)
         : state.mode === "edit" ? await safeCall(() => updateMedicalDocument(state.doc.id, patientId, payload), NETWORK_FAILURE)
         : await safeCall(() => correctMedicalDocument(state.doc.id, patientId, { ...payload, reason }), NETWORK_FAILURE);
       if (!r.ok) {
+        if (r.code === "already_saved_changed") { onAlreadySaved?.(); return; }
+        if (r.code === "id_conflict") { setClientId(crypto.randomUUID()); tries.current = 0; }
         const k = r.code.startsWith("field_") ? r.code.slice(6) : null;
         setError(k ? t(`err.${k}` as "err.date") : r.code === "buddhist_year" ? tdate("buddhistYear") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));
         return;

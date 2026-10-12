@@ -2269,6 +2269,9 @@
     "zoomOut": "Alejar",
     "adjust": "Ajustar"
   },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
   "offline": {
     "banner": "Sin conexión a internet. Puedes ver lo que está abierto, pero los cambios no se guardarán."
   }

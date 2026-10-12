@@ -2269,6 +2269,9 @@
     "zoomOut": "Perkecil",
     "adjust": "Sesuaikan"
   },
+  "save": {
+    "alreadySavedChanged": "Ini sudah tersimpan sebelum perubahan terakhir Anda. Perubahan setelahnya tidak diterapkan; periksa versi yang tersimpan."
+  },
   "offline": {
     "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   }
