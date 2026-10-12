@@ -9,6 +9,10 @@ export default defineConfig({
   workers: 1,
   retries: process.env.CI ? 1 : 0,
   reporter: "list",
+  // The smoke suite's run tag, leftover sweep and ledger retry (e2e/smoke/
+  // admin.ts). Without the service key both only set the run tag.
+  globalSetup: "./e2e/smoke/global-setup.ts",
+  globalTeardown: "./e2e/smoke/global-teardown.ts",
   use: {
     baseURL: BASE_URL,
     trace: "retain-on-failure",
