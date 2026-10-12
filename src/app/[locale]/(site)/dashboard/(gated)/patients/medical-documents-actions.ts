@@ -14,7 +14,7 @@ import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
-import { DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
+import { DOC_LANGS, OFFERED_DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
 // server flag 'clinical_documents'): the doctor's certificates, declarations,
@@ -58,8 +58,9 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
-  // A new Thai certificate: Thai or English only (ad).
-  if (!docLangsForType(input.type, DOC_LANGS).includes(c.lang)) return { ok: false, code: "check_failed" };
+  // A new document: an offered language only (es/de/fr/it hidden until
+  // reviewed, 02); a new Thai certificate: Thai or English only (ad).
+  if (!docLangsForType(input.type, OFFERED_DOC_LANGS).includes(c.lang)) return { ok: false, code: "check_failed" };
   const { data, error } = await me.supabase.from("medical_documents").insert({
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
@@ -76,9 +77,9 @@ export async function updateMedicalDocument(id: string, patientId: string, input
   if (!me) return { ok: false, code: "not_doctor" };
   const c = await checked(me, input);
   if (!c.ok) return c;
-  // A language the type doesn't offer only if the document already has it
-  // (an older Thai certificate keeps its language; ad).
-  if (!docLangsForType(input.type, DOC_LANGS).includes(c.lang)) {
+  // A language the type doesn't offer (or a hidden one, 02) only if the
+  // document already has it (an older Thai certificate keeps its language; ad).
+  if (!docLangsForType(input.type, OFFERED_DOC_LANGS).includes(c.lang)) {
     const { data: cur } = await me.supabase.from("medical_documents").select("language").eq("id", id).eq("professional_id", me.uid).maybeSingle();
     if ((cur as { language?: string } | null)?.language !== c.lang) return { ok: false, code: "check_failed" };
   }
