@@ -2057,8 +2057,8 @@
           ]
         },
         "web": {
-          "pt": "Os documentos clínicos em PDF (atestados, declarações e solicitações de exames) também listam todos os locais no rodapé.",
-          "en": "Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer."
+          "pt": "na barra lateral, **Clínicas** abre **Minhas Clínicas** (não fica em Configurações); lá, cada local tem **Editar** (nome, endereço, cidade, estado e telefone) e **Tornar principal**. Em **Configurações → Horário de atendimento**, escolha o **Local** de cada dia. Com dois ou mais locais, receitas, recibos e o histórico impressos listam todos os locais no rodapé (nome, endereço e telefone). Os documentos clínicos em PDF (atestados, declarações e solicitações de exames) também listam todos os locais no rodapé.",
+          "en": "in the sidebar, **Clinics** opens **My Clinics** (it isn't under Settings); there, each location has **Edit** (name, address, city, state and phone) and **Make primary**. In **Settings → Working hours**, choose each day's **Location**. With two or more locations, printed prescriptions, receipts and the history list every location in the footer (name, address and phone). Clinical document PDFs (certificates, declarations and exam requests) also list every location in the footer."
         },
         "webUnavailable": false,
         "open": "settings-clinic",
