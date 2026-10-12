@@ -68,22 +68,27 @@ export function isOffline(): boolean {
 // uninstall for the last one out.
 let installs = 0;
 let original: typeof fetch | null = null;
+let guard: typeof fetch | null = null;
 export function installOfflineFetchGuard(supabaseUrl: string | undefined): () => void {
   if (typeof window === "undefined") return () => {};
   if (installs++ === 0) {
     original = window.fetch;
     const base = original;
-    window.fetch = function guardedFetch(input: RequestInfo | URL, init?: RequestInit) {
+    guard = function guardedFetch(input: RequestInfo | URL, init?: RequestInit) {
       if (isOffline() && blocksWhenOffline([input, init], window.location.origin, supabaseUrl)) {
         return Promise.reject(new OfflineBlockedError());
       }
       return base.call(window, input, init);
     } as typeof fetch;
+    window.fetch = guard;
   }
   return () => {
     if (--installs === 0 && original) {
-      window.fetch = original;
+      // Only if nothing wrapped fetch again after us (ec): never undo someone
+      // else's wrapper.
+      if (window.fetch === guard) window.fetch = original;
       original = null;
+      guard = null;
     }
   };
 }

@@ -19,6 +19,8 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 vi.mock("next-intl/server", () => ({ getTranslations: async () => (k: string) => k }));
 vi.mock("next/navigation", () => ({ redirect: () => { throw new Error("REDIRECT"); } }));
+// The page mounts the offline guard (1.9.0), a client component with its own test.
+vi.mock("@/components/OfflineGuard", () => ({ OfflineGuard: () => null }));
 vi.mock("@/app/[locale]/(site)/book/[professionalId]/BookingClient", () => ({ BookingClient: () => <div>CALENDAR</div> }));
 
 import BookPage from "@/app/[locale]/(site)/book/[professionalId]/page";
