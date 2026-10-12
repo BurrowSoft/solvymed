@@ -6,12 +6,13 @@ import { createClient } from "@/lib/supabase/client";
 import { isSkewed, measureSkew, setKnownSkew } from "@/lib/clockSkew";
 
 // The wrong-clock guard (1.9.0 item 1.7; lib/clockSkew). Mounted with the
-// offline guard on every signed-in screen. The browser auth client starts
-// with its background refresh OFF (lib/supabase/client); this turns it on
-// once the device's clock checks out, and keeps it off, with a banner,
-// while the clock is more than 5 minutes off. Nothing typed is lost: the
-// session stays (the server keeps its own cookies fresh by its own clock),
-// and an expired token is still refreshed on demand by the next request.
+// offline guard on every signed-in screen. It measures the device's clock
+// against the server's; the offset shifts every token expiry to the device's
+// clock (skewAwareFetch), so the auth client refreshes when a token really
+// expires, then the background refresh (off until now, lib/supabase/client)
+// starts. While the clock is more than 5 minutes off, a banner says how to
+// fix it. Nobody is signed out and nothing typed is lost (the server also
+// refreshes an expired token itself: lib/supabase/userWithRefresh).
 // Checked on mount, when the tab comes back, and every 10 minutes.
 
 const RECHECK_MS = 10 * 60_000;
@@ -28,10 +29,11 @@ export function ClockSkewGuard() {
       if (!alive) return;
       // A failed check counts as a right clock (never block on it).
       const wrong = skew !== null && isSkewed(skew);
+      // With the skew known, the token expiries are shifted to this clock
+      // (lib/clockSkew), so the background refresh is right either way (ec).
       setKnownSkew(skew);
       setSkewed(wrong);
-      if (wrong) await auth.stopAutoRefresh();
-      else await auth.startAutoRefresh();
+      await auth.startAutoRefresh();
     };
     void check();
     const onVisible = () => { if (document.visibilityState === "visible") void check(); };

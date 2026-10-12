@@ -49,12 +49,12 @@ describe("ClockSkewGuard", () => {
     expect(screen.queryByTestId("clock-skew-banner")).toBeNull();
   });
 
-  it("a clock 2 h fast: the refresh stays stopped and the banner says how to fix it", async () => {
+  it("a clock 2 h fast: the banner says how to fix it; the refresh runs (expiries shifted to this clock)", async () => {
     vi.stubGlobal("fetch", serverSays(2 * 3_600_000));
     show();
     await settle();
-    expect(auth.stopAutoRefresh).toHaveBeenCalled();
-    expect(auth.startAutoRefresh).not.toHaveBeenCalled();
+    expect(auth.startAutoRefresh).toHaveBeenCalled();
+    expect(auth.stopAutoRefresh).not.toHaveBeenCalled();
     expect(screen.getByTestId("clock-skew-banner").textContent).toBe(en.clockSkew.banner);
   });
 
