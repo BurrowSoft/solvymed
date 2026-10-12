@@ -1082,7 +1082,7 @@
             },
             {
               "type": "p",
-              "text": "Escolha o **Idioma do documento** (muda os rótulos, a data e o calendário; o texto é você quem escreve) e preencha os campos. O atestado tailandês sai em tailandês ou inglês (o modelo do Conselho Médico existe nesses dois). O CID só entra no atestado se você marcar **Incluir CID** (só com o consentimento do paciente)."
+              "text": "Escolha o **Idioma do documento** (muda os rótulos, a data e o calendário; o texto é você quem escreve) e preencha os campos. Os idiomas são português, inglês e tailandês; um documento já salvo em outro idioma continua nele. O atestado tailandês sai em tailandês ou inglês (o modelo do Conselho Médico existe nesses dois). O CID só entra no atestado se você marcar **Incluir CID** (só com o consentimento do paciente)."
             },
             {
               "type": "p",
@@ -1116,7 +1116,7 @@
             },
             {
               "type": "p",
-              "text": "Choose the **Document language** (it changes the labels, the date and the calendar; you write the text) and fill in the fields. The Thai medical certificate is in Thai or English (the Medical Council form exists in those two). The ICD code is on a certificate only if you tick **Include ICD code** (only with the patient's consent)."
+              "text": "Choose the **Document language** (it changes the labels, the date and the calendar; you write the text) and fill in the fields. The languages are Portuguese, English and Thai; a document already saved in another language keeps it. The Thai medical certificate is in Thai or English (the Medical Council form exists in those two). The ICD code is on a certificate only if you tick **Include ICD code** (only with the patient's consent)."
             },
             {
               "type": "p",
