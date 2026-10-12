@@ -2297,5 +2297,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "adjust": "Adjust"
+  },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
   }
 }

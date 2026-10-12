@@ -2267,5 +2267,8 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "adjust": "调整"
+  },
+  "save": {
+    "alreadySavedChanged": "此内容在您最后一次修改之前已保存。之后的修改未生效，请查看已保存的版本。"
   }
 }

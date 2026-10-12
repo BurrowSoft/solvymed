@@ -6,7 +6,7 @@ import { getActiveProfId, isActiveProfessional, isLockedOut } from "@/lib/active
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
-import { clientIdFrom, isDuplicateKey, savedBefore } from "@/lib/saveOnce";
+import { clientIdFrom, isDuplicateKey, isRetry, samePrescription, sameRecord } from "@/lib/saveOnce";
 import { recordInput, TEMPLATE_NAME_MAX } from "@/lib/recordTemplates";
 import { recordTypeKey } from "@/lib/recordTypes";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
@@ -368,9 +368,14 @@ export async function createRecord(patientId: string, formData: FormData) {
   });
 
   if (error) {
-    const repeat = !!id && isDuplicateKey(error) && await savedBefore(() =>
-      supabase.from("medical_records").select("id").eq("id", id).eq("professional_id", user.id).maybeSingle());
-    if (!repeat) return { error: actionError(error.message) };
+    // A repeat (216): the first try was saved. Read it back (the doctor's own
+    // row); if the form changed since, say so instead of a plain success.
+    const { data: stored } = id && isDuplicateKey(error)
+      ? await supabase.from("medical_records").select("id, content, sections").eq("id", id).eq("professional_id", user.id).maybeSingle()
+      : { data: null };
+    if (!stored) return { error: actionError(error.message) };
+    revalidatePath(`/dashboard/patients/${patientId}`);
+    if (!sameRecord(stored, { content, sections })) return { success: true, alreadySavedChanged: true };
   }
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
@@ -419,7 +424,7 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
   // original's template name); without, the original 3-argument one.
   // p_id (216): a retry of the same correction returns it, never a second one.
   const pId = clientIdFrom(formData.get("client_id"));
-  const { error } = sections
+  const { data: correctionId, error } = sections
     ? await supabase.rpc("add_record_correction", { p_record_id: recordId, p_content: content, p_sections: sections, p_reason: reason, p_id: pId })
     : await supabase.rpc("add_record_correction", {
         p_record_id: recordId,
@@ -429,6 +434,10 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
       });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
+  if (pId && isRetry(formData.get("client_try")) && typeof correctionId === "string") {
+    const { data: stored } = await supabase.from("medical_records").select("content, sections, correction_reason").eq("id", correctionId).maybeSingle();
+    if (stored && !sameRecord(stored, { content, sections, reason })) return { success: true, alreadySavedChanged: true };
+  }
   return { success: true };
 }
 
@@ -467,8 +476,14 @@ export async function createPrescription(patientId: string, formData: FormData) 
   if (error) return { error: error.message?.includes("content_required") ? "medication_required" : actionError(error.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
+  const savedId = ((data as string | null) ?? id) as string;
+  // A retry returns the first save (216): compare it with this try.
+  if (isRetry(formData.get("client_try"))) {
+    const { data: stored } = await supabase.from("prescriptions").select("notes, prescription_items(name, dosage, frequency, duration)").eq("id", savedId).maybeSingle();
+    if (stored && !samePrescription(stored, { notes, items })) return { success: true, id: savedId, alreadySavedChanged: true };
+  }
   // The id: the patient's copy is made from it (1.8.0 B2).
-  return { success: true, id: ((data as string | null) ?? id) as string };
+  return { success: true, id: savedId };
 }
 
 export async function toggleBookingBlock(patientId: string, blocked: boolean) {
@@ -592,6 +607,11 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
   });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
+  if (isRetry(formData.get("client_try")) && typeof correctionId === "string") {
+    const { data: stored } = await supabase.from("prescriptions").select("notes, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("id", correctionId).maybeSingle();
+    const notes = (formData.get("notes") as string)?.trim() || null;
+    if (stored && !samePrescription(stored, { notes, items: meds, reason })) return { success: true, id: correctionId, alreadySavedChanged: true };
+  }
   return { success: true, id: (correctionId as string | null) ?? null };
 }
 

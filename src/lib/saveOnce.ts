@@ -32,3 +32,46 @@ export async function savedBefore(read: () => PromiseLike<{ data: unknown; error
     return false;
   }
 }
+
+// ── A retry after the doctor CHANGED the form (02 "(c) everywhere", c5's
+// rule, the same in the app): the first try was saved, the answer lost, and
+// the form edited before trying again. Never overwrite the saved version
+// silently, never drop the edit silently: compare what was stored with what
+// this try sent, on the form's key fields; different → the action says so
+// (alreadySavedChanged) and the page shows the STORED version with a
+// message; the doctor then uses Edit (within 24 h) or a correction.
+
+// The try number the form sends with its id (1 = the first).
+export function isRetry(v: unknown): boolean {
+  return Number(v) > 1;
+}
+
+const txt = (v: unknown) => (typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim());
+// Key order and missing-vs-null don't matter; values compare trimmed.
+function norm(v: unknown): unknown {
+  if (Array.isArray(v)) return v.map(norm);
+  if (v && typeof v === "object") {
+    return Object.fromEntries(Object.keys(v as object).sort()
+      .filter((k) => (v as Record<string, unknown>)[k] != null && (v as Record<string, unknown>)[k] !== "")
+      .map((k) => [k, norm((v as Record<string, unknown>)[k])]));
+  }
+  return typeof v === "string" ? v.trim() : v;
+}
+const sameJson = (a: unknown, b: unknown) => JSON.stringify(norm(a ?? null)) === JSON.stringify(norm(b ?? null));
+
+export function sameRecord(stored: { content?: unknown; sections?: unknown; correction_reason?: unknown }, sent: { content: string; sections?: unknown; reason?: string | null }): boolean {
+  return txt(stored.content) === txt(sent.content) && sameJson(stored.sections, sent.sections) && txt(stored.correction_reason) === txt(sent.reason);
+}
+
+type Item = { name?: unknown; dosage?: unknown; frequency?: unknown; duration?: unknown };
+export function samePrescription(stored: { notes?: unknown; prescription_items?: Item[] | null; correction_reason?: unknown }, sent: { notes: string | null; items: Item[]; reason?: string | null }): boolean {
+  // The items as a list (the stored order isn't guaranteed: compared sorted).
+  const key = (it: Item) => [it.name, it.dosage, it.frequency, it.duration].map(txt).join("\u0000");
+  const a = (stored.prescription_items ?? []).map(key).sort();
+  const b = sent.items.map(key).sort();
+  return txt(stored.notes) === txt(sent.notes) && a.length === b.length && a.every((x, i) => x === b[i]) && txt(stored.correction_reason) === txt(sent.reason);
+}
+
+export function sameDocument(stored: { body?: unknown; fields?: unknown; correction_reason?: unknown }, sent: { body: string | null; fields: unknown; reason?: string | null }): boolean {
+  return txt(stored.body) === txt(sent.body) && sameJson(stored.fields, sent.fields) && txt(stored.correction_reason) === txt(sent.reason);
+}

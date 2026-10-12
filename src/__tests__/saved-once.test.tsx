@@ -71,7 +71,7 @@ describe("records and documents: a direct insert under the form's id", () => {
   it("a repeat (23505) that reads back as this doctor's own row is a success; otherwise an error", async () => {
     const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
     db.insertError = { code: "23505", message: "duplicate key value violates unique constraint" };
-    db.readBack = { id: ID };
+    db.readBack = { id: ID, content: "Retorno", sections: null } as never;
     expect(await createRecord("p1", fd({ content: "Retorno", client_id: ID }))).toEqual({ success: true });
     db.readBack = null;
     expect(await createRecord("p1", fd({ content: "Retorno", client_id: ID }))).toHaveProperty("error");
@@ -81,7 +81,7 @@ describe("records and documents: a direct insert under the form's id", () => {
     const { createMedicalDocument } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions");
     const input = { type: "declaration" as const, lang: "pt-BR" as const, fields: { attendedOn: "2026-10-01", from: "09:00", to: "10:00" } as never, body: "Declaro…", clientId: ID };
     db.insertError = { code: "23505", message: "duplicate key" };
-    db.readBack = { id: ID };
+    db.readBack = { id: ID, body: input.body, fields: input.fields } as never;
     const r = await createMedicalDocument("11111111-1111-4111-8111-111111111111", input);
     expect(r).toEqual({ ok: true, data: ID });
     expect(db.inserts[0].row.id).toBe(ID);
@@ -122,7 +122,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: 
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions", () => new Proxy({}, { get: () => vi.fn(async () => ({})) }));
 
 describe("the record dialog keeps its id across retries", () => {
-  afterEach(() => { sent.calls.length = 0; });
+  afterEach(() => { sent.calls.length = 0; vi.restoreAllMocks(); });
 
   it("a lost answer, then a retry: the same client_id; reopening: a new one", async () => {
     const actions = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
@@ -156,5 +156,87 @@ describe("the record dialog keeps its id across retries", () => {
     await save();
     await waitFor(() => expect(sent.calls).toHaveLength(3));
     expect(sent.calls[2].get("client_id")).not.toBe(first);
+  });
+});
+
+// ── A retry after the doctor changed the form (02 "(c) everywhere", c5) ──
+import { isRetry, sameDocument, samePrescription, sameRecord } from "@/lib/saveOnce";
+
+describe("comparing the stored version with the retry", () => {
+  it("records, prescriptions, documents: trimmed text, sections/fields as data, items as a list", () => {
+    expect(isRetry("1")).toBe(false);
+    expect(isRetry("2")).toBe(true);
+    expect(sameRecord({ content: "Retorno ", sections: null }, { content: "Retorno" })).toBe(true);
+    expect(sameRecord({ content: "Retorno" }, { content: "Retorno, febre" })).toBe(false);
+    expect(sameRecord({ content: "x", sections: [{ title: "A", text: "1" }] }, { content: "x", sections: [{ text: "1", title: "A" }] })).toBe(true);
+    expect(sameRecord({ content: "x", correction_reason: "erro" }, { content: "x", reason: "outro" })).toBe(false);
+    const item = { name: "Dipirona", dosage: "1 cp", frequency: "6/6 h", duration: "3 dias" };
+    expect(samePrescription({ notes: null, prescription_items: [item] }, { notes: "", items: [{ ...item, name: "Dipirona " }] })).toBe(true);
+    expect(samePrescription({ notes: null, prescription_items: [item] }, { notes: null, items: [{ ...item, duration: "5 dias" }] })).toBe(false);
+    expect(samePrescription({ notes: null, prescription_items: [item] }, { notes: null, items: [item, item] })).toBe(false);
+    expect(sameDocument({ body: "Atesto…", fields: { days: 2, date: "2026-10-07" } }, { body: "Atesto… ", fields: { date: "2026-10-07", days: 2 } })).toBe(true);
+    expect(sameDocument({ body: "Atesto…", fields: { days: 2 } }, { body: "Atesto…", fields: { days: 3 } })).toBe(false);
+  });
+});
+
+describe("the actions on a changed retry", () => {
+  beforeEach(() => { db.insertError = null; db.readBack = null; db.inserts.length = 0; db.rpcs.length = 0; db.rpcResult = { data: ID, error: null }; });
+
+  it("a record: the stored first save differs → alreadySavedChanged; equal → a plain success", async () => {
+    const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
+    db.insertError = { code: "23505", message: "duplicate key" };
+    db.readBack = { id: ID, content: "Retorno", sections: null } as never;
+    expect(await createRecord("p1", fd({ content: "Retorno, febre", client_id: ID, client_try: "2" }))).toEqual({ success: true, alreadySavedChanged: true });
+    expect(await createRecord("p1", fd({ content: "Retorno", client_id: ID, client_try: "2" }))).toEqual({ success: true });
+  });
+
+  it("a prescription retry is read back and compared; a first try isn't", async () => {
+    const { createPrescription } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
+    db.readBack = { notes: null, prescription_items: [{ name: "Dipirona", dosage: "", frequency: "", duration: "" }] } as never;
+    expect(await createPrescription("p1", fd({ client_id: ID, client_try: "2", name_0: "Amoxicilina" }))).toEqual({ success: true, id: ID, alreadySavedChanged: true });
+    expect(await createPrescription("p1", fd({ client_id: ID, client_try: "2", name_0: "Dipirona" }))).toEqual({ success: true, id: ID });
+    expect(await createPrescription("p1", fd({ client_id: ID, client_try: "1", name_0: "Amoxicilina" }))).toEqual({ success: true, id: ID });
+  });
+
+  it("a medical document: a changed retry → already_saved_changed (the page shows the stored one)", async () => {
+    const { createMedicalDocument } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions");
+    db.insertError = { code: "23505", message: "duplicate key" };
+    db.readBack = { id: ID, body: "Atesto 2 dias", fields: {} } as never;
+    const input = { type: "declaration" as const, lang: "pt-BR" as const, fields: {} as never, clientId: ID, clientTry: 2 };
+    expect(await createMedicalDocument("11111111-1111-4111-8111-111111111111", { ...input, body: "Atesto 3 dias" })).toEqual({ ok: false, code: "already_saved_changed" });
+    expect(await createMedicalDocument("11111111-1111-4111-8111-111111111111", { ...input, body: "Atesto 2 dias" })).toEqual({ ok: true, data: ID });
+  });
+});
+
+describe("the record dialog on a changed retry", () => {
+  afterEach(() => { sent.calls.length = 0; vi.restoreAllMocks(); });
+
+  it("lost answer, the text edited, Save again: the dialog closes and the message says the saved version stands", async () => {
+    const actions = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
+    let tries = 0;
+    vi.spyOn(actions, "createRecord").mockImplementation(async (_p: string, f: FormData) => {
+      sent.calls.push(f);
+      if (tries++ === 0) throw new TypeError("Failed to fetch");
+      return { success: true, alreadySavedChanged: true } as never;
+    });
+    const { PatientTabs } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient");
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <PatientTabs patient={{ id: "p1", full_name: "Ana", created_at: "2026-10-01T12:00:00Z" } as never} records={[]} prescriptions={[]} appointments={[]} locale="pt-BR" currentUserId="d1" timeZone="America/Sao_Paulo" recordTemplates={[]} />
+      </NextIntlClientProvider>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.tabRecords.replace("{n}", "0") }));
+    fireEvent.click(screen.getByRole("button", { name: new RegExp(pt.patientDetail.newRecord) }));
+    fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "Retorno" } });
+    const save = () => act(async () => { fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.saveRecord })); });
+    await save();
+    await waitFor(() => expect(sent.calls).toHaveLength(1));
+    fireEvent.change(screen.getAllByRole("textbox")[0], { target: { value: "Retorno, febre" } });
+    await save();
+    await waitFor(() => expect(sent.calls).toHaveLength(2));
+    expect(sent.calls.map((f) => f.get("client_try"))).toEqual(["1", "2"]);
+    expect(sent.calls[1].get("client_id")).toBe(sent.calls[0].get("client_id"));
+    expect(await screen.findByText(pt.save.alreadySavedChanged)).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: pt.patientDetail.saveRecord })).toBeNull();
   });
 });

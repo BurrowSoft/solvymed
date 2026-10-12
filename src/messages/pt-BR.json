@@ -2267,5 +2267,8 @@
     "zoomIn": "Aproximar",
     "zoomOut": "Afastar",
     "adjust": "Ajustar"
+  },
+  "save": {
+    "alreadySavedChanged": "Isto já tinha sido salvo antes das suas últimas alterações. As alterações posteriores não foram aplicadas; confira a versão salva."
   }
 }

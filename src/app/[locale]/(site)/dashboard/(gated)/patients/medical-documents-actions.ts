@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { readLocationLines } from "@/lib/locationLines";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessLogRefusal } from "@/lib/accessLog";
-import { clientIdFrom, isDuplicateKey, savedBefore } from "@/lib/saveOnce";
+import { clientIdFrom, isDuplicateKey, isRetry, sameDocument } from "@/lib/saveOnce";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
 import { actionError } from "@/lib/dbErrors";
@@ -35,7 +35,7 @@ async function doctor() {
 }
 
 // clientId: the form's id (216, saved once; see lib/saveOnce).
-type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string; clientId?: string };
+type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string; clientId?: string; clientTry?: number };
 
 // The type must be one the practice's country offers, the language one of
 // the seven (the controlled prescription: Portuguese only), the fields
@@ -68,11 +68,15 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
   }).select("id").single();
-  // A retry after a lost answer: the document is already there (216).
-  if (error && clientId && isDuplicateKey(error) && await savedBefore(() =>
-    me.supabase.from("medical_documents").select("id").eq("id", clientId).eq("professional_id", me.uid).maybeSingle())) {
-    revalidatePath(`/dashboard/patients/${patientId}`);
-    return { ok: true, data: clientId };
+  // A retry after a lost answer: the document is already there (216). If
+  // the form changed since, the page shows the stored one with a message.
+  if (error && clientId && isDuplicateKey(error)) {
+    const { data: stored } = await me.supabase.from("medical_documents").select("id, body, fields").eq("id", clientId).eq("professional_id", me.uid).maybeSingle();
+    if (stored) {
+      revalidatePath(`/dashboard/patients/${patientId}`);
+      if (!sameDocument(stored, { body: (input.body ?? "").trim() || null, fields: input.fields })) return { ok: false, code: "already_saved_changed" };
+      return { ok: true, data: clientId };
+    }
   }
   if (error || !data) return { ok: false, code: actionError(error?.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
@@ -116,6 +120,11 @@ export async function correctMedicalDocument(id: string, patientId: string, inpu
   });
   if (error) return { ok: false, code: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
+  // A retry returns the first correction (216): compare it with this try.
+  if (isRetry(input.clientTry) && typeof correctionId === "string") {
+    const { data: stored } = await me.supabase.from("medical_documents").select("body, fields, correction_reason").eq("id", correctionId).maybeSingle();
+    if (stored && !sameDocument(stored, { body: (input.body ?? "").trim() || null, fields: input.fields, reason })) return { ok: false, code: "already_saved_changed" };
+  }
   // The correction's id: the patient's copy is made from it (1.8.0 B2).
   return { ok: true, data: (correctionId as string | null) ?? null };
 }
