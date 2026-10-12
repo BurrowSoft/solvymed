@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { addClinic, deleteClinic, locateClinicCity, makePrimaryClinic, updateClinic, updateClinicLocation } from "./actions";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 // Leaflet needs the browser, and the tiles should load only when a doctor
 // opens the pin dialog: loaded on demand, never on the server.
@@ -112,7 +113,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     const { lat, lng } = pinPos;
     setPinError("");
     startTransition(async () => {
-      const result = await updateClinicLocation(id, lat, lng);
+      const result = await safeCall(() => updateClinicLocation(id, lat, lng), NETWORK_ERROR);
       if (result.error) {
         setPinError(t("genericError"));
         return;
@@ -145,10 +146,13 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   function handleMakePrimary(id: string) {
     setConfirmPrimary(null);
     startTransition(async () => {
-      const result = await makePrimaryClinic(id);
+      const result = await safeCall(() => makePrimaryClinic(id), NETWORK_ERROR);
       if (!result.error) {
         setClinics((prev) => prev.map((c) => ({ ...c, is_primary: c.id === id })).sort((a, b) => Number(!!b.is_primary) - Number(!!a.is_primary)));
         router.refresh();
+      } else {
+        // It failed silently before (1.9.0).
+        setError(t("genericError"));
       }
     });
   }
@@ -162,9 +166,11 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     if (!window.confirm(t("deleteConfirm", { name }))) return;
     setDeletingId(id);
     startTransition(async () => {
-      const result = await deleteClinic(id);
+      const result = await safeCall(() => deleteClinic(id), NETWORK_ERROR);
       if (!result.error) {
         setClinics((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        setError(t("genericError"));
       }
       setDeletingId(null);
     });

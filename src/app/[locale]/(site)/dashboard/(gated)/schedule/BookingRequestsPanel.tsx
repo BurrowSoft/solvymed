@@ -14,6 +14,7 @@ import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
 import { RowPractice, forRow } from "@/components/RowPractice";
+import { NETWORK_ERROR, safeCall } from "@/lib/netError";
 import { DoctorTag, type DoctorTagInfo } from "@/components/DoctorTag";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 
@@ -133,12 +134,19 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   // A request's doctor in "All" (166), else none (the switcher's).
   const pid = (id: string) => bookings.find((x) => x.id === id)?.practice?.id ?? null;
+  // No answer (1.9.0): the schedule's generic error, instead of the throw
+  // replacing the page with the error screen; a refusal keeps its own alert.
+  async function call<T>(fn: () => Promise<T>): Promise<T | typeof NETWORK_ERROR> {
+    const r = await safeCall(fn, NETWORK_ERROR);
+    if (r === NETWORK_ERROR) alert(t("genericError"));
+    return r;
+  }
 
   function handleConfirmClick(b: Booking) {
     const note = notes[b.id] || undefined;
     setActing(`confirm:${b.id}`);
     startTransition(async () => {
-      const result = await forRow(pid(b.id), "confirmBookingAndAddPatient", confirmBookingAndAddPatient)(b.id, note);
+      const result = await call(() => forRow(pid(b.id), "confirmBookingAndAddPatient", confirmBookingAndAddPatient)(b.id, note));
       // The patient's record at this clinic is archived (server-enforced).
       if (result?.error === "patient_archived") alert(t("patientArchivedError"));
     });
@@ -148,16 +156,17 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
     const note = (reasonsLive ? reasons[id] : notes[id]) || undefined;
     setRejectingId(null);
     setActing(`reject:${id}`);
-    startTransition(async () => { await forRow(pid(id), "rejectBooking", rejectBooking)(id, note); });
+    startTransition(async () => { await call(() => forRow(pid(id), "rejectBooking", rejectBooking)(id, note)); });
   }
 
   function handleProposeSubmit(id: string) {
     if (!propDate || !propStart || !propEnd || looksBuddhistEra(propDate)) return;
     const note = notes[id] || undefined;
     startTransition(async () => {
-      const result = await forRow(pid(id), "proposeNewTime", proposeNewTime)(id, propDate, propStart, propEnd, note);
+      const result = await call(() => forRow(pid(id), "proposeNewTime", proposeNewTime)(id, propDate, propStart, propEnd, note));
       if (result?.error === "patient_archived") alert(t("patientArchivedError"));
-      setProposalId(null);
+      // No answer: the proposal stays open with the typed time.
+      if (result !== NETWORK_ERROR) setProposalId(null);
     });
   }
 
@@ -245,7 +254,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {t("proposeNewTime")}
                       </button>
                       <button
-                        onClick={() => { setActing(`dismiss:${b.id}`); startTransition(async () => { await rejectBooking(b.id, undefined); }); }}
+                        onClick={() => { setActing(`dismiss:${b.id}`); startTransition(async () => { await call(() => rejectBooking(b.id, undefined)); }); }}
                         disabled={isPending}
                         className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
                       >
@@ -324,7 +333,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     <div className="flex gap-2">
                       <button
                         onClick={() => { setActing(`accept:${b.id}`); startTransition(async () => {
-                          const result = await forRow(pid(b.id), "acceptRescheduleRequest", acceptRescheduleRequest)(b.id);
+                          const result = await call(() => forRow(pid(b.id), "acceptRescheduleRequest", acceptRescheduleRequest)(b.id));
                           if (result.error === "slot_taken") {
                             alert(t("slotTakenAlert"));
                           } else if (result.error === "proposed_time_expired") {
@@ -340,7 +349,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         {spin(`accept:${b.id}`)}{t("accept")}
                       </button>
                       <button
-                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await forRow(pid(b.id), "declineRescheduleRequest", declineRescheduleRequest)(b.id); }); }}
+                        onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await call(() => forRow(pid(b.id), "declineRescheduleRequest", declineRescheduleRequest)(b.id)); }); }}
                         disabled={isPending}
                         data-testid="reschedule-decline-button"
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"

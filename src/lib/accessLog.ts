@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/nextjs";
 import { dateLocale, plainSpaces } from "./dateLabels";
+import { hasServerCode } from "./netError";
 
 // The record access log (Sprint TH, TH-3; migration 111): who opened a
 // patient's record, and when. The web logs server-side, in the page that
@@ -20,8 +21,9 @@ export function isMissingFunction(error: { code?: string } | null | undefined): 
 // a fetch that never reached the database, has no code: then the caller shows
 // its generic failure (with "Tentar de novo"), not "couldn't record the
 // access" (b2, 1.8.1; the app's logAccessStrict uses the same rule).
+// The shared rule (lib/netError, 1.9.0 offline guard §3).
 export function isAccessLogRefusal(error: { code?: string | null } | null | undefined): boolean {
-  return !!error && typeof error.code === "string" && error.code.trim() !== "";
+  return hasServerCode(error);
 }
 
 // Logs the opening of a patient's chart. Never blocks the page: a failure

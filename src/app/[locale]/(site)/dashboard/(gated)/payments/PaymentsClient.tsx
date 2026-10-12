@@ -7,6 +7,7 @@ import { markPaid, markUnpaid, setPaymentAmount } from "./actions";
 import { useRowAction } from "@/components/RowPractice";
 import { currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
+import { safeCall } from "@/lib/netError";
 
 
 const ERROR_CODE_KEY: Record<string, string> = {
@@ -120,7 +121,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
     const finalAmount = inputVal.trim() ? parsed! : amount ?? 0;
     setError("");
     startTransition(async () => {
-      const result = await paid(id, finalAmount);
+      const result = await safeCall(() => paid(id, finalAmount), { error: "network", code: "network" } as const);
       if (result?.error) setError(t((ERROR_CODE_KEY[result.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
     });
   }
@@ -191,7 +192,7 @@ export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { 
     if (parsed <= 0) { setError(t("amountFirst")); return; }
     setError("");
     startTransition(async () => {
-      const r = await saveAmount(id, parsed);
+      const r = await safeCall(() => saveAmount(id, parsed), { error: "network", code: "network" } as const);
       if (r?.error) setError(t((ERROR_CODE_KEY[r.code ?? ""] ?? "errorGeneric") as Parameters<typeof t>[0]));
       else { setOpen(false); onSaved?.(); }
     });
@@ -242,7 +243,7 @@ export function MarkUnpaidButton({ id }: { id: string }) {
     <button
       onClick={() => {
         if (!confirm(t("revertConfirm"))) return;
-        startTransition(async () => { await unpaid(id); });
+        startTransition(async () => { await safeCall(() => unpaid(id), null); });
       }}
       disabled={pending}
       className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition disabled:opacity-60"

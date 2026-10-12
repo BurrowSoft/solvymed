@@ -14,6 +14,7 @@ import { AddressFields } from "@/components/patient/AddressFields";
 import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
 import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -250,7 +251,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
       forceNext.current = false;
     }
     startTransition(async () => {
-      const result = await createPatient(formData);
+      const result = await safeCall(() => createPatient(formData), { error: "network", code: "network" } as const);
       if ("success" in result) {
         setOpen(false);
         return;
@@ -286,7 +287,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
     setError("");
     setRestoringId(id);
     startTransition(async () => {
-      const result = await restorePatient(id);
+      const result = await safeCall(() => restorePatient(id), NETWORK_ERROR);
       setRestoringId(null);
       if ("error" in result) { setError(t("restoreError")); return; }
       close();
