@@ -213,6 +213,6 @@
   },
   "not-shared-marker-live": {
     "met": false,
-    "what": "\"Not shared yet\" (1.9.0 item 1.4) is live on BOTH platforms: migration 220 applied (share_intended_at, create_prescription p_share, mark_share_intent, list_unshared), the website's marker merged and the app's released, and their rows 🟢. Until then the website sends no intent and shows no marker."
+    "what": "\"Not shared yet\" (1.9.0 item 1.4) is live on BOTH platforms: migration 220 applied (share_intended_at, create_prescription p_share, mark_share_intent, list_unshared), the website's marker merged AND the app's marker shipped (c5's 1.9.0 OTA or store build; 02: flip only at parity, so the Help is true for both), and their rows 🟢. Until then the website sends no intent and shows no marker."
   }
 }
