@@ -2093,6 +2093,7 @@
     },
     "share": "Bagikan ke pasien",
     "notSharedYet": "Belum dibagikan",
+    "dontShare": "Jangan bagikan",
     "shareChecking": "Memeriksa apakah pasien melihat salinan ini…",
     "shareCheckFailed": "Kami tidak dapat memeriksa apakah pasien melihat salinan ini. Pilih apakah akan membagikannya.",
     "shared": "Dibagikan ke pasien",

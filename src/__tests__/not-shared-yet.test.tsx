@@ -32,6 +32,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", ()
 }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/share-intent-actions", () => ({
   listUnshared: vi.fn(async () => h.unshared),
+  clearShareIntent: vi.fn(async (source: string, id: string) => { h.shared.push(`clear ${source}:${id}`); h.unshared = []; return { ok: true }; }),
   markShareIntent: vi.fn(async (source: string, id: string) => { h.shared.push(`mark ${source}:${id}`); return { ok: true }; }),
 }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots", () => ({
@@ -64,6 +65,15 @@ describe("the mark on the patient page", () => {
     fireEvent.click(screen.getByRole("button", { name: pt.docs.share }));
     await waitFor(() => expect(h.shared).toEqual([`mark prescription:${rx.id}`, `share rx ${rx.id}`]));
     await waitFor(() => expect(screen.queryByTestId("not-shared")).toBeNull());
+  });
+
+  it("Don't share (02): the intent is cleared and the mark goes at once, with no share", async () => {
+    h.unshared = [`prescription:${rx.id}`];
+    tab();
+    await screen.findByTestId("not-shared");
+    fireEvent.click(screen.getByRole("button", { name: pt.docs.dontShare }));
+    expect(screen.queryByTestId("not-shared")).toBeNull();
+    await waitFor(() => expect(h.shared).toEqual([`clear prescription:${rx.id}`]));
   });
 
   it("nothing pending, documents off, or the condition off: no mark", async () => {

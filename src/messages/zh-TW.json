@@ -2093,6 +2093,7 @@
     },
     "share": "與病患分享",
     "notSharedYet": "尚未分享",
+    "dontShare": "不分享",
     "shareChecking": "正在檢查患者是否能看到此副本…",
     "shareCheckFailed": "無法檢查患者是否能看到此副本。請選擇是否分享。",
     "shared": "已與病患分享",

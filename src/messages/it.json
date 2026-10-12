@@ -2093,6 +2093,7 @@
     },
     "share": "Condividi con il paziente",
     "notSharedYet": "Non ancora condiviso",
+    "dontShare": "Non condividere",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Condiviso con il paziente",

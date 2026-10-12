@@ -22,7 +22,7 @@ import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
 import { copySharedNow, loadPatientDocuments } from "../documents-actions";
-import { listUnshared, markShareIntent } from "../share-intent-actions";
+import { clearShareIntent, listUnshared, markShareIntent } from "../share-intent-actions";
 import { shareIntentLive, unsharedKey, type ShareSource } from "@/lib/shareIntent";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
@@ -1075,8 +1075,19 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     void safeCall(() => listUnshared(patientId), [] as string[]).then((keys) => setUnshared(new Set(keys)));
   }, [markerOn, patientId]);
   useEffect(() => { refreshUnshared(); }, [refreshUnshared, prescriptions, medicalDocs?.list]);
+  // And when the tab comes back into view (a share made in the app meanwhile; ec).
+  useEffect(() => {
+    if (!markerOn) return;
+    const onVisible = () => { if (document.visibilityState === "visible") refreshUnshared(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [markerOn, refreshUnshared]);
   function shareAgain(source: ShareSource, id: string, share: () => void) {
     void safeCall(() => markShareIntent(source, id), { ok: false }).then(() => share());
+  }
+  function dontShare(source: ShareSource, id: string) {
+    setUnshared((cur) => { const next = new Set(cur); next.delete(unsharedKey(source, id)); return next; });
+    void safeCall(() => clearShareIntent(source, id), { ok: false }).then(() => refreshUnshared());
   }
   function NotShared({ source, id, share }: { source: ShareSource; id: string; share: () => void }) {
     if (!markerOn || isArchived || !unshared.has(unsharedKey(source, id))) return null;
@@ -1084,6 +1095,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       <span className="flex items-center gap-1.5">
         <span data-testid="not-shared" className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{tdocs("notSharedYet")}</span>
         <button data-server type="button" disabled={sharing} onClick={() => shareAgain(source, id, share)} className="rounded-lg px-2 py-0.5 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{tdocs("share")}</button>
+        <button data-server type="button" disabled={sharing} onClick={() => dontShare(source, id)} className="rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 disabled:opacity-60">{tdocs("dontShare")}</button>
       </span>
     );
   }

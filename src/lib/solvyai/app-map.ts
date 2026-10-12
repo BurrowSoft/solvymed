@@ -450,7 +450,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
-      text: "\"Ainda não compartilhado\" / \"Not shared yet\" (app and website): a prescription or document saved with sharing on whose copy never reached the patient (e.g. the connection dropped) shows this mark in the Prescriptions & documents list; \"Compartilhar com o paciente\" / \"Share with the patient\" next to it sends it again, and the mark goes once shared. Never shown when the doctor chose not to share, or for patients without an app account. SolvyAI doesn't share; it explains the mark and the button.",
+      text: "\"Ainda não compartilhado\" / \"Not shared yet\" (app and website): a prescription or document saved with sharing on whose copy never reached the patient (e.g. the connection dropped) shows this mark in the Prescriptions & documents list; \"Compartilhar com o paciente\" / \"Share with the patient\" next to it sends it again, and the mark goes once shared; \"Não compartilhar\" / \"Don't share\" removes the mark without sharing (a later share brings it back). Never shown when the doctor chose not to share, or for patients without an app account. SolvyAI doesn't share; it explains the mark and the button.",
       pending: ["not-shared-marker-live"],
     },
     help: "P15",

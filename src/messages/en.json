@@ -2123,6 +2123,7 @@
     },
     "share": "Share with the patient",
     "notSharedYet": "Not shared yet",
+    "dontShare": "Don't share",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Shared with the patient",

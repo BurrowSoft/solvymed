@@ -2093,6 +2093,7 @@
     },
     "share": "환자와 공유",
     "notSharedYet": "아직 공유되지 않음",
+    "dontShare": "공유하지 않음",
     "shareChecking": "환자가 이 사본을 볼 수 있는지 확인하는 중…",
     "shareCheckFailed": "환자가 이 사본을 볼 수 있는지 확인하지 못했습니다. 공유할지 선택하세요.",
     "shared": "환자와 공유됨",

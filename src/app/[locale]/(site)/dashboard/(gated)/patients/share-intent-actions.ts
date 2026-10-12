@@ -43,3 +43,15 @@ export async function markShareIntent(source: ShareSource, id: string): Promise<
   const { error } = await supabase.rpc("mark_share_intent", { p_source: source, p_id: id });
   return { ok: !error };
 }
+
+// "Don't share" on the mark (02): the doctor decides this one stays with
+// them; the mark goes (a later Share brings the intent back). 220 refuses
+// once any copy exists ("already_shared"): then the page just re-reads and
+// the mark has gone anyway.
+export async function clearShareIntent(source: ShareSource, id: string): Promise<{ ok: boolean }> {
+  if (!shareIntentLive() || !isSource(source) || !isUuid(id)) return { ok: false };
+  const supabase = await doctor();
+  if (!supabase) return { ok: false };
+  const { error } = await supabase.rpc("clear_share_intent", { p_source: source, p_id: id });
+  return { ok: !error };
+}

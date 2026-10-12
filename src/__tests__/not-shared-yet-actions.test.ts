@@ -27,7 +27,8 @@ vi.mock("@/lib/supabase/server", () => ({
 
 import { createMedicalDocument } from "@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions";
 import { createPrescription } from "@/app/[locale]/(site)/dashboard/(gated)/patients/actions";
-import { listUnshared, markShareIntent } from "@/app/[locale]/(site)/dashboard/(gated)/patients/share-intent-actions";
+import { clearShareIntent, listUnshared, markShareIntent } from "@/app/[locale]/(site)/dashboard/(gated)/patients/share-intent-actions";
+import { noteShareIntent } from "@/lib/shareIntent";
 
 const P = "11111111-1111-4111-8111-111111111111";
 const D = "22222222-2222-4222-8222-222222222222";
@@ -68,6 +69,26 @@ describe("Not shared yet: the server side", () => {
     h.live = false; h.rpcs = [];
     expect(await listUnshared(P)).toEqual([]);
     expect(await markShareIntent("prescription", D)).toEqual({ ok: false });
+    expect(h.rpcs).toEqual([]);
+  });
+
+  it("an edit or a correction (noteShareIntent): mark_share_intent only while recording; nothing at all while off (ec)", async () => {
+    const rpc = vi.fn(async () => ({ error: null }));
+    h.live = false; h.recording = false;
+    await noteShareIntent({ rpc }, "medical_document", D);
+    expect(rpc).not.toHaveBeenCalled();
+    h.recording = true;
+    await noteShareIntent({ rpc }, "prescription", D);
+    expect(rpc).toHaveBeenCalledWith("mark_share_intent", { p_source: "prescription", p_id: D });
+    // A failure never surfaces: the share still runs.
+    await expect(noteShareIntent({ rpc: async () => { throw new TypeError("Failed to fetch"); } }, "prescription", D)).resolves.toBeUndefined();
+  });
+
+  it("Don't share: clear_share_intent with its source and id, only with the mark live", async () => {
+    expect(await clearShareIntent("medical_document", D)).toEqual({ ok: true });
+    expect(h.rpcs.at(-1)).toEqual({ fn: "clear_share_intent", args: { p_source: "medical_document", p_id: D } });
+    h.live = false; h.rpcs = [];
+    expect(await clearShareIntent("medical_document", D)).toEqual({ ok: false });
     expect(h.rpcs).toEqual([]);
   });
 
