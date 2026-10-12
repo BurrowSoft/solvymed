@@ -39,7 +39,7 @@ describe("copyIsShared", () => {
 });
 
 // ── The dialogs ──
-const h = vi.hoisted(() => ({ shared: false, calls: [] as unknown[][], gate: null as null | Promise<void> }));
+const h = vi.hoisted(() => ({ shared: "off" as "on" | "off" | "unknown", calls: [] as unknown[][], gate: null as null | Promise<void> }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", () => new Proxy({}, { get: () => vi.fn(async () => ({})) }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/files-actions", () => new Proxy({}, { get: () => vi.fn(async () => ({})) }));
@@ -70,41 +70,61 @@ function renderTab(o: { rx?: boolean; doc?: boolean }) {
 }
 const correct = () => fireEvent.click(screen.getByRole("button", { name: pt.patientDetail.addCorrection }));
 
-beforeEach(() => { h.shared = false; h.calls = []; h.gate = null; });
+beforeEach(() => { h.shared = "off"; h.calls = []; h.gate = null; });
+// The dialog's own submit (the list's entry button has the same name).
+const submitOf = (name: string) => screen.getAllByRole("button", { name }).find((b) => b.getAttribute("type") === "submit")!;
+const rxSave = () => submitOf(pt.patientDetail.addCorrection);
+const D = pt.docs;
 
 describe("the share box when correcting", () => {
-  it("a prescription whose copy the doctor hid (or never shared): OFF", async () => {
+  it("a prescription whose copy the doctor hid (or never shared): OFF, then Save", async () => {
     renderTab({ rx: true });
     correct();
     await waitFor(() => expect(h.calls).toEqual([[patient.id, "prescription", rx.id]]));
+    await waitFor(() => expect(rxSave()).toBeEnabled());
     expect(screen.getByTestId("share-rx-with-patient")).not.toBeChecked();
   });
 
   it("a prescription the patient sees now: ON once known", async () => {
-    h.shared = true;
+    h.shared = "on";
     renderTab({ rx: true });
     correct();
     await waitFor(() => expect(screen.getByTestId("share-rx-with-patient")).toBeChecked());
+    expect(rxSave()).toBeEnabled();
   });
 
-  it("the doctor's own click wins over a late answer", async () => {
-    h.shared = false;
+  it("while checking: the box and Save wait, with the hint (ec, #528)", async () => {
     let release!: () => void;
     h.gate = new Promise<void>((r) => { release = r; });
     renderTab({ rx: true });
     correct();
-    const box = screen.getByTestId("share-rx-with-patient");
-    expect(box).not.toBeChecked();
+    expect(screen.getByTestId("share-rx-with-patient")).toBeDisabled();
+    expect(rxSave()).toBeDisabled();
+    expect(screen.getByText(D.shareChecking)).toBeInTheDocument();
+    await act(async () => { release(); });
+    await waitFor(() => expect(rxSave()).toBeEnabled());
+    expect(screen.queryByText(D.shareChecking)).toBeNull();
+  });
+
+  it("the lookup failed: unknown is not hidden; Save waits for the doctor's choice", async () => {
+    h.shared = "unknown";
+    renderTab({ rx: true });
+    correct();
+    await waitFor(() => expect(screen.getByText(D.shareCheckFailed)).toBeInTheDocument());
+    const box = screen.getByTestId("share-rx-with-patient") as HTMLInputElement;
+    expect(box.indeterminate).toBe(true);
+    expect(rxSave()).toBeDisabled();
     fireEvent.click(box);
     expect(box).toBeChecked();
-    await act(async () => { release(); });
-    expect(box).toBeChecked();
+    expect(rxSave()).toBeEnabled();
+    expect(screen.queryByText(D.shareCheckFailed)).toBeNull();
   });
 
   it("a new prescription stays ON, with no lookup", async () => {
     renderTab({});
     fireEvent.click(await screen.findByRole("button", { name: pt.documents.addPrescription }));
     expect(screen.getByTestId("share-rx-with-patient")).toBeChecked();
+    expect(submitOf(pt.patientDetail.savePrescription)).toBeEnabled();
     expect(h.calls).toEqual([]);
   });
 
@@ -112,13 +132,29 @@ describe("the share box when correcting", () => {
     renderTab({ doc: true });
     correct();
     await waitFor(() => expect(h.calls).toEqual([[patient.id, "medical_document", doc.id]]));
+    await waitFor(() => expect(submitOf(pt.patientDetail.addCorrection)).toBeEnabled());
     expect(screen.getByTestId("share-with-patient")).not.toBeChecked();
   });
 
   it("a document the patient sees now: ON", async () => {
-    h.shared = true;
+    h.shared = "on";
     renderTab({ doc: true });
     correct();
     await waitFor(() => expect(screen.getByTestId("share-with-patient")).toBeChecked());
+  });
+
+  it("a document: checking, then unknown → Save waits for a choice", async () => {
+    let release!: () => void;
+    h.gate = new Promise<void>((r) => { release = r; });
+    h.shared = "unknown";
+    renderTab({ doc: true });
+    correct();
+    expect(screen.getByTestId("share-with-patient")).toBeDisabled();
+    expect(submitOf(pt.patientDetail.addCorrection)).toBeDisabled();
+    await act(async () => { release(); });
+    await waitFor(() => expect(screen.getByText(D.shareCheckFailed)).toBeInTheDocument());
+    expect(submitOf(pt.patientDetail.addCorrection)).toBeDisabled();
+    fireEvent.click(screen.getByTestId("share-with-patient"));
+    expect(submitOf(pt.patientDetail.addCorrection)).toBeEnabled();
   });
 });

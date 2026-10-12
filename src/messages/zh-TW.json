@@ -2092,6 +2092,8 @@
       "internal": "內部文件"
     },
     "share": "與病患分享",
+    "shareChecking": "正在檢查患者是否能看到此副本…",
+    "shareCheckFailed": "無法檢查患者是否能看到此副本。請選擇是否分享。",
     "shared": "已與病患分享",
     "notShared": "僅您可見",
     "replacedByNewer": "已被較新的副本取代",

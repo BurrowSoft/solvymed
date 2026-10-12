@@ -147,6 +147,10 @@ export function formatBytes(n: number): string {
 // shared (an unchanged Save with the box on re-exposed a hidden copy). The
 // copies made from the source, each followed to its newest replacement (a
 // correction's copy replaces the original's).
+// The share box's default when editing / correcting: "unknown" (the lookup
+// failed) is not "off" (ec, #528): the doctor must choose before saving.
+export type CopyShareState = "on" | "off" | "unknown";
+
 export function copyIsShared(docs: PatientDocument[], source: "prescription" | "medical_document", sourceId: string): boolean {
   const replacedBy = new Map<string, PatientDocument>();
   for (const d of docs) if (d.replacesId) replacedBy.set(d.replacesId, d);

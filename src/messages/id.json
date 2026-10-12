@@ -2092,6 +2092,8 @@
       "internal": "Dokumen internal"
     },
     "share": "Bagikan ke pasien",
+    "shareChecking": "Memeriksa apakah pasien melihat salinan ini…",
+    "shareCheckFailed": "Kami tidak dapat memeriksa apakah pasien melihat salinan ini. Pilih apakah akan membagikannya.",
     "shared": "Dibagikan ke pasien",
     "notShared": "Hanya Anda yang dapat melihat ini",
     "replacedByNewer": "Diganti dengan salinan yang lebih baru",

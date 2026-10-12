@@ -1180,6 +1180,10 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   // and the doctor's own click wins.
   const [shareRxOn, setShareRxOn] = useState(true);
   const shareRxTouched = useRef(false);
+  // Editing / correcting: the box and Save wait for the copy's state; when
+  // it can't be read the doctor chooses (ec, #528).
+  const [shareRxState, setShareRxState] = useState<"known" | "checking" | "unknown">("known");
+  const shareRxWaits = canShare && !!dialog && shareRxState !== "known";
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
@@ -1189,25 +1193,28 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
     shareRxTouched.current = false;
     setShareRxOn(d.mode === "new");
+    setShareRxState(d.mode !== "new" && canShare ? "checking" : "known");
     openRx.current = d.mode === "new" ? null : d.rx.id;
     setDialog(d);
     if (d.mode !== "new" && canShare) {
       const rxId = d.rx.id;
-      copySharedNow(patientId, "prescription", rxId).then((on) => {
-        if (!shareRxTouched.current) setDialogShare(rxId, on);
-      }, () => {});
+      const done = (s: "on" | "off" | "unknown") => { if (!shareRxTouched.current) setDialogShare(rxId, s); };
+      copySharedNow(patientId, "prescription", rxId).then(done, () => done("unknown"));
     }
   }
   // Only while that dialog is still the one open.
   const openRx = useRef<string | null>(null);
   useEffect(() => { openRx.current = dialog && dialog.mode !== "new" ? dialog.rx.id : null; }, [dialog]);
-  function setDialogShare(rxId: string, on: boolean) {
-    if (openRx.current === rxId) setShareRxOn(on);
+  function setDialogShare(rxId: string, s: "on" | "off" | "unknown") {
+    if (openRx.current !== rxId) return;
+    if (s === "unknown") { setShareRxState("unknown"); return; }
+    setShareRxOn(s === "on");
+    setShareRxState("known");
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!dialog) return;
+    if (!dialog || shareRxWaits) return;
     const formData = new FormData(formRef.current!);
     setError("");
     startTransition(async () => {
@@ -1391,15 +1398,21 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           </div>
           {dialog?.mode === "correct" && <ReasonField />}
           {canShare && dialog && (
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" data-testid="share-rx-with-patient" checked={shareRxOn} onChange={(e) => { shareRxTouched.current = true; setShareRxOn(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
-              {tdocs("share")}
-            </label>
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" data-testid="share-rx-with-patient" checked={shareRxOn} disabled={shareRxState === "checking"}
+                  ref={(el) => { if (el) el.indeterminate = shareRxState === "unknown"; }}
+                  onChange={(e) => { shareRxTouched.current = true; setShareRxState("known"); setShareRxOn(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+                {tdocs("share")}
+              </label>
+              {shareRxState === "checking" && <p role="status" className="mt-1 text-xs text-slate-500">{tdocs("shareChecking")}</p>}
+              {shareRxState === "unknown" && <p role="alert" className="mt-1 text-xs text-amber-700">{tdocs("shareCheckFailed")}</p>}
+            </div>
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending || shareRxWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : dialog?.mode === "correct" ? t("addCorrection") : t("savePrescription")}
             </button>
           </div>
