@@ -13,6 +13,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { saveTourProgress } from "@/lib/tourActions";
 import { CLOSED_EVENT, OPEN_EVENT } from "@/components/solvyai/SolvyAiSettings";
 import { track } from "@/lib/track";
+import { leaveGuarded } from "@/components/DiscardGuard";
 
 // Runs the guided tour inside the dashboard (specs/walkthrough.md):
 // - "auto": first sign-in after sign-up (no saved state) → starts by itself
@@ -128,7 +129,7 @@ export function TourProvider({
     track(result === "completed" ? TOUR_EVENTS.completed : TOUR_EVENTS.skipped, { role, step: index + 1 });
     void saveTourProgress(result, index);
     // Doctors land on the setup checklist afterwards (as in 1.3.0).
-    if (role === "professional") router.push(`${home}?setup=1`);
+    if (role === "professional") leaveGuarded(() => router.push(`${home}?setup=1`));
   }, [role, router, home]);
 
   // The Novidades popup: on the home page, when nothing else is on screen.

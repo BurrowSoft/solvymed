@@ -17,7 +17,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/documents-actions", ()
   countFolderShared: vi.fn(async () => 0), deleteFolder: vi.fn(), loadFolders: vi.fn(), reorderFolders: vi.fn(), saveFolder: vi.fn(async () => ({ ok: true, data: "f" })),
 }));
 
-import { hasUnsavedChanges, NavigationGuard, useFormDirty } from "@/components/DiscardGuard";
+import { hasUnsavedChanges, leaveGuarded, NavigationGuard, useFormDirty } from "@/components/DiscardGuard";
 import { ProceduresPanel, WorkingHoursForm } from "@/app/[locale]/(site)/dashboard/settings/SettingsClient";
 import { DocumentFoldersCard } from "@/app/[locale]/(site)/dashboard/settings/DocumentFoldersCard";
 
@@ -87,6 +87,23 @@ describe("the sidebar and links", () => {
     click();
     fireEvent.click(screen.getByRole("button", { name: C.discard }));
     expect(nav.push).toHaveBeenCalledWith("/pt-BR/dashboard/patients");
+  });
+
+  it("navigation in code (SolvyAI, the language, signing out, the tour) goes through the same question (ec)", async () => {
+    page();
+    const go = vi.fn();
+    const keep = vi.fn();
+    act(() => leaveGuarded(go, keep));
+    expect(go).toHaveBeenCalledTimes(1);
+    fireEvent.change(screen.getByLabelText("name"), { target: { value: "Ana B" } });
+    await settle();
+    act(() => leaveGuarded(go, keep));
+    expect(go).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole("button", { name: C.keepEditing }));
+    expect(keep).toHaveBeenCalledTimes(1);
+    act(() => leaveGuarded(go, keep));
+    fireEvent.click(screen.getByRole("button", { name: C.discard }));
+    expect(go).toHaveBeenCalledTimes(2);
   });
 
   it("an anchor on the same page or a new tab never asks", async () => {

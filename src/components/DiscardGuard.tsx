@@ -96,13 +96,28 @@ export function useDiscardAsk() {
   return { ask, dialog, asking: pending !== null };
 }
 
+// Navigation done in code (SolvyAI, the language switch, the tour, signing
+// out; ec): `go` runs at once when nothing is unsaved, else after the same
+// question's Discard; `onKeep` runs on Keep editing.
+type Leave = { go: () => void; keep?: () => void };
+let askLeave: ((l: Leave) => void) | null = null;
+export function leaveGuarded(go: () => void, onKeep?: () => void) {
+  if (!hasUnsavedChanges() || !askLeave) { go(); return; }
+  askLeave({ go, keep: onKeep });
+}
+
 // The sidebar and every link in the dashboard: leaving a page with unsaved
 // changes asks first (the browser's prompt covers reload / closing the tab
-// / other sites). Clicks are caught before Next's own Link handler.
+// / other sites). Clicks are caught before Next's own Link handler. The
+// browser's Back button isn't caught (a known limit, in Help).
 export function NavigationGuard() {
   const router = useRouter();
   const t = useTranslations("common");
-  const [to, setTo] = useState<string | null>(null);
+  const [pending, setPending] = useState<Leave | null>(null);
+  useEffect(() => {
+    askLeave = (l) => setPending(l);
+    return () => { askLeave = null; };
+  }, []);
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (!hasUnsavedChanges() || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
@@ -115,19 +130,20 @@ export function NavigationGuard() {
       if (url.pathname === window.location.pathname && url.search === window.location.search) return;
       e.preventDefault();
       e.stopPropagation();
-      setTo(url.pathname + url.search + url.hash);
+      const dest = url.pathname + url.search + url.hash;
+      setPending({ go: () => router.push(dest) });
     };
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
-  }, []);
-  if (!to) return null;
+  }, [router]);
+  if (!pending) return null;
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/40 p-4" data-testid="discard-navigation">
       <div className="w-full max-w-sm rounded-2xl bg-white p-2 shadow-xl">
         <DiscardConfirm
           className="border-0 bg-white"
-          onDiscard={() => { const dest = to; dirtyForms.clear(); setTo(null); router.push(dest); }}
-          onKeep={() => setTo(null)}
+          onDiscard={() => { const l = pending; dirtyForms.clear(); setPending(null); l.go(); }}
+          onKeep={() => { const l = pending; setPending(null); l.keep?.(); }}
         />
       </div>
       <span className="sr-only">{t("discardTitle")}</span>
