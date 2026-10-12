@@ -44,6 +44,7 @@ describe("the design", () => {
     ["a layout outside the presets", (d: Record<string, unknown>) => { d.layout = "fancy"; }],
     ["an uploaded font", (d: Record<string, unknown>) => { d.font = "comic-sans"; }],
     ["a non-hex colour", (d: Record<string, unknown>) => { (d.palette as Record<string, unknown>).primary = "red"; }],
+    ["a prototype key as the preset", (d: Record<string, unknown>) => { (d.palette as Record<string, unknown>).preset = "constructor"; }],
     ["an unknown palette preset", (d: Record<string, unknown>) => { (d.palette as Record<string, unknown>).preset = "neon"; }],
     ["a raw hex where a palette reference goes", (d: Record<string, unknown>) => { (d.sectionBar as Record<string, unknown>).fill = "#FF0000"; }],
     ["a watermark too strong", (d: Record<string, unknown>) => { (d.watermark as Record<string, unknown>).opacity = 0.5; }],
@@ -65,6 +66,15 @@ describe("the design", () => {
     expect(validateDesign(d).ok).toBe(true);
     const big = { ...d, texts: { ...(d.texts as object), padding: "x".repeat(DESIGN_MAX_BYTES) } };
     expect(validateDesign(big).ok).toBe(false);
+  });
+
+  it("a design full of Thai text is still valid; its size is counted in UTF-8 bytes, as the server does", () => {
+    const thai = "ก".repeat(299);
+    const d = withPatch((x) => { x.texts = Object.fromEntries(["prescription", "certificate", "declaration", "exam_request", "th_certificate", "receipt", "history", "letterhead"].map((k) => [k, { header: thai, footer: thai }])); });
+    expect(JSON.stringify(d).length).toBeLessThan(DESIGN_MAX_BYTES);
+    expect(validateDesign(d).ok).toBe(true);
+    const s = JSON.stringify(d);
+    expect(new TextEncoder().encode(s).length).toBeGreaterThan(s.length);
   });
 
   it("the contacts offered follow the practice country (config, not if-BR)", () => {

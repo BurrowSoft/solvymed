@@ -96,7 +96,8 @@ const oneOf = <T extends string>(v: unknown, set: readonly T[]): v is T => typeo
 // say what's wrong before saving; the server stays the authority).
 export function validateDesign(input: unknown): Check {
   if (!isObj(input)) return { ok: false, error: "design: not an object" };
-  if (JSON.stringify(input).length > DESIGN_MAX_BYTES) return { ok: false, error: "design: too large" };
+  // UTF-8 bytes, as the server counts (Thai is 3 bytes a character).
+  if (new TextEncoder().encode(JSON.stringify(input)).length > DESIGN_MAX_BYTES) return { ok: false, error: "design: too large" };
   const top = ["v", "layout", "palette", "font", "nameBlock", "logoUse", "watermark", "sectionBar", "field", "footer", "band", "signature", "texts"];
   const e0 = onlyKeys(input, top, "design"); if (e0) return { ok: false, error: e0 };
   const d = input as Record<string, unknown>;
@@ -107,7 +108,7 @@ export function validateDesign(input: unknown): Check {
   const p = d.palette; if (!isObj(p)) return { ok: false, error: "palette" };
   const ep = onlyKeys(p, ["primary", "accent", "light", "preset"], "palette"); if (ep) return { ok: false, error: ep };
   for (const k of ["primary", "accent", "light"]) if (typeof p[k] !== "string" || !HEX.test(p[k] as string)) return { ok: false, error: `palette.${k}` };
-  if (p.preset !== null && !(typeof p.preset === "string" && p.preset in PALETTE_PRESETS)) return { ok: false, error: "palette.preset" };
+  if (p.preset !== null && !(typeof p.preset === "string" && Object.hasOwn(PALETTE_PRESETS, p.preset))) return { ok: false, error: "palette.preset" };
 
   const nb = d.nameBlock; if (!isObj(nb)) return { ok: false, error: "nameBlock" };
   const enb = onlyKeys(nb, ["style"], "nameBlock"); if (enb) return { ok: false, error: enb };
