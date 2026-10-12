@@ -1,7 +1,9 @@
 import { expect, type Page } from "@playwright/test";
+import { addToLedger, deleteAccounts, listUsers, log, need, newRunTag, readLedger, RUN_RE, sb, service, sleep } from "./admin";
 
 // Fixtures for the smoke suite (web tester 1's helpers, 3e). Accounts are
-// created with the service role and deleted by cleanup() in afterAll.
+// created with the service role and deleted by cleanup() in afterAll; the
+// global teardown retries any left in the run's ledger (admin.ts).
 // Everything secret comes from the environment, read only when a fixture is
 // made (the public spec runs without any of it):
 //   SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (fixtures and cleanup only, never in a browser)
@@ -10,31 +12,19 @@ import { expect, type Page } from "@playwright/test";
 // Never seed medical_records / prescriptions: retention then blocks deleting
 // the doctor.
 
-function need(k: string): string {
-  const v = process.env[k];
-  if (!v) throw new Error(`missing env ${k} (see e2e/smoke/README.md)`);
-  return v;
-}
-const sb = () => need("SUPABASE_URL");
-const service = () => {
-  const key = need("SUPABASE_SERVICE_ROLE_KEY");
-  return { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
-};
+export { sleep };
 export const password = () => need("E2E_PASSWORD");
-export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-const log = (...a: unknown[]) => console.log("[smoke]", ...a);
 
 // The run tag: every account this run creates carries it, and cleanup /
 // purgeRun match it exactly. e2e-smoke-<run>-<tag>@burrowsoft.com, run =
-// yyyymmddHHMMss + 4 random characters. Never touch other prefixes
-// (e2e-test-opus-*, e2e-test-t2-*, e2e-mt1-*, e2e-mt2-*) or Vitor's accounts.
-export const RUN = process.env.E2E_RUN ?? `${new Date().toISOString().replace(/\D/g, "").slice(0, 14)}${Math.random().toString(36).slice(2, 6).padEnd(4, "0")}`;
+// yyyymmddHHMMss + 4 random characters (the global setup sets E2E_RUN).
+// Never touch other prefixes (e2e-test-opus-*, e2e-test-t2-*, e2e-mt1-*,
+// e2e-mt2-*) or Vitor's accounts.
+export const RUN = process.env.E2E_RUN ?? newRunTag();
 // A reused tag must be a full one, as purgeRun requires (9a).
-if (!/^\d{14}[a-z0-9]{4}$/.test(RUN)) throw new Error("E2E_RUN must be a full run tag (yyyymmddHHMMss + 4 characters)");
+if (!RUN_RE.test(RUN)) throw new Error("E2E_RUN must be a full run tag (yyyymmddHHMMss + 4 characters)");
 const PREFIX = `e2e-smoke-${RUN}-`;
 export const emailFor = (tag: string) => `${PREFIX}${tag}@burrowsoft.com`;
-
-const created: string[] = []; // user ids this run created, in order
 
 type Res = { status: number; body: unknown };
 async function parse(r: Response): Promise<Res> {
@@ -58,6 +48,9 @@ export async function rest(path: string, init: RequestInit = {}): Promise<Res> {
 
 export async function mkUser(role: "professional" | "patient", tag: string, fullName: string) {
   const email = emailFor(tag);
+  // Logged first: if the response is lost, the run tag and email still say
+  // what to look for (the next run's sweep deletes it after 2 h).
+  log(`creating ${email} (run ${RUN})`);
   const r = await fetch(`${sb()}/auth/v1/admin/users`, {
     method: "POST",
     headers: service(),
@@ -65,7 +58,9 @@ export async function mkUser(role: "professional" | "patient", tag: string, full
   });
   const u = (await r.json()) as { id?: string };
   if (!u.id) throw new Error(`mkUser ${tag} failed (${r.status})`);
-  created.push(u.id);
+  // In the ledger before anything else can fail.
+  addToLedger(RUN, { id: u.id, email });
+  log(`created ${email} = ${u.id}`);
   return { id: u.id, email };
 }
 
@@ -89,33 +84,26 @@ export async function rpcAs(token: string, fn: string, args: object): Promise<Re
 }
 
 // Blocking rows first (they keep a doctor alive by design), then the users,
-// newest first. Only what THIS run created.
+// newest first. Only what THIS run created (its ledger). Each account is
+// retried on its own and a failure never stops the loop or the test file:
+// the failed ids stay in the ledger for the global teardown.
 export async function cleanup() {
-  for (const id of [...created].reverse()) {
-    for (const t of ["appointments", "procedures", "secretary_invites", "patients"]) {
-      await rest(`${t}?professional_id=eq.${id}`, { method: "DELETE" }).catch(() => {});
-    }
-    const r = await fetch(`${sb()}/auth/v1/admin/users/${id}`, { method: "DELETE", headers: service() });
-    if (r.status >= 300) log(`cleanup: user ${id} → ${r.status}`);
-  }
-  log(`cleanup: ${created.length} users (run ${RUN})`);
-  created.length = 0;
+  const ids = readLedger(RUN).map((e) => e.id);
+  const failed = await deleteAccounts(RUN, ids);
+  log(`cleanup: ${ids.length - failed.length}/${ids.length} users deleted (run ${RUN})${failed.length ? `; left for the teardown: ${failed.join(", ")}` : ""}`);
 }
 
 // A killed run skips afterAll: list (and with dryRun=false delete) the
 // accounts of ONE full run tag. Refuses anything shorter.
 export async function purgeRun(run: string, dryRun = true) {
-  if (!/^\d{14}[a-z0-9]{4}$/.test(run)) throw new Error("purgeRun needs a full run tag");
+  if (!RUN_RE.test(run)) throw new Error("purgeRun needs a full run tag");
   const pre = `e2e-smoke-${run}-`;
-  const hits: { id: string; email: string }[] = [];
-  for (let p = 1; p < 50; p++) {
-    const r = (await (await fetch(`${sb()}/auth/v1/admin/users?per_page=200&page=${p}`, { headers: service() })).json()) as { users?: { id: string; email: string }[] };
-    const us = r.users ?? [];
-    if (!us.length) break;
-    hits.push(...us.filter((u) => u.email.startsWith(pre)));
-  }
+  const hits = (await listUsers()).filter((u) => (u.email ?? "").startsWith(pre)).map((u) => ({ id: u.id, email: u.email }));
   log(`purgeRun ${run}: ${hits.length} accounts`, hits.map((h) => h.email));
-  if (!dryRun) { created.push(...hits.map((h) => h.id)); await cleanup(); }
+  if (!dryRun) {
+    const failed = await deleteAccounts(run, hits.map((h) => h.id));
+    log(`purgeRun ${run}: ${hits.length - failed.length}/${hits.length} deleted${failed.length ? `; failed: ${failed.join(", ")}` : ""}`);
+  }
   return hits;
 }
 

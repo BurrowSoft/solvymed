@@ -53,8 +53,12 @@ E2E_BASE_URL=$(node scripts/preview-url.mjs <head sha>) npm run test:smoke
 - **Previews and www share the production database.** `accounts.spec.ts` creates and deletes real rows there, which is why it needs the service-role key and the cleanup below.
 - **No email is sent.** Accounts are created through the admin API with `email_confirm: true` (no confirmation email), and the flows the suite clicks (sign-in, booking, confirm / propose / decline) notify by push only. The seeded patient record has no email, so no patient notice can go out by email either. The `@burrowsoft.com` addresses are our own domain. Any future test that triggers an email must use `@example.invalid`, or Resend's `delivered@resend.dev` for a real send.
 
-- Every account is `e2e-smoke-<RUN>-<tag>@burrowsoft.com`, where RUN is the 14-digit UTC time plus 4 random characters. `afterAll` deletes exactly what the run created: blocking rows first, then the users.
-- A killed run leaves its accounts behind. List them with `purgeRun("<RUN>")` (a dry run), then delete them with `purgeRun("<RUN>", false)`. It refuses anything but a full run tag.
+- Every account is `e2e-smoke-<RUN>-<tag>@burrowsoft.com`, where RUN is the 14-digit UTC time plus 4 random characters. The global setup picks one RUN for the whole run and logs it. Each account is logged when it is created (`[smoke] created <email> = <id>`).
+- **The ledger:** each created account goes at once into `test-results/smoke-created-<RUN>.json` (git-ignored; Playwright empties `test-results/` at the start of the next run).
+- **Cleanup** (`afterAll`) deletes exactly what the ledger lists: blocking rows first, then the user, newest first. Each account is retried 3 times (1 s, 2 s, 4 s), and a failure never stops the others. A deleted account leaves the ledger; a failed one stays and is logged (`cleanup FAILED for user <id>`).
+- **The global teardown** retries whatever the ledger still lists after the tests. Anything still failing is printed (`STILL NOT DELETED`) and stays in the ledger file.
+- **The sweep** (global setup, with the service key only) deletes leftovers of earlier runs: only `e2e-smoke-<14 digits><4 characters>-<tag>@burrowsoft.com`, and only when both the run tag and the account's creation are more than 2 h old. It never touches another prefix or a run in progress. Every swept account is logged with its id.
+- A killed run's accounts are swept by the next run after 2 h. To delete them sooner, list them with `purgeRun("<RUN>")` (a dry run), then delete them with `purgeRun("<RUN>", false)`. It refuses anything but a full run tag.
 - Never touch other prefixes (`e2e-test-opus-*`, `e2e-test-t2-*`, `e2e-mt1-*`, `e2e-mt2-*`) or Vitor's accounts.
 - Never seed medical records or prescriptions. Retention rules then block deleting the doctor.
 - Never complete a payment on www. Opening a live Checkout and abandoning it is allowed.
