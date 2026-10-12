@@ -106,3 +106,19 @@ Thai title: "ไม่มีอินเทอร์เน็ต"
 ข้อมูลที่คุณพิมพ์ไว้จะยังอยู่ในแบบฟอร์ม เมื่อกลับมาเชื่อมต่อได้ ข้อความจะหายไปและคุณบันทึกได้
 `open:none`
 `requires:offline-guard-live`
+
+---
+
+## K8. Data e hora erradas / Wrong date and time
+**pt-BR**
+Se a data e a hora do seu dispositivo estiverem erradas (mais de 5 minutos), o SolvyMed mostra **A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo.**
+Ative a data e hora automáticas nas configurações do dispositivo. Você continua conectado e o que digitou não se perde; quando o relógio estiver certo, o aviso some sozinho.
+**en**
+If your device's date and time are wrong (by more than 5 minutes), SolvyMed shows **Your device's date and time look wrong. Turn on automatic date and time, then try again.**
+Turn on automatic date and time in your device's settings. You stay signed in and nothing you typed is lost; once the clock is right, the message goes away by itself.
+Thai title: "วันที่และเวลาไม่ถูกต้อง"
+**th**
+หากวันที่และเวลาในอุปกรณ์ของคุณไม่ถูกต้อง (คลาดเคลื่อนเกิน 5 นาที) SolvyMed จะแสดง **วันที่และเวลาในอุปกรณ์ของคุณดูเหมือนไม่ถูกต้อง เปิดการตั้งวันที่และเวลาอัตโนมัติ แล้วลองอีกครั้ง**
+เปิดการตั้งวันที่และเวลาอัตโนมัติในการตั้งค่าของอุปกรณ์ คุณยังคงลงชื่อเข้าใช้อยู่ และข้อมูลที่พิมพ์ไว้จะไม่หายไป เมื่อเวลาถูกต้องแล้ว ข้อความจะหายไปเอง
+`open:none`
+`requires:clock-skew-live`

@@ -29,6 +29,7 @@ import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 import { TeamAccessWatch } from "@/components/TeamAccessWatch";
 import { LocaleRedirect } from "@/components/LocaleRedirect";
 import { OfflineGuard } from "@/components/OfflineGuard";
+import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
 
 function isVersionBelow(current: string, minimum: string): boolean {
@@ -219,6 +220,7 @@ export default async function DashboardLayout({
   return (
     <div data-theme={theme} data-theme-root className="contents">
     <OfflineGuard />
+    <ClockSkewGuard />
     <TourProvider
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}

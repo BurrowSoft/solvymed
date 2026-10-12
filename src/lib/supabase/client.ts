@@ -8,6 +8,13 @@ export function createClient() {
   return createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    Object.keys(headers).length ? { global: { headers } } : undefined,
+    {
+      ...(Object.keys(headers).length ? { global: { headers } } : {}),
+      // The background token refresh starts only once the device's clock is
+      // known to be right (ClockSkewGuard, 1.9.0): a clock an hour fast made
+      // it refresh again and again. An expired token is still refreshed on
+      // demand by the next request, and the server keeps its cookies fresh.
+      auth: { autoRefreshToken: false },
+    },
   );
 }

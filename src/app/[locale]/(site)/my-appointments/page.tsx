@@ -7,6 +7,7 @@ import { getOnboardingFlags } from "@/lib/setup";
 import { statusReasonLive } from "@/lib/statusReason";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { OfflineGuard } from "@/components/OfflineGuard";
+import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
@@ -185,6 +186,7 @@ export default async function MyAppointmentsPage({
     <>
     <SaveMyLocale locale={locale} />
     <OfflineGuard />
+    <ClockSkewGuard />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       privacyNoticeDate={privacyNoticeDate}

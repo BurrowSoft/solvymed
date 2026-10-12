@@ -2300,5 +2300,8 @@
   },
   "offline": {
     "banner": "No internet connection. You can view what's open, but changes won't be saved."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
   }
 }

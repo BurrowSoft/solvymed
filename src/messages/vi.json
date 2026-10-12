@@ -2270,5 +2270,8 @@
   },
   "offline": {
     "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
+  },
+  "clockSkew": {
+    "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."
   }
 }
