@@ -6,6 +6,7 @@ import { clinicDate } from "@/lib/clinicTime";
 import { getOnboardingFlags } from "@/lib/setup";
 import { statusReasonLive } from "@/lib/statusReason";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
+import { OfflineGuard } from "@/components/OfflineGuard";
 import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
@@ -183,6 +184,7 @@ export default async function MyAppointmentsPage({
   return (
     <>
     <SaveMyLocale locale={locale} />
+    <OfflineGuard />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
       privacyNoticeDate={privacyNoticeDate}

@@ -13,7 +13,7 @@ export function ShowSetupRow() {
   const { locale } = useParams<{ locale: string }>();
   const [pending, start] = useTransition();
   return (
-    <button
+    <button data-server
       type="button"
       disabled={pending}
       onClick={() => start(async () => {

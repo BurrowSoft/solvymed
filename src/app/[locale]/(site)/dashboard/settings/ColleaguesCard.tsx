@@ -91,7 +91,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
                     <p className="truncate text-xs text-slate-500">{c.available ? c.specialty ?? "" : t("addedOn", { date: formatShortDate(locale, toLocalDateString(new Date(c.added_at))) })}</p>
                   </div>
                 </div>
-                <button type="button" disabled={busy} onClick={() => remove(c)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
+                <button data-server type="button" disabled={busy} onClick={() => remove(c)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
                   {t("remove")}
                 </button>
               </li>

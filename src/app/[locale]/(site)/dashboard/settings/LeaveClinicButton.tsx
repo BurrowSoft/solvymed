@@ -31,7 +31,7 @@ export function LeaveClinicButton({ doctorName, locale }: { doctorName: string |
   return (
     <div>
       {error && <div className="error-banner mb-3">{error}</div>}
-      <button
+      <button data-server
         type="button"
         onClick={leave}
         disabled={pending}

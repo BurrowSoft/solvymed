@@ -37,7 +37,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
     return (
       <section ref={ref} className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-teal-50 p-5">
         <p className="font-bold text-teal-900">{t("ready")}</p>
-        <button
+        <button data-server
           type="button"
           disabled={pending}
           onClick={() => start(async () => { await ackSetupCompleted(); })}
@@ -73,7 +73,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </button>
-        <button
+        <button data-server
           type="button"
           disabled={pending}
           onClick={() => start(async () => { await setSetupHidden(true); })}

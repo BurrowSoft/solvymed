@@ -136,7 +136,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <button type="button" onClick={() => openEdit(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-teal-700 hover:bg-teal-50">{t("edit")}</button>
-                    <button type="button" onClick={() => remove(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50">{t("delete")}</button>
+                    <button data-server type="button" onClick={() => remove(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50">{t("delete")}</button>
                   </div>
                 </li>
               ))}

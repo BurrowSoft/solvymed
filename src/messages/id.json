@@ -2267,5 +2267,8 @@
     "zoomIn": "Perbesar",
     "zoomOut": "Perkecil",
     "adjust": "Sesuaikan"
+  },
+  "offline": {
+    "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   }
 }
