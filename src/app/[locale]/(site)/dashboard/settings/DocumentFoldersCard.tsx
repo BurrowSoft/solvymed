@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { FOLDER_NAME_MAX, FOLDERS_MAX, STORAGE_NOTICE_RATIO, formatBytes, type DocErrorKey, type DocFolder } from "@/lib/patientDocuments";
 import { countFolderShared, deleteFolder, loadFolders, reorderFolders, saveFolder } from "../(gated)/patients/documents-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // Settings → Document folders (1.8.0 A; doctors only, flag
 // 'patient_documents'; the app's DocumentFoldersModal). The folders apply
@@ -23,19 +24,19 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
   const [busy, start] = useTransition();
 
   const nameOf = (f: DocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}`) : "");
-  const errText = (k: DocErrorKey) =>
+  const errText = (k: DocErrorKey | "network") =>
     k === "folderNotEmpty" ? t("settings.deleteEmptyOnly") : k === "maxFolders" ? t("settings.max") : tp("filesError");
 
   async function reload() {
-    const r = await loadFolders();
+    const r = await safeCall(() => loadFolders(), NETWORK_FAILURE);
     if (r.ok) setFolders(r.data.folders);
   }
 
-  function run(fn: () => Promise<{ ok: boolean; code?: DocErrorKey }>) {
+  function run(fn: () => Promise<{ ok: boolean; code?: DocErrorKey | "network" }>) {
     setMsg("");
     start(async () => {
-      const r = await fn();
-      if (!r.ok) { setMsg(errText((r as { code: DocErrorKey }).code)); return; }
+      const r = await safeCall(() => fn(), NETWORK_FAILURE);
+      if (!r.ok) { setMsg(errText((r as { code: DocErrorKey | "network" }).code)); return; }
       await reload();
     });
   }
@@ -44,10 +45,10 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
     setMsg("");
     start(async () => {
       if (!on) {
-        const n = await countFolderShared(f.id);
+        const n = await safeCall(() => countFolderShared(f.id), null);
         if (n && n > 0 && !window.confirm(t("settings.offConfirm", { count: n }))) return;
       }
-      const r = await saveFolder(f.id, { name: f.name, shared: on, patientCanUpload: on && f.patientCanUpload });
+      const r = await safeCall(() => saveFolder(f.id, { name: f.name, shared: on, patientCanUpload: on && f.patientCanUpload }), NETWORK_FAILURE);
       if (!r.ok) { setMsg(errText(r.code)); return; }
       await reload();
     });
@@ -60,7 +61,7 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
     const f = editing.id ? folders.find((x) => x.id === editing.id) : null;
     run(async () => {
       // A new folder: visible to patients, no uploads (the doctor turns them on).
-      const r = await saveFolder(editing.id, { name, shared: f ? f.shared : true, patientCanUpload: f ? f.patientCanUpload : false });
+      const r = await safeCall(() => saveFolder(editing.id, { name, shared: f ? f.shared : true, patientCanUpload: f ? f.patientCanUpload : false }), NETWORK_FAILURE);
       if (r.ok) setEditing(null);
       return r;
     });

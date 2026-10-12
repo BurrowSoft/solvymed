@@ -25,7 +25,7 @@ import { forRow, useRowAction } from "@/components/RowPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
-import { safeCall } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -289,8 +289,11 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
     startTransition(async () => {
       const result = await safeCall(() => updateStatus(id, newStatus, why), { error: "network", code: "generic" } as const);
       if (result?.error) {
-        setStatus(previous);
         setError(actionErrorMessage(t, result.code));
+        // A cancel with a reason: the reason box comes back with the typed
+        // reason (it was lost on a failed save, 1.9.0).
+        if (why !== undefined) { setAsking({ previous }); return; }
+        setStatus(previous);
         return;
       }
       if ("undo" in result) offerUndo(result.undo);
@@ -427,7 +430,11 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
 
   function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => { await safeCall(() => remove(id), null); });
+    startTransition(async () => {
+      const r = await safeCall(() => remove(id), NETWORK_ERROR);
+      // It failed silently before (1.9.0, ec).
+      if (r && typeof r === "object" && "error" in r && r.error) alert(t("genericError"));
+    });
   }
 
   return (

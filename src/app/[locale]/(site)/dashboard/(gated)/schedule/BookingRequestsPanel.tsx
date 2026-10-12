@@ -156,7 +156,11 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
     const note = (reasonsLive ? reasons[id] : notes[id]) || undefined;
     setRejectingId(null);
     setActing(`reject:${id}`);
-    startTransition(async () => { await call(() => forRow(pid(id), "rejectBooking", rejectBooking)(id, note)); });
+    startTransition(async () => {
+      const r = await call(() => forRow(pid(id), "rejectBooking", rejectBooking)(id, note));
+      // No answer: the reason box comes back with what was typed (1.9.0).
+      if (r === NETWORK_ERROR && reasonsLive) setRejectingId(id);
+    });
   }
 
   function handleProposeSubmit(id: string) {
