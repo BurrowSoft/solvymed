@@ -65,7 +65,7 @@ export function JoinPracticeCard() {
           maxLength={64}
           className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm uppercase text-slate-900 focus:border-teal-500 focus:outline-none"
         />
-        <button
+        <button data-server
           type="button"
           onClick={join}
           disabled={pending || !code.trim()}

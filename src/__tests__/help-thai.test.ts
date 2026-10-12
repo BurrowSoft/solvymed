@@ -30,7 +30,7 @@ describe("Thai Help", () => {
     const cats = build(true) as Built;
     const withTh = cats.flatMap((c) => c.articles.filter((a) => a.th).map((a) => a.id));
     expect(withTh.sort()).toEqual([...DRAFTED].sort());
-    expect(cats.map((c) => c.titleTh)).toEqual(["ตารางงาน", "ผู้ป่วย", "การชำระเงิน", "การตั้งค่า", "บัญชี"]);
+    expect(cats.map((c) => c.titleTh)).toEqual(["ตารางนัด", "ผู้ป่วย", "การชำระเงิน", "การตั้งค่า", "บัญชี"]);
     for (const c of cats) for (const a of c.articles) if (a.th) {
       expect(a.th.title.length).toBeGreaterThan(0);
       expect(a.th.body.length).toBeGreaterThan(0);
@@ -51,14 +51,14 @@ describe("Thai Help", () => {
 
   it("the Thai view: Thai where translated, English otherwise, the same shape", () => {
     const cats: HelpCategory[] = [{
-      slug: "agenda", title: { pt: "Agenda", en: "Schedule" }, titleTh: "ตารางงาน",
+      slug: "agenda", title: { pt: "Agenda", en: "Schedule" }, titleTh: "ตารางนัด",
       articles: [
         { id: "A1", category: "agenda", title: { pt: "pt", en: "en" }, body: { pt: [], en: [{ type: "p", text: "en" }] }, web: { pt: "wpt", en: "wen" }, webUnavailable: false, open: null, appOnly: null, appTitle: null, th: { title: "ไทย", body: [{ type: "p", text: "ไทย" }], web: "เว็บ" } },
         { id: "A2", category: "agenda", title: { pt: "pt2", en: "en2" }, body: { pt: [], en: [{ type: "p", text: "en2" }] }, web: null, webUnavailable: false, open: null, appOnly: null, appTitle: null },
       ],
     }];
     const [c] = thaiOverlay(cats);
-    expect(c.title.en).toBe("ตารางงาน");
+    expect(c.title.en).toBe("ตารางนัด");
     expect(c.articles[0].title.en).toBe("ไทย");
     expect(c.articles[0].body.en).toEqual([{ type: "p", text: "ไทย" }]);
     expect(c.articles[0].web?.en).toBe("เว็บ");

@@ -2187,6 +2187,7 @@
     "findings": "Temuan / pendapat",
     "rest": "Perlu istirahat",
     "refill": "Isi ulang teks",
+    "textMayNotMatch": "Teks mungkin tidak sesuai dengan kolom yang Anda ubah.",
     "items": "Obat",
     "itemName": "Obat",
     "dose": "Dosis",
@@ -2270,5 +2271,8 @@
   },
   "save": {
     "alreadySavedChanged": "Ini sudah tersimpan sebelum perubahan terakhir Anda. Perubahan setelahnya tidak diterapkan; periksa versi yang tersimpan."
+  },
+  "offline": {
+    "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   }
 }

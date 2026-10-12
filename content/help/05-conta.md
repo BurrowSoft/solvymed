@@ -87,3 +87,22 @@ Thai title: "ติดต่อฝ่ายสนับสนุน"
 **th**
 ส่งอีเมลมาที่ support@solvymed.com เราไม่เคยขอรหัสผ่านของคุณ
 `open:none`
+
+---
+
+## K7. Sem internet / No internet connection
+**pt-BR**
+Sem internet, o SolvyMed mostra **Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas.** no alto da tela.
+Você continua vendo o que já está aberto, mas nada é salvo: os botões que precisam do servidor ficam apagados e, ao tocar, repetem o aviso.
+O que você digitou continua no formulário. Quando a conexão volta, o aviso some e você pode salvar.
+**en**
+Without internet, SolvyMed shows **No internet connection. You can view what's open, but changes won't be saved.** at the top of the screen.
+You can still see what's already open, but nothing is saved: buttons that need the server are greyed out and, when tapped, repeat the message.
+What you typed stays in the form. When the connection is back, the message goes away and you can save.
+Thai title: "ไม่มีอินเทอร์เน็ต"
+**th**
+เมื่อไม่มีอินเทอร์เน็ต SolvyMed จะแสดง **ไม่มีการเชื่อมต่ออินเทอร์เน็ต ดูข้อมูลที่เปิดอยู่ได้ แต่การเปลี่ยนแปลงจะไม่ถูกบันทึก** ที่ด้านบนของหน้าจอ
+คุณยังดูข้อมูลที่เปิดอยู่ได้ แต่จะไม่มีการบันทึกใดๆ ปุ่มที่ต้องใช้เซิร์ฟเวอร์จะเป็นสีจาง และเมื่อแตะจะแสดงข้อความนี้อีกครั้ง
+ข้อมูลที่คุณพิมพ์ไว้จะยังอยู่ในแบบฟอร์ม เมื่อกลับมาเชื่อมต่อได้ ข้อความจะหายไปและคุณบันทึกได้
+`open:none`
+`requires:offline-guard-live`

@@ -66,7 +66,9 @@ describe("records and documents: a direct insert under the form's id", () => {
     const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
     expect(await createRecord("p1", fd({ content: "Retorno", client_id: ID }))).toEqual({ success: true });
     expect(db.inserts[0].row.id).toBe(ID);
-  });
+    // The first import of the actions module is slow on a busy runner (it
+    // timed out once at the default 5 s); the later tests reuse it.
+  }, 30_000);
 
   it("a repeat (23505) that reads back as this doctor's own row is a success; otherwise an error", async () => {
     const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
