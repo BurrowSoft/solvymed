@@ -44,7 +44,10 @@ export function runTime(run14: string): number | null {
   const m = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(run14);
   if (!m) return null;
   const t = Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
-  return Number.isNaN(t) ? null : t;
+  // Date.UTC rolls an impossible date over (month 13 → next January): only a
+  // tag that formats back to itself is a real date (ec).
+  if (Number.isNaN(t)) return null;
+  return new Date(t).toISOString().replace(/\D/g, "").slice(0, 14) === run14 ? t : null;
 }
 
 // ── The ledger: test-results/smoke-created-<RUN>.json ──

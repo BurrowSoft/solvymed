@@ -58,6 +58,7 @@ E2E_BASE_URL=$(node scripts/preview-url.mjs <head sha>) npm run test:smoke
 - **Cleanup** (`afterAll`) deletes exactly what the ledger lists: blocking rows first, then the user, newest first. Each account is retried 3 times (1 s, 2 s, 4 s), and a failure never stops the others. A deleted account leaves the ledger; a failed one stays and is logged (`cleanup FAILED for user <id>`).
 - **The global teardown** retries whatever the ledger still lists after the tests. Anything still failing is printed (`STILL NOT DELETED`) and stays in the ledger file.
 - **The sweep** (global setup, with the service key only) deletes leftovers of earlier runs: only `e2e-smoke-<14 digits><4 characters>-<tag>@burrowsoft.com`, and only when both the run tag and the account's creation are more than 2 h old. It never touches another prefix or a run in progress. Every swept account is logged with its id.
+- The global setup and teardown are config-level, so they run for every project (the `chromium` specs too). They only sweep or delete when `SUPABASE_URL` and the service key are in the environment.
 - A killed run's accounts are swept by the next run after 2 h. To delete them sooner, list them with `purgeRun("<RUN>")` (a dry run), then delete them with `purgeRun("<RUN>", false)`. It refuses anything but a full run tag.
 - Never touch other prefixes (`e2e-test-opus-*`, `e2e-test-t2-*`, `e2e-mt1-*`, `e2e-mt2-*`) or Vitor's accounts.
 - Never seed medical records or prescriptions. Retention rules then block deleting the doctor.
