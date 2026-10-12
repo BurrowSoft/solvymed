@@ -15,11 +15,17 @@ import { countryProfile } from "@/lib/country";
 export const DOC_LANGS = ["pt-BR", "en", "th", "es", "de", "fr", "it"] as const;
 export type DocLang = (typeof DOC_LANGS)[number];
 
+// The languages a NEW document can be written in (02, 1.9.0): only the ones
+// with reviewed translations. es / de / fr / it stay in DOC_LANGS (a document
+// already saved in one still opens, prints and can be edited in it) but are
+// not offered until a native review. Add a language back here once reviewed.
+export const OFFERED_DOC_LANGS: readonly DocLang[] = ["pt-BR", "en", "th"];
+
 // The picker's order (cf, 6 Oct): the practice country's language and English
-// first, then the rest (all 7 kept: a certificate for travel abroad).
+// first, then the rest of the offered languages.
 export function docLangsFor(country: string | null | undefined): DocLang[] {
   const first = [countryProfile(country).fallbackLocale, "en"] as DocLang[];
-  return [...new Set<DocLang>([...first, ...DOC_LANGS])];
+  return [...new Set<DocLang>([...first, ...OFFERED_DOC_LANGS])].filter((l) => OFFERED_DOC_LANGS.includes(l));
 }
 
 // The languages a type offers (ad, 7 Oct): the Thai medical certificate's
