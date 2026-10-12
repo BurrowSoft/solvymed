@@ -57,7 +57,7 @@ function CompleteRegistrationCard({ prompt, onDone }: { prompt: SelfPrompt; onDo
       {state === "card" ? (
         <div className="mt-3 flex gap-2">
           <button type="button" onClick={() => setState("form")} className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-teal-700">{t("complete")}</button>
-          <button type="button" disabled={pending} onClick={() => start(async () => { if (await safeCall(() => dismissSelfFields(prompt.doctorId), false)) setState("gone"); })}
+          <button data-server type="button" disabled={pending} onClick={() => start(async () => { if (await safeCall(() => dismissSelfFields(prompt.doctorId), false)) setState("gone"); })}
             className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">{t("notNow")}</button>
         </div>
       ) : (

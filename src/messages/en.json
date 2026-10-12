@@ -2300,5 +2300,11 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "adjust": "Adjust"
+  },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
+  "offline": {
+    "banner": "No internet connection. You can view what's open, but changes won't be saved."
   }
 }

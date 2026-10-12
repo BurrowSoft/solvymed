@@ -51,7 +51,7 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Link href="/privacy" className="rounded-xl px-3 py-2 text-sm font-semibold text-teal-800 underline-offset-2 hover:bg-teal-100 hover:underline">{t("read")}</Link>
-        <button type="button" disabled={pending} onClick={ok} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700 disabled:opacity-60">{t("ok")}</button>
+        <button data-server type="button" disabled={pending} onClick={ok} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700 disabled:opacity-60">{t("ok")}</button>
         {failed && <span className="text-xs text-red-700">{t("failed")}</span>}
       </div>
     </section>

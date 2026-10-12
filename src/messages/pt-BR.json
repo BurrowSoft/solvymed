@@ -2270,5 +2270,11 @@
     "zoomIn": "Aproximar",
     "zoomOut": "Afastar",
     "adjust": "Ajustar"
+  },
+  "save": {
+    "alreadySavedChanged": "Isto já tinha sido salvo antes das suas últimas alterações. As alterações posteriores não foram aplicadas; confira a versão salva."
+  },
+  "offline": {
+    "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
   }
 }

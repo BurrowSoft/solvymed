@@ -9,6 +9,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { OpenInApp } from "@/components/OpenInApp";
+import { signOutHere } from "@/lib/signOut";
 
 const COUNTDOWN = 5;
 
@@ -50,7 +51,7 @@ export default function PatientWelcomePage() {
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/login`);
   }
 

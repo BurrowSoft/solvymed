@@ -2270,5 +2270,11 @@
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
     "adjust": "Điều chỉnh"
+  },
+  "save": {
+    "alreadySavedChanged": "Mục này đã được lưu trước những thay đổi gần nhất của bạn. Các thay đổi sau đó chưa được áp dụng; hãy kiểm tra phiên bản đã lưu."
+  },
+  "offline": {
+    "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
   }
 }

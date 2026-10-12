@@ -229,6 +229,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
   const tAddr = useTranslations("patientAddress");
   const tIds = useTranslations("patientIds");
   const tBirth = useTranslations("dateInput");
+  const tsave = useTranslations("save");
   const [open, setOpen] = useState(autoOpen);
   // Opened from the setup checklist (?new=1): drop the parameter once shown.
   useEffect(() => { if (autoOpen) dropQueryParam("new"); }, [autoOpen]);
@@ -240,6 +241,9 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
   const router = useRouter();
   // Set by "Create anyway" for the very next submit only.
   const forceNext = useRef(false);
+  // Saved once (216): one id per new patient, sent with every try (the
+  // "Create anyway" resubmit included).
+  const saveOnce = useRef({ id: "", tries: 0 });
   const prefix = locale === "en" ? "" : `/${locale}`;
 
   function submit(formData: FormData) {
@@ -250,10 +254,16 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
       formData.set("force", "1");
       forceNext.current = false;
     }
+    if (!saveOnce.current.id) saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
+    formData.set("client_id", saveOnce.current.id);
+    formData.set("client_try", String(++saveOnce.current.tries));
     startTransition(async () => {
       const result = await safeCall(() => createPatient(formData), { error: "network", code: "network" } as const);
       if ("success" in result) {
         setOpen(false);
+        saveOnce.current = { id: "", tries: 0 };
+        // Saved before the last changes: the list shows the saved one.
+        if (result.alreadySavedChanged) alert(tsave("alreadySavedChanged"));
         return;
       }
       if (result.code === "possible_match") { setMatches(result.matches); return; }
@@ -319,7 +329,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
             {m.archived_at ? (
               // Bring the existing record back rather than creating a second
               // one for the same person.
-              <button type="button" onClick={() => restoreMatch(m.id)} disabled={pending || restoringId !== null} className="shrink-0 font-semibold text-teal-700 hover:underline disabled:opacity-60">
+              <button data-server type="button" onClick={() => restoreMatch(m.id)} disabled={pending || restoringId !== null} className="shrink-0 font-semibold text-teal-700 hover:underline disabled:opacity-60">
                 {restoringId === m.id ? "…" : t("restore")}
               </button>
             ) : (
@@ -330,7 +340,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
           </li>
         ))}
       </ul>
-      <button type="button" onClick={createAnyway} disabled={pending} className="text-sm font-semibold text-amber-900 underline disabled:opacity-60">
+      <button data-server type="button" onClick={createAnyway} disabled={pending} className="text-sm font-semibold text-amber-900 underline disabled:opacity-60">
         {t("createAnyway")}
       </button>
     </div>
