@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { attempt, hasServerCode, isNetworkError, NETWORK_FAILURE, safeCall } from "@/lib/netError";
 import { isAccessLogRefusal } from "@/lib/accessLog";
 
@@ -51,5 +51,23 @@ describe("safeCall", () => {
     expect(await safeCall(async () => ({ ok: true }), NETWORK_FAILURE)).toEqual({ ok: true });
     expect(await safeCall(async () => ({ ok: false, code: "denied" }), NETWORK_FAILURE)).toEqual({ ok: false, code: "denied" });
     expect(await safeCall(async () => { throw new TypeError("Failed to fetch"); }, NETWORK_FAILURE)).toEqual({ ok: false, code: "network" });
+  });
+});
+
+describe("untilDone", () => {
+  it("while a run is in flight, calling again returns that run; after it settles, a new run", async () => {
+    const { untilDone } = await import("@/lib/netError");
+    let resolve!: (v: string) => void;
+    const task = vi.fn(() => new Promise<string>((r) => { resolve = r; }));
+    const run = untilDone(task);
+    const a = run();
+    const b = run();
+    expect(a).toBe(b);
+    expect(task).toHaveBeenCalledTimes(1);
+    resolve("shared");
+    expect(await a).toBe("shared");
+    void run();
+    expect(task).toHaveBeenCalledTimes(2);
+    expect(untilDone(run)).toBe(run);
   });
 });
