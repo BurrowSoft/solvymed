@@ -25,6 +25,7 @@ import { MyDoctors } from "./MyDoctors";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
+import { signOutHere } from "@/lib/signOut";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -465,7 +466,7 @@ export function MyAppointmentsClient({
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/login`);
   }
 
