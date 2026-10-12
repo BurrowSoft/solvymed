@@ -2092,6 +2092,8 @@
       "internal": "내부 문서"
     },
     "share": "환자와 공유",
+    "shareChecking": "환자가 이 사본을 볼 수 있는지 확인하는 중…",
+    "shareCheckFailed": "환자가 이 사본을 볼 수 있는지 확인하지 못했습니다. 공유할지 선택하세요.",
     "shared": "환자와 공유됨",
     "notShared": "나만 볼 수 있음",
     "replacedByNewer": "최신 사본으로 대체됨",
