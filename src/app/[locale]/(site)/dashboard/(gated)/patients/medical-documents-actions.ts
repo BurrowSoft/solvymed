@@ -15,7 +15,7 @@ import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
-import { noteShareIntent, shareIntentLive } from "@/lib/shareIntent";
+import { noteShareIntent, shareIntentRecording } from "@/lib/shareIntent";
 import { DOC_LANGS, OFFERED_DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
@@ -71,7 +71,7 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
     // 220's trigger stamps the server's time; any value means "meant to share".
-    ...(input.share === true && shareIntentLive() ? { share_intended_at: new Date().toISOString() } : {}),
+    ...(input.share === true && shareIntentRecording() ? { share_intended_at: new Date().toISOString() } : {}),
   }).select("id").single();
   // A retry after a lost answer: the document is already there (216). If
   // the form changed since, the page shows the stored one with a message.

@@ -21,7 +21,7 @@ import { conditionMet } from "@/lib/conditions";
 import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
 import { inputsOf, fieldsFor, missingRequired, readPatientFieldRules, type FieldKey } from "@/lib/patientFields";
-import { noteShareIntent, shareIntentLive } from "@/lib/shareIntent";
+import { noteShareIntent, shareIntentRecording } from "@/lib/shareIntent";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
@@ -494,7 +494,7 @@ export async function createPrescription(patientId: string, formData: FormData) 
   const id = clientIdFrom(formData.get("client_id")) ?? crypto.randomUUID();
   // 220: saved with "Share with the patient" on records the intent (named,
   // so the call resolves before and after 220).
-  const share = formData.get("share") === "1" && shareIntentLive();
+  const share = formData.get("share") === "1" && shareIntentRecording();
   const { data, error } = await supabase.rpc("create_prescription", { p_id: id, p_patient_id: patientId, p_notes: notes, p_items: items, ...(share ? { p_share: true } : {}) });
   if (error) return { error: error.message?.includes("content_required") ? "medication_required" : actionError(error.message) };
 

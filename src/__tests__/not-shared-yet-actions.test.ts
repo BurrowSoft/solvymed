@@ -5,10 +5,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 // list_unshared / mark_share_intent read and record it; nothing is sent
 // while it's off (before 220 is applied, the column and RPCs don't exist).
 
-const h = vi.hoisted(() => ({ live: true, rpcData: null as unknown, rpcs: [] as { fn: string; args: Record<string, unknown> }[], inserts: [] as Record<string, unknown>[] }));
+const h = vi.hoisted(() => ({ live: true, recording: false, rpcData: null as unknown, rpcs: [] as { fn: string; args: Record<string, unknown> }[], inserts: [] as Record<string, unknown>[] }));
 vi.mock("@/lib/conditions", async (orig) => {
   const real = await orig<typeof import("@/lib/conditions")>();
-  return { ...real, conditionMet: (id: string) => (id === "not-shared-marker-live" ? h.live : real.conditionMet(id as never)) };
+  return { ...real, conditionMet: (id: string) => (id === "not-shared-marker-live" ? h.live : id === "share-intent-recording" ? h.recording : real.conditionMet(id as never)) };
 });
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/activeAccess", () => ({ isActiveProfessional: async () => true, getActiveProfId: async () => "doc-1", isLockedOut: async () => false }));
@@ -33,7 +33,7 @@ const P = "11111111-1111-4111-8111-111111111111";
 const D = "22222222-2222-4222-8222-222222222222";
 const doc = { type: "certificate" as const, lang: "pt-BR" as const, fields: { variant: "attendance", date: "2026-10-12", from: "09:00", to: "10:00", includeCid: false } as never, body: "Atesto." };
 
-beforeEach(() => { h.rpcs = []; h.inserts = []; h.live = true; h.rpcData = null; });
+beforeEach(() => { h.rpcs = []; h.inserts = []; h.live = true; h.recording = false; h.rpcData = null; });
 
 describe("Not shared yet: the server side", () => {
   it("a new document saved with the box on carries the intent; off, or before 220 is live, it doesn't", async () => {
@@ -70,4 +70,16 @@ describe("Not shared yet: the server side", () => {
     expect(await markShareIntent("prescription", D)).toEqual({ ok: false });
     expect(h.rpcs).toEqual([]);
   });
+
+  it("recording alone (220 applied, the mark not shipped): saves carry the intent, but nothing is listed or marked", async () => {
+    h.live = false; h.recording = true;
+    await createMedicalDocument(P, { ...doc, share: true });
+    expect(h.inserts[0]).toHaveProperty("share_intended_at");
+    const f = new FormData(); f.append("name_0", "Dipirona"); f.set("share", "1");
+    await createPrescription(P, f);
+    expect(h.rpcs.find((r) => r.fn === "create_prescription")?.args).toMatchObject({ p_share: true });
+    h.rpcData = [{ source: "prescription", source_id: D }];
+    expect(await listUnshared(P)).toEqual([]);
+    expect(await markShareIntent("prescription", D)).toEqual({ ok: false });
+  }, 30_000);
 });
