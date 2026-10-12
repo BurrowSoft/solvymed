@@ -15,7 +15,8 @@ import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
-import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
+import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -131,7 +132,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       setShare(s === "on");
       setShareState("known");
     };
-    copySharedNow(patientId, "medical_document", sourceId).then(done, () => done("unknown"));
+    timeLimit(copySharedNow(patientId, "medical_document", sourceId), SHARE_CHECK_MS, "unknown" as const).then(done, () => done("unknown"));
     return () => { live = false; };
   }, [canShare, patientId, sourceId]);
   const types = documentTypesFor(country);

@@ -11,7 +11,7 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
-import { localDay } from "@/lib/patientDocuments";
+import { localDay, SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -1199,7 +1199,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (d.mode !== "new" && canShare) {
       const rxId = d.rx.id;
       const done = (s: "on" | "off" | "unknown") => { if (!shareRxTouched.current) setDialogShare(rxId, s); };
-      copySharedNow(patientId, "prescription", rxId).then(done, () => done("unknown"));
+      timeLimit(copySharedNow(patientId, "prescription", rxId), SHARE_CHECK_MS, "unknown" as const).then(done, () => done("unknown"));
     }
   }
   // Only while that dialog is still the one open.

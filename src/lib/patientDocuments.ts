@@ -150,6 +150,9 @@ export function formatBytes(n: number): string {
 // The share box's default when editing / correcting: "unknown" (the lookup
 // failed) is not "off" (ec, #528): the doctor must choose before saving.
 export type CopyShareState = "on" | "off" | "unknown";
+// A lookup that never answers ends as "unknown" (ec, #528): the box and Save
+// wait for it, so it must not wait forever.
+export const SHARE_CHECK_MS = 15_000;
 
 export function copyIsShared(docs: PatientDocument[], source: "prescription" | "medical_document", sourceId: string): boolean {
   const replacedBy = new Map<string, PatientDocument>();

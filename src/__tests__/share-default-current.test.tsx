@@ -120,6 +120,24 @@ describe("the share box when correcting", () => {
     expect(screen.queryByText(D.shareCheckFailed)).toBeNull();
   });
 
+  it("a lookup that never answers ends as unknown after 15 s, so Save never waits forever (ec B2)", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      h.gate = new Promise<void>(() => {});
+      renderTab({ rx: true });
+      correct();
+      expect(rxSave()).toBeDisabled();
+      await act(async () => { await vi.advanceTimersByTimeAsync(14_000); });
+      expect(screen.getByText(D.shareChecking)).toBeInTheDocument();
+      await act(async () => { await vi.advanceTimersByTimeAsync(1_500); });
+      expect(screen.getByText(D.shareCheckFailed)).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("share-rx-with-patient"));
+      expect(rxSave()).toBeEnabled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("a new prescription stays ON, with no lookup", async () => {
     renderTab({});
     fireEvent.click(await screen.findByRole("button", { name: pt.documents.addPrescription }));
