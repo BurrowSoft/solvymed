@@ -2187,6 +2187,7 @@
     "findings": "检查结果 / 意见",
     "rest": "需要休息",
     "refill": "重新填写正文",
+    "textMayNotMatch": "正文可能与您修改的字段不一致。",
     "items": "药品",
     "itemName": "药品",
     "dose": "剂量",

@@ -2187,6 +2187,7 @@
     "findings": "Resultado / parecer",
     "rest": "Afastamento",
     "refill": "Preencher o texto de novo",
+    "textMayNotMatch": "O texto pode não corresponder aos campos que você alterou.",
     "items": "Medicamentos",
     "itemName": "Medicamento",
     "dose": "Dose",

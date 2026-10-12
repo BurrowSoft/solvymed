@@ -68,3 +68,23 @@ describe("sharing the patient's copy holds the page until it's done", () => {
     expect(screen.getByRole("button", { name: pt.docs.tryAgain })).toBeInTheDocument();
   });
 });
+
+describe("a stalled share (1.9.0, as the app)", () => {
+  it("after 90 s: the hold ends with the existing failure + Tentar de novo, not an endless modal", async () => {
+    h.resolve = null;
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await saveRx();
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      // Never answered.
+      await act(async () => { await vi.advanceTimersByTimeAsync(89_000); });
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      await act(async () => { await vi.advanceTimersByTimeAsync(2_000); });
+      await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+      expect(await screen.findByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
+      expect(screen.getByRole("button", { name: pt.docs.tryAgain })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
