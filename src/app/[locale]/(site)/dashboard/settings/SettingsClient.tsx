@@ -12,6 +12,7 @@ import { NETWORK_ERROR, safeCall } from "@/lib/netError";
 import { dayLocationValue } from "@/lib/locations";
 import { BR_STATES, councilRegistration, parseCouncilRegistration, type CouncilFields } from "@/lib/registration";
 import { cardLinkInput } from "@/lib/cardLink";
+import { savedOk } from "@/lib/savedOk";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -76,12 +77,16 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
   const registrationExample = t(ex.registration);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateProfile(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateProfile(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -111,6 +116,7 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
             </div>
           )}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -414,12 +420,16 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
   );
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateWorkingHours(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateWorkingHours(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -479,6 +489,7 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
             );
           })}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -490,12 +501,16 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateSchedulingRules(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateSchedulingRules(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -520,6 +535,7 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
           </div>
           <p className="mt-2 text-xs text-slate-400">{t("maxHint2")}</p>
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>

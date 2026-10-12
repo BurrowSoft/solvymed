@@ -41,19 +41,26 @@ describe("sharing the patient's copy holds the page until it's done", () => {
   it("a modal with the progress line and the leave-page prompt while pending; both go once shared", async () => {
     await saveRx();
     expect(screen.getByTestId("sharing-progress")).toHaveTextContent("Compartilhando com o paciente…");
-    // 4f: nothing behind the modal can take focus; the modal has it.
+    // 4f: nothing behind the modal can take focus; the modal has it. The
+    // page is made inert (and the modal focused) by an effect after the
+    // modal renders: wait for that state instead of asserting at once (it
+    // raced on a busy CI runner, ec #515 / #518).
     const overlay = screen.getByTestId("sharing-progress");
-    const page = [...document.body.children].filter((el) => el !== overlay);
-    expect(page.length).toBeGreaterThan(0);
-    expect(page.every((el) => el.hasAttribute("inert"))).toBe(true);
-    expect(document.activeElement).toBe(overlay);
+    await waitFor(() => {
+      const page = [...document.body.children].filter((el) => el !== overlay);
+      expect(page.length).toBeGreaterThan(0);
+      expect(page.every((el) => el.hasAttribute("inert"))).toBe(true);
+      expect(document.activeElement).toBe(overlay);
+    });
     const e = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(e);
     expect(e.defaultPrevented).toBe(true);
 
     await act(async () => { h.resolve!("shared"); });
-    expect(screen.queryByTestId("sharing-progress")).toBeNull();
-    expect([...document.body.children].some((el) => el.hasAttribute("inert"))).toBe(false);
+    await waitFor(() => {
+      expect(screen.queryByTestId("sharing-progress")).toBeNull();
+      expect([...document.body.children].some((el) => el.hasAttribute("inert"))).toBe(false);
+    });
     const after = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(after);
     expect(after.defaultPrevented).toBe(false);
@@ -63,8 +70,8 @@ describe("sharing the patient's copy holds the page until it's done", () => {
     h.resolve = null;
     await saveRx();
     await act(async () => { h.resolve!("failed"); });
-    expect(screen.queryByTestId("sharing-progress")).toBeNull();
-    expect(screen.getByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
+    await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+    expect(await screen.findByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
     expect(screen.getByRole("button", { name: pt.docs.tryAgain })).toBeInTheDocument();
   });
 });
