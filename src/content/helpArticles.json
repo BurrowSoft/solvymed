@@ -1574,7 +1574,7 @@
               "items": [
                 "**Configurações → Equipe**: digite o e-mail da pessoa e toque em **Convidar**.",
                 "O convite chega a esse e-mail, com o botão **Aceitar convite**. O código de convite também aparece na tela uma vez, para você compartilhar se quiser (vale 7 dias, uso único, só para esse e-mail).",
-                "A pessoa abre o e-mail e toca em **Aceitar convite**: a conta é criada com o e-mail já preenchido. Sem o e-mail à mão, ela pode usar o código em \"Trabalha na secretaria?\"."
+                "A pessoa abre o e-mail, toca em **Aceitar convite** e cria a conta: o e-mail já vem preenchido. Sem o e-mail à mão, ela pode usar o código em \"Trabalha na secretaria?\"."
               ]
             },
             {
@@ -1600,7 +1600,7 @@
               "items": [
                 "**Settings → Team**: type the person's email and tap **Invite**.",
                 "The invite is emailed to that address, with an **Accept invite** button. The invite code also shows on screen once, for you to share if you like (valid for 7 days, single use, for that email only).",
-                "The person opens the e-mail and taps **Accept invite**: the account is created with the e-mail already filled in. Without the e-mail at hand, they can use the code under \"Work at the front desk?\"."
+                "The person opens the e-mail, taps **Accept invite** and creates the account: the e-mail is already filled in. Without the e-mail at hand, they can use the code under \"Work at the front desk?\"."
               ]
             },
             {
