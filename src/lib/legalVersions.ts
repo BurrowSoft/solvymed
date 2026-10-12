@@ -59,9 +59,10 @@
 // with their flips. Mobile's accepting migration (215) applied FIRST.
 // 2026-10-19: §5's Sentry row names our server functions too (1.9.0 item
 // 1.3; the edge functions report errors through the same strict scrub, no
-// patient data, proven with an envelope sink first). Mobile's accepting
-// migration (219) applied FIRST; merged only after c5's "edge Sentry live +
-// proven" and Vitor's OK on the wording.
+// patient data). Wording = Vitor's "OK privacy Sentry" (10-09). Order (02):
+// mobile 219 applied FIRST, then this text + version go live, THEN c5 deploys
+// the edge reporting (its allowlist payload checked on an intercepted
+// envelope) right after.
 export const PRIVACY_VERSION = "2026-10-19";
 export const TERMS_VERSION = "2026-10-01";
 
