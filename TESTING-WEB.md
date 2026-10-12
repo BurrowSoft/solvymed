@@ -10565,3 +10565,37 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
 - The #492 and #495 sets were purged by the mobile dev (10-09 ~02:10Z / ~02:35Z) and verified 0 by WT1, Storage included.
 - The #490 throwaways were deleted and verified 0.
 - Nothing was backdated.
+
+## Batch 17: web PRs #500–#504: the 1.8.0 release flip, the 1.8.1 network-error fixes, and the #470 correction add-on (web tester 1 + web tester 2, 2026-10-09 → 10-11)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT1 = web tester 1, WT2 = web tester 2; purges by the mobile dev. Every row with a Preview also ran the regression suite: "smoke: 57 passed at `<SHA>`".
+
+**Release flip on www:** #500 merged as `903731f` at 07:28Z on 10-09, with the five server flags ON from 07:28:13Z and migration 215 (privacy 2026-10-17) live from ~06:15Z. The row ran on www with **fresh, unlisted** throwaways (0 `server_flag_testers` rows), so it proves every 1.8.0 feature is on for everyone. The work was split: WT1 took items 1, 2, 4, 7, 8 and 9; WT2 took 3, 5 and 6.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #500 | 1.8.0 release flip: six conditions met + 4f's §3.8 fixes; privacy 2026-10-17 | **Before the flip:** WT2 🟢 `#493` on www (6073635388): "Pronto!" in 1398 ms, still shown 15 s later. **Flip row on www:** WT1 🟢 (6077010485): (1) `/privacy` en / pt "17 October 2026" / "17 de outubro de 2026", §3.8, the clinical-documents words, §3.2 "…or the patients themselves", 4f's two §3.8 fixes; (2) a fresh doctor's **Documentos**: upload + share, the patient (linked through the invite code) sees and opens it; (4) certificate / declaration / exam request + PDFs, the declaration's PDF listing both locations; (7) two practice locations, **Principal** / **Tornar principal**, a **Local** per day; (8) Help P15 / C13 / C15 / C16 in en / pt-BR / th + 4 SolvyAI answers; (9) smoke 57 at `903731f`. WT2 🟢 (6076729912): (3) the share overlay, each document's own copy, **Atualizado em** / **Substituído por uma cópia mais recente** on an edit; (5) the C2 card, "Pronto!" in 1406 ms; (6) **Modelos de prontuário** create / use / delete | `903731f` into master |
+| #502 | The share step: a network error is the generic failure, not "couldn't record the access" | WT1 🟢 `4ecfe63` (6077189491) with a correction (6077236483). Offline during the share → "Salvo, mas não foi possível compartilhar a cópia com o paciente." + **Tentar de novo**; the online retry makes the copy. A control on www without #502 behaved the same, so a browser test reaches only the client path. The server rule (an error with no database code = generic) rests on the unit tests | `90e06ad` into master |
+| #503 | File open, CSV export, history + Rx print: the same rule | WT1 🟢 `cb2ad6e` (6077523425). Online, all four work. Browser offline: the CSV export shows "Não foi possível exportar. Tente novamente."; the print pages get the browser's own offline page; "Não foi possível registrar o acesso" nowhere. The server branch rests on the unit tests, as for #502 | `d76890c` into master |
+| #504 | SolvyAI: **Abrir tela** for practice locations (C15) | WT1 🟢 `92eb4cf` (6077680485): the answer to "Como cadastro um segundo local de atendimento?" has **Abrir tela**, which opens `/dashboard/clinics` | `4ae5b0a` into master |
+
+**#470 add-on (www, 2026-10-11 19:59Z, WT2, 6113140986):** the correction path that #470's row left to the unit tests.
+- **Setup:** the shared Rx `d9878f10` was corrected in real time, ~71 h after it was made. Nothing was backdated.
+- **Correction:** **Adicionar correção** only (no **Editar**). It created a new Rx with `corrects_id`, and its own copy "Receita 11/10/2026" with `replaces_id` = the edited copy.
+- **What each side sees:**
+  - The patient sees "Receita 11/10/2026 · Corrigido em 11/10/2026".
+  - The doctor's **Documentos** marks the replaced copy **Substituído por uma cópia mais recente**.
+  - **Registro de acessos** keeps the earlier views and adds today's.
+
+**Nits passed to the web dev (1.8.x queue, not blocking):**
+- **My Clinics:** after adding a 2nd location, the list showed only the 1st until a reload (seen once).
+- **Documentos → Abrir offline:** an empty tab and an uncaught `Failed to fetch`, with no message. This was already there before #503.
+- **SolvyAI's locations answer:** it says "Configurações → Minhas Clínicas", but on the website it is its own sidebar item.
+
+**Fixtures:**
+- **Accounts:** throwaways only (`e2e-test-opus-…`, `e2e-smoke-…`). No listings were used for the flip row.
+- **Purges by the mobile dev:**
+  - WT1 verified 0 (Storage included) for its sets: the flip-row set (~08:10Z) and the #502–#504 set (~08:50Z).
+  - WT2's sets (its flip-row pair, and the #470 fixtures after the add-on) were purged as noted in WT2's comments.
+- **Downloads:** the CSV exports were deleted from disk after reading their header.
+- Nothing was backdated.
