@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { readLocationLines } from "@/lib/locationLines";
 import { createClient } from "@/lib/supabase/server";
 import { isAccessLogRefusal } from "@/lib/accessLog";
+import { clientIdFrom, isDuplicateKey, savedBefore } from "@/lib/saveOnce";
 import { isActiveProfessional } from "@/lib/activeAccess";
 import { serverFlag } from "@/lib/myDoctors";
 import { actionError } from "@/lib/dbErrors";
@@ -33,7 +34,8 @@ async function doctor() {
   return { supabase, uid: user.id };
 }
 
-type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string };
+// clientId: the form's id (216, saved once; see lib/saveOnce).
+type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string; clientId?: string };
 
 // The type must be one the practice's country offers, the language one of
 // the seven (the controlled prescription: Portuguese only), the fields
@@ -60,10 +62,18 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
   if (!c.ok) return c;
   // A new Thai certificate: Thai or English only (ad).
   if (!docLangsForType(input.type, DOC_LANGS).includes(c.lang)) return { ok: false, code: "check_failed" };
+  const clientId = clientIdFrom(input.clientId);
   const { data, error } = await me.supabase.from("medical_documents").insert({
+    ...(clientId ? { id: clientId } : {}),
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
   }).select("id").single();
+  // A retry after a lost answer: the document is already there (216).
+  if (error && clientId && isDuplicateKey(error) && await savedBefore(() =>
+    me.supabase.from("medical_documents").select("id").eq("id", clientId).eq("professional_id", me.uid).maybeSingle())) {
+    revalidatePath(`/dashboard/patients/${patientId}`);
+    return { ok: true, data: clientId };
+  }
   if (error || !data) return { ok: false, code: actionError(error?.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { ok: true, data: data.id as string };
@@ -101,6 +111,8 @@ export async function correctMedicalDocument(id: string, patientId: string, inpu
   if (!c.ok) return c;
   const { data: correctionId, error } = await me.supabase.rpc("add_document_correction", {
     p_document_id: id, p_body: (input.body ?? "").trim() || null, p_fields: input.fields, p_reason: reason,
+    // 216: a retry of the same correction returns it.
+    p_id: clientIdFrom(input.clientId),
   });
   if (error) return { ok: false, code: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);

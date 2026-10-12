@@ -806,8 +806,13 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(records);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
   function open(d: RecordDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
     // A record written with sections is edited / corrected with the same ones.
     const own = d.mode !== "new" ? d.record.sections : null;
     setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
@@ -849,11 +854,14 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
       formData.set("template_name", sections.templateName ?? "");
     }
     setError("");
+    formData.set("client_id", clientId.current);
     startTransition(async () => {
       const result =
         dialog.mode === "new" ? await safeCall(() => createRecord(patientId, formData), NETWORK_ERROR)
         : dialog.mode === "edit" ? await safeCall(() => updateRecord(dialog.record.id, patientId, formData), NETWORK_ERROR)
         : await safeCall(() => addRecordCorrection(dialog.record.id, patientId, formData), NETWORK_ERROR);
+      // The id was someone else's: a new one for the next try.
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
       setDialog(null);
     });
@@ -1171,8 +1179,13 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
   function open(d: RxDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
     const items = d.mode === "new" ? [] : d.rx.prescription_items;
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
     setShareRxOn(true);
@@ -1184,11 +1197,13 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (!dialog) return;
     const formData = new FormData(formRef.current!);
     setError("");
+    formData.set("client_id", clientId.current);
     startTransition(async () => {
       const result =
         dialog.mode === "new" ? await safeCall(() => createPrescription(patientId, formData), NETWORK_ERROR)
         : dialog.mode === "edit" ? await safeCall(() => updatePrescription(dialog.rx.id, patientId, formData), NETWORK_ERROR)
         : await safeCall(() => addPrescriptionCorrection(dialog.rx.id, patientId, formData), NETWORK_ERROR);
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;

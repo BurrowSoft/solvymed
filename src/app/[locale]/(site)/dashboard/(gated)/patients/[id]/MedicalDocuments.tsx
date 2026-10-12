@@ -108,6 +108,9 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // the page asks too (the browser's own prompt).
   const snapshot = JSON.stringify({ type, lang, fields, body });
   const opened = useRef(snapshot);
+  // Saved once (216): one id for this dialog, sent with every try (a retry
+  // after a lost answer finds the first save); a new one only on id_conflict.
+  const [clientId, setClientId] = useState(() => crypto.randomUUID());
   const dirty = snapshot !== opened.current;
   useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
   useEffect(() => {
@@ -157,11 +160,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
     setError("");
     start(async () => {
-      const payload = { type, lang: effLang, fields, body };
+      const payload = { type, lang: effLang, fields, body, clientId };
       const r = state.mode === "new" ? await safeCall(() => createMedicalDocument(patientId, payload), NETWORK_FAILURE)
         : state.mode === "edit" ? await safeCall(() => updateMedicalDocument(state.doc.id, patientId, payload), NETWORK_FAILURE)
         : await safeCall(() => correctMedicalDocument(state.doc.id, patientId, { ...payload, reason }), NETWORK_FAILURE);
       if (!r.ok) {
+        if (r.code === "id_conflict") setClientId(crypto.randomUUID());
         const k = r.code.startsWith("field_") ? r.code.slice(6) : null;
         setError(k ? t(`err.${k}` as "err.date") : r.code === "buddhist_year" ? tdate("buddhistYear") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));
         return;

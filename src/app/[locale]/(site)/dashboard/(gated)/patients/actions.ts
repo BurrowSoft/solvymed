@@ -6,6 +6,7 @@ import { getActiveProfId, isActiveProfessional, isLockedOut } from "@/lib/active
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
+import { clientIdFrom, isDuplicateKey, savedBefore } from "@/lib/saveOnce";
 import { recordInput, TEMPLATE_NAME_MAX } from "@/lib/recordTemplates";
 import { recordTypeKey } from "@/lib/recordTypes";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
@@ -353,7 +354,10 @@ export async function createRecord(patientId: string, formData: FormData) {
 
   // The practice's date and time, not the server's (UTC).
   const now = new Date();
+  // Saved once (216): the form's id; a retry after a lost answer finds it.
+  const id = clientIdFrom(formData.get("client_id"));
   const { error } = await supabase.from("medical_records").insert({
+    ...(id ? { id } : {}),
     patient_id: patientId,
     professional_id: user.id,
     date: clinicDate(now),
@@ -363,7 +367,11 @@ export async function createRecord(patientId: string, formData: FormData) {
     ...(sections ? { sections, template_name: templateName || null } : {}),
   });
 
-  if (error) return { error: actionError(error.message) };
+  if (error) {
+    const repeat = !!id && isDuplicateKey(error) && await savedBefore(() =>
+      supabase.from("medical_records").select("id").eq("id", id).eq("professional_id", user.id).maybeSingle());
+    if (!repeat) return { error: actionError(error.message) };
+  }
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -409,12 +417,15 @@ export async function addRecordCorrection(recordId: string, patientId: string, f
 
   // With sections: 189's 4-argument overload (the correction keeps the
   // original's template name); without, the original 3-argument one.
+  // p_id (216): a retry of the same correction returns it, never a second one.
+  const pId = clientIdFrom(formData.get("client_id"));
   const { error } = sections
-    ? await supabase.rpc("add_record_correction", { p_record_id: recordId, p_content: content, p_sections: sections, p_reason: reason })
+    ? await supabase.rpc("add_record_correction", { p_record_id: recordId, p_content: content, p_sections: sections, p_reason: reason, p_id: pId })
     : await supabase.rpc("add_record_correction", {
         p_record_id: recordId,
         p_content: content,
         p_reason: reason,
+        p_id: pId,
       });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
@@ -444,29 +455,20 @@ export async function createPrescription(patientId: string, formData: FormData) 
   if ((await isActiveProfessional(supabase, user.id)) !== true) return { error: "not_doctor" };
 
   const notes = (formData.get("notes") as string)?.trim() || null;
-  const date = clinicDate();
+  const items = parseMedications(formData);
+  if (items.length === 0) return { error: "medication_required" };
 
-  const { data: prescription, error: pError } = await supabase
-    .from("prescriptions")
-    .insert({ patient_id: patientId, professional_id: user.id, date, notes })
-    .select()
-    .single();
-
-  if (pError) return { error: actionError(pError.message) };
-
-  const items = parseMedications(formData).map((m) => ({ ...m, prescription_id: prescription.id }));
-
-  if (items.length === 0) {
-    await supabase.from("prescriptions").delete().eq("id", prescription.id);
-    return { error: "medication_required" };
-  }
-
-  const { error: iError } = await supabase.from("prescription_items").insert(items);
-  if (iError) return { error: actionError(iError.message) };
+  // One call (216): the header and its medications in one transaction (two
+  // inserts could leave a prescription without items on a drop), saved once
+  // under the form's id (a retry returns the same prescription), the date
+  // stamped by the server in the practice's time zone.
+  const id = clientIdFrom(formData.get("client_id")) ?? crypto.randomUUID();
+  const { data, error } = await supabase.rpc("create_prescription", { p_id: id, p_patient_id: patientId, p_notes: notes, p_items: items });
+  if (error) return { error: error.message?.includes("content_required") ? "medication_required" : actionError(error.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
   // The id: the patient's copy is made from it (1.8.0 B2).
-  return { success: true, id: prescription.id as string };
+  return { success: true, id: ((data as string | null) ?? id) as string };
 }
 
 export async function toggleBookingBlock(patientId: string, blocked: boolean) {
@@ -585,6 +587,8 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
     p_notes: (formData.get("notes") as string)?.trim() || null,
     p_items: meds,
     p_reason: reason,
+    // 216: a retry of the same correction returns it.
+    p_id: clientIdFrom(formData.get("client_id")),
   });
   if (error) return { error: actionError(error.message) };
   revalidatePath(`/dashboard/patients/${patientId}`);
