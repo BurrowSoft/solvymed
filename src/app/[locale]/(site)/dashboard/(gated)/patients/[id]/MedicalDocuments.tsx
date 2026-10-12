@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import {
-  DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, sharesSnapshot, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
+  OFFERED_DOC_LANGS, PRINT, docLangsFor, docLangsForType, documentTypesFor, sharesSnapshot, fixedLanguage, formatCpfDigits, idLabel, prefilledBody, registrationLine, validateFields,
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
@@ -94,7 +94,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const uiLocale = useLocale();
   const existing = state.mode !== "new" ? state.doc : null;
   const [type, setType] = useState<MedicalDocType | null>(existing?.doc_type ?? (state.mode === "new" ? state.type : null));
-  const defaultLang: DocLang = (DOC_LANGS as readonly string[]).includes(uiLocale) ? (uiLocale as DocLang) : "en";
+  const defaultLang: DocLang = (OFFERED_DOC_LANGS as readonly string[]).includes(uiLocale) ? (uiLocale as DocLang) : "en";
   const [lang, setLang] = useState<DocLang>(existing?.language ?? defaultLang);
   const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type) : null);
   const [body, setBody] = useState(existing?.body ?? "");
