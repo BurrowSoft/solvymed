@@ -8,6 +8,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 import { conditionMet } from "@/lib/conditions";
+import { signOutHere } from "@/lib/signOut";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -204,7 +205,7 @@ export default function InviteRequiredPage() {
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/signup`);
   }
 

@@ -8,6 +8,7 @@ import { useState, useRef, useEffect } from "react";
 import { nameInitial } from "@/lib/doctorName";
 import { OFFERED_LOCALES } from "@/lib/publicLocales";
 import { BrandLogo } from "@/components/BrandLogo";
+import { signOutHere } from "@/lib/signOut";
 
 interface Props {
   locale: string;
@@ -183,7 +184,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
   async function signOut() {
     setSigningOut(true);
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     // Land on the home page in the language the user was in.
     router.push(prefix || "/");
     router.refresh();
