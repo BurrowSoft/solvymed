@@ -142,11 +142,15 @@ export async function createAppointment(formData: FormData) {
   const rowIds = clientId ? seriesIds(clientId, dates.length) : null;
   const firstSave = async () => {
     if (!clientId) return null;
-    const { data: stored } = await supabase.from("appointments").select("id, date, start_time, end_time, patient_id, status").eq("id", clientId).eq("professional_id", effectiveProfId).maybeSingle();
+    // The whole series (as the app: its first one + how many were saved),
+    // up to the longest one: the first try may have had more dates.
+    const { data } = await supabase.from("appointments").select("id, date, start_time, end_time, patient_id, status").in("id", seriesIds(clientId, MAX_OCCURRENCES)).eq("professional_id", effectiveProfId);
+    const saved = (data ?? []) as { id: string; date: string; start_time: string; end_time: string; patient_id: string | null; status: string }[];
+    const stored = saved.find((r) => r.id === clientId);
     if (!stored) return null;
     revalidatePath("/dashboard/schedule");
-    const same = sameAppointment(stored, { date: dates[0], start: startTime, end: endTime, patientId, status: "scheduled" });
-    return { success: true as const, id: (stored as { id: string }).id, count: dates.length, ...(same ? {} : { alreadySavedChanged: true as const }) };
+    const same = saved.length === dates.length && sameAppointment(stored, { date: dates[0], start: startTime, end: endTime, patientId, status: "scheduled" });
+    return { success: true as const, id: stored.id, count: saved.length, ...(same ? {} : { alreadySavedChanged: true as const }) };
   };
   if (clientId && isRetry(formData.get("client_try"))) {
     const done = await firstSave();

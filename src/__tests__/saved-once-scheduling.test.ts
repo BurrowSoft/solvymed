@@ -39,6 +39,8 @@ describe("lib/saveOnce (scheduling)", () => {
 const db = vi.hoisted(() => ({
   // Read-back of the first save (select by the form's id).
   stored: null as null | Record<string, unknown>,
+  // A series' read-back (default: just `stored`).
+  storedRows: null as null | Record<string, unknown>[],
   insertError: null as null | { code: string; message: string },
   reads: [] as { table: string; cols: string }[],
   inserts: [] as { table: string; row: unknown }[],
@@ -57,13 +59,15 @@ vi.mock("@/lib/supabase/server", () => ({
     rpc: async (fn: string) => { db.rpcs.push(fn); return { data: [], error: null }; },
     from: (table: string) => {
       let cols = "";
+      let inIds: string[] | null = null;
       const q: Record<string, unknown> = {};
       const chain = () => q;
       for (const m of ["eq", "neq", "in", "is", "not", "or", "gt", "gte", "lt", "lte", "ilike", "order", "limit", "range"]) q[m] = chain;
+      q.in = (_col: string, ids: string[]) => { inIds = ids; return q; };
       q.select = (c = "") => { cols = c; db.reads.push({ table, cols }); return q; };
       q.maybeSingle = async () => ({ data: cols.includes("status") || cols.includes("passport_number") ? db.stored : null, error: null });
       q.single = async () => ({ data: null, error: null });
-      q.then = (ok: (v: unknown) => unknown) => Promise.resolve({ data: [], error: null }).then(ok);
+      q.then = (ok: (v: unknown) => unknown) => Promise.resolve({ data: table === "appointments" && cols.includes("status") ? (db.storedRows ?? (db.stored ? [db.stored] : [])).filter((r) => !inIds || inIds.includes(r.id as string)) : [], error: null }).then(ok);
       q.insert = (row: unknown) => {
         db.inserts.push({ table, row });
         const res = { data: db.insertError ? null : { id: (Array.isArray(row) ? row[0] : (row as { id?: string })).id ?? "server-id" }, error: db.insertError };
@@ -83,7 +87,7 @@ const appt = { patient_name: "Ana Souza", date: "2026-10-20", start_time: "09:00
 const storedAppt = { id: ID, date: "2026-10-20", start_time: "09:00:00", end_time: "09:30:00", patient_id: null, status: "scheduled" };
 
 beforeEach(() => {
-  db.stored = null; db.insertError = null; db.reads = []; db.inserts = []; db.rpcs = [];
+  db.stored = null; db.storedRows = null; db.insertError = null; db.reads = []; db.inserts = []; db.rpcs = [];
 });
 
 describe("createAppointment", () => {
@@ -114,6 +118,21 @@ describe("createAppointment", () => {
     await createAppointment(fd({ ...appt, recurrence: "weekly", occurrences: "3", client_id: ID, client_try: "1" }));
     const rows = db.inserts.find((x) => x.table === "appointments")?.row as { id: string }[];
     expect(rows.map((x) => x.id)).toEqual(seriesIds(ID, 3));
+  });
+
+  it("a series retry reads back every date: all there = same; fewer = changed", async () => {
+    const ids = seriesIds(ID, 3);
+    const series = { ...appt, recurrence: "weekly", occurrences: "3", client_id: ID, client_try: "2" };
+    db.storedRows = ids.map((id, i) => ({ ...storedAppt, id, date: `2026-10-${20 + 7 * i}` }));
+    const r = await createAppointment(fd(series));
+    expect(r).toMatchObject({ success: true, id: ID, count: 3 });
+    expect(r).not.toHaveProperty("alreadySavedChanged", true);
+    db.storedRows = db.storedRows.slice(0, 2);
+    expect(await createAppointment(fd(series))).toMatchObject({ success: true, id: ID, count: 2, alreadySavedChanged: true });
+    // Fewer dates sent than saved (a changed retry) is flagged too.
+    db.storedRows = ids.map((id) => ({ ...storedAppt, id }));
+    expect(await createAppointment(fd({ ...series, occurrences: "2" }))).toMatchObject({ alreadySavedChanged: true });
+    expect(db.inserts).toHaveLength(0);
   });
 
   it("23505 on the insert (the first try landed meanwhile): the first save", async () => {
