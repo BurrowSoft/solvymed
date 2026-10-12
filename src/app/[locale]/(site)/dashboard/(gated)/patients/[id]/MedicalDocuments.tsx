@@ -207,7 +207,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
     setError("");
     start(async () => {
-      const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
+      // share: the intent, recorded with the save (1.4, 220).
+      const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current, share: canShare && share && sharesSnapshot(type) };
       const r = state.mode === "new" ? await safeCall(() => createMedicalDocument(patientId, payload), NETWORK_FAILURE)
         : state.mode === "edit" ? await safeCall(() => updateMedicalDocument(state.doc.id, patientId, payload), NETWORK_FAILURE)
         : await safeCall(() => correctMedicalDocument(state.doc.id, patientId, { ...payload, reason }), NETWORK_FAILURE);

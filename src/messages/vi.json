@@ -2092,6 +2092,7 @@
       "internal": "Tài liệu nội bộ"
     },
     "share": "Chia sẻ với bệnh nhân",
+    "notSharedYet": "Chưa chia sẻ",
     "shareChecking": "Đang kiểm tra xem bệnh nhân có thấy bản sao này không…",
     "shareCheckFailed": "Không thể kiểm tra xem bệnh nhân có thấy bản sao này không. Hãy chọn có chia sẻ hay không.",
     "shared": "Đã chia sẻ với bệnh nhân",

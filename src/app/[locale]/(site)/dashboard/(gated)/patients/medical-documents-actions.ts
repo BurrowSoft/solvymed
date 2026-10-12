@@ -15,6 +15,7 @@ import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
+import { noteShareIntent, shareIntentLive } from "@/lib/shareIntent";
 import { DOC_LANGS, OFFERED_DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
 
 // 1.8.0 B on the website (migration 189's medical_documents, behind the
@@ -35,7 +36,8 @@ async function doctor() {
 }
 
 // clientId: the form's id (216, saved once; see lib/saveOnce).
-type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string; clientId?: string; clientTry?: number };
+// share: saved with "Share with the patient" on (1.4, 220: the intent).
+type Input = { type: MedicalDocType; lang: DocLang; fields: DocFields; body: string; clientId?: string; clientTry?: number; share?: boolean };
 
 // The type must be one the practice's country offers, the language one of
 // the seven (the controlled prescription: Portuguese only), the fields
@@ -68,6 +70,8 @@ export async function createMedicalDocument(patientId: string, input: Input): Pr
     ...(clientId ? { id: clientId } : {}),
     patient_id: patientId, professional_id: me.uid, doc_type: input.type, language: c.lang,
     fields: input.fields, body: (input.body ?? "").trim() || null,
+    // 220's trigger stamps the server's time; any value means "meant to share".
+    ...(input.share === true && shareIntentLive() ? { share_intended_at: new Date().toISOString() } : {}),
   }).select("id").single();
   // A retry after a lost answer: the document is already there (216). If
   // the form changed since, the page shows the stored one with a message.
@@ -101,6 +105,7 @@ export async function updateMedicalDocument(id: string, patientId: string, input
     .update({ language: c.lang, fields: input.fields, body: (input.body ?? "").trim() || null })
     .eq("id", id).eq("professional_id", me.uid);
   if (error) return { ok: false, code: actionError(error.message) };
+  if (input.share === true) await noteShareIntent(me.supabase, "medical_document", id);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { ok: true, data: null };
 }
@@ -127,6 +132,7 @@ export async function correctMedicalDocument(id: string, patientId: string, inpu
     if (stored && !sameDocument(stored, { body: (input.body ?? "").trim() || null, fields: input.fields, reason })) return { ok: false, code: "already_saved_changed" };
   }
   // The correction's id: the patient's copy is made from it (1.8.0 B2).
+  if (input.share === true) await noteShareIntent(me.supabase, "medical_document", correctionId as string | null);
   return { ok: true, data: (correctionId as string | null) ?? null };
 }
 

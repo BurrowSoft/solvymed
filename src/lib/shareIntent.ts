@@ -1,0 +1,32 @@
+import { conditionMet } from "@/lib/conditions";
+
+// "Not shared yet" (1.9.0 item 1.4, migration 220, both platforms): a
+// prescription or document saved with "Share with the patient" on (or
+// shared later by hand) records the intent; one whose patient copy never
+// arrived (the share failed, or the page was closed mid-share) shows
+// "Not shared yet" with "Share with the patient" until a share succeeds.
+// Off until 220 is applied and the rows pass (not-shared-marker-live).
+
+export type ShareSource = "prescription" | "medical_document";
+
+export function shareIntentLive(): boolean {
+  return conditionMet("not-shared-marker-live");
+}
+
+export function unsharedKey(source: ShareSource, id: string): string {
+  return `${source}:${id}`;
+}
+
+type Rpc = { rpc(fn: string, args: Record<string, unknown>): PromiseLike<{ error: unknown }> };
+
+// The intent for an edit or a correction saved with the box on (a new one
+// records it in its own insert / create_prescription). Best effort: a
+// failure here never undoes the save; the share itself still runs.
+export async function noteShareIntent(supabase: Rpc, source: ShareSource, id: string | null | undefined): Promise<void> {
+  if (!shareIntentLive() || !id) return;
+  try {
+    await supabase.rpc("mark_share_intent", { p_source: source, p_id: id });
+  } catch {
+    /* the share still runs */
+  }
+}

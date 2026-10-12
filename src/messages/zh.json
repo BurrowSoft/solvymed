@@ -2092,6 +2092,7 @@
       "internal": "内部文件"
     },
     "share": "与患者共享",
+    "notSharedYet": "尚未共享",
     "shareChecking": "正在检查患者是否能看到此副本…",
     "shareCheckFailed": "无法检查患者是否能看到此副本。请选择是否共享。",
     "shared": "已与患者共享",
