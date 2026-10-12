@@ -31,7 +31,7 @@ import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
-import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -1050,16 +1050,20 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   }, [sharing]);
   const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
+    // One run at a time for a document: Try again waits for a run that timed
+    // out on the page but is still going (ec; the app's shareUntilDone),
+    // instead of starting a second one that could adopt its upload.
+    const run = untilDone(make);
     setShareIssue(null);
     setSharing(true);
     let outcome: string;
     // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
     // "couldn't share" + Try again, never an endless modal over the page.
-    try { outcome = await timeLimit(make(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
+    try { outcome = await timeLimit(run(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
-      retry: outcome === "storageFull" ? null : () => { void runShare(make); },
+      retry: outcome === "storageFull" ? null : () => { void runShare(run); },
     });
   }
   function shareRx(rxId: string, correctsId: string | null) {

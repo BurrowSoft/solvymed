@@ -88,3 +88,25 @@ describe("a stalled share (1.9.0, as the app)", () => {
     }
   });
 });
+
+describe("Try again while the timed-out share is still running (ec, #523)", () => {
+  it("waits for that same run instead of starting a second share", async () => {
+    const snaps = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots");
+    h.resolve = null;
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await saveRx();
+      const before = (snaps.shareRxSnapshot as unknown as { mock: { calls: unknown[] } }).mock.calls.length;
+      await act(async () => { await vi.advanceTimersByTimeAsync(121_000); });
+      fireEvent.click(await screen.findByRole("button", { name: pt.docs.tryAgain }));
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      // The first run finishes late: the retry was waiting on it.
+      await act(async () => { h.resolve!("shared"); });
+      await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+      expect(screen.queryByTestId("share-issue")).toBeNull();
+      expect((snaps.shareRxSnapshot as unknown as { mock: { calls: unknown[] } }).mock.calls.length).toBe(before);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
