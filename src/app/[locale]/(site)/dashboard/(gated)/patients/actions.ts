@@ -6,7 +6,7 @@ import { getActiveProfId, isActiveProfessional, isLockedOut } from "@/lib/active
 import { getEffectiveProfId } from "@/lib/effectiveProfId";
 import { tellPatient } from "@/lib/clinicNotify";
 import { actionError } from "@/lib/dbErrors";
-import { clientIdFrom, isDuplicateKey, isRetry, samePrescription, sameRecord } from "@/lib/saveOnce";
+import { clientIdFrom, isDuplicateKey, isRetry, samePatient, samePrescription, sameRecord } from "@/lib/saveOnce";
 import { recordInput, TEMPLATE_NAME_MAX } from "@/lib/recordTemplates";
 import { recordTypeKey } from "@/lib/recordTypes";
 import { clinicDate, clinicTime, getClinicTimeZone } from "@/lib/clinicTime";
@@ -30,7 +30,7 @@ const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
 export type PatientMatch = { id: string; full_name: string; phone: string | null; birth_date: string | null; archived_at: string | null };
 
 export type CreatePatientResult =
-  | { success: true; id?: string }
+  | { success: true; id?: string; alreadySavedChanged?: true }
   | { error: string; code: "generic" | "name_required" | "invalid_th_id" | "id_kind_mismatch" | "birth_year_buddhist" | "invalid_birth_date" | "invalid_cns" }
   // Possible duplicates found before saving. The user chooses "Open
   // existing" or "Create anyway" (resubmits with force=1).
@@ -71,6 +71,22 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   if (addressError(address)) return { error: "Invalid CNS", code: "invalid_cns" };
   const force = formData.get("force") === "1";
 
+  // Saved once (216): the form's id. A retry finds the first save before the
+  // duplicate checks below (which would match it as an existing patient).
+  const clientId = clientIdFrom(formData.get("client_id"));
+  const sent = { full_name: fullName, email, phone, birth_date: birthDate, ...ids };
+  const firstSave = async (): Promise<CreatePatientResult | null> => {
+    if (!clientId) return null;
+    const { data: stored } = await supabase.from("patients").select("id, full_name, email, phone, birth_date, cpf, th_national_id, passport_number").eq("id", clientId).eq("professional_id", effectiveProfId).maybeSingle();
+    if (!stored) return null;
+    revalidatePath("/dashboard/patients");
+    return { success: true, id: (stored as { id: string }).id, ...(samePatient(stored as Record<string, unknown>, sent) ? {} : { alreadySavedChanged: true as const }) };
+  };
+  if (clientId && isRetry(formData.get("client_try"))) {
+    const done = await firstSave();
+    if (done) return done;
+  }
+
   // 1.8.0 C1: the practice's required details (no rules = today's form).
   const fieldRules = await readPatientFieldRules(supabase, effectiveProfId);
   if (fieldRules) {
@@ -109,6 +125,7 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   }
 
   const { data: saved, error } = await supabase.from("patients").insert({
+    ...(clientId ? { id: clientId } : {}),
     professional_id: effectiveProfId,
     full_name: fullName,
     email,
@@ -125,6 +142,8 @@ export async function createPatient(formData: FormData): Promise<CreatePatientRe
   }).select("id").single();
 
   if (error) {
+    // The first try finished meanwhile (its id): that patient.
+    if (error.code === "23505" && clientId) { const done = await firstSave(); if (done) return done; }
     if (error.code === "23505") {
       // A unique identifier (the CPF, Thai ID or passport key) or email
       // collision. Look the existing patient up so the user can open it.

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { clientIdFrom, isRetry, sameAppointment, seriesIds } from "@/lib/saveOnce";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveProfId } from "@/lib/activeAccess";
 import { knownDbError } from "@/lib/dbErrors";
@@ -134,6 +135,24 @@ export async function createAppointment(formData: FormData) {
   if (match?.archived_at) return { error: "Patient is archived", code: "patient_archived" };
   const patientId = match?.id ?? null;
 
+  // Saved once (216): the form's id (a series: derived per date). A retry
+  // finds the first save BEFORE the checks below, which would otherwise
+  // see it as another appointment in the slot.
+  const clientId = clientIdFrom(formData.get("client_id"));
+  const rowIds = clientId ? seriesIds(clientId, dates.length) : null;
+  const firstSave = async () => {
+    if (!clientId) return null;
+    const { data: stored } = await supabase.from("appointments").select("id, date, start_time, end_time, patient_id, status").eq("id", clientId).eq("professional_id", effectiveProfId).maybeSingle();
+    if (!stored) return null;
+    revalidatePath("/dashboard/schedule");
+    const same = sameAppointment(stored, { date: dates[0], start: startTime, end: endTime, patientId, status: "scheduled" });
+    return { success: true as const, id: (stored as { id: string }).id, count: dates.length, ...(same ? {} : { alreadySavedChanged: true as const }) };
+  };
+  if (clientId && isRetry(formData.get("client_try"))) {
+    const done = await firstSave();
+    if (done) return { success: true as const, id: done.id, count: done.count, alreadySavedChanged: done.alreadySavedChanged };
+  }
+
   // Another appointment already there: a hard stop, like the app (the
   // database's exclusion constraint refuses it anyway; this says with whom).
   // The same statuses as the constraint (081): cancelled, rejected and
@@ -213,7 +232,8 @@ export async function createAppointment(formData: FormData) {
     if (Number.isFinite(price) && price > 0) paymentAmount = price;
   }
 
-  const rows = dates.map((d) => ({
+  const rows = dates.map((d, i) => ({
+    ...(rowIds ? { id: rowIds[i] } : {}),
     professional_id: effectiveProfId,
     patient_id: patientId,
     patient_name: patientName.trim(),
@@ -236,6 +256,8 @@ export async function createAppointment(formData: FormData) {
   const saved = ((savedRows ?? []) as { id: string; date: string }[])[0] ?? null;
 
   if (error) {
+    // The first try finished meanwhile: its rows are there.
+    if (error.code === "23505") { const done = await firstSave(); if (done) return { success: true as const, id: done.id, count: done.count, alreadySavedChanged: done.alreadySavedChanged }; }
     if (error.message?.includes("patient_archived")) return { error: "Patient is archived", code: "patient_archived" };
     // Taken between the check above and the insert: the exclusion constraint.
     if (error.code === "23P01") return { error: "This time overlaps with another appointment", code: "slot_overlap", overlap: null };
@@ -573,7 +595,23 @@ export async function blockTime(formData: FormData) {
   const endTime = computeEndTime(startTime, duration);
   if (!endTime) return { error: "This time and duration would run past midnight", code: "past_midnight" };
 
+  // Saved once (216), as an appointment.
+  const clientId = clientIdFrom(formData.get("client_id"));
+  const firstBlock = async () => {
+    if (!clientId) return null;
+    const { data: stored } = await supabase.from("appointments").select("id, date, start_time, end_time, patient_id, status").eq("id", clientId).eq("professional_id", effectiveProfId).maybeSingle();
+    if (!stored) return null;
+    revalidatePath("/dashboard/schedule");
+    const same = sameAppointment(stored, { date, start: startTime, end: endTime, patientId: null, status: "blocked" });
+    return { success: true as const, id: (stored as { id: string }).id, ...(same ? {} : { alreadySavedChanged: true as const }) };
+  };
+  if (clientId && isRetry(formData.get("client_try"))) {
+    const done = await firstBlock();
+    if (done) return { success: true as const, id: done.id, alreadySavedChanged: done.alreadySavedChanged };
+  }
+
   const { data: saved, error } = await supabase.from("appointments").insert({
+    ...(clientId ? { id: clientId } : {}),
     professional_id: effectiveProfId,
     patient_id: null,
     patient_name: reason || "Blocked",
@@ -589,7 +627,10 @@ export async function blockTime(formData: FormData) {
     scheduled_by: "professional",
   }).select("id").single();
 
-  if (error) return { error: error.message, code: knownDbError(error.message) ?? "generic" };
+  if (error) {
+    if (error.code === "23505") { const done = await firstBlock(); if (done) return { success: true as const, id: done.id, alreadySavedChanged: done.alreadySavedChanged }; }
+    return { error: error.message, code: knownDbError(error.message) ?? "generic" };
+  }
   revalidatePath("/dashboard/schedule");
   return { success: true, id: (saved as { id: string } | null)?.id };
 }
