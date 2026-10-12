@@ -117,12 +117,14 @@ describe("the PDFs", () => {
 });
 
 describe("B follow-ups (53's row, cf 6 Oct)", () => {
-  it("the language picker: the practice's language and English first, all 7 kept", async () => {
-    const { docLangsFor } = await import("@/lib/medicalDocuments");
-    expect(docLangsFor("BR")).toEqual(["pt-BR", "en", "th", "es", "de", "fr", "it"]);
-    expect(docLangsFor("TH")).toEqual(["th", "en", "pt-BR", "es", "de", "fr", "it"]);
-    expect(docLangsFor("US").slice(0, 1)).toEqual(["en"]);
-    expect(docLangsFor(null)).toHaveLength(7);
+  it("the language picker: the practice's language and English first; es/de/fr/it hidden (02, 1.9.0)", async () => {
+    const { docLangsFor, docLangsForType } = await import("@/lib/medicalDocuments");
+    expect(docLangsFor("BR")).toEqual(["pt-BR", "en", "th"]);
+    expect(docLangsFor("TH")).toEqual(["th", "en", "pt-BR"]);
+    expect(docLangsFor("US")).toEqual(["en", "pt-BR", "th"]);
+    expect(docLangsFor(null)).toHaveLength(3);
+    // A document already saved in a hidden language keeps it in its picker.
+    expect(docLangsForType("certificate", docLangsFor("BR"), "es")).toEqual(["pt-BR", "en", "th", "es"]);
   });
 
   it("the footer is in the document's language, for every language", async () => {
