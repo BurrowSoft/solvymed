@@ -2213,7 +2213,7 @@
   },
   "privacyNotice": {
     "title": "Hemos actualizado nuestra Política de Privacidad",
-    "body": "Mira qué cambió el {date}.",
+    "body": "Mira qué cambió.",
     "read": "Leer la política",
     "ok": "OK",
     "close": "Cerrar",

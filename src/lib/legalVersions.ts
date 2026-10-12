@@ -60,6 +60,16 @@
 export const PRIVACY_VERSION = "2026-10-17";
 export const TERMS_VERSION = "2026-10-01";
 
+// The versions above are IDs (what consents and the accepting migrations
+// record), often chosen ahead of the release: never print them as a date.
+// What the pages print ("Last updated") is the day the text really went
+// live: the day its PR merged to master (= production), UTC. RULE: the PR
+// that bumps a version sets its PUBLISHED date to the day it merges (fix it
+// on the day if the merge slips); a test fails if one is in the future (02,
+// 10-13: the banner and the page said 17 October on 9 October).
+export const PRIVACY_PUBLISHED = "2026-10-09"; // 2026-10-17 went live with #500, 07:28 UTC
+export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
+
 // Sent with every web signup (the checkbox is required, so it's sent only
 // on acceptance).
 export function consentMetadata() {

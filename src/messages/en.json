@@ -2243,7 +2243,7 @@
   },
   "privacyNotice": {
     "title": "We've updated our Privacy Policy",
-    "body": "See what changed on {date}.",
+    "body": "See what changed.",
     "read": "Read the policy",
     "ok": "OK",
     "close": "Close",
