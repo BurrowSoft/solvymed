@@ -206,5 +206,9 @@
   "record-templates-live": {
     "met": true,
     "what": "Record templates are live on the website (1.8.0 D): migration 189 applied on production and the server flag 'record_templates' on. Gates Help C13 and the App Map's record-template rule. The app's half (1.8.0) is gated separately by its released build."
+  },
+  "document-studio-live": {
+    "met": false,
+    "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. Until then the PDFs ignore any design (lib/studio/load documentStyle)."
   }
 }

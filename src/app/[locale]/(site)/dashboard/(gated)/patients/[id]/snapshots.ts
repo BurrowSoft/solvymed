@@ -1,6 +1,6 @@
 "use client";
 
-import { loadFontBytes } from "@/lib/pdf/document";
+import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { renderPrescriptionPdf, type RxPdfLabels } from "@/lib/pdf/prescription";
 import { shareSnapshot, type ShareOutcome } from "@/lib/shareSnapshot";
 import { SNAPSHOT_FOLDER, sharesSnapshot, snapshotTitle, snapshotUnsignedLine } from "@/lib/medicalDocuments";
@@ -34,8 +34,9 @@ export async function shareRxSnapshot(opts: {
   if (!r.ok) return r.code === "access_log_failed" ? "accessLog" : "failed";
   const d = r.data;
   try {
-    const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
+    const [fonts, logoBytes, brandLogo] = await Promise.all([loadDesignFontBytes(d.fontId), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
     const bytes = await renderPrescriptionPdf({
+      fontId: d.fontId,
       labels: opts.labels, locale: opts.locale,
       template: { primaryColor: d.template.primaryColor, accentColor: d.template.accentColor, headerText: d.template.headerText, footerText: d.template.footerText, logoBytes },
       brand: d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null,

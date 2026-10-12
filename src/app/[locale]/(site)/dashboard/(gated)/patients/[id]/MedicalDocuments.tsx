@@ -8,7 +8,7 @@ import {
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
 import { correctMedicalDocument, createMedicalDocument, documentPrintData, updateMedicalDocument } from "../medical-documents-actions";
-import { loadFontBytes } from "@/lib/pdf/document";
+import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { DateInput } from "@/components/DateInput";
@@ -384,7 +384,9 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
   const d = r.data;
-  const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
+  // The controlled prescription is a legal layout: always today's typeface.
+  const fontId = doc.doc_type === "controlled_prescription" ? "sarabun" : d.fontId;
+  const [fonts, logoBytes, brandLogo] = await Promise.all([loadDesignFontBytes(fontId), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
   const brand = d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null;
   const idValue = d.idKind === "cpf" ? (d.patient.cpf ? formatCpfDigits(d.patient.cpf) : null) : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
   const idKind = d.idKind === "thai_id" && !d.patient.thId && d.patient.passport ? "passport" : d.idKind;
@@ -422,6 +424,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     signerRegistration: registrationLine(d.country, doc.language, d.doctor.registration, d.doctor.state),
     licenceNo: d.doctor.registration,
     footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
+    fontId,
   }, fonts);
   return { ok: true, bytes };
 }

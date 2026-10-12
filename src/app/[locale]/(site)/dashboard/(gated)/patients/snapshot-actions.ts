@@ -11,6 +11,8 @@ import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { documentStyle } from "@/lib/studio/load";
+import type { FontId } from "@/lib/studio/design";
 import { readLocationLines } from "@/lib/locationLines";
 import { conditionMet } from "@/lib/conditions";
 import { ADDRESS_FIELDS, addressLine, type AddressColumns } from "@/lib/patientAddress";
@@ -40,6 +42,8 @@ export type RxSnapshotData = {
   template: { primaryColor: string; accentColor: string; headerText: string | null; footerText: string | null; logoUrl: string | null };
   brand: { logoUrl: string | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
   locationLines: string[];
+  // Document Studio: the typeface (today's, Sarabun, until a design is saved).
+  fontId: FontId;
 };
 
 // The prescription as printed (its print view's data), read only once the
@@ -67,6 +71,8 @@ export async function prescriptionSnapshotData(patientId: string, rxId: string):
   const base = toDocTemplate(tpl.data as Record<string, unknown> | null);
   const t = brandedDocTemplate(base, brandRow);
   const b = docBrand(base, brandRow);
+  // Document Studio: a saved design's look (its prescription texts), else today's.
+  const s = await documentStyle(me.supabase, { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, brandColor: b?.color ?? null }, () => "prescription");
   return {
     ok: true,
     data: {
@@ -78,9 +84,10 @@ export async function prescriptionSnapshotData(patientId: string, rxId: string):
       notes: r.notes?.trim() ? r.notes : null,
       signerName: pr?.full_name ?? "",
       signerRegistration: pr?.professional_registration?.trim() ? pr.professional_registration : null,
-      template: { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, logoUrl: t.logoUrl },
-      brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
+      template: { primaryColor: s.primaryColor, accentColor: s.accentColor, headerText: s.headerText, footerText: s.footerText, logoUrl: t.logoUrl },
+      brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: s.brandColor ?? b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
       locationLines: await readLocationLines(me.supabase, me.uid),
+      fontId: s.fontId,
     },
   };
 }
