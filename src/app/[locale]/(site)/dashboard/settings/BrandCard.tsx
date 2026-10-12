@@ -212,7 +212,7 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
         </div>
 
         <div className="flex items-center gap-3">
-          <button type="button" onClick={save} disabled={state === "saving" || valuesFailed}
+          <button data-server type="button" onClick={save} disabled={state === "saving" || valuesFailed}
             className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
             {state === "saving" ? t("saving") : t("save")}
           </button>
@@ -245,7 +245,7 @@ function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRe
           {url && <img src={url} alt="" className={`h-full w-full ${round ? "object-cover" : "object-contain"}`} />}
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" disabled={disabled} onClick={() => input.current?.click()}
+          <button data-server type="button" disabled={disabled} onClick={() => input.current?.click()}
             className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-60">
             {busy ? t("uploading") : url ? t("replace") : t("upload")}
           </button>
@@ -270,7 +270,7 @@ function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRe
           <p id={`${testid}-remove-title`} className="text-sm font-semibold text-slate-900">{t("removeTitle")}</p>
           <p className="mt-0.5 text-xs text-slate-600">{t("removeBody")}</p>
           <div className="mt-2 flex gap-2">
-            <button type="button" disabled={disabled} onClick={() => { setConfirming(false); onRemove(); }}
+            <button data-server type="button" disabled={disabled} onClick={() => { setConfirming(false); onRemove(); }}
               className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60">
               {t("removeConfirm")}
             </button>

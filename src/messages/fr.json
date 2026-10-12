@@ -2268,5 +2268,11 @@
     "zoomIn": "Zoom avant",
     "zoomOut": "Zoom arrière",
     "adjust": "Ajuster"
+  },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
+  "offline": {
+    "banner": "Pas de connexion Internet. Vous pouvez consulter ce qui est ouvert, mais les modifications ne seront pas enregistrées."
   }
 }
