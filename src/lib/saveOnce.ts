@@ -75,3 +75,26 @@ export function samePrescription(stored: { notes?: unknown; prescription_items?:
 export function sameDocument(stored: { body?: unknown; fields?: unknown; correction_reason?: unknown }, sent: { body: string | null; fields: unknown; reason?: string | null }): boolean {
   return txt(stored.body) === txt(sent.body) && sameJson(stored.fields, sent.fields) && txt(stored.correction_reason) === txt(sent.reason);
 }
+
+// A recurring series (c5): the form's id is the first appointment's; the
+// others derive from it by their index, the same on every try (the last 8
+// hex digits plus the index, still a valid UUID).
+export function seriesIds(base: string, count: number): string[] {
+  const head = base.slice(0, -8);
+  const tail = parseInt(base.slice(-8), 16);
+  return Array.from({ length: count }, (_, i) => (i === 0 ? base : `${head}${((tail + i) >>> 0).toString(16).padStart(8, "0")}`));
+}
+
+// A patient: the name, the identifiers, birth date, phone and e-mail.
+export function samePatient(stored: Record<string, unknown>, sent: Record<string, unknown>): boolean {
+  const keys = ["full_name", "cpf", "th_national_id", "passport_number", "birth_date", "phone", "email"];
+  return keys.every((k) => txt(stored[k]).toLowerCase() === txt(sent[k]).toLowerCase());
+}
+
+// An appointment or blocked time (a series: its first one): date, start,
+// end, patient and status. Times compare on HH:MM (the database adds :SS).
+export function sameAppointment(stored: { date?: unknown; start_time?: unknown; end_time?: unknown; patient_id?: unknown; status?: unknown }, sent: { date: string; start: string; end: string; patientId: string | null; status: string }): boolean {
+  const hm = (v: unknown) => txt(v).slice(0, 5);
+  return txt(stored.date) === sent.date && hm(stored.start_time) === hm(sent.start) && hm(stored.end_time) === hm(sent.end)
+    && txt(stored.patient_id) === txt(sent.patientId) && txt(stored.status) === sent.status;
+}
