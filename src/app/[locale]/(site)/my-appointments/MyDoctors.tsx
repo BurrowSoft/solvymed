@@ -94,7 +94,7 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
           <p id={`disc-${doctor.id}`} className="text-sm font-semibold text-slate-900">{t("disconnectTitle", { doctor: doctor.name })}</p>
           <p className="mt-0.5 text-xs text-slate-600">{t("disconnectBody", { doctor: doctor.name })}</p>
           <div className="mt-2 flex gap-2">
-            <button type="button" disabled={pending} onClick={disconnect} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60">{t("disconnect")}</button>
+            <button data-server type="button" disabled={pending} onClick={disconnect} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60">{t("disconnect")}</button>
             <button type="button" onClick={() => setConfirming(false)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700">{tCommon("cancel")}</button>
           </div>
         </div>

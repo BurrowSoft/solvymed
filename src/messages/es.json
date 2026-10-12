@@ -2267,5 +2267,8 @@
     "zoomIn": "Acercar",
     "zoomOut": "Alejar",
     "adjust": "Ajustar"
+  },
+  "offline": {
+    "banner": "Sin conexión a internet. Puedes ver lo que está abierto, pero los cambios no se guardarán."
   }
 }

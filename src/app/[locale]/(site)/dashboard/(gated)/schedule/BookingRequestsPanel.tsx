@@ -244,7 +244,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       >
                         {t("proposeNewTime")}
                       </button>
-                      <button
+                      <button data-server
                         onClick={() => { setActing(`dismiss:${b.id}`); startTransition(async () => { await rejectBooking(b.id, undefined); }); }}
                         disabled={isPending}
                         className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50"
@@ -256,7 +256,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                     <>
                   {b.status === "tentative" && (
                     <div className="flex gap-2">
-                      <button
+                      <button data-server
                         onClick={() => handleConfirmClick(b)}
                         disabled={isPending}
                         className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700 disabled:opacity-50"
@@ -270,7 +270,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       >
                         {t("proposeNewTime")}
                       </button>
-                      <button
+                      <button data-server
                         onClick={() => (reasonsLive ? setRejectingId(rejectingId === b.id ? null : b.id) : handleReject(b.id))}
                         disabled={isPending}
                         className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-100 disabled:opacity-50"
@@ -297,7 +297,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                         <span className="text-[11px] text-slate-400">{(reasons[b.id] ?? "").length}/{REASON_MAX}</span>
                         <div className="flex gap-2">
                           <button type="button" onClick={() => setRejectingId(null)} disabled={isPending} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 disabled:opacity-50">{t("keepAppointment")}</button>
-                          <button type="button" onClick={() => handleReject(b.id)} disabled={isPending} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">{spin(`reject:${b.id}`)}{t("reject")}</button>
+                          <button data-server type="button" onClick={() => handleReject(b.id)} disabled={isPending} className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">{spin(`reject:${b.id}`)}{t("reject")}</button>
                         </div>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                   )}
                   {b.status === "proposal" && b.scheduled_by === "patient" && (
                     <div className="flex gap-2">
-                      <button
+                      <button data-server
                         onClick={() => { setActing(`accept:${b.id}`); startTransition(async () => {
                           const result = await forRow(pid(b.id), "acceptRescheduleRequest", acceptRescheduleRequest)(b.id);
                           if (result.error === "slot_taken") {
@@ -339,7 +339,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       >
                         {spin(`accept:${b.id}`)}{t("accept")}
                       </button>
-                      <button
+                      <button data-server
                         onClick={() => { setActing(`decline:${b.id}`); startTransition(async () => { await forRow(pid(b.id), "declineRescheduleRequest", declineRescheduleRequest)(b.id); }); }}
                         disabled={isPending}
                         data-testid="reschedule-decline-button"
@@ -432,7 +432,7 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
                       />
                     </div>
                     <div className="flex items-end gap-2">
-                      <button
+                      <button data-server
                         onClick={() => handleProposeSubmit(b.id)}
                         disabled={isPending || !propDate || !propStart || !propEnd || looksBuddhistEra(propDate)}
                         className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50"

@@ -28,6 +28,7 @@ import { ACTING_COOKIE, ALL_PRACTICES, allFallbackCookieScript, allFallbackId } 
 import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 import { TeamAccessWatch } from "@/components/TeamAccessWatch";
 import { LocaleRedirect } from "@/components/LocaleRedirect";
+import { OfflineGuard } from "@/components/OfflineGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
 
 function isVersionBelow(current: string, minimum: string): boolean {
@@ -217,6 +218,7 @@ export default async function DashboardLayout({
 
   return (
     <div data-theme={theme} data-theme-root className="contents">
+    <OfflineGuard />
     <TourProvider
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}

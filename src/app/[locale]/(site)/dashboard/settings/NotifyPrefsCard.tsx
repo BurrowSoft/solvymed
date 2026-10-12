@@ -47,7 +47,7 @@ export function NotifyPrefsCard({ prefs: initial, colors = {} }: { prefs: Notify
                 {colors[p.professional_id] && <DoctorDot color={colors[p.professional_id]} className="h-2.5 w-2.5" />}
                 <span className="truncate">{name}</span>
               </span>
-              <button
+              <button data-server
                 type="button"
                 role="switch"
                 aria-checked={on}

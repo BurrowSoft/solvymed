@@ -141,7 +141,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
             className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
             autoFocus
           />
-          <button
+          <button data-server
             onClick={handlePaid}
             disabled={pending}
             className="rounded-lg bg-green-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-green-700 transition disabled:opacity-60"
@@ -161,7 +161,7 @@ export function MarkPaidButton({ id, amount, currency = "BRL" }: { id: string; a
 
   return (
     <div className="flex flex-col items-start gap-1">
-      <button
+      <button data-server
         onClick={handlePaid}
         disabled={pending}
         className="rounded-lg bg-green-50 border border-green-200 px-3 py-1.5 text-xs font-bold text-green-700 hover:bg-green-100 transition disabled:opacity-60"
@@ -221,7 +221,7 @@ export function SetAmountButton({ id, suggested, currency = "BRL", onSaved }: { 
             aria-label={t("setAmount")}
             className="w-28 rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
           />
-          <button type="button" onClick={save} disabled={pending} className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+          <button data-server type="button" onClick={save} disabled={pending} className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-60">
             {pending ? "…" : t("confirm")}
           </button>
           <button type="button" onClick={() => { setOpen(false); setError(""); }} className="rounded-lg px-2 py-1.5 text-xs text-slate-400 hover:text-slate-600">{t("cancel")}</button>
@@ -239,7 +239,7 @@ export function MarkUnpaidButton({ id }: { id: string }) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <button
+    <button data-server
       onClick={() => {
         if (!confirm(t("revertConfirm"))) return;
         startTransition(async () => { await unpaid(id); });

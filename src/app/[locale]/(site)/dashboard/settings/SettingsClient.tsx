@@ -225,7 +225,7 @@ export function InviteCodeCard({ code: initialCode, country = null }: { code?: s
           >
             {linkCopied ? t("copied") : t("copyLink")}
           </button>
-          <button
+          <button data-server
             type="button"
             onClick={handleGenerate}
             disabled={pending}
@@ -235,7 +235,7 @@ export function InviteCodeCard({ code: initialCode, country = null }: { code?: s
           </button>
         </div>
       ) : (
-        <button
+        <button data-server
           type="button"
           onClick={handleGenerate}
           disabled={pending}
@@ -662,7 +662,7 @@ export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPa
                 <a href={`${prefix}/dashboard/patients/${p.id}`} className="text-sm font-semibold text-slate-900 hover:text-teal-700 transition">{p.full_name}</a>
                 {p.email && <p className="text-xs text-slate-500 mt-0.5">{p.email}</p>}
               </div>
-              <button
+              <button data-server
                 onClick={() => handleUnblock(p.id)}
                 disabled={pending}
                 className="shrink-0 rounded-lg border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-50 transition disabled:opacity-60"
@@ -690,7 +690,7 @@ function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency 
         </p>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button
+        <button data-server
           onClick={() => start(async () => { await toggleProcedure(proc.id, !proc.active); })}
           disabled={pending}
           title={proc.active ? t("disable") : t("enable")}
@@ -698,7 +698,7 @@ function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency 
         >
           {pending ? "…" : proc.active ? t("disable") : t("enable")}
         </button>
-        <button
+        <button data-server
           onClick={() => { if (confirm(t("deleteConfirm", { name: proc.name }))) start(async () => { await deleteProcedure(proc.id); }); }}
           disabled={pending}
           title="Delete"

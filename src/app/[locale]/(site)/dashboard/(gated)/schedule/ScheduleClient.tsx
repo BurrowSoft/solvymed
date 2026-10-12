@@ -138,7 +138,7 @@ export function ScheduleUndoToast() {
           : (
             <>
               <span className="min-w-0">{what}</span>
-              <button type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
+              <button data-server type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
                 {phase === "undoing" ? "…" : t("undoAction", { s: left })}
               </button>
             </>
@@ -325,7 +325,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
             <span className="text-[11px] text-slate-400">{reason.length}/{REASON_MAX}</span>
             <div className="flex gap-1">
               <button type="button" onClick={() => { setStatus(asking.previous); setAsking(null); }} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100">{t("keepAppointment")}</button>
-              <button type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
+              <button data-server type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
             </div>
           </div>
         </div>
@@ -412,7 +412,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
         <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
         <div className="flex gap-3 pt-5">
           <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-          <button type="button" onClick={moveAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("reschedule")}</button>
+          <button data-server type="button" onClick={moveAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("reschedule")}</button>
         </div>
       </Dialog>
     </>
@@ -430,7 +430,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   }
 
   return (
-    <button onClick={handleDelete} disabled={pending} className="rounded-lg p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 transition">
+    <button data-server onClick={handleDelete} disabled={pending} className="rounded-lg p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 transition">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
         <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
       </svg>
@@ -723,7 +723,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
         <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
         <div className="flex gap-3 pt-5">
           <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-          <button type="button" onClick={bookAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("bookAnywayButton")}</button>
+          <button data-server type="button" onClick={bookAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("bookAnywayButton")}</button>
         </div>
       </Dialog>
     </>

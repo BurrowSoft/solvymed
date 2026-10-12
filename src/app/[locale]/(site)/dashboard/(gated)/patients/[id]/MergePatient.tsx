@@ -154,7 +154,7 @@ export function MergePatientButton({ patientId, patientName, locale, pairWith = 
                 <ul className="divide-y divide-slate-100">
                   {(candidates ?? []).map((c) => (
                     <li key={c.id}>
-                      <button type="button" disabled={pending} onClick={() => choose(c.id)} className="flex w-full items-center justify-between gap-3 py-2.5 text-left text-sm hover:bg-slate-50 disabled:opacity-60">
+                      <button data-server type="button" disabled={pending} onClick={() => choose(c.id)} className="flex w-full items-center justify-between gap-3 py-2.5 text-left text-sm hover:bg-slate-50 disabled:opacity-60">
                         <span className="font-semibold text-slate-800">{c.full_name}</span>
                         <span className="text-xs text-slate-500">
                           {c.birth_date ? formatShortDate(locale, c.birth_date) : ""}{c.archived ? ` · ${t("archivedTag")}` : ""}
@@ -234,8 +234,8 @@ export function MergePatientButton({ patientId, patientName, locale, pairWith = 
                     {step === "compare" ? t("back") : t("cancel")}
                   </button>
                   {step === "compare" && <button type="button" onClick={() => setStep("confirm")} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700">{t("merge")}</button>}
-                  {step === "confirm" && <button type="button" onClick={() => (usesApp ? setStep("app") : submit(false))} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700">{t("merge")}</button>}
-                  {(step === "app" || step === "saving") && <button type="button" onClick={() => submit(true)} disabled={step === "saving"} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">{step === "saving" ? "…" : t("samePerson")}</button>}
+                  {step === "confirm" && <button data-server type="button" onClick={() => (usesApp ? setStep("app") : submit(false))} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700">{t("merge")}</button>}
+                  {(step === "app" || step === "saving") && <button data-server type="button" onClick={() => submit(true)} disabled={step === "saving"} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">{step === "saving" ? "…" : t("samePerson")}</button>}
                 </div>
               </div>
             )}

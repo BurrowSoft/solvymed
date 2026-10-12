@@ -111,7 +111,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
         {!isArchived && (
           <>
             <input ref={input} type="file" accept={ACCEPT} className="hidden" aria-label={t("filesUpload")} onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); }} />
-            <button type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+            <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
               {busy ? t("filesUploading") : t("filesUpload")}
             </button>
           </>
@@ -132,9 +132,9 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
                 <p className="text-xs text-slate-400">{formatShortDate(locale, f.createdAt.slice(0, 10))}{f.size ? ` · ${Math.max(1, Math.round(f.size / 1024))} KB` : ""}</p>
               </div>
               <div className="flex shrink-0 gap-2">
-                <button type="button" onClick={() => void open(f)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50">{t("filesOpen")}</button>
+                <button data-server type="button" onClick={() => void open(f)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50">{t("filesOpen")}</button>
                 {!isArchived && (
-                  <button type="button" disabled={busy} onClick={() => void remove(f)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-50">{t("filesRemove")}</button>
+                  <button data-server type="button" disabled={busy} onClick={() => void remove(f)} className="rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-50">{t("filesRemove")}</button>
                 )}
               </div>
             </li>
@@ -169,7 +169,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
           </label>
           <div className="mt-3 flex gap-2">
             <button type="button" onClick={() => setHiding(null)} className="flex-1 rounded-xl border border-slate-200 bg-white py-2 font-semibold text-slate-600">{t("cancel")}</button>
-            <button type="button" disabled={busy} onClick={() => void confirmHide()} className="flex-1 rounded-xl bg-teal-600 py-2 font-bold text-white disabled:opacity-60">{t("filesRemove")}</button>
+            <button data-server type="button" disabled={busy} onClick={() => void confirmHide()} className="flex-1 rounded-xl bg-teal-600 py-2 font-bold text-white disabled:opacity-60">{t("filesRemove")}</button>
           </div>
         </div>
       )}

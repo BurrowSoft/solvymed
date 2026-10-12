@@ -96,7 +96,7 @@ export function MassMessageButton() {
               {result && (
                 <p role="status" className={`rounded-xl px-3 py-2 text-sm ${result.kind === "ok" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{result.text}</p>
               )}
-              <button
+              <button data-server
                 type="button"
                 onClick={send}
                 disabled={pending || titleEmpty || bodyEmpty}
