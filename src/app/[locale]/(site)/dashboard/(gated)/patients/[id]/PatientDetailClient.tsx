@@ -1048,12 +1048,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       for (const el of others) el.removeAttribute("inert");
     };
   }, [sharing]);
-  const SHARE_LIMIT_MS = 90_000;
+  const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
     setShareIssue(null);
     setSharing(true);
     let outcome: string;
-    // At most 90 s (1.9.0, as the app): a stalled share ends in the existing
+    // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
     // "couldn't share" + Try again, never an endless modal over the page.
     try { outcome = await timeLimit(make(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
