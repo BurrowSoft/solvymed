@@ -64,6 +64,8 @@ describe("useFormDirty", () => {
 });
 
 describe("the sidebar and links", () => {
+  // A raw <a> on purpose: it's what the guard catches (Next's <Link> renders one).
+  // eslint-disable-next-line @next/next/no-html-link-for-pages
   const page = () => wrap(<><NavigationGuard /><Probe /><a href="/pt-BR/dashboard/patients">Pacientes</a><a href="#hours">aqui</a></>);
 
   it("nothing unsaved: links go as usual", async () => {
