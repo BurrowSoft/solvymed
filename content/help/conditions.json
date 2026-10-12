@@ -206,5 +206,21 @@
   "record-templates-live": {
     "met": true,
     "what": "Record templates are live on the website (1.8.0 D): migration 189 applied on production and the server flag 'record_templates' on. Gates Help C13 and the App Map's record-template rule. The app's half (1.8.0) is gated separately by its released build."
+  },
+  "app-1.9.0": {
+    "met": false,
+    "what": "App 1.9.0 is released on Google Play (iOS is TestFlight-only for now, so Play alone flips it). Includes the app's share default when editing or correcting (the box starts as the patient copy is now; checking / unknown wait for the doctor), matching the website (#528)."
+  },
+  "save-once-live": {
+    "met": false,
+    "what": "Saved once is live on BOTH platforms: the website's PR3 (#524) and its follow-up (#526) are merged, and the app's PR A (idempotent saves, migration 216) is released. A retry after a lost answer never makes a second record; a retry with changes shows \"already saved\" and the stored version (Help K9)."
+  },
+  "not-shared-marker-live": {
+    "met": false,
+    "what": "\"Not shared yet\" (1.9.0 item 1.4) is live on BOTH platforms: c5's share-intent schema applied, the website's marker merged and the app's released. The Prescriptions & documents list rows and the item detail show the marker when sharing was intended and no patient copy exists."
+  },
+  "document-studio-live": {
+    "met": false,
+    "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens."
   }
 }

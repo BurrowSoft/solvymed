@@ -330,3 +330,19 @@ Thai title: "ข้อมูลผู้ป่วย"
 {pending:c2-patient-step-live} ผู้ป่วยที่มีบัญชีจะเห็นการ์ด "{แพทย์} ขอข้อมูลเพิ่มเติม" ใน นัดหมายของฉัน เมื่อข้อมูลที่จำเป็นในแฟ้มของตนยังว่างอยู่: **กรอกข้อมูล** จะเปิดเฉพาะช่องเหล่านั้น (โดยไม่แสดงข้อมูลที่คุณมีอยู่แล้ว) และสิ่งที่ผู้ป่วยกรอกจะเข้าแฟ้มและถูกบันทึกใน **บันทึกการเข้าถึง** **ไว้ภายหลัง** จะซ่อนการ์ดจนกว่าคุณจะกำหนดให้ข้อมูลอื่นเป็นข้อมูลที่จำเป็น หมายเหตุภายในจะไม่ถูกขอจากผู้ป่วย และการ์ดจะไม่ขัดขวางการขอนัด
 `open:settings-patient-fields`
 `requires:patient-fields-live`
+
+---
+
+## C17. Document Studio / Document Studio
+**pt-BR**
+Em **Configurações → Minha marca → Document Studio**, dê aos seus documentos a aparência do papel timbrado do seu consultório: escolha um layout, as cores e o tipo de letra, e veja a prévia em A4.
+Todos os documentos seguem o mesmo visual: receitas, atestados, declarações, solicitações de exames, recibos e o histórico em PDF. Cópias já compartilhadas com o paciente não mudam.
+O logo, a cor e o nome vêm de **Minha marca**. O rodapé pode mostrar os seus locais de atendimento e contatos, e cada tipo de documento mantém o seu texto de cabeçalho e rodapé.
+A receita de controle especial segue o layout da Anvisa (só a cor muda), e o recibo tailandês mantém o texto revisado.
+**en**
+In **Settings → My brand → Document Studio**, give your documents the look of your practice's stationery: pick a layout, the colours and the typeface, and see the A4 preview.
+Every document follows the same look: prescriptions, certificates, declarations, exam requests, receipts and the PDF history. Copies already shared with the patient don't change.
+The logo, colour and name come from **My brand**. The footer can show your practice locations and contacts, and each document type keeps its own header and footer text.
+The special control prescription follows Anvisa's layout (only the colour changes), and the Thai receipt keeps its reviewed text.
+`open:settings`
+`requires:document-studio-live`
