@@ -19,3 +19,50 @@ describe("signOutHere", () => {
     expect(throwing.mock.calls).toEqual([[], [{ scope: "local" }]]);
   });
 });
+
+import { flushPendingSignOut, PENDING_KEY } from "@/lib/signOut";
+
+describe("a sign-out made offline is finished on the server later (02)", () => {
+  const session = { access_token: "at", refresh_token: "rt" };
+  const failing = () => vi.fn(async (opts?: { scope?: string }) => (opts?.scope === "local" ? { error: null } : { error: { name: "AuthRetryableFetchError" } }));
+
+  it("the server can't be reached: the session's tokens are kept for the revoke; a normal sign-out keeps nothing", async () => {
+    localStorage.clear();
+    await signOutHere({ signOut: vi.fn(async () => ({ error: null })), getSession: async () => ({ data: { session } }) });
+    expect(localStorage.getItem(PENDING_KEY)).toBeNull();
+    await signOutHere({ signOut: failing(), getSession: async () => ({ data: { session } }) });
+    expect(JSON.parse(localStorage.getItem(PENDING_KEY)!)).toEqual(session);
+  });
+
+  it("online again: the server sign-out with the kept token, then forgotten", async () => {
+    localStorage.setItem(PENDING_KEY, JSON.stringify(session));
+    const f = vi.fn(async () => new Response(null, { status: 204 }));
+    expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("done");
+    expect(f).toHaveBeenCalledWith("https://x.supabase.co/auth/v1/logout", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer at" }) }));
+    expect(localStorage.getItem(PENDING_KEY)).toBeNull();
+  });
+
+  it("the access token expired meanwhile: a refresh first, then the sign-out with the new one", async () => {
+    localStorage.setItem(PENDING_KEY, JSON.stringify(session));
+    const calls: string[] = [];
+    const f = vi.fn(async (url: string, init: RequestInit) => {
+      const auth = new Headers(init.headers).get("Authorization");
+      calls.push(`${url.split("/auth/v1/")[1]} ${auth ?? ""}`.trim());
+      if (url.includes("grant_type=refresh_token")) return Response.json({ access_token: "new" });
+      return new Response(null, { status: auth === "Bearer at" ? 401 : 204 });
+    });
+    expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("done");
+    expect(calls).toEqual(["logout Bearer at", "token?grant_type=refresh_token", "logout Bearer new"]);
+    expect(localStorage.getItem(PENDING_KEY)).toBeNull();
+  });
+
+  it("still offline: kept for the next try; a refresh token that no longer works: nothing left to revoke", async () => {
+    localStorage.setItem(PENDING_KEY, JSON.stringify(session));
+    expect(await flushPendingSignOut("https://x.supabase.co", "anon", (async () => { throw new TypeError("Failed to fetch"); }) as unknown as typeof fetch)).toBe("later");
+    expect(localStorage.getItem(PENDING_KEY)).not.toBeNull();
+    const f = vi.fn(async (url: string) => (url.includes("refresh_token") ? new Response("{}", { status: 400 }) : new Response(null, { status: 401 })));
+    expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("done");
+    expect(localStorage.getItem(PENDING_KEY)).toBeNull();
+    expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("none");
+  });
+});
