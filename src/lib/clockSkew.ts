@@ -33,3 +33,33 @@ export async function measureSkew(fetchImpl: typeof fetch = fetch, now: () => nu
     return null;
   }
 }
+
+// The device's measured offset (set by ClockSkewGuard), in ms; 0 = unknown
+// or right.
+let knownSkew = 0;
+export function setKnownSkew(ms: number | null): void {
+  knownSkew = ms !== null && isSkewed(ms) ? ms : 0;
+}
+
+// The auth client compares a token's expiry (server time) with the device's
+// clock on EVERY request, not only in its background refresh, so a skewed
+// device refreshed once per request (ec, #521). This fetch, given to the
+// browser client, shifts the expiry of each token the auth server issues by
+// the measured offset, so the comparison is right on the device's own
+// clock: the token is refreshed when it really expires, no sooner.
+export function skewAwareFetch(base?: typeof fetch): typeof fetch {
+  return async (input, init) => {
+    // The page's fetch at call time, so the offline guard's wrapper applies.
+    const res = await (base ?? globalThis.fetch)(input, init);
+    const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
+    if (!knownSkew || !res.ok || !url.includes("/auth/v1/token")) return res;
+    try {
+      const body = (await res.clone().json()) as { expires_at?: unknown };
+      if (typeof body.expires_at !== "number") return res;
+      const shifted = { ...body, expires_at: body.expires_at + Math.round(knownSkew / 1000) };
+      return new Response(JSON.stringify(shifted), { status: res.status, statusText: res.statusText, headers: res.headers });
+    } catch {
+      return res;
+    }
+  };
+}

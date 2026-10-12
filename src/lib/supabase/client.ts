@@ -1,5 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr';
 import { actingHeaders, browserActingCookie } from '@/lib/actingPractice';
+import { skewAwareFetch } from '@/lib/clockSkew';
 
 export function createClient() {
   // The secretary's chosen doctor (1.5.0, behind the flag): the
@@ -9,7 +10,8 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      ...(Object.keys(headers).length ? { global: { headers } } : {}),
+      // A skewed device clock: token expiries shifted to it (lib/clockSkew).
+      global: { ...(Object.keys(headers).length ? { headers } : {}), fetch: skewAwareFetch() },
       // The background token refresh starts only once the device's clock is
       // known to be right (ClockSkewGuard, 1.9.0): a clock an hour fast made
       // it refresh again and again. An expired token is still refreshed on

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { isSkewed, measureSkew } from "@/lib/clockSkew";
+import { isSkewed, measureSkew, setKnownSkew } from "@/lib/clockSkew";
 
 // The wrong-clock guard (1.9.0 item 1.7; lib/clockSkew). Mounted with the
 // offline guard on every signed-in screen. The browser auth client starts
@@ -28,6 +28,7 @@ export function ClockSkewGuard() {
       if (!alive) return;
       // A failed check counts as a right clock (never block on it).
       const wrong = skew !== null && isSkewed(skew);
+      setKnownSkew(skew);
       setSkewed(wrong);
       if (wrong) await auth.stopAutoRefresh();
       else await auth.startAutoRefresh();
