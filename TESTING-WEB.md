@@ -10599,3 +10599,14 @@ Evidence: each PR's tester comment (SHA + what was checked). Merged commits from
   - WT2's sets (its flip-row pair, and the #470 fixtures after the add-on) were purged as noted in WT2's comments.
 - **Downloads:** the CSV exports were deleted from disk after reading their header.
 - Nothing was backdated.
+
+## Batch 18: web PRs #506–#507, Help C15 website note (web tester 2, 2026-10-12)
+
+Evidence: each PR's tester comment (SHA + what was checked). Merged commits from GitHub. WT2 = web tester 2. Both rows ran the regression suite on the PR's Preview.
+
+| PR | Change | Tester result (SHA, evidence) | Merged |
+|---|---|---|---|
+| #506 | Help C15: the website note says where My Clinics is (the sidebar's **Clinics** [Clínicas], not Settings) and restores the note dropped on www | WT2 🟢 `7eec0ed` (6116404885). `/help/c15` in en / pt-BR shows the fixed note plus the footer sentence (clinical-document PDFs list every location). `/th/help/c15` shows the English article (`help-th-live` off), and the hidden Thai draft carries the same note. The labels match the dashboard: **Clinics** → **My Clinics** [Clínicas → Minhas Clínicas], `/dashboard/clinics`. **Open on the website** [Abrir no site] links there. SolvyAI (pt) points to the sidebar. Smoke 57 | `2977139` into master |
+| #507 | Help C15: the website note names **Add Clinic** [Adicionar Clínica] | WT2 🟢 `5463e5c` (6116549390). The en / pt-BR note names **Add Clinic** / **Adicionar Clínica**, matching the button on `/dashboard/clinics` (`clinics.add`; th "เพิ่มคลินิก" in source). SolvyAI (pt) gives the three steps (sidebar → Add Clinic → fill in and save). Smoke 57 on the first run | `b4eecf9` into master |
+
+**Fixtures:** one throwaway BR doctor per row, deleted after each run by WT2. Nothing is left on prod.
