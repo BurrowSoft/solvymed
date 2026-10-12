@@ -7,6 +7,7 @@ import {
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
+import { clinicDate } from "@/lib/clinicTime";
 import { correctMedicalDocument, createMedicalDocument, documentPrintData, updateMedicalDocument } from "../medical-documents-actions";
 import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
@@ -37,18 +38,23 @@ export type MedDoc = {
 // The languages' own names (the picker shows each in itself).
 const LANG_NAMES: Record<DocLang, string> = { "pt-BR": "Português", en: "English", th: "ไทย", es: "Español", de: "Deutsch", fr: "Français", it: "Italiano" };
 
-const today = () => {
+// Today in the PRACTICE's time zone (1.9.0, as the app's clinicToday): a
+// Brazilian practice on a computer set to Bangkok time defaulted its
+// documents to tomorrow. Without a zone (never on the patient page), the
+// browser's day.
+const today = (tz?: string) => {
+  if (tz) return clinicDate(new Date(), tz);
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-function emptyFields(type: MedicalDocType): DocFields {
+function emptyFields(type: MedicalDocType, tz?: string): DocFields {
   switch (type) {
-    case "certificate": return { variant: "absence", date: today(), days: 1, start: today(), includeCid: false } as CertificateFields;
-    case "declaration": return { date: today(), from: "", to: "" } as DeclarationFields;
+    case "certificate": return { variant: "absence", date: today(tz), days: 1, start: today(tz), includeCid: false } as CertificateFields;
+    case "declaration": return { date: today(tz), from: "", to: "" } as DeclarationFields;
     case "exam_request": return { exams: [], indication: "", cid: "" } as ExamRequestFields;
     case "controlled_prescription": return { items: [{ name: "", dose: "", quantity: "", posology: "" }] } as ControlledFields;
-    case "th_certificate": return { examDate: today() } as ThCertificateFields;
+    case "th_certificate": return { examDate: today(tz) } as ThCertificateFields;
   }
 }
 
@@ -66,7 +72,7 @@ export function restEnd(start: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onAlreadySaved, onDirtyChange, reasonField, canShare = false }: {
+export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onAlreadySaved, onDirtyChange, reasonField, canShare = false, timeZone }: {
   state: DocDialogState;
   patientId: string;
   patientName: string;
@@ -81,6 +87,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // Saved before the doctor's last changes (216, a retry): the host closes
   // the dialog and shows the stored version with a message.
   onAlreadySaved?: () => void;
+  // The practice's time zone: the default dates are its today.
+  timeZone?: string;
   // Whether anything changed since the dialog opened (12's #413 row, ad).
   onDirtyChange?: (dirty: boolean) => void;
   reasonField: React.ReactNode;
@@ -96,7 +104,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [type, setType] = useState<MedicalDocType | null>(existing?.doc_type ?? (state.mode === "new" ? state.type : null));
   const defaultLang: DocLang = (OFFERED_DOC_LANGS as readonly string[]).includes(uiLocale) ? (uiLocale as DocLang) : "en";
   const [lang, setLang] = useState<DocLang>(existing?.language ?? defaultLang);
-  const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type) : null);
+  const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type, timeZone) : null);
   const [body, setBody] = useState(existing?.body ?? "");
   // The prefilled text follows the fields until the doctor edits it (1.9.0,
   // c5's rule, the same in the app): no stored flag; the text counts as
@@ -144,13 +152,13 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // the end to start + days − 1, as the app (12's #413 row); the end stays
   // editable.
   const setRest = (patch: Partial<NonNullable<ThCertificateFields["rest"]>>) => {
-    const r = { ...((fields as ThCertificateFields).rest ?? { days: 1, start: today(), end: today() }), ...patch };
+    const r = { ...((fields as ThCertificateFields).rest ?? { days: 1, start: today(timeZone), end: today(timeZone) }), ...patch };
     if (("days" in patch || "start" in patch) && r.days >= 1 && /^\d{4}-\d{2}-\d{2}$/.test(r.start)) r.end = restEnd(r.start, r.days);
     setF({ rest: r } as Partial<ThCertificateFields>);
   };
   const pick = (ty: MedicalDocType) => {
     setType(ty);
-    const f = emptyFields(ty);
+    const f = emptyFields(ty, timeZone);
     setFields(f);
     setFieldsChanged(false);
     // A type that doesn't offer the chosen language (the Thai certificate:
@@ -334,7 +342,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
                 <DateInput value={(f!.examDate as string) ?? ""} onChange={(v) => setF({ examDate: v } as Partial<ThCertificateFields>)} className={input} />
               </label>
               <label className="flex items-center gap-2 text-sm text-slate-700">
-                <input type="checkbox" checked={!!f!.rest} onChange={(e) => setF({ rest: e.target.checked ? { days: 1, start: today(), end: today() } : undefined } as Partial<ThCertificateFields>)} className="h-4 w-4 accent-teal-600" />
+                <input type="checkbox" checked={!!f!.rest} onChange={(e) => setF({ rest: e.target.checked ? { days: 1, start: today(timeZone), end: today(timeZone) } : undefined } as Partial<ThCertificateFields>)} className="h-4 w-4 accent-teal-600" />
                 {t("rest")}
               </label>
               {!!f!.rest && (
