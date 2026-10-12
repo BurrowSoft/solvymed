@@ -13,6 +13,7 @@ import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -157,9 +158,9 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     setError("");
     start(async () => {
       const payload = { type, lang: effLang, fields, body };
-      const r = state.mode === "new" ? await createMedicalDocument(patientId, payload)
-        : state.mode === "edit" ? await updateMedicalDocument(state.doc.id, patientId, payload)
-        : await correctMedicalDocument(state.doc.id, patientId, { ...payload, reason });
+      const r = state.mode === "new" ? await safeCall(() => createMedicalDocument(patientId, payload), NETWORK_FAILURE)
+        : state.mode === "edit" ? await safeCall(() => updateMedicalDocument(state.doc.id, patientId, payload), NETWORK_FAILURE)
+        : await safeCall(() => correctMedicalDocument(state.doc.id, patientId, { ...payload, reason }), NETWORK_FAILURE);
       if (!r.ok) {
         const k = r.code.startsWith("field_") ? r.code.slice(6) : null;
         setError(k ? t(`err.${k}` as "err.date") : r.code === "buddhist_year" ? tdate("buddhistYear") : r.code === "reason_required" ? tp("reasonRequired") : r.code === "clinical_record_locked" ? tp("lockedError") : tp("genericError"));

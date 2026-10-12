@@ -13,6 +13,7 @@ import {
   deleteOwnDocument, hideDocument, loadPatientDocuments, moveDocument, openDocument, registerDocument,
   renameDocument, setDocumentShared,
 } from "../documents-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // The patient's Documents (1.8.0 A; flag 'patient_documents'): replaces
 // Exams + Files while the flag is on (the app's PatientDocuments). Every
@@ -41,7 +42,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   const input = useRef<HTMLInputElement>(null);
 
   const folderName = useCallback((f: DocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}`) : ""), [t]);
-  const errText = useCallback((k: DocErrorKey) => {
+  const errText = useCallback((k: DocErrorKey | "network") => {
     switch (k) {
       case "tooLarge": case "type": case "cantShareType": case "dailyLimit": case "patientFull": case "storageFull": case "ownStorageFull": case "noAccess":
         return t(`err.${k}`);
@@ -50,7 +51,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   }, [t, tp]);
 
   const load = useCallback(async () => {
-    const r = await loadPatientDocuments(patientId);
+    const r = await safeCall(() => loadPatientDocuments(patientId), NETWORK_FAILURE);
     if (!r.ok) { setFolders([]); setError(errText(r.code)); return; }
     setFolders(r.data.folders);
     setDocs(r.data.documents);
@@ -83,7 +84,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
       // 190 checks it against the extension.
       const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, upload.file.slice(0, upload.file.size, mime), { upsert: false, contentType: mime });
       if (upErr) { setError(/storage_full/.test(upErr.message ?? "") ? t("err.ownStorageFull") : tp("filesError")); return; }
-      const r = await registerDocument(patientId, { path, folderId: upload.folderId, title: upload.title, shared: upload.shared && !isInternal(upload.folderId) });
+      const r = await safeCall(() => registerDocument(patientId, { path, folderId: upload.folderId, title: upload.title, shared: upload.shared && !isInternal(upload.folderId) }), NETWORK_FAILURE);
       if (!r.ok) { setError(errText(r.code)); return; }
       setUpload(null);
       await load();
@@ -100,7 +101,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     // (FilesTab's pattern; the opener is cut by hand).
     const win = window.open("", "_blank");
     if (win) win.opener = null;
-    const r = await openDocument(d.id);
+    const r = await safeCall(() => openDocument(d.id), NETWORK_FAILURE);
     if (!r.ok) { win?.close(); setError(errText(r.code)); return; }
     if (win) win.location.href = r.data; else setError(tp("filesPopupBlocked"));
     // The first doctor open stamps doctor_opened_at (the patient can't remove it anymore).
@@ -111,7 +112,8 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   // list call can take seconds (53).
   async function act(p: Promise<{ ok: boolean; code?: DocErrorKey }>, apply?: (ds: PatientDocument[]) => PatientDocument[]) {
     setBusy(true); setError("");
-    const r = await p;
+    // No answer: the generic error, and the buttons come back (1.9.0).
+    const r = await safeCall(() => p, NETWORK_FAILURE);
     setBusy(false);
     if (!r.ok) { setError(errText((r as { code: DocErrorKey }).code)); return false; }
     if (apply) setDocs(apply);
@@ -124,7 +126,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     if (canDeleteOwn(d)) {
       if (!window.confirm(tp("filesDeleteConfirm"))) return;
       setBusy(true);
-      const r = await deleteOwnDocument(d.storagePath, patientId);
+      const r = await safeCall(() => deleteOwnDocument(d.storagePath, patientId), NETWORK_FAILURE);
       setBusy(false);
       // The window closed in between: hide it instead.
       if (!r.ok) { setHiding(d); setReason(""); return; }
