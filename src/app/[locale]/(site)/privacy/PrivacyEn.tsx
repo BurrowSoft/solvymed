@@ -91,7 +91,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Stripe", "Subscription payments", "USA / global"],
             ["Resend", `Transactional email (confirmations, password resets)${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
             ["Expo", "Push notification delivery", "USA"],
-            ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
+            ["Sentry", "Error monitoring for the app, website and our server functions (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
             ["Google Workspace", "Support email", "USA / global"],
             ["OpenStreetMap", "Converts the clinic's address into a map location, and shows the map when a professional adjusts the pin, from our servers, the app or the browser (no patient data)", "EU / UK"],

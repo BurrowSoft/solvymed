@@ -91,7 +91,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
             ["Resend", `E-mails transacionais (confirmações, redefinição de senha)${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
-            ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
+            ["Sentry", "Monitoramento de erros do aplicativo, do site e das nossas funções de servidor (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
             ["Google Workspace", "E-mail de suporte", "EUA / global"],
             ["OpenStreetMap", "Converte o endereço da clínica em uma localização no mapa e exibe o mapa quando um profissional ajusta o marcador, a partir dos nossos servidores, do aplicativo ou do navegador (sem dados de pacientes)", "UE / Reino Unido"],

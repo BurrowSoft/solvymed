@@ -57,7 +57,12 @@
 // (clinical-documents-live), and §3.2's patients completing their own details
 // (c2-patient-step-live; "OK privacy C2"). One version for all three, merged
 // with their flips. Mobile's accepting migration (215) applied FIRST.
-export const PRIVACY_VERSION = "2026-10-17";
+// 2026-10-19: §5's Sentry row names our server functions too (1.9.0 item
+// 1.3; the edge functions report errors through the same strict scrub, no
+// patient data, proven with an envelope sink first). Mobile's accepting
+// migration (219) applied FIRST; merged only after c5's "edge Sentry live +
+// proven" and Vitor's OK on the wording.
+export const PRIVACY_VERSION = "2026-10-19";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -68,7 +73,8 @@ export const TERMS_VERSION = "2026-10-01";
 // on the day if the merge slips), and so does any condition / flag flip that
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
-export const PRIVACY_PUBLISHED = "2026-10-09"; // 2026-10-17 went live with #500, 07:28 UTC
+// SET TO THE MERGE DAY (UTC) when this PR merges.
+export const PRIVACY_PUBLISHED = "2026-10-12"; // 2026-10-19 (2026-10-17 went live 2026-10-09 with #500)
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only
