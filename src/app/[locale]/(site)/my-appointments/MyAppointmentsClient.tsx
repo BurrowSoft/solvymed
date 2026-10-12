@@ -26,6 +26,7 @@ import { MyDoctors } from "./MyDoctors";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
+import { signOutHere } from "@/lib/signOut";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -339,7 +340,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
 
       {isProfProposal && !lapsed && (
         <div className="flex gap-2 mt-4">
-          <button
+          <button data-server
             disabled={pending}
             aria-busy={pending && acting === "accept"}
             onClick={() => act("accept")}
@@ -348,7 +349,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
             {pending && acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("accept")}
           </button>
-          <button
+          <button data-server
             disabled={pending}
             aria-busy={pending && acting === "decline"}
             onClick={() => act("decline")}
@@ -367,7 +368,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
               <p className="text-sm font-semibold text-slate-800">{t("cancelRequestTitle")}</p>
               <p className="mt-1 text-xs text-slate-500">{t("cancelRequestBody")}</p>
               <div className="mt-3 flex gap-2">
-                <button type="button" disabled={cancelling} aria-busy={cancelling} onClick={cancelRequest} className="flex-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition">
+                <button data-server type="button" disabled={cancelling} aria-busy={cancelling} onClick={cancelRequest} className="flex-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition">
                   {cancelling && <span className="spinner-current mr-2" aria-hidden="true" />}
                   {t("cancelRequest")}
                 </button>
@@ -470,7 +471,7 @@ export function MyAppointmentsClient({
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/login`);
   }
 
