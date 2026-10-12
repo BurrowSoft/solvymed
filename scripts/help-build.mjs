@@ -41,7 +41,7 @@ import { resolve } from "node:path";
 
 // th: the apps' tab names (th i18n: tab.schedule, tab.patients…).
 export const CATEGORIES = {
-  "01-agenda": { slug: "agenda", pt: "Agenda", en: "Schedule", th: "ตารางงาน" },
+  "01-agenda": { slug: "agenda", pt: "Agenda", en: "Schedule", th: "ตารางนัด" },
   "02-pacientes": { slug: "pacientes", pt: "Pacientes", en: "Patients", th: "ผู้ป่วย" },
   "03-pagamentos": { slug: "pagamentos", pt: "Pagamentos", en: "Payments", th: "การชำระเงิน" },
   "04-configuracoes": { slug: "configuracoes", pt: "Configurações", en: "Settings", th: "การตั้งค่า" },

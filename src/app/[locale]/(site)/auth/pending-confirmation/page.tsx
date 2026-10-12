@@ -10,6 +10,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 import { acceptProposal, declineProposal } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/booking-actions";
 import { formatDateLabel, formatTimeLabel } from "@/lib/dateLabels";
+import { signOutHere } from "@/lib/signOut";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 
@@ -137,7 +138,7 @@ export default function PendingConfirmationPage() {
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/signup`);
   }
 

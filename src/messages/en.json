@@ -2298,5 +2298,8 @@
     "zoomIn": "Zoom in",
     "zoomOut": "Zoom out",
     "adjust": "Adjust"
+  },
+  "offline": {
+    "banner": "No internet connection. You can view what's open, but changes won't be saved."
   }
 }

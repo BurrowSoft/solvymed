@@ -198,7 +198,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                 <p className="truncate text-sm font-semibold text-slate-900">{m.name ?? m.email}</p>
                 {m.name && <p className="truncate text-xs text-slate-500">{m.email}</p>}
               </div>
-              <button
+              <button data-server
                 type="button"
                 onClick={() => remove(m)}
                 disabled={pending}
@@ -230,7 +230,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                   {tooSoon && waitUntil && mounted && <p data-testid="resend-wait" className="text-xs text-slate-500">{t("teamResendAt", { time: time(waitUntil) })}</p>}
                 </div>
                 <div className="flex shrink-0 gap-3">
-                  <button
+                  <button data-server
                     type="button"
                     onClick={() => { if (emailLive) resendEmail(inv); else if (window.confirm(t("teamResendConfirm", { email: inv.email }))) invite(inv.email); }}
                     disabled={pending || tooSoon}
@@ -238,7 +238,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                   >
                     {emailLive ? t("teamResendEmail") : t("teamResend")}
                   </button>
-                  <button
+                  <button data-server
                     type="button"
                     onClick={() => revoke(inv.id)}
                     disabled={pending}

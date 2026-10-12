@@ -2268,5 +2268,8 @@
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
     "adjust": "Điều chỉnh"
+  },
+  "offline": {
+    "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
   }
 }

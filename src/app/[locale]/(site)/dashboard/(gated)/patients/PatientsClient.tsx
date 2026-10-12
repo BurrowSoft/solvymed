@@ -319,7 +319,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
             {m.archived_at ? (
               // Bring the existing record back rather than creating a second
               // one for the same person.
-              <button type="button" onClick={() => restoreMatch(m.id)} disabled={pending || restoringId !== null} className="shrink-0 font-semibold text-teal-700 hover:underline disabled:opacity-60">
+              <button data-server type="button" onClick={() => restoreMatch(m.id)} disabled={pending || restoringId !== null} className="shrink-0 font-semibold text-teal-700 hover:underline disabled:opacity-60">
                 {restoringId === m.id ? "…" : t("restore")}
               </button>
             ) : (
@@ -330,7 +330,7 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
           </li>
         ))}
       </ul>
-      <button type="button" onClick={createAnyway} disabled={pending} className="text-sm font-semibold text-amber-900 underline disabled:opacity-60">
+      <button data-server type="button" onClick={createAnyway} disabled={pending} className="text-sm font-semibold text-amber-900 underline disabled:opacity-60">
         {t("createAnyway")}
       </button>
     </div>

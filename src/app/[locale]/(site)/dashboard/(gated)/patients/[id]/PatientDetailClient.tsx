@@ -325,7 +325,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
         </div>
       )}
       {hasMore && !failed && (
-        <button
+        <button data-server
           type="button"
           onClick={loadMore}
           disabled={pending}
@@ -517,12 +517,12 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
               <button type="button" onClick={handleCopyCode} className="text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
                 {codeCopied ? t("codeCopied") : t("copyCode")}
               </button>
-              <button type="button" onClick={handleGenerateCode} disabled={codePending} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60">
+              <button data-server type="button" onClick={handleGenerateCode} disabled={codePending} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60">
                 {codePending ? "…" : t("regenerateCode")}
               </button>
             </div>
           ) : (
-            <button
+            <button data-server
               type="button"
               onClick={handleGenerateCode}
               disabled={codePending}
@@ -555,7 +555,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           <button onClick={() => setEditing(true)} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
             {t("editPatient")}
           </button>
-          {!isArchived && <button
+          {!isArchived && <button data-server
             onClick={handleToggleBlock}
             disabled={blockPending}
             className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${
@@ -573,7 +573,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           )}
           {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} pairWith={mergeWith} />}
           {canDelete && (
-            <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
+            <button data-server onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}
             </button>
           )}
@@ -757,7 +757,7 @@ function EntryActions({ editable, isArchived, onEdit, onDelete, onCorrect, pendi
   return editable ? (
     <div className="flex gap-2">
       <button type="button" onClick={onEdit} disabled={pending} className={`${btn} text-slate-600 hover:bg-slate-100`}>{t("editEntry")}</button>
-      <button type="button" onClick={onDelete} disabled={pending} className={`${btn} text-red-600 hover:bg-red-50`}>{t("deleteEntry")}</button>
+      <button data-server type="button" onClick={onDelete} disabled={pending} className={`${btn} text-red-600 hover:bg-red-50`}>{t("deleteEntry")}</button>
     </div>
   ) : (
     <button type="button" onClick={onCorrect} disabled={pending} className={`${btn} text-teal-700 hover:bg-teal-50`}>{t("addCorrection")}</button>
@@ -1137,7 +1137,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
+            <button data-server type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
             {printed[doc.id] && (
               <a href={printed[doc.id]} target="_blank" rel="noopener noreferrer" data-testid="open-printed-pdf"
                 className="rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 underline hover:bg-slate-50">{td("openPdf")}</a>
@@ -1288,7 +1288,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       {shareIssue && (
         <div role="alert" data-testid="share-issue" className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
           <span>{shareIssue.text}</span>
-          {shareIssue.retry && <button type="button" onClick={shareIssue.retry} className="rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">{tdocs("tryAgain")}</button>}
+          {shareIssue.retry && <button data-server type="button" onClick={shareIssue.retry} className="rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">{tdocs("tryAgain")}</button>}
         </div>
       )}
 
@@ -1490,7 +1490,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-5">
         <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
+        <button data-server type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
           {pending ? t("saving") : t("archiveConfirm")}
         </button>
       </div>
@@ -1523,7 +1523,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, archived
         <p className="mt-0.5 text-xs text-slate-600">{t("archivedSub")}</p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
-      <button type="button" onClick={handleRestore} disabled={pending} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+      <button data-server type="button" onClick={handleRestore} disabled={pending} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
         {pending ? "…" : tPatients("restore")}
       </button>
     </div>

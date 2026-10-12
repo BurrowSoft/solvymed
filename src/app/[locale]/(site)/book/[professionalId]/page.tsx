@@ -6,6 +6,7 @@ import { BookingClient } from "./BookingClient";
 import { countryProfile } from "@/lib/country";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
+import { OfflineGuard } from "@/components/OfflineGuard";
 
 export default async function BookPage({
   params,
@@ -89,6 +90,8 @@ export default async function BookPage({
   // Working hours are fetched client-side via get_professional_working_hours()
   // SECURITY DEFINER RPC — cannot read professionals table directly as a patient (RLS).
   return (
+    <>
+    <OfflineGuard />
     <BookingClient
       brand={brand}
       professionalId={professionalId}
@@ -104,5 +107,6 @@ export default async function BookPage({
       clinicTz={prof?.time_zone || countryProfile(prof?.country).defaultTimeZone}
       locations={prof?.locations ?? null}
     />
+    </>
   );
 }
