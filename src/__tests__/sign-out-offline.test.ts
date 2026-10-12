@@ -38,7 +38,8 @@ describe("a sign-out made offline is finished on the server later (02)", () => {
     localStorage.setItem(PENDING_KEY, JSON.stringify(session));
     const f = vi.fn(async () => new Response(null, { status: 204 }));
     expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("done");
-    expect(f).toHaveBeenCalledWith("https://x.supabase.co/auth/v1/logout", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer at" }) }));
+    // Only the abandoned session, never the user's later ones (ec).
+    expect(f).toHaveBeenCalledWith("https://x.supabase.co/auth/v1/logout?scope=local", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer at" }) }));
     expect(localStorage.getItem(PENDING_KEY)).toBeNull();
   });
 
@@ -52,7 +53,7 @@ describe("a sign-out made offline is finished on the server later (02)", () => {
       return new Response(null, { status: auth === "Bearer at" ? 401 : 204 });
     });
     expect(await flushPendingSignOut("https://x.supabase.co", "anon", f as unknown as typeof fetch)).toBe("done");
-    expect(calls).toEqual(["logout Bearer at", "token?grant_type=refresh_token", "logout Bearer new"]);
+    expect(calls).toEqual(["logout?scope=local Bearer at", "token?grant_type=refresh_token", "logout?scope=local Bearer new"]);
     expect(localStorage.getItem(PENDING_KEY)).toBeNull();
   });
 
