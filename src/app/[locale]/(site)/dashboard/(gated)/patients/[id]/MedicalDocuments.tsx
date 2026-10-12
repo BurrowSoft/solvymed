@@ -9,6 +9,7 @@ import {
 } from "@/lib/medicalDocuments";
 import { clinicDate } from "@/lib/clinicTime";
 import { correctMedicalDocument, createMedicalDocument, documentPrintData, updateMedicalDocument } from "../medical-documents-actions";
+import { copySharedNow } from "../documents-actions";
 import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
@@ -112,8 +113,18 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [fieldsChanged, setFieldsChanged] = useState(false);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
-  // ON by default (the A spec); never for the controlled prescription.
-  const [share, setShare] = useState(true);
+  // ON by default for a new one (the A spec); never for the controlled
+  // prescription. Editing / correcting: as its patient copy is now (1.9.0,
+  // 02): off until that's known, and the doctor's own click always wins.
+  const [share, setShare] = useState(state.mode === "new");
+  const shareTouched = useRef(false);
+  const sourceId = existing?.id ?? null;
+  useEffect(() => {
+    if (!canShare || !sourceId) return;
+    let live = true;
+    copySharedNow(patientId, "medical_document", sourceId).then((on) => { if (live && !shareTouched.current) setShare(on); }, () => {});
+    return () => { live = false; };
+  }, [canShare, patientId, sourceId]);
   const types = documentTypesFor(country);
   const effLang = (type && fixedLanguage(type)) ?? lang;
 
@@ -369,7 +380,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           {state.mode === "correct" && reasonField}
           {canShare && type && sharesSnapshot(type) && (
             <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} className="h-4 w-4 accent-teal-600" />
+              <input type="checkbox" data-testid="share-with-patient" checked={share} onChange={(e) => { shareTouched.current = true; setShare(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
               {tdocs("share")}
             </label>
           )}

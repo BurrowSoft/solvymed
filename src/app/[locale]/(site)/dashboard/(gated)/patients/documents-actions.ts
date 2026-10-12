@@ -6,7 +6,7 @@ import { serverFlag } from "@/lib/myDoctors";
 import { patientDocumentFn } from "@/lib/patientDocumentFn";
 import { BUCKET, isUuid } from "@/lib/patientFiles";
 import {
-  DOC_TITLE_MAX, docErrorKey, toDocument, toFolder,
+  DOC_TITLE_MAX, copyIsShared, docErrorKey, toDocument, toFolder,
   type DocErrorKey, type DocFolder, type PatientDocument,
 } from "@/lib/patientDocuments";
 
@@ -49,6 +49,18 @@ export async function loadPatientDocuments(patientId: string): Promise<Result<{ 
       documents: ((d.data ?? []) as Record<string, unknown>[]).map(toDocument),
     },
   };
+}
+
+// Whether the patient sees the copy of this prescription / document right
+// now (the share box's default when editing or correcting it). Unknown
+// (an error, no access) → false: never re-share by default.
+export async function copySharedNow(patientId: string, source: "prescription" | "medical_document", sourceId: string): Promise<boolean> {
+  if (!isUuid(patientId) || !isUuid(sourceId) || (source !== "prescription" && source !== "medical_document")) return false;
+  const me = await doctor();
+  if (!me) return false;
+  const d = await me.supabase.rpc("list_patient_documents", { p_patient_id: patientId });
+  if (d.error) return false;
+  return copyIsShared(((d.data ?? []) as Record<string, unknown>[]).map(toDocument), source, sourceId);
 }
 
 export async function registerDocument(patientId: string, input: { path: string; folderId: string; title: string; shared: boolean }): Promise<Result<string>> {

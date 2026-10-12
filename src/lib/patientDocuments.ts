@@ -34,6 +34,9 @@ export type PatientDocument = {
   mime: string;
   sizeBytes: number;
   source: string;
+  // The prescription / clinical document a copy was made from.
+  prescriptionId: string | null;
+  medicalDocumentId: string | null;
   replacesId: string | null;
   replaced: boolean;
   shared: boolean;
@@ -89,6 +92,8 @@ export function toDocument(r: Record<string, unknown>): PatientDocument {
     mime: r.mime as string,
     sizeBytes: Number(r.size_bytes ?? 0),
     source: r.source as string,
+    prescriptionId: (r.prescription_id as string | null) ?? null,
+    medicalDocumentId: (r.medical_document_id as string | null) ?? null,
     replacesId: (r.replaces_id as string | null) ?? null,
     replaced: r.replaced === true,
     shared: r.shared === true,
@@ -134,4 +139,21 @@ export function formatBytes(n: number): string {
   if (n >= 1024 * 1024 * 1024) return `${(n / (1024 * 1024 * 1024)).toFixed(1)} GB`;
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(1)} MB`;
   return `${Math.max(1, Math.round(n / 1024))} KB`;
+}
+
+// 1.9.0 (02, the app's rule; 78): editing or correcting something with a
+// patient copy, "Share with the patient" starts as that copy is NOW: on
+// while the patient sees it, off when the doctor hid it or it was never
+// shared (an unchanged Save with the box on re-exposed a hidden copy). The
+// copies made from the source, each followed to its newest replacement (a
+// correction's copy replaces the original's).
+export function copyIsShared(docs: PatientDocument[], source: "prescription" | "medical_document", sourceId: string): boolean {
+  const replacedBy = new Map<string, PatientDocument>();
+  for (const d of docs) if (d.replacesId) replacedBy.set(d.replacesId, d);
+  const own = docs.filter((d) => (source === "prescription" ? d.prescriptionId : d.medicalDocumentId) === sourceId);
+  return own.some((d) => {
+    let cur = d;
+    for (let i = 0; i < 100 && replacedBy.has(cur.id); i++) cur = replacedBy.get(cur.id)!;
+    return cur.shared && !cur.hidden;
+  });
 }

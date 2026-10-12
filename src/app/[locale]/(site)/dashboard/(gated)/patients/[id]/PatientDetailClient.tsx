@@ -21,7 +21,7 @@ import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type
 import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
-import { loadPatientDocuments } from "../documents-actions";
+import { copySharedNow, loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -1175,8 +1175,11 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const [error, setError] = useState("");
   const [listError, setListError] = useState("");
   const [medications, setMedications] = useState<MedRow[]>([medRow()]);
-  // "Compartilhar com o paciente" (1.8.0 B2): ON by default.
+  // "Compartilhar com o paciente" (1.8.0 B2): ON for a new one; editing /
+  // correcting, as its patient copy is now (1.9.0, 02): off until known,
+  // and the doctor's own click wins.
   const [shareRxOn, setShareRxOn] = useState(true);
+  const shareRxTouched = useRef(false);
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
@@ -1184,8 +1187,22 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setError("");
     const items = d.mode === "new" ? [] : d.rx.prescription_items;
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
-    setShareRxOn(true);
+    shareRxTouched.current = false;
+    setShareRxOn(d.mode === "new");
+    openRx.current = d.mode === "new" ? null : d.rx.id;
     setDialog(d);
+    if (d.mode !== "new" && canShare) {
+      const rxId = d.rx.id;
+      copySharedNow(patientId, "prescription", rxId).then((on) => {
+        if (!shareRxTouched.current) setDialogShare(rxId, on);
+      }, () => {});
+    }
+  }
+  // Only while that dialog is still the one open.
+  const openRx = useRef<string | null>(null);
+  useEffect(() => { openRx.current = dialog && dialog.mode !== "new" ? dialog.rx.id : null; }, [dialog]);
+  function setDialogShare(rxId: string, on: boolean) {
+    if (openRx.current === rxId) setShareRxOn(on);
   }
 
   function handleSubmit(e: React.FormEvent) {
@@ -1375,7 +1392,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           {dialog?.mode === "correct" && <ReasonField />}
           {canShare && dialog && (
             <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" checked={shareRxOn} onChange={(e) => setShareRxOn(e.target.checked)} className="h-4 w-4 accent-teal-600" />
+              <input type="checkbox" data-testid="share-rx-with-patient" checked={shareRxOn} onChange={(e) => { shareRxTouched.current = true; setShareRxOn(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
               {tdocs("share")}
             </label>
           )}
