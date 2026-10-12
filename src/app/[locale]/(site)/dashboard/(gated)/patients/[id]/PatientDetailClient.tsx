@@ -31,7 +31,7 @@ import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
-import { safeCall, NETWORK_ERROR, NETWORK_FAILURE } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -1048,11 +1048,14 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       for (const el of others) el.removeAttribute("inert");
     };
   }, [sharing]);
+  const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
     setShareIssue(null);
     setSharing(true);
     let outcome: string;
-    try { outcome = await make(); } catch { outcome = "failed"; } finally { setSharing(false); }
+    // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
+    // "couldn't share" + Try again, never an endless modal over the page.
+    try { outcome = await timeLimit(make(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),

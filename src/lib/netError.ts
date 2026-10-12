@@ -58,3 +58,13 @@ export async function attempt<T>(fn: () => Promise<T>): Promise<{ ok: true; valu
     return { ok: false, network: isNetworkError(e) };
   }
 }
+
+// A call that may hang (a stalled upload): after `ms`, `onTimeout` instead.
+// The call itself isn't cancelled (the browser can't stop a server action);
+// the place shows its failure with a retry instead of waiting forever.
+export function timeLimit<T, F>(p: Promise<T>, ms: number, onTimeout: F): Promise<T | F> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => resolve(onTimeout), ms);
+    p.then((v) => { clearTimeout(timer); resolve(v); }, (e) => { clearTimeout(timer); reject(e); });
+  });
+}

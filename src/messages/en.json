@@ -2217,6 +2217,7 @@
     "findings": "Findings / opinion",
     "rest": "Should rest",
     "refill": "Fill in the text again",
+    "textMayNotMatch": "The text may not match the fields you changed.",
     "items": "Medications",
     "itemName": "Medication",
     "dose": "Dose",

@@ -2187,6 +2187,7 @@
     "findings": "Kết quả / ý kiến",
     "rest": "Cần nghỉ ngơi",
     "refill": "Điền lại nội dung",
+    "textMayNotMatch": "Nội dung có thể không khớp với các trường bạn đã thay đổi.",
     "items": "Thuốc",
     "itemName": "Thuốc",
     "dose": "Liều",

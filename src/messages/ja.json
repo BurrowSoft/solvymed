@@ -2187,6 +2187,7 @@
     "findings": "所見 / 意見",
     "rest": "休養が必要",
     "refill": "本文を再入力",
+    "textMayNotMatch": "本文が、変更した項目と一致していない可能性があります。",
     "items": "薬剤",
     "itemName": "薬剤",
     "dose": "用量",
