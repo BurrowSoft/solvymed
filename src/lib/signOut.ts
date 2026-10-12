@@ -1,8 +1,8 @@
 // Signing out (1.9.0, offline guard): the server sign-out revokes the
 // session everywhere; when it can't be reached (offline, a weak network) the
 // auth client keeps the local session, so this browser stayed signed in.
-// Then this browser's session is removed anyway (scope "local", no
-// request), and the revoke waits: the session's tokens are kept for that
+// Then this browser's session is removed anyway (its auth cookies deleted
+// here, 7e's #512 row), and the revoke waits: the session's tokens are kept for that
 // one purpose and the server sign-out is sent as soon as the browser is
 // online again, or on the next visit to any page (02: a shared computer
 // mustn't leave a valid session behind). Then they're deleted.
@@ -11,6 +11,7 @@ type Session = { access_token: string; refresh_token: string } | null;
 type Auth = {
   signOut(opts?: { scope?: "global" | "local" | "others" }): Promise<{ error: unknown }>;
   getSession?(): Promise<{ data: { session: Session } }>;
+  stopAutoRefresh?(): Promise<void> | void;
 };
 
 export const PENDING_KEY = "solvymed.pendingSignOut";
@@ -33,7 +34,30 @@ export async function signOutHere(auth: Auth): Promise<void> {
     try { store()?.setItem(PENDING_KEY, JSON.stringify({ access_token: session.access_token, refresh_token: session.refresh_token })); } catch { /* storage off: nothing to keep */ }
     if (typeof window !== "undefined") window.addEventListener("online", () => { void flushPendingSignOut(); }, { once: true });
   }
-  await auth.signOut({ scope: "local" });
+  // No ticker writing a refreshed session back once online again.
+  try { await auth.stopAutoRefresh?.(); } catch { /* ignore */ }
+  // auth-js's "local" sign-out still calls the server first and, when that
+  // fails, keeps the session (7e: the cookie stayed, and the first page
+  // online rendered the dashboard signed in). The session lives in this
+  // browser's own cookies (@supabase/ssr, not httpOnly): delete them here,
+  // whatever the network does.
+  try { await auth.signOut({ scope: "local" }); } catch { /* offline */ }
+  clearAuthCookies();
+}
+
+// The auth cookies of @supabase/ssr: sb-<project>-auth-token, its chunks
+// (.0, .1, …) and the PKCE code verifier. Expired on the path they're set
+// on ("/"), plus any copy left in localStorage.
+export function clearAuthCookies(): void {
+  if (typeof document === "undefined") return;
+  for (const part of document.cookie.split(";")) {
+    const name = part.split("=")[0]?.trim();
+    if (name && /^sb-.+-auth-token/.test(name)) document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+  }
+  const s = store();
+  try {
+    for (const k of Object.keys(s ?? {})) if (/^sb-.+-auth-token/.test(k)) s?.removeItem(k);
+  } catch { /* storage off */ }
 }
 
 // Sends the waiting server sign-out, if any. The access token may have
