@@ -11,8 +11,13 @@ import { SolvyAiIntroPopup } from "./SolvyAiIntroPopup";
 import { SOLVYAI_INTRO_TOUR } from "@/lib/solvyaiIntro";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { saveTourProgress } from "@/lib/tourActions";
+import { safeCall } from "@/lib/netError";
 import { CLOSED_EVENT, OPEN_EVENT } from "@/components/solvyai/SolvyAiSettings";
 import { track } from "@/lib/track";
+
+// Tour progress is saved in the background: without an answer it is simply
+// not saved (an unhandled rejection before, 1.9.0).
+const saveProgress = (...a: Parameters<typeof saveTourProgress>) => safeCall(() => saveTourProgress(...a), null);
 
 // Runs the guided tour inside the dashboard (specs/walkthrough.md):
 // - "auto": first sign-in after sign-up (no saved state) → starts by itself
@@ -102,7 +107,7 @@ export function TourProvider({
     setOfferResume(false);
     setActive({ startAt, replay });
     track(replay ? TOUR_EVENTS.replayed : TOUR_EVENTS.started, { role });
-    void saveTourProgress("started", startAt);
+    void saveProgress("started", startAt);
   }, [role]);
 
   // First sign-in: start on the home page once it's rendered.
@@ -118,7 +123,7 @@ export function TourProvider({
 
   const onStep = useCallback((index: number) => {
     track(TOUR_EVENTS.step, { role, step: index + 1 });
-    void saveTourProgress("started", index);
+    void saveProgress("started", index);
   }, [role]);
 
   const onClose = useCallback((result: "completed" | "skipped" | "none", index: number) => {
@@ -126,7 +131,7 @@ export function TourProvider({
     // Nothing could be shown (nothing on screen): nothing is recorded.
     if (result === "none") return;
     track(result === "completed" ? TOUR_EVENTS.completed : TOUR_EVENTS.skipped, { role, step: index + 1 });
-    void saveTourProgress(result, index);
+    void saveProgress(result, index);
     // Doctors land on the setup checklist afterwards (as in 1.3.0).
     if (role === "professional") router.push(`${home}?setup=1`);
   }, [role, router, home]);
@@ -143,7 +148,7 @@ export function TourProvider({
       // The Novidades already announced SolvyAI: "Meet SolvyAI" counts as seen (the app's rule).
       if (newsItems.some((i) => i.id === "solvyai")) {
         introWaiting.current = false;
-        void saveTourProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
+        void saveProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
       }
       track("news_shown", { release: CURRENT_NEWS.release, role });
     }, 800);
@@ -160,7 +165,7 @@ export function TourProvider({
       introWaiting.current = false;
       setIntroPopup(true);
       track("solvyai_intro_shown", { role });
-      void saveTourProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
+      void saveProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
     }, 900);
     return () => clearTimeout(id);
   }, [active, newsTour, newsPopup, introPopup, pathname, home, entry, role]);
@@ -168,7 +173,7 @@ export function TourProvider({
   const introTry = useCallback(() => {
     setIntroPopup(false);
     track("solvyai_intro_try", { role });
-    void saveTourProgress("completed", 0, SOLVYAI_INTRO_TOUR);
+    void saveProgress("completed", 0, SOLVYAI_INTRO_TOUR);
     window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { chip: tIntro("whatCanDo") } }));
   }, [role, tIntro]);
   const introLater = useCallback(() => setIntroPopup(false), []);
@@ -189,13 +194,13 @@ export function TourProvider({
 
   // The first news step actually on screen: the release counts as started.
   const onNewsStep = useCallback((index: number) => {
-    if (index === 0 && newsTour && !newsTour.replay) void saveTourProgress("started", 0, newsTourId(newsTour.release));
+    if (index === 0 && newsTour && !newsTour.replay) void saveProgress("started", 0, newsTourId(newsTour.release));
   }, [newsTour]);
 
   const closeNewsPopup = useCallback(() => {
     setNewsPopup(false);
     track("news_dismissed", { release: CURRENT_NEWS.release, role });
-    void saveTourProgress("skipped", 0, newsTourId(CURRENT_NEWS.release));
+    void saveProgress("skipped", 0, newsTourId(CURRENT_NEWS.release));
   }, [role]);
 
   const onNewsClose = useCallback((result: "completed" | "skipped" | "none", index: number) => {
@@ -205,7 +210,7 @@ export function TourProvider({
     // (UX), so the popup comes back on a later visit.
     if (result === "none" || newsTour?.replay) return;
     track(result === "completed" ? "news_tour_completed" : "news_tour_skipped", { release, role, step: index + 1 });
-    void saveTourProgress(result, index, newsTourId(release));
+    void saveProgress(result, index, newsTourId(release));
   }, [newsTour, role]);
 
   // "Experimentar agora": the tour pauses on the next step and SolvyAI opens
@@ -215,9 +220,9 @@ export function TourProvider({
     track("tour_try_solvyai", { role, step: index + 1 });
     const next = index + 1;
     if (next >= steps.length) {
-      void saveTourProgress("completed", index);
+      void saveProgress("completed", index);
     } else {
-      void saveTourProgress("started", next);
+      void saveProgress("started", next);
       setResumeAt(next);
       paused.current = true;
     }
@@ -255,7 +260,7 @@ export function TourProvider({
           <div className="mt-3 flex justify-end gap-2">
             <button
               type="button"
-              onClick={() => { setOfferResume(false); void saveTourProgress("skipped", resumeAt); }}
+              onClick={() => { setOfferResume(false); void saveProgress("skipped", resumeAt); }}
               className="rounded-lg px-3 py-1.5 text-sm font-semibold text-slate-500 hover:bg-slate-50"
             >
               {t("dismiss")}

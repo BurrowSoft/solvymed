@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { acceptSecretaryInvite, declineSecretaryInvite } from "./actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // The "secretary" key for each accept/decline error code (shared with the
 // Settings "Entrar na equipe de outro médico" card).
@@ -35,7 +36,7 @@ export function InviteDecision({ code, locale, secondPractice = false }: { code:
   function accept() {
     setError("");
     start(async () => {
-      const result = await acceptSecretaryInvite(code);
+      const result = await safeCall(() => acceptSecretaryInvite(code), NETWORK_FAILURE);
       if (result.ok && secondPractice) {
         setJoined(`${result.doctor.trim() ? tp("joinedTeam", { doctor: result.doctor.trim() }) : tp("joinedTeamNoName")} ${tp("joinPickHint", { label: tp("switcherLabel") })}`);
         return;
@@ -52,7 +53,7 @@ export function InviteDecision({ code, locale, secondPractice = false }: { code:
   function decline() {
     setError("");
     start(async () => {
-      const result = await declineSecretaryInvite(code);
+      const result = await safeCall(() => declineSecretaryInvite(code), NETWORK_FAILURE);
       if (result.ok) {
         setDeclined(true);
         return;

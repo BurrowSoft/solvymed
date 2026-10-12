@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { DISMISS_KEY } from "@/lib/privacyNotice";
 import { acknowledgePrivacyNotice } from "@/lib/privacyNoticeActions";
 import { useTour } from "@/components/tour/TourProvider";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // "We've updated our Privacy Policy" (cf, 6 Oct): shown by the page only when
 // the caller's accepted version is older (lib/privacyNotice). "OK" records
@@ -33,7 +34,7 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
   function ok() {
     setFailed(false);
     start(async () => {
-      const r = await acknowledgePrivacyNotice(locale);
+      const r = await safeCall(() => acknowledgePrivacyNotice(locale), NETWORK_FAILURE);
       if (r.ok) setHidden(true);
       else setFailed(true);
     });

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { dismissOnboardingCard } from "@/lib/setupActions";
+import { safeCall,  } from "@/lib/netError";
 
 // One-time cards (first-run spec §5). Dismissed on the server, so a card
 // never comes back, on any device. The secretary card shows on their first
@@ -23,7 +24,7 @@ export function OnboardingCard({ kind, clinicName, bookHref, bookLabel }: {
   function dismiss(then?: () => void) {
     setGone(true);
     start(async () => {
-      await dismissOnboardingCard(kind);
+      await safeCall(() => dismissOnboardingCard(kind), null);
       then?.();
     });
   }

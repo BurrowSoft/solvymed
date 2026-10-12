@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import type { SetupProgress } from "@/lib/setup";
 import { ackSetupCompleted, setSetupHidden } from "@/lib/setupActions";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
+import { safeCall,  } from "@/lib/netError";
 
 // The doctor's first-run checklist on Home (first-run spec §2). The state
 // comes from get_setup_progress(); each CTA goes to the page that completes
@@ -40,7 +41,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
         <button data-server
           type="button"
           disabled={pending}
-          onClick={() => start(async () => { await ackSetupCompleted(); })}
+          onClick={() => start(async () => { await safeCall(() => ackSetupCompleted(), null); })}
           className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700 disabled:opacity-60"
         >
           {t("gotIt")}
@@ -76,7 +77,7 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
         <button data-server
           type="button"
           disabled={pending}
-          onClick={() => start(async () => { await setSetupHidden(true); })}
+          onClick={() => start(async () => { await safeCall(() => setSetupHidden(true), null); })}
           className="text-xs font-semibold text-slate-400 transition hover:text-slate-600"
         >
           {t("hide")}
