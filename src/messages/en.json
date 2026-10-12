@@ -2300,5 +2300,10 @@
   },
   "offline": {
     "banner": "No internet connection. You can view what's open, but changes won't be saved."
+  },
+  "common": {
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
   }
 }

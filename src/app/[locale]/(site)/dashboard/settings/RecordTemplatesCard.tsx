@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { useLocale, useTranslations } from "next-intl";
 import { RECORD_PRESETS, presetToTemplate } from "@/lib/recordPresets";
 import { SECTION_HINT_MAX, SECTION_TITLE_MAX, TEMPLATE_NAME_MAX, TEMPLATE_SECTIONS_MAX, TEMPLATES_PER_DOCTOR, type RecordTemplate } from "@/lib/recordTemplates";
@@ -15,6 +16,8 @@ type Row = { key: number; title: string; hint: string };
 let rowKey = 0;
 const row = (title = "", hint = ""): Row => ({ key: ++rowKey, title, hint });
 type Draft = { id: string | null; name: string; rows: Row[] };
+// What a draft holds, for "changed since it opened" (the row keys aside).
+const draftValues = (d: Draft) => JSON.stringify([d.name, d.rows.map((r) => [r.title, r.hint])]);
 
 const inputClass = "w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20";
 
@@ -27,21 +30,25 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
   const [choosing, setChoosing] = useState(false);
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [busy, start] = useTransition();
+  // Unsaved edits ask before the page is left; Cancel discards (1.9.0, 02).
+  const [opened, setOpened] = useState("");
+  const open = (d: Draft) => { setOpened(draftValues(d)); setDraft(d); };
+  useLeaveGuard(!!draft && draftValues(draft) !== opened);
 
   const errorText = (c: TemplateError) =>
     t(c === "name" ? "errName" : c === "sections" ? "errSections" : c === "title" ? "errTitle" : c === "hint" ? "errHint" : c === "limit" ? "errLimit" : "errFailed");
   const atLimit = rows.length >= TEMPLATES_PER_DOCTOR;
 
-  function openNew() { setMsg(null); setChoosing(false); setDraft({ id: null, name: "", rows: [row()] }); }
+  function openNew() { setMsg(null); setChoosing(false); open({ id: null, name: "", rows: [row()] }); }
   function openPreset(id: string) {
     const p = RECORD_PRESETS.find((x) => x.id === id);
     if (!p) return;
     const tpl = presetToTemplate(p, locale);
     setMsg(null);
     setChoosing(false);
-    setDraft({ id: null, name: tpl.name, rows: tpl.sections.map((s) => row(s.title, s.hint ?? "")) });
+    open({ id: null, name: tpl.name, rows: tpl.sections.map((s) => row(s.title, s.hint ?? "")) });
   }
-  function openEdit(r: RecordTemplate) { setMsg(null); setDraft({ id: r.id, name: r.name, rows: r.sections.map((s) => row(s.title, s.hint ?? "")) }); }
+  function openEdit(r: RecordTemplate) { setMsg(null); open({ id: r.id, name: r.name, rows: r.sections.map((s) => row(s.title, s.hint ?? "")) }); }
 
   function setRow(key: number, patch: Partial<Row>) {
     setDraft((d) => d && { ...d, rows: d.rows.map((r) => (r.key === key ? { ...r, ...patch } : r)) });

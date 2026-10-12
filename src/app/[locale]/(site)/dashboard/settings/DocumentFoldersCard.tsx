@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useDiscardAsk, useLeaveGuard } from "@/components/DiscardGuard";
 import { useTranslations } from "next-intl";
 import { FOLDER_NAME_MAX, FOLDERS_MAX, STORAGE_NOTICE_RATIO, formatBytes, type DocErrorKey, type DocFolder } from "@/lib/patientDocuments";
 import { countFolderShared, deleteFolder, loadFolders, reorderFolders, saveFolder } from "../(gated)/patients/documents-actions";
@@ -21,6 +22,13 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
   const [editing, setEditing] = useState<{ id: string | null; name: string } | null>(null);
   const [msg, setMsg] = useState("");
   const [busy, start] = useTransition();
+  // A name being typed: opening another rename or "+ Add" in its place, or
+  // leaving the page, asks first; its Cancel discards (1.9.0, 02).
+  const [openedName, setOpenedName] = useState("");
+  const editDirty = !!editing && editing.name !== openedName;
+  useLeaveGuard(editDirty);
+  const { ask, dialog } = useDiscardAsk();
+  const startEdit = (next: { id: string | null; name: string }) => ask(editDirty, () => { setOpenedName(next.name); setEditing(next); });
 
   const nameOf = (f: DocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}`) : "");
   const errText = (k: DocErrorKey) =>
@@ -82,6 +90,7 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
     <section data-testid="document-folders-card" className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
       <h2 className="text-base font-bold text-slate-900">{t("settings.title")}</h2>
       <p className="mt-0.5 text-sm text-slate-500">{t("settings.appliesAll")}</p>
+      {dialog && <div className="mt-3">{dialog}</div>}
       {showStorage && <p role="status" className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-800">{t("storageNotice", { used: formatBytes(usedBytes) })}</p>}
 
       {loadFailed ? (
@@ -123,7 +132,7 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
                 )}
                 {editing?.id !== f.id && (
                   <div className="flex gap-2 text-xs">
-                    <button type="button" disabled={busy} onClick={() => setEditing({ id: f.id, name: nameOf(f) })} className="rounded-lg px-2 py-1 font-semibold text-teal-700 hover:bg-teal-50">{t("settings.rename")}</button>
+                    <button type="button" disabled={busy} onClick={() => startEdit({ id: f.id, name: nameOf(f) })} className="rounded-lg px-2 py-1 font-semibold text-teal-700 hover:bg-teal-50">{t("settings.rename")}</button>
                     {!f.defaultKey && (
                       <button type="button" disabled={busy || f.documentCount > 0} title={f.documentCount > 0 ? t("settings.deleteEmptyOnly") : undefined}
                         onClick={() => run(() => deleteFolder(f.id))} className="rounded-lg px-2 py-1 font-semibold text-red-600 hover:bg-red-50 disabled:opacity-40">{t("settings.delete")}</button>
@@ -146,7 +155,7 @@ export function DocumentFoldersCard({ initial, usedBytes, limitBytes, loadFailed
         ) : folders.length >= FOLDERS_MAX ? (
           <p className="mt-3 text-sm text-slate-500">{t("settings.max")}</p>
         ) : (
-          <button type="button" disabled={busy} onClick={() => setEditing({ id: null, name: "" })} className="mt-3 rounded-xl border border-dashed border-slate-300 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">+ {t("settings.add")}</button>
+          <button type="button" disabled={busy} onClick={() => startEdit({ id: null, name: "" })} className="mt-3 rounded-xl border border-dashed border-slate-300 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50">+ {t("settings.add")}</button>
         )
       )}
     </section>

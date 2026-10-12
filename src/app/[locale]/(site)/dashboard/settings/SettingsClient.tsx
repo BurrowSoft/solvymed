@@ -2,7 +2,7 @@
 
 import { amountExample, currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import { countryProfile, titleExamples, type Currency } from "@/lib/country";
-import { useTransition, useState, useRef } from "react";
+import { useTransition, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { markInviteShared } from "@/lib/setupActions";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
@@ -12,6 +12,7 @@ import { dayLocationValue } from "@/lib/locations";
 import { BR_STATES, councilRegistration, parseCouncilRegistration, type CouncilFields } from "@/lib/registration";
 import { cardLinkInput } from "@/lib/cardLink";
 import { savedOk } from "@/lib/savedOk";
+import { useFormDirty } from "@/components/DiscardGuard";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -77,6 +78,8 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  // Unsaved edits ask before the page is left (1.9.0, 02).
+  const guard = useFormDirty();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -87,13 +90,14 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
       // returned error or no answer keeps the form as typed (1.9.0).
       if (!(await savedOk(() => updateProfile(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
+      guard.markClean();
       setTimeout(() => setSaved(false), 3000);
     });
   }
 
   return (
     <Card id="profile" title={t("profileTitle")} description={t("profileSub")}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} {...guard.formProps}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>{t("fullName")}</Label>
@@ -285,6 +289,8 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  // Unsaved edits ask before the page is left (1.9.0, 02).
+  const guard = useFormDirty();
   // The CNPJ as stored, masked; checked only when it's changed (a stored bad
   // value never blocks other edits), like the app.
   const loadedCnpj = data.clinic_cnpj ? formatCnpj(data.clinic_cnpj) : "";
@@ -303,13 +309,14 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
         return;
       }
       setSaved(true);
+      guard.markClean();
       setTimeout(() => setSaved(false), 3000);
     });
   }
 
   return (
     <Card id="clinic" title={t("clinicTitle")} description={t("clinicSub")}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} {...guard.formProps}>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>{t("clinicName")}</Label>
@@ -420,6 +427,8 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  // Unsaved edits ask before the page is left (1.9.0, 02).
+  const guard = useFormDirty();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -430,13 +439,14 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
       // returned error or no answer keeps the form as typed (1.9.0).
       if (!(await savedOk(() => updateWorkingHours(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
+      guard.markClean();
       setTimeout(() => setSaved(false), 3000);
     });
   }
 
   return (
     <Card id="hours" title={t("hoursTitle")} description={t("hoursSub")}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} {...guard.formProps}>
         <div className="divide-y divide-slate-100">
           {DAYS.map(d => {
             const h = hours[d.key] ?? { enabled: false, start: "08:00", end: "18:00" };
@@ -501,6 +511,8 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
+  // Unsaved edits ask before the page is left (1.9.0, 02).
+  const guard = useFormDirty();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -511,13 +523,14 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
       // returned error or no answer keeps the form as typed (1.9.0).
       if (!(await savedOk(() => updateSchedulingRules(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
+      guard.markClean();
       setTimeout(() => setSaved(false), 3000);
     });
   }
 
   return (
     <Card title={t("rulesTitle")} description={t("rulesSub")}>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} {...guard.formProps}>
         <div>
           <Label>{t("maxLabel")}</Label>
           <div className="flex items-center gap-4">
@@ -558,7 +571,9 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
   const [pending, start] = useTransition();
   const tPay = useTranslations("payments");
   const [error, setError] = useState("");
-  const formRef = useRef<HTMLFormElement>(null);
+  // Unsaved edits ask before the page is left; Cancel discards (1.9.0, 02).
+  const guard = useFormDirty(showForm);
+  const formRef = guard.ref;
   // The price as typed, read by one rule (lib/money parseMoney).
   const [priceText, setPriceText] = useState("");
   const parsedPrice = parseMoney(priceText);
@@ -589,7 +604,7 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
       </div>
 
       {showForm ? (
-        <form ref={formRef} onSubmit={handleCreate} className="rounded-xl border border-teal-100 bg-teal-50/40 p-4">
+        <form {...guard.formProps} onSubmit={handleCreate} className="rounded-xl border border-teal-100 bg-teal-50/40 p-4">
           <p className="text-sm font-bold text-slate-900 mb-4">{t("newProcedure")}</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
@@ -635,7 +650,7 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
               className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60 transition">
               {pending ? t("adding") : t("addProcedure")}
             </button>
-            <button type="button" onClick={() => { setShowForm(false); setError(""); }}
+            <button type="button" onClick={() => { setShowForm(false); setError(""); setPriceText(""); }}
               className="rounded-xl px-4 py-2 text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
               {t("cancel")}
             </button>
