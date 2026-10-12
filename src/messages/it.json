@@ -2268,5 +2268,11 @@
     "zoomIn": "Ingrandisci",
     "zoomOut": "Riduci",
     "adjust": "Regola"
+  },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
+  },
+  "offline": {
+    "banner": "Nessuna connessione a Internet. Puoi vedere ciò che è aperto, ma le modifiche non verranno salvate."
   }
 }

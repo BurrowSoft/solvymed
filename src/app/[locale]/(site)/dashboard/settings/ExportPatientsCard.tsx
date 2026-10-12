@@ -39,7 +39,7 @@ export function ExportPatientsCard({ locale }: { locale: string }) {
 
   return (
     <Card title={t("exportTitle")} description={t("exportHint")}>
-      <button type="button" disabled={busy} onClick={() => void exportCsv()} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+      <button data-server type="button" disabled={busy} onClick={() => void exportCsv()} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
         {busy ? "…" : t("exportButton")}
       </button>
       {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}

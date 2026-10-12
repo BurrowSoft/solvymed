@@ -93,7 +93,7 @@ export const HELP_UI: Record<HelpView, Record<string, string>> = {
     title: "ศูนย์ช่วยเหลือ",
     subtitle: "คู่มือการใช้งาน SolvyMed ทีละขั้นตอน",
     search: "ค้นหาความช่วยเหลือ",
-    searchPlaceholder: "เช่น บล็อกเวลา, พร้อมเพย์, เลขานุการ",
+    searchPlaceholder: "เช่น ปิดช่วงเวลา, พร้อมเพย์, เลขานุการ",
     noResults: "ไม่พบบทความ ลองใช้คำอื่น หรือเขียนถึงฝ่ายสนับสนุน",
     onTheWebsite: "ในเว็บไซต์",
     openOnWebsite: "เปิดในเว็บไซต์",

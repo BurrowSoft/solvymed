@@ -139,7 +139,7 @@ export function ScheduleUndoToast() {
           : (
             <>
               <span className="min-w-0">{what}</span>
-              <button type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
+              <button data-server type="button" onClick={undo} disabled={phase === "undoing"} className="shrink-0 whitespace-nowrap font-bold text-[#5eead4] hover:text-[#99f6e4] disabled:opacity-60">
                 {phase === "undoing" ? "…" : t("undoAction", { s: left })}
               </button>
             </>
@@ -329,7 +329,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
             <span className="text-[11px] text-slate-400">{reason.length}/{REASON_MAX}</span>
             <div className="flex gap-1">
               <button type="button" onClick={() => { setStatus(asking.previous); setAsking(null); }} className="rounded-lg px-2 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100">{t("keepAppointment")}</button>
-              <button type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
+              <button data-server type="button" onClick={() => save("cancelled", asking.previous, reason)} className="rounded-lg bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700">{t("confirmCancel")}</button>
             </div>
           </div>
         </div>
@@ -416,7 +416,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
         <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
         <div className="flex gap-3 pt-5">
           <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-          <button type="button" onClick={moveAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("reschedule")}</button>
+          <button data-server type="button" onClick={moveAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("reschedule")}</button>
         </div>
       </Dialog>
     </>
@@ -438,7 +438,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
   }
 
   return (
-    <button onClick={handleDelete} disabled={pending} className="rounded-lg p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 transition">
+    <button data-server onClick={handleDelete} disabled={pending} className="rounded-lg p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 transition">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="h-4 w-4">
         <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
       </svg>
@@ -466,6 +466,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
+  const tsave = useTranslations("save");
   const { locale } = useParams<{ locale: string }>();
   const settingsProceduresHref = `${locale === "en" ? "" : `/${locale}`}/dashboard/settings#procedures`;
   const [open, setOpen] = useState(false);
@@ -505,6 +506,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setOccurrences(String(DEFAULT_OCCURRENCES));
     setPickedLocation(null);
     setError("");
+    saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
     setOpen(true);
   }
 
@@ -534,9 +536,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   // Blocked time / outside the working hours: ONE question listing both,
   // then book anyway on [Agendar] (UX 2026-09-28). The form data waits here.
   const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
+  // Saved once (216): one id per open, sent with every try.
+  const saveOnce = useRef({ id: "", tries: 0 });
 
   function submit(formData: FormData) {
     setError("");
+    if (!saveOnce.current.id) saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
+    formData.set("client_id", saveOnce.current.id);
+    formData.set("client_try", String(++saveOnce.current.tries));
     startTransition(async () => {
       const result = await safeCall(() => create(formData), { error: "network", code: "generic" } as const);
       // In a series, which date (the app names it too).
@@ -562,6 +569,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "invalid_occurrences") { setError(t("occurrencesRange", { min: MIN_OCCURRENCES, max: MAX_OCCURRENCES })); return; }
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
+      saveOnce.current = { id: "", tries: 0 };
+      // Saved before the last changes: the agenda shows the saved one.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) { alert(tsave("alreadySavedChanged")); return; }
       if (result && "undo" in result) offerUndo(result.undo);
     });
   }
@@ -731,7 +741,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
         <p role="alertdialog" className="text-sm text-slate-700">{ask?.text}</p>
         <div className="flex gap-3 pt-5">
           <button type="button" onClick={() => setAsk(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-          <button type="button" onClick={bookAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("bookAnywayButton")}</button>
+          <button data-server type="button" onClick={bookAnyway} disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">{t("bookAnywayButton")}</button>
         </div>
       </Dialog>
     </>
@@ -743,20 +753,29 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
   // In "Todos" (166), for the doctor chosen first; else as before.
   const block = useRowAction("blockTime", blockTime);
   const tDate = useTranslations("dateInput");
+  const tsave = useTranslations("save");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Saved once (216): one id per open, sent with every try.
+  const saveOnce = useRef({ id: "", tries: 0 });
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(formRef.current!);
     setError("");
+    if (!saveOnce.current.id) saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
+    formData.set("client_id", saveOnce.current.id);
+    formData.set("client_try", String(++saveOnce.current.tries));
     startTransition(async () => {
       const result = await safeCall(() => block(formData), { error: "network", code: "generic" } as const);
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
       formRef.current?.reset();
+      saveOnce.current = { id: "", tries: 0 };
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) alert(tsave("alreadySavedChanged"));
     });
   }
 

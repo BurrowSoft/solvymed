@@ -53,11 +53,11 @@ export function InvitedPatientsCard({ patients, total, prefix }: { patients: Inv
               {errors[p.id] && <p className="text-xs text-red-600">{errors[p.id]}</p>}
             </div>
             <div className="flex shrink-0 gap-2">
-              <button type="button" disabled={pendingId === p.id} aria-busy={pendingId === p.id} onClick={() => act(p.id, "keep", p.full_name)}
+              <button data-server type="button" disabled={pendingId === p.id} aria-busy={pendingId === p.id} onClick={() => act(p.id, "keep", p.full_name)}
                 className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-60">
                 {t("invitedKeep")}
               </button>
-              <button type="button" disabled={pendingId === p.id} onClick={() => act(p.id, "remove", p.full_name)}
+              <button data-server type="button" disabled={pendingId === p.id} onClick={() => act(p.id, "remove", p.full_name)}
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">
                 {t("invitedRemove")}
               </button>
