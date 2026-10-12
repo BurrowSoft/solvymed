@@ -53,7 +53,10 @@ export async function flushPendingSignOut(
   let pending: { access_token?: string; refresh_token?: string };
   try { pending = JSON.parse(raw); } catch { forget(); return "done"; }
   try {
-    const logout = (token: string) => fetchImpl(`${base}/auth/v1/logout`, { method: "POST", headers: { apikey, Authorization: `Bearer ${token}` } });
+    // scope=local: exactly the abandoned session. Without it the sign-out is
+    // global, and running later it would also end sessions made after the
+    // click (the doctor's phone, a new sign-in here; ec).
+    const logout = (token: string) => fetchImpl(`${base}/auth/v1/logout?scope=local`, { method: "POST", headers: { apikey, Authorization: `Bearer ${token}` } });
     let res = pending.access_token ? await logout(pending.access_token) : null;
     if (!res || res.status === 401 || res.status === 403) {
       if (!pending.refresh_token) { forget(); return "done"; }
