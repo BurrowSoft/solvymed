@@ -25,6 +25,7 @@ import { forRow, useRowAction } from "@/components/RowPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
+import { safeCall } from "@/lib/netError";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -286,7 +287,7 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
   function save(newStatus: string, previous: string, why?: string) {
     setAsking(null);
     startTransition(async () => {
-      const result = await updateStatus(id, newStatus, why);
+      const result = await safeCall(() => updateStatus(id, newStatus, why), { error: "network", code: "generic" } as const);
       if (result?.error) {
         setStatus(previous);
         setError(actionErrorMessage(t, result.code));
@@ -351,7 +352,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
   function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      const result = await move(formData);
+      const result = await safeCall(() => move(formData), { error: "network", code: "generic" } as const);
       if (result?.code === "needs_confirm" && "hours" in result) {
         const parts: string[] = [];
         if (result.blocked) parts.push(t("warnBlocked", result.blocked));
@@ -426,7 +427,7 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
 
   function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => { await remove(id); });
+    startTransition(async () => { await safeCall(() => remove(id), null); });
   }
 
   return (
@@ -530,7 +531,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   function submit(formData: FormData) {
     setError("");
     startTransition(async () => {
-      const result = await create(formData);
+      const result = await safeCall(() => create(formData), { error: "network", code: "generic" } as const);
       // In a series, which date (the app names it too).
       const on = (d: string | null | undefined) => (d ? `${t("seriesOnDate", { date: formatDateLabel(uiLocale, d, { day: "2-digit", month: "2-digit", year: "numeric" }, practiceCalendar) })} ` : "");
       if (result?.code === "needs_confirm" && "hours" in result) {
@@ -745,7 +746,7 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
     const formData = new FormData(formRef.current!);
     setError("");
     startTransition(async () => {
-      const result = await block(formData);
+      const result = await safeCall(() => block(formData), { error: "network", code: "generic" } as const);
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
       formRef.current?.reset();

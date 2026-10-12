@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { NETWORK_ERROR, safeCall } from "@/lib/netError";
 import { useState, useTransition, useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -189,9 +190,10 @@ function RescheduleDialog({
             if (!selectedSlot) return;
             setSubmitError(null);
             startTransition(async () => {
-              const result = await requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end);
+              const result = await safeCall(() => requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end), NETWORK_ERROR);
               if (!result.error) { onSuccess(); }
-              else { setSubmitError(result.error === "appointment_already_started" ? t("rescheduleStarted") : result.error); }
+              // No answer (1.9.0): the request's generic error, the chosen time kept.
+              else { setSubmitError(result.error === "appointment_already_started" ? t("rescheduleStarted") : result === NETWORK_ERROR ? tBook("errorGeneric") : result.error); }
             });
           }}
           className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
@@ -232,7 +234,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const cancelRequest = () => {
     setActError("");
     startCancel(async () => {
-      const r = await cancelMyRequest(appt.id);
+      const r = await safeCall(() => cancelMyRequest(appt.id), NETWORK_ERROR);
+      // No answer: say so and keep the question open (nothing was cancelled).
+      if (r === NETWORK_ERROR) { setActError(tSchedule("genericError")); return; }
       setAskCancel(false);
       if (r?.error) { setActError(t("cancelContactClinic")); onMutate(); return; }
       setCancelled(true);
@@ -243,9 +247,10 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
     setActing(kind);
     setActError("");
     startTransition(async () => {
-      const r = await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      const r = await safeCall(() => (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id)), NETWORK_ERROR);
       // The server refuses a proposal whose time has passed (153).
       if (r?.error === "proposed_time_expired") setActError(t("proposalPassed"));
+      if (r === NETWORK_ERROR) { setActError(tSchedule("genericError")); setActing(null); return; }
       onMutate();
     });
   };

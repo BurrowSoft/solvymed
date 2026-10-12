@@ -9,6 +9,7 @@ import {
   type FileKind, type PatientFile,
 } from "@/lib/patientFiles";
 import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "../files-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // Exams / Files tab (Help P7): photos or PDFs, private. Upload goes from the
 // browser to storage under the doctor's own folder; a name already taken
@@ -30,7 +31,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
   const input = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
-    const r = await listPatientFiles(patientId, kind);
+    const r = await safeCall(() => listPatientFiles(patientId, kind), NETWORK_FAILURE);
     if (r.ok) setFiles(r.data); else { setFiles([]); setError(t("filesError")); }
   }, [patientId, kind, t]);
   useEffect(() => { setFiles(null); setError(""); void load(); }, [load]);
@@ -67,7 +68,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
     // would replace this page. The opener is cut by hand instead.
     const win = window.open("", "_blank");
     if (win) win.opener = null;
-    const r = await openPatientFile(patientId, f.path);
+    const r = await safeCall(() => openPatientFile(patientId, f.path), NETWORK_FAILURE);
     if (!r.ok) { win?.close(); setError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : t("filesError")); return; }
     // Pop-ups blocked: never navigate away from the patient; say so.
     if (win) win.location.href = r.data;
@@ -79,7 +80,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
     if (isFileDeletable(f.createdAt)) {
       if (!window.confirm(t("filesDeleteConfirm"))) return;
       setBusy(true);
-      const r = await deletePatientFile(patientId, f.path, f.createdAt);
+      const r = await safeCall(() => deletePatientFile(patientId, f.path, f.createdAt), NETWORK_FAILURE);
       setBusy(false);
       // The window closed in between: hide it instead.
       if (!r.ok && r.code === "delete_window_passed") { setHiding(f); setReason(""); return; }
@@ -94,7 +95,7 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
     if (!hiding) return;
     if (!reason.trim()) { setError(t("reasonRequired")); return; }
     setBusy(true);
-    const r = await hidePatientFile(patientId, hiding.path, reason);
+    const r = await safeCall(() => hidePatientFile(patientId, hiding.path, reason), NETWORK_FAILURE);
     setBusy(false);
     if (!r.ok) { setError(r.code === "reason_required" ? t("reasonRequired") : t("filesError")); return; }
     setHiding(null);
