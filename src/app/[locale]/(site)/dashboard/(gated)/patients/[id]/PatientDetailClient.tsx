@@ -1168,6 +1168,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   }
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
+  // The practice's time zone: the document dialog's default dates are its today.
+  const timeZone = useContext(TimeZoneContext);
   const [dialog, setDialog] = useState<RxDialog | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -1333,6 +1335,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
               canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}
+              timeZone={timeZone}
               reasonField={<ReasonField />}
             />
           )}
