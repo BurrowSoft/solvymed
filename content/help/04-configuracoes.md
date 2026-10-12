@@ -54,40 +54,40 @@ Thai title: "หัตถการและราคา"
 ---
 ## C4. Convidar uma secretária / Invite a secretary
 **pt-BR**
-1. **Configurações → Equipe → Convidar**.
-2. Compartilhe o código de convite (vale 7 dias, uso único).
-3. A pessoa cria a conta em "Trabalha na secretaria?" com esse código.
+1. **Configurações → Equipe**: digite o e-mail da pessoa e toque em **Convidar**.
+2. O convite chega a esse e-mail, com o botão **Aceitar convite**. O código de convite também aparece na tela uma vez, para você compartilhar se quiser (vale 7 dias, uso único, só para esse e-mail).
+3. A pessoa abre o convite e cria a conta (o e-mail já vem preenchido), ou cria a conta em "Trabalha na secretaria?" com o código.
 Sua equipe pode ter até 3 pessoas, contando os convites pendentes. A equipe cuida da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
 No site, quem foi removido da última equipe vê, ao voltar ao painel, "Você não faz parte de nenhuma equipe no momento.", com **Entrar com um código de convite** e **Sair**.
 {pending:app-1.8.0} No app também: em até 2 minutos, ou ao voltar ao app, quem foi removido(a) da última equipe vê a mesma tela; quem ainda trabalha para outro médico passa para a equipe dele.
-{pending:secretary-invite-email-live} O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido.
+**Reenviar convite** envia um convite novo por e-mail (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar).
 {pending:multi-practice-live} Uma secretária pode trabalhar para vários médicos: cada médico a convida pela própria **Equipe**. No topo do painel, **Agenda de** escolhe o médico; a agenda, os pacientes, os pagamentos e as configurações passam a ser os dele. Cada médico remove só a sua própria ligação com ela. Na **Agenda**, **Agenda de → Todos** mostra as consultas de todos os médicos, cada uma com o nome e a cor do médico (uma cor fixa por médico, a mesma em toda parte), e filtros por médico. Em **Todos** há **Lista**, **Dia** (uma coluna por médico), **Semana** e **Mês**; o calendário só aparece quando os médicos mostrados estão no mesmo fuso horário (senão, use a lista ou escolha um médico); com fusos diferentes, a lista segue a ordem real dos horários, cada horário no relógio do seu médico e com a cidade do fuso, por exemplo "17:30 (Manaus)"; o que ela faz numa consulta (status, remarcar, valor, pedidos) vale para o médico dela. Em **Todos**, **Nova Consulta** e **Bloquear horário** pedem primeiro o **Médico**; depois valem os procedimentos, valores e horários dele. Em **Configurações → Notificações por médico**, ela escolhe de quais médicos recebe notificações no app (pode desligar todos); as notificações do próprio médico não mudam.
 {pending:multi-practice-live} Se a assinatura de um dos médicos estiver inativa, ele aparece em **Agenda de** com "· assinatura inativa" e fica fora de **Todos** (um aviso diz quantos não aparecem). Ao abrir o SolvyMed, se o médico escolhido estiver com a assinatura inativa, abre um médico com assinatura ativa; escolhendo ele de novo, aparece "A assinatura de {médico} está inativa. Para voltar a atender, {médico} precisa renovar.", com **Trocar de médico** e **Sair**. Só o próprio médico pode renovar.
 {pending:multi-practice-live,app-365-secretary-join} No app, a secretária entra na equipe de outro médico em **Configurações → Entrar na equipe de outro médico**: digita o **Código de convite** que o médico enviou e toca em **Entrar**. No app e no site, ela só entra na equipe de médicos do mesmo país do consultório dela; senão aparece "Você só pode entrar na equipe de médicos do mesmo país do seu consultório.".
 {pending:multi-practice-live} No site, a secretária entra na equipe de outro médico em **Configurações → Entrar na equipe de outro médico**: digita o **Código de convite** e clica em **Entrar**. Ou abre o link de convite que o médico enviou e clica em **Aceitar**. Depois, escolhe o médico em **Agenda de**.
 **en**
-1. **Settings → Team → Invite**.
-2. Share the invite code (valid for 7 days, single use).
-3. The person signs up under "Work at the front desk?" with that code.
+1. **Settings → Team**: type the person's email and tap **Invite**.
+2. The invite is emailed to that address, with an **Accept invite** button. The invite code also shows on screen once, for you to share if you like (valid for 7 days, single use, for that email only).
+3. The person opens the invite and signs up (the email is already filled in), or signs up under "Work at the front desk?" with the code.
 Your team can have up to 3 people, counting pending invites. The team manages the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
 On the website, someone removed from their last team sees "You're not part of any team right now." when they return to the dashboard, with **Join with an invite code** and **Sign out**.
 {pending:app-1.8.0} In the app too: within 2 minutes, or on returning to the app, someone removed from their last team sees the same screen; someone still working for another doctor moves to that doctor's team.
-{pending:secretary-invite-email-live} The invite is also emailed to the address you entered. **Resend invite** sends a new one (at most once an hour, up to 10 a day; the previous code stops working). Whoever signs up from the invite finds the email already filled in.
+**Resend invite** emails a new invite (at most once an hour, up to 10 a day; the previous code stops working).
 {pending:multi-practice-live} A secretary can work for several doctors: each doctor invites her from their own **Team**. At the top of the dashboard, **Schedule for** picks the doctor; the schedule, patients, payments and settings are then that doctor's. Each doctor removes only their own link with her. In the **Schedule**, **Schedule for → All** shows every doctor's appointments, each with its doctor's name and colour (a fixed colour per doctor, the same everywhere), with a filter per doctor. **All** has **List**, **Day** (a column per doctor), **Week** and **Month**; the calendar shows only when the doctors shown are in the same time zone (otherwise, use the list or pick one doctor); across time zones the list follows the real order, each time in its doctor's own clock with the zone's city, e.g. "17:30 (Manaus)"; what she does on an appointment (status, move, amount, requests) applies to that appointment's doctor. In **All**, **New appointment** and **Block time** ask for the **Doctor** first; that doctor's procedures, prices and hours then apply. In **Settings → Notifications per doctor**, she chooses which doctors she gets app notifications for (she can turn them all off); the doctor's own notifications don't change.
 {pending:multi-practice-live} If one doctor's subscription is inactive, they show in **Schedule for** with "· subscription inactive" and are left out of **All** (a note says how many aren't shown). When SolvyMed opens on a doctor whose subscription is inactive, it opens a doctor with an active one instead; picking the inactive doctor again shows "{doctor}'s subscription is inactive. To keep working for them, {doctor} needs to renew.", with **Switch doctor** and **Sign out**. Only the doctor can renew.
 {pending:multi-practice-live,app-365-secretary-join} In the app, a secretary joins another doctor's team in **Settings → Join another doctor's team**: she types the **Invite code** the doctor sent and taps **Join**. In the app and on the website, she can only join doctors in the same country as her practice; otherwise she sees "You can only join doctors in the same country as your practice.".
 {pending:multi-practice-live} On the website, a secretary joins another doctor's team in **Settings → Join another doctor's team**: she types the **Invite code** and clicks **Join**. Or she opens the invite link the doctor sent and clicks **Accept**. Then she picks the doctor in **Schedule for**.
-**No site:** **Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.
-**On the website:** **Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**.
+**No site:** **Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. O convite vai por e-mail; o link e o código também aparecem na hora para compartilhar (só aparecem uma vez, valem 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.
+**On the website:** **Settings → Team**: type the person's email and click **Invite**. The invite is emailed; the link and code also appear right away to share (shown only once, valid for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**.
 Thai title: "เชิญเลขานุการ"
 **th**
-1. **การตั้งค่า → ทีม → เชิญ**
-2. ส่ง **รหัสเชิญ** ให้อีกฝ่าย (ใช้ได้ 7 วัน ครั้งเดียว)
-3. อีกฝ่ายสร้างบัญชีโดยเลือก **เลขานุการ / พนักงานต้อนรับ** แล้วใส่รหัสนั้น
+1. **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วแตะ **เชิญ**
+2. คำเชิญจะส่งไปที่อีเมลนั้น พร้อมปุ่ม **ยอมรับคำเชิญ** และ **รหัสเชิญ** จะแสดงบนหน้าจอหนึ่งครั้ง เผื่อคุณต้องการส่งให้อีกฝ่ายเอง (ใช้ได้ 7 วัน ครั้งเดียว และเฉพาะอีเมลนั้น)
+3. อีกฝ่ายเปิดคำเชิญแล้วสร้างบัญชี (อีเมลจะกรอกไว้ให้แล้ว) หรือสร้างบัญชีโดยเลือก **เลขานุการ / พนักงานต้อนรับ** แล้วใส่รหัสนั้น
 ทีมของคุณมีได้สูงสุด 3 คน รวมคำเชิญที่รออยู่ ทีมดูแลตารางนัด ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
 ในเว็บไซต์ ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็น "ขณะนี้คุณไม่ได้อยู่ในทีมใด" เมื่อกลับมาที่แดชบอร์ด พร้อม **เข้าร่วมด้วยรหัสเชิญ** และ **ออกจากระบบ**
 {pending:app-1.8.0} ในแอปก็เช่นกัน: ภายใน 2 นาที หรือเมื่อกลับมาที่แอป ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็นหน้าจอเดียวกัน ส่วนผู้ที่ยังทำงานให้แพทย์คนอื่นจะย้ายไปที่ทีมของแพทย์คนนั้น
-**ในเว็บไซต์:** **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วคลิก **เชิญ** ส่งลิงก์หรือรหัสที่แสดงทันที (แสดงเพียงครั้งเดียว ใช้ได้ 7 วัน และเฉพาะอีเมลนั้น) หากต้องการนำออก: **นำออก** หากต้องการยกเลิกคำเชิญที่รออยู่: **ยกเลิก**
+**ในเว็บไซต์:** **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วคลิก **เชิญ** คำเชิญจะส่งทางอีเมล และลิงก์กับรหัสจะแสดงทันทีเพื่อส่งให้อีกฝ่าย (แสดงเพียงครั้งเดียว ใช้ได้ 7 วัน และเฉพาะอีเมลนั้น) หากต้องการนำออก: **นำออก** หากต้องการยกเลิกคำเชิญที่รออยู่: **ยกเลิก**
 `open:settings-team`
 
 ---
