@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Card } from "../SettingsClient";
 import { ReloadButton } from "@/components/ReloadButton";
 import { timeLimit } from "@/lib/netError";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
 import { StudioPosters, type PosterDay } from "./StudioPosters";
 import { StudioSignature } from "./StudioSignature";
@@ -104,14 +105,10 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
   const knownLayout = (LAYOUTS as readonly string[]).includes(design.layout);
   const legalNote = studioCountry(country).legalNote;
 
-  // Leaving with unsaved changes: the browser's own prompt (reload, close,
-  // typed address).
-  useEffect(() => {
-    if (!dirty) return;
-    const onBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [dirty]);
+  // Leaving with unsaved changes asks "Discard changes?" (#530's guard, 02):
+  // the sidebar and every dashboard link, plus the browser's own prompt on
+  // reload / closing the tab.
+  useLeaveGuard(dirty);
 
   const change = (next: Design | ((d: Design) => Design)) => {
     setDesign((d) => (typeof next === "function" ? next(d) : next));
