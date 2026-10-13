@@ -13,7 +13,7 @@ vi.mock("@/i18n/navigation", () => ({ Link: ({ href, children }: { href: string;
 
 import { PrivacyNoticeCard } from "@/components/PrivacyNoticeCard";
 
-const view = () => render(<NextIntlClientProvider locale="en" messages={en}><PrivacyNoticeCard locale="en" date="12 October 2026" /></NextIntlClientProvider>);
+const view = () => render(<NextIntlClientProvider locale="en" messages={en}><PrivacyNoticeCard locale="en" /></NextIntlClientProvider>);
 
 describe("the privacy notice and the tour", () => {
   it("hidden while the tour runs", () => {

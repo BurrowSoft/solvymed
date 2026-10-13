@@ -14,6 +14,7 @@ import { saveTourProgress } from "@/lib/tourActions";
 import { safeCall } from "@/lib/netError";
 import { CLOSED_EVENT, OPEN_EVENT } from "@/components/solvyai/SolvyAiSettings";
 import { track } from "@/lib/track";
+import { leaveGuarded } from "@/components/DiscardGuard";
 
 // Tour progress is saved in the background: without an answer it is simply
 // not saved (an unhandled rejection before, 1.9.0).
@@ -133,7 +134,7 @@ export function TourProvider({
     track(result === "completed" ? TOUR_EVENTS.completed : TOUR_EVENTS.skipped, { role, step: index + 1 });
     void saveProgress(result, index);
     // Doctors land on the setup checklist afterwards (as in 1.3.0).
-    if (role === "professional") router.push(`${home}?setup=1`);
+    if (role === "professional") leaveGuarded(() => router.push(`${home}?setup=1`));
   }, [role, router, home]);
 
   // The Novidades popup: on the home page, when nothing else is on screen.

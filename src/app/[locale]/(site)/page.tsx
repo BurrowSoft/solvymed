@@ -1,5 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { thaiEnabled } from "@/lib/publicLocales";
+import { TRIAL_DAYS } from "@/lib/subscription";
+import { landingPrice } from "@/lib/pricingCountry";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { SignupCta } from "@/components/SignupCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
@@ -117,6 +119,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               label={t("hero.signupCta")}
               className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
             />
+            <p data-testid="hero-trial" className="mt-3 text-sm font-medium text-teal-100">
+              {(() => {
+                const price = landingPrice(locale);
+                return price ? t("hero.trialLine", { days: TRIAL_DAYS, price }) : t("hero.trialLineNoPrice", { days: TRIAL_DAYS });
+              })()}
+            </p>
             <p className="mt-4 text-sm text-slate-300 sm:hidden">
               {t("hero.haveAccount")}{" "}
               <Link href="/auth/login" className="font-semibold text-teal-300 underline hover:text-teal-200">

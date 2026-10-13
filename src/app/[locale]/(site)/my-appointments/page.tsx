@@ -7,6 +7,7 @@ import { getOnboardingFlags } from "@/lib/setup";
 import { statusReasonLive } from "@/lib/statusReason";
 import { SaveMyLocale } from "@/components/SaveMyLocale";
 import { OfflineGuard } from "@/components/OfflineGuard";
+import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { cookies } from "next/headers";
 import { parseCountryChoice, patientLanguageTarget, pickApplies, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
@@ -15,8 +16,6 @@ import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadMyDocumentDoctors } from "./document-actions";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
-import { PRIVACY_VERSION } from "@/lib/legalVersions";
-import { formatDateLabel } from "@/lib/dateLabels";
 
 export type PatientAppointment = {
   // 1.8.0 F (migration 200): the visit's location, only with 2+ shown.
@@ -177,17 +176,16 @@ export default async function MyAppointmentsPage({
     ...(doctors ?? []).filter((d) => d.id !== myProfessionalId).map((d) => ({ id: d.id, name: d.name })),
   ];
   const selfPrompts = await loadSelfFieldPrompts(supabase, selfDoctors);
-  const privacyNoticeDate = privacyNoticeDue(await readAcceptedPrivacy(supabase))
-    ? formatDateLabel(locale, PRIVACY_VERSION, { day: "numeric", month: "long", year: "numeric" })
-    : null;
+  const privacyNotice = privacyNoticeDue(await readAcceptedPrivacy(supabase));
 
   return (
     <>
     <SaveMyLocale locale={locale} />
     <OfflineGuard />
+    <ClockSkewGuard />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
-      privacyNoticeDate={privacyNoticeDate}
+      privacyNotice={privacyNotice}
       selfPrompts={selfPrompts}
       upcoming={upcoming ?? []}
       past={past ?? []}
