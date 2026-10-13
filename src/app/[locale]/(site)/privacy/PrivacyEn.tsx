@@ -56,6 +56,8 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <p><strong>3.8 Documents shared with patients:</strong></p>
             <ul>
               <li>A professional can share documents with a patient (for example prescriptions, certificates, exam requests and consent terms), and a patient can send documents to their professional (for example exam results or photos). These may include health data.</li>
+              <li><strong>Signature on documents:</strong> in the app, a professional can draw their handwritten signature and add it to the documents they issue, such as prescriptions, certificates and the patient-history PDF (optional, off by default). It is kept on their phone (and in that phone&rsquo;s own backup, if they use one) and is not sent to us on its own. It is not a digital signature.</li>
+              <li>A document issued with the signature contains it, including when it is printed or shared with the patient; a shared copy is kept like any shared document (section 9). Removing or changing the signature changes only documents issued afterwards; documents already issued keep the signature they were issued with.</li>
               <li>For each document we store the file, its title, type, size, when it was uploaded and who uploaded it. Every file shared with a patient or sent by a patient is checked by its real format: only PDF, JPG, PNG or HEIC, up to 20 MB each.</li>
               <li>Only the patient&rsquo;s own professional sees the patient&rsquo;s documents, including the ones the patient sends. Secretaries and other professionals in the same practice do not.</li>
               <li>The patient sees only the documents their professional shares with them and the documents they sent, and only while they are connected to that professional. Turning the feature on does not share any existing file: a professional shares each document themselves.</li>
@@ -91,7 +93,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Stripe", "Subscription payments", "USA / global"],
             ["Resend", `Transactional email (confirmations, password resets)${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
             ["Expo", "Push notification delivery", "USA"],
-            ["Sentry", "Error monitoring for the app, website and our server functions (no patient data)", "USA"],
+            ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
             ["Google Workspace", "Support email", "USA / global"],
             ["OpenStreetMap", "Converts the clinic's address into a map location, and shows the map when a professional adjusts the pin, from our servers, the app or the browser (no patient data)", "EU / UK"],

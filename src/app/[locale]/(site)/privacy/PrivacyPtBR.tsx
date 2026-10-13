@@ -56,6 +56,8 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <p><strong>3.8 Documentos compartilhados com pacientes:</strong></p>
             <ul>
               <li>Um profissional pode compartilhar documentos com um paciente (por exemplo receitas, atestados, solicitações de exames e termos de consentimento), e um paciente pode enviar documentos ao seu profissional (por exemplo resultados de exames ou fotos). Eles podem conter dados de saúde.</li>
+              <li><strong>Assinatura nos documentos:</strong> no aplicativo, o profissional pode desenhar a sua assinatura de próprio punho e adicioná-la aos documentos que emite, como receitas, atestados e o PDF do histórico do paciente (opcional, desativada por padrão). Ela fica guardada no celular dele (e no backup do próprio celular, se ele usar um) e não é enviada para nós separadamente. Ela não é uma assinatura digital.</li>
+              <li>Um documento emitido com a assinatura a contém, inclusive quando é impresso ou compartilhado com o paciente; uma cópia compartilhada é mantida como qualquer documento compartilhado (seção 9). Remover ou trocar a assinatura muda só os documentos emitidos depois; os já emitidos mantêm a assinatura com que foram emitidos.</li>
               <li>Para cada documento guardamos o arquivo, o título, o tipo, o tamanho, quando foi enviado e quem o enviou. Todo arquivo compartilhado com o paciente ou enviado por ele é verificado pelo formato real: apenas PDF, JPG, PNG ou HEIC, até 20 MB cada.</li>
               <li>Somente o profissional do paciente vê os documentos do paciente, inclusive os que o paciente envia. Secretárias(os) e outros profissionais da mesma clínica não veem.</li>
               <li>O paciente vê apenas os documentos que seu profissional compartilha com ele e os documentos que ele enviou, e somente enquanto estiver conectado a esse profissional. Ativar o recurso não compartilha nenhum arquivo já existente: o profissional compartilha cada documento.</li>
@@ -91,7 +93,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
             ["Resend", `E-mails transacionais (confirmações, redefinição de senha)${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
-            ["Sentry", "Monitoramento de erros do aplicativo, do site e das nossas funções de servidor (sem dados de pacientes)", "EUA"],
+            ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
             ["Google Workspace", "E-mail de suporte", "EUA / global"],
             ["OpenStreetMap", "Converte o endereço da clínica em uma localização no mapa e exibe o mapa quando um profissional ajusta o marcador, a partir dos nossos servidores, do aplicativo ou do navegador (sem dados de pacientes)", "UE / Reino Unido"],
