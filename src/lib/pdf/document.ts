@@ -7,6 +7,8 @@
 import { PDFDocument, rgb, type PDFFont, type PDFImage, type PDFPage, type RGB } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import { drawShaped, textWidth, wrapText } from "./text";
+import { embedDesignFonts } from "./fonts";
+import type { FontId } from "@/lib/studio/design";
 
 export const A4: [number, number] = [595.28, 841.89];
 export const MARGIN = 48;
@@ -84,13 +86,12 @@ export class Writer {
   static async create(frame: Omit<DocFrame, "brand" | "logo"> & {
     brand: (Omit<NonNullable<DocFrame["brand"]>, "logo"> & { logoBytes: Uint8Array | null }) | null;
     logoBytes: Uint8Array | null;
-  }, fonts: FontBytes): Promise<Writer> {
+  }, fonts: FontBytes, fontId: FontId = "sarabun"): Promise<Writer> {
     const pdf = await PDFDocument.create();
     pdf.registerFontkit(fontkit);
-    const f: Fonts = {
-      regular: await pdf.embedFont(fonts.regular, { subset: true }),
-      bold: await pdf.embedFont(fonts.bold, { subset: true }),
-    };
+    // The design's typeface (Document Studio): `fonts` are its bytes;
+    // subset only where pdf-lib's subsetter is safe (lib/pdf/fonts).
+    const f: Fonts = await embedDesignFonts(pdf, fontId, fonts);
     const brand = frame.brand ? { ...frame.brand, logo: await embedImage(pdf, frame.brand.logoBytes) } : null;
     const logo = brand ? null : await embedImage(pdf, frame.logoBytes);
     const w = new Writer(pdf, f, { ...frame, brand, logo });

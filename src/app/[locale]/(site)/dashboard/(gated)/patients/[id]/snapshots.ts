@@ -1,7 +1,9 @@
 "use client";
 
-import { loadFontBytes } from "@/lib/pdf/document";
+import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { renderPrescriptionPdf, type RxPdfLabels } from "@/lib/pdf/prescription";
+import { renderDesignedDocument } from "@/lib/pdf/designed";
+import { prescriptionContent } from "@/lib/studio/content";
 import { shareSnapshot, type ShareOutcome } from "@/lib/shareSnapshot";
 import { SNAPSHOT_FOLDER, sharesSnapshot, snapshotTitle, snapshotUnsignedLine } from "@/lib/medicalDocuments";
 import { prescriptionSnapshotData } from "../snapshot-actions";
@@ -34,8 +36,28 @@ export async function shareRxSnapshot(opts: {
   if (!r.ok) return r.code === "access_log_failed" ? "accessLog" : "failed";
   const d = r.data;
   try {
-    const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
+    // Document Studio: the prescription in the practice's saved design.
+    if (d.studio) {
+      const [studioFonts, square, wide, reversed] = await Promise.all([
+        loadDesignFontBytes(d.studio.design.font), fetchBytes(d.studio.logos.square), fetchBytes(d.studio.logos.wide), fetchBytes(d.studio.logos.reversed),
+      ]);
+      const L = opts.labels;
+      const designed = await renderDesignedDocument({
+        design: d.studio.design, locale: opts.locale, practice: d.studio.practice, logos: { square, wide, reversed },
+        doc: prescriptionContent({
+          title: L.title, patientLabel: L.patient, patientName: d.patientName, dateLabel: L.date, date: d.date,
+          items: d.items.map((it) => ({ name: it.name, form: it.dosage || null, instructions: [it.frequency, it.duration].filter((x) => x?.trim()).join(" · ") })),
+          notesLabel: L.notes, notes: d.notes, unsignedLine: L.unsignedCopy,
+        }),
+      }, studioFonts);
+      return await shareSnapshot({
+        doctorId: opts.doctorId, patientId: opts.patientId, bytes: designed, source: "prescription", sourceId: opts.rxId,
+        replacesSourceId: opts.correctsId, folderKey: "prescriptions", title: opts.title(d.iso),
+      });
+    }
+    const [fonts, logoBytes, brandLogo] = await Promise.all([loadDesignFontBytes(d.fontId), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
     const bytes = await renderPrescriptionPdf({
+      fontId: d.fontId,
       labels: opts.labels, locale: opts.locale,
       template: { primaryColor: d.template.primaryColor, accentColor: d.template.accentColor, headerText: d.template.headerText, footerText: d.template.footerText, logoBytes },
       brand: d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null,
