@@ -238,6 +238,8 @@ export default async function SettingsPage({
   // 1.5.0 "My brand" (flag; Previews only until the release). null while
   // migration 161 isn't there: the card opens empty with the defaults.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
+  // Document Studio's button in My brand: the document_studio flag (testers first).
+  const studioOn = liveFeatures.myBrand && (await studioEnabled(supabase));
   // "Meus colegas" (167): the doctor's own list.
   const colleagues = liveFeatures.colleagues && !locked ? await listColleagues() : null;
   // The fields' own values: the raw row (the owner may read it), never the
@@ -286,7 +288,7 @@ export default async function SettingsPage({
             values={brandRow}
             valuesFailed={brandRowFailed}
             country={practiceCountry}
-            studioHref={studioEnabled() ? `${locale === "en" ? "" : `/${locale}`}/dashboard/settings/studio` : null}
+            studioHref={studioOn ? `${locale === "en" ? "" : `/${locale}`}/dashboard/settings/studio` : null}
             fallback={{
               fullName: prof.full_name ?? "",
               specialty: prof.specialty ?? "",

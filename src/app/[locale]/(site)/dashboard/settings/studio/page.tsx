@@ -14,15 +14,17 @@ import { StudioEditor } from "./StudioEditor";
 
 // Document Studio (PR3): the doctor's editor for their practice's design,
 // with a live preview. Its own page (02, 10-13), opened from My brand;
-// doctors only, and nothing until Studio is live (studioEnabled).
+// doctors only, and nothing while the document_studio flag is off for
+// the caller (studioEnabled).
 export default async function StudioPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  if (!studioEnabled() || !liveFeatures.myBrand) notFound();
-  const t = await getTranslations({ locale, namespace: "studio" });
-  const tSettings = await getTranslations({ locale, namespace: "settings" });
+  if (!liveFeatures.myBrand) notFound();
   const supabase = await createClient({ acting: false });
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`/${locale === "en" ? "" : locale + "/"}auth/login`);
+  if (!(await studioEnabled(supabase))) notFound();
+  const t = await getTranslations({ locale, namespace: "studio" });
+  const tSettings = await getTranslations({ locale, namespace: "settings" });
   const prefix = locale === "en" ? "" : `/${locale}`;
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/settings`);
 

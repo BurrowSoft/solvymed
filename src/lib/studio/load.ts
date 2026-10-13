@@ -36,7 +36,7 @@ const legacyStyle = (legacy: LegacyStyle): DocStyle => resolveStyle(null, false,
 // The style a document is drawn with. `type` is asked only when a saved
 // design exists (a medical document's type is one more read).
 export async function documentStyle(supabase: Rpc, legacy: LegacyStyle, type: () => Promise<DocType | null> | DocType | null): Promise<DocStyle> {
-  if (!studioEnabled()) return legacyStyle(legacy);
+  if (!(await studioEnabled(supabase))) return legacyStyle(legacy);
   const d = await loadPracticeDesign(supabase);
   if (!d?.saved) return legacyStyle(legacy);
   const t = await type();

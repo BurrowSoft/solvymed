@@ -11,7 +11,7 @@ const rpc = vi.fn();
 let live = true;
 let isDoctor: boolean | null = true;
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
-vi.mock("@/lib/conditions", () => ({ conditionMet: (k: string) => k === "document-studio-live" && live }));
+vi.mock("@/lib/studio/live", () => ({ studioEnabled: async () => live }));
 vi.mock("@/lib/effectiveProfId", () => ({ isProfessionalRole: async () => isDoctor }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({ auth: { getUser: async () => ({ data: { user: { id: "u1" } } }) }, rpc }),
@@ -50,7 +50,7 @@ describe("saveMyDesign", () => {
     expect(rpc).not.toHaveBeenCalled();
   });
 
-  it("nothing before Studio is live, nothing for a non-doctor", async () => {
+  it("nothing while the document_studio flag is off, nothing for a non-doctor", async () => {
     live = false;
     expect(await saveMyDesign(design(), 0)).toEqual({ ok: false, code: "not_allowed" });
     live = true; isDoctor = false;

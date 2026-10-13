@@ -48,7 +48,7 @@ export async function loadStudioForDocument(
   brand: Brand | null,
   profile: { fullName: string; specialty?: string | null; registration?: string | null; clinicName?: string | null },
 ): Promise<StudioDocData | null> {
-  if (!studioEnabled()) return null;
+  if (!(await studioEnabled(supabase))) return null;
   try {
     const { data, error } = await supabase.rpc("get_practice_design");
     if (error || !data) return null;

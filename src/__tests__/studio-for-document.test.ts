@@ -8,7 +8,7 @@ import type { Brand } from "@/lib/brand";
 // reading the design while Studio is off.
 
 const cond = vi.hoisted(() => ({ live: false }));
-vi.mock("@/lib/conditions", () => ({ conditionMet: (id: string) => id === "document-studio-live" && cond.live }));
+vi.mock("@/lib/studio/live", () => ({ studioEnabled: async () => cond.live }));
 
 import { loadStudioForDocument } from "@/lib/studio/forDocument";
 

@@ -490,7 +490,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     return { ok: true, bytes };
   }
   // Document Studio: the whole document in the practice's saved design
-  // (behind document-studio-live; the server sends studio only then; the
+  // (behind the document_studio flag; the server sends studio only then; the
   // controlled prescription returned above: a legal layout, never designed).
   if (d.studio) {
     const [studioFonts, square, wide, reversed] = await Promise.all([
