@@ -15,7 +15,9 @@
     "iosBetaHint": "يتطلب تطبيق TestFlight المجاني من Apple",
     "signupCta": "ابدأ تجربتك المجانية",
     "haveAccount": "لديك حساب بالفعل؟",
-    "preferApp": "تفضّل التطبيق؟ نزّله من هنا:"
+    "preferApp": "تفضّل التطبيق؟ نزّله من هنا:",
+    "trialLine": "{days} يومًا مجانًا · دون بطاقة ائتمان · ثم {price} شهريًا",
+    "trialLineNoPrice": "{days} يومًا مجانًا · دون بطاقة ائتمان"
   },
   "highlights": {
     "h1": "جدولة ذكية",

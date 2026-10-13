@@ -15,7 +15,9 @@
     "iosBetaHint": "Apple의 무료 TestFlight 앱이 필요합니다",
     "signupCta": "무료 체험 시작하기",
     "haveAccount": "이미 계정이 있으신가요?",
-    "preferApp": "앱이 더 편하신가요? 여기서 다운로드하세요:"
+    "preferApp": "앱이 더 편하신가요? 여기서 다운로드하세요:",
+    "trialLine": "{days}일 무료 · 신용카드 불필요 · 이후 월 {price}",
+    "trialLineNoPrice": "{days}일 무료 · 신용카드 불필요"
   },
   "highlights": {
     "h1": "스마트 일정 관리",

@@ -15,7 +15,9 @@
     "iosBetaHint": "Requiere la app gratuita TestFlight de Apple",
     "signupCta": "Empieza tu prueba gratis",
     "haveAccount": "¿Ya tienes cuenta?",
-    "preferApp": "¿Prefieres la app? Descárgala:"
+    "preferApp": "¿Prefieres la app? Descárgala:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda inteligente",
