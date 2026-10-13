@@ -2279,6 +2279,9 @@
   "offline": {
     "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
   },
+  "clockSkew": {
+    "banner": "A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo."
+  },
   "common": {
     "discardTitle": "Descartar alterações?",
     "discard": "Descartar",

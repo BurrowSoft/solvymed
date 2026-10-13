@@ -2279,6 +2279,9 @@
   "offline": {
     "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   },
+  "clockSkew": {
+    "banner": "Tanggal dan waktu di perangkat Anda tampaknya salah. Aktifkan tanggal dan waktu otomatis, lalu coba lagi."
+  },
   "common": {
     "discardTitle": "Buang perubahan?",
     "discard": "Buang",
