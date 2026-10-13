@@ -30,7 +30,9 @@ export type DesignedInput = {
   // headerText / footerText: the design's texts for this document type
   // (design.texts, carried over from Document Templates): a muted line under
   // the title, a small line above the footer.
-  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null };
+  // signature: "none" = no signature block (a letterhead without a body,
+  // 02); default: the typed stamp.
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none" };
 };
 
 export type DocBlock =
@@ -41,7 +43,10 @@ export type DocBlock =
   | { kind: "paragraph"; text: string; muted?: boolean; bold?: boolean }
   | { kind: "bullets"; items: string[] }
   | { kind: "checked"; text: string }
-  | { kind: "dateLine"; text: string };
+  | { kind: "dateLine"; text: string }
+  // Amounts (a receipt's services and total): the label left, the value
+  // right; a bold row (the total) gets a rule above it.
+  | { kind: "rows"; rows: { label: string; detail?: string | null; value: string; bold?: boolean }[] };
 
 type Ctx = {
   pdf: PDFDocument;
@@ -57,7 +62,17 @@ type Ctx = {
   width: number;
   y: number;
   locale: string;
+  // Content stops above this (the footer's top); a line that would go
+  // below it starts a new page. -Infinity while drawing the footer.
+  floor: number;
+  newPage: () => void;
 };
+
+// Room for h points before the floor, else a new page (keeps a block's
+// first lines together: an item's number with its name, a bar with its title).
+function need(c: Ctx, h: number) {
+  if (c.y - h < c.floor) c.newPage();
+}
 
 const WHITE = rgb(1, 1, 1);
 
@@ -69,6 +84,7 @@ function line(c: Ctx, text: string, o: { size: number; bold?: boolean; color?: R
   const lines = wrapText(s, font, o.size, w, c.locale);
   const lh = o.size * (o.spacing ?? 1.4);
   for (const l of lines) {
+    if (c.y - lh < c.floor) c.newPage();
     c.y -= lh;
     const tw = textWidth(font, l, o.size);
     const x = o.align === "center" ? x0 + (w - tw) / 2 : o.align === "right" ? x0 + w - tw : x0;
@@ -182,6 +198,7 @@ function drawTitle(c: Ctx, title: string) {
   const sb = c.d.sectionBar;
   if (c.p.title === "bar" && sb.fill !== "none") {
     const h = c.p.size.title * 2.2;
+    need(c, h + c.p.size.body * 1.4);
     c.page.drawRectangle({ x: c.left, y: c.y - h, width: c.width, height: h, color: c.color(sb.fill) });
     const font = c.fonts.bold;
     const s = sb.upper ? title.toLocaleUpperCase(c.locale) : title;
@@ -210,6 +227,7 @@ function drawFields(c: Ctx, cells: [string, string][]) {
       line(c, value, { size: c.p.size.body * 0.93, x, width: half, align: i ? "right" : "left", color: i ? c.muted : c.ink });
     } else if (f.style === "box") {
       const h = c.p.size.body * 3.1;
+      need(c, h);
       c.page.drawRectangle({ x, y: top - h, width: half, height: h, color: c.color(f.line === "muted" ? "light" : f.line) });
       c.y = top - 6;
       line(c, label, { size: c.p.size.small, x: x + 9, width: half - 18, color: c.muted });
@@ -231,6 +249,7 @@ function drawFields(c: Ctx, cells: [string, string][]) {
 function drawItems(c: Ctx, items: { name: string; form?: string | null; instructions: string }[]) {
   items.forEach((it, i) => {
     const head = it.form ? `${it.name} · ${it.form}` : it.name;
+    need(c, c.p.size.body * 1.4 * 2 + 4);
     if (c.p.items === "numbered") {
       const r = 9.75;
       const cy = c.y - r - 2;
@@ -288,6 +307,7 @@ function drawBlock(c: Ctx, b: DocBlock) {
     case "bullets": for (const t of b.items) line(c, `•  ${t}`, { size: body, x: c.left + 12, width: c.width - 12 }); c.y -= c.p.gap * 0.4; return;
     case "checked": {
       const s = body * 0.75;
+      need(c, body * 1.4);
       const y0 = c.y;
       line(c, b.text, { size: body, x: c.left + s + 8, width: c.width - s - 8 });
       const by = y0 - body * 1.4 + body * 0.2;
@@ -298,6 +318,22 @@ function drawBlock(c: Ctx, b: DocBlock) {
       return;
     }
     case "dateLine": c.y -= c.p.gap * 0.4; line(c, b.text, { size: body, align: "right" }); return;
+    case "rows": {
+      const valueW = Math.min(140, c.width * 0.35);
+      for (const r of b.rows) {
+        need(c, body * 1.4 * (r.detail ? 2 : 1) + (r.bold ? 6 : 0));
+        if (r.bold) { c.y -= 3; rule(c, c.color("accent"), 0.75); c.y -= 2; }
+        const top = c.y;
+        line(c, r.value, { size: body, bold: r.bold, x: c.left + c.width - valueW, width: valueW, align: "right", color: r.bold ? c.color("primary") : c.ink });
+        const afterValue = c.y;
+        c.y = top;
+        line(c, r.label, { size: body, bold: r.bold || !!r.detail, width: c.width - valueW - 12 });
+        if (r.detail) line(c, r.detail, { size: c.p.size.small, color: c.muted, width: c.width - valueW - 12 });
+        c.y = Math.min(c.y, afterValue) - 4;
+      }
+      c.y -= c.p.gap * 0.4;
+      return;
+    }
   }
 }
 
@@ -317,13 +353,18 @@ function footerColumns(groups: FooterGroup[], columns: number): FooterGroup[][] 
   return [...groups.slice(0, n - 1).map((g) => [g]), groups.slice(n - 1)];
 }
 
-// The signature, then the footer, measured from the bottom: the footer ends
-// above the band, whatever its length.
-function drawBottom(c: Ctx, input: DesignedInput) {
+// The footer and the signature, laid out from the bottom: the footer ends
+// above the band whatever its length, and its height is measured before the
+// content is drawn, so content that would run into it continues on a new
+// page. The footer (and the sidebar contacts) go on every page; the
+// signature on the last one, above the footer.
+type Bottom = { top: number; drawFooter: () => void; sigTop: number | null; drawSignature: () => void };
+function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
   const size = c.p.size.small;
   const lh = size * 1.5;
   const groups = footerGroups(c, input);
   const base = Math.max(c.p.padding[2], bandHeight(c.d.band.style) + 14);
+  const ops: (() => void)[] = [];
   let footerH = 0;
   if (groups.length && c.d.footer.columns === 1 && c.p.footer.oneLine !== "none") {
     // One joined line, measured first so it ends above the band. A long one
@@ -341,26 +382,30 @@ function drawBottom(c: Ctx, input: DesignedInput) {
     }
     if (cur) rows.push(cur);
     footerH = rows.length * lh + 10;
-    c.y = base + footerH;
-    for (const r of rows) line(c, r, { size, color: c.muted, align: caps ? "center" : "left", spacing: 1.5 });
+    const h = footerH;
+    ops.push(() => {
+      c.y = base + h;
+      for (const r of rows) line(c, r, { size, color: c.muted, align: caps ? "center" : "left", spacing: 1.5 });
+    });
   } else if (groups.length) {
     const cols = footerColumns(groups, c.d.footer.columns);
     const rows = Math.max(...cols.map((col) => col.reduce((n, g) => n + g.lines.length, 0)));
     footerH = rows * lh + 10;
+    const h = footerH;
     const gap = 12;
     const w = (c.width - gap * (cols.length - 1)) / cols.length;
-    cols.forEach((col, i) => {
-      c.y = base + footerH;
+    ops.push(() => cols.forEach((col, i) => {
+      c.y = base + h;
       const align = cols.length > 1 && i === cols.length - 1 ? "right" : "left";
       for (const g of col) g.lines.forEach((t, j) => {
         const title = g.titled && j === 0;
         line(c, t, { size, x: c.left + i * (w + gap), width: w, color: title ? c.ink : c.muted, bold: title, align, spacing: 1.5 });
       });
-    });
+    }));
   }
   if (groups.length && c.p.footer.rule) {
-    c.y = base + footerH + 6;
-    rule(c, hexColor("#D9DED9"), 0.75);
+    const h = footerH;
+    ops.push(() => { c.y = base + h + 6; rule(c, hexColor("#D9DED9"), 0.75); });
   }
   // The type's footer text: above the footer (and its rule); the signature
   // moves up by its height.
@@ -368,29 +413,39 @@ function drawBottom(c: Ctx, input: DesignedInput) {
   if (footerText) {
     const n = wrapText(footerText, c.fonts.regular, size, c.width, c.locale).length;
     const top = base + footerH + (groups.length ? 12 : 0) + n * lh;
-    c.y = top;
-    line(c, footerText, { size, color: c.muted, spacing: 1.5 });
+    ops.push(() => { c.y = top; line(c, footerText, { size, color: c.muted, spacing: 1.5 }); });
     footerH = top - base;
   }
   // Sidebar layouts put the contacts in the column.
   if (c.p.sidebar > 0 && c.d.footer.contacts.length) {
-    const saved = { left: c.left, width: c.width, y: c.y };
-    c.left = 12; c.width = c.p.sidebar - 24; c.y = base + c.d.footer.contacts.length * lh + 20;
-    for (const ct of c.d.footer.contacts) line(c, ct.value, { size, align: "center", color: c.color("light"), spacing: 1.5 });
-    Object.assign(c, saved);
+    ops.push(() => {
+      const saved = { left: c.left, width: c.width, y: c.y };
+      c.left = 12; c.width = c.p.sidebar - 24; c.y = base + c.d.footer.contacts.length * lh + 20;
+      for (const ct of c.d.footer.contacts) line(c, ct.value, { size, align: "center", color: c.color("light"), spacing: 1.5 });
+      Object.assign(c, saved);
+    });
   }
-  // Signature above the footer.
-  const sig = c.p.signature;
-  const sx = sig.align === "center" ? c.left + (c.width - sig.width) / 2 : c.left + c.width - sig.width;
-  const sigTop = base + footerH + 24 + c.p.size.body * 1.4 + c.p.size.small * 1.4 + 6;
-  c.y = sigTop;
-  c.page.drawRectangle({ x: sx, y: c.y - 0.75, width: sig.width, height: 0.75, color: c.ink });
-  c.y -= 4;
-  line(c, input.practice.displayName, { size: c.p.size.body, bold: true, x: sx, width: sig.width, align: sig.align });
-  const cred = [input.practice.specialty, input.practice.registrationLine].filter(Boolean).join(" · ");
-  if (cred) line(c, cred, { size: c.p.size.small, x: sx, width: sig.width, align: sig.align, color: c.muted });
-  // A patient's copy (unsigned): its line under the signature block.
-  if (input.doc.unsignedLine) line(c, input.doc.unsignedLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
+  // Signature above the footer (none on a letterhead without a body: 02).
+  const signed = input.doc.signature !== "none";
+  const sigTop = signed ? base + footerH + 24 + c.p.size.body * 1.4 + c.p.size.small * 1.4 + 6 : null;
+  return {
+    top: base + footerH,
+    sigTop,
+    drawFooter: () => { for (const op of ops) op(); },
+    drawSignature: () => {
+      if (sigTop === null) return;
+      const sig = c.p.signature;
+      const sx = sig.align === "center" ? c.left + (c.width - sig.width) / 2 : c.left + c.width - sig.width;
+      c.y = sigTop;
+      c.page.drawRectangle({ x: sx, y: c.y - 0.75, width: sig.width, height: 0.75, color: c.ink });
+      c.y -= 4;
+      line(c, input.practice.displayName, { size: c.p.size.body, bold: true, x: sx, width: sig.width, align: sig.align });
+      const cred = [input.practice.specialty, input.practice.registrationLine].filter(Boolean).join(" · ");
+      if (cred) line(c, cred, { size: c.p.size.small, x: sx, width: sig.width, align: sig.align, color: c.muted });
+      // A patient's copy (unsigned): its line under the signature block.
+      if (input.doc.unsignedLine) line(c, input.doc.unsignedLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
+    },
+  };
 }
 
 export async function renderDesignedDocument(input: DesignedInput, fontBytes: FontBytes): Promise<Uint8Array> {
@@ -408,14 +463,31 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
     wide: await embedImage(pdf, input.logos.wide),
     reversed: await embedImage(pdf, input.logos.reversed),
   };
-  const page = pdf.addPage(A4);
+  const wm = d.watermark.logo === "wide" ? logos.wide ?? logos.square : logos.square ?? logos.wide;
   const [, H] = A4;
   const left = p.sidebar + p.padding[3];
-  const c: Ctx = { pdf, page, fonts, p, d, ink, muted, color, left, width: A4[0] - left - p.padding[1], y: H - p.padding[0], locale: input.locale };
-  drawPage(c, d.watermark.logo === "wide" ? logos.wide ?? logos.square : logos.square ?? logos.wide);
+  const pages: PDFPage[] = [pdf.addPage(A4)];
+  const c: Ctx = {
+    pdf, page: pages[0], fonts, p, d, ink, muted, color, left, width: A4[0] - left - p.padding[1], y: H - p.padding[0], locale: input.locale,
+    floor: -Infinity,
+    // A continuation page: the same paper, sidebar, watermark and band; the
+    // content restarts at the top margin.
+    newPage: () => {
+      const next = pdf.addPage(A4);
+      pages.push(next);
+      c.page = next;
+      drawPage(c, wm);
+      c.y = H - p.padding[0];
+    },
+  };
+  const bottom = layoutBottom(c, input);
+  drawPage(c, wm);
   drawHeader(c, input, headerLogo(c, logos));
+  // From here on, content stops above the footer and continues on a new page.
+  c.floor = bottom.top + 16;
   c.y -= p.gap;
-  drawTitle(c, input.doc.title);
+  // A letterhead may have no title: no empty bar.
+  if (input.doc.title.trim()) drawTitle(c, input.doc.title);
   const headerText = input.doc.headerText?.trim();
   if (headerText) {
     c.y -= 4;
@@ -423,6 +495,13 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
   }
   c.y -= p.gap * 0.6;
   for (const b of input.doc.blocks) drawBlock(c, b);
-  drawBottom(c, input);
+  // The signature needs its own room above the footer on the last page.
+  if (bottom.sigTop !== null && c.y < bottom.sigTop + 12) c.newPage();
+  c.floor = -Infinity;
+  for (const pg of pages) {
+    c.page = pg;
+    bottom.drawFooter();
+  }
+  bottom.drawSignature();
   return pdf.save();
 }

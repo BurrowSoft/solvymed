@@ -77,3 +77,81 @@ export function medicalDocumentContent(o: {
   blocks.push({ kind: "dateLine", text: dateLine(o.lang, o.city, o.issued) });
   return { title, blocks, unsignedLine: o.unsignedLine };
 }
+
+// The patient's history (the print view's content, Help P8): the patient
+// and their details, every record (date, time, corrected), every
+// prescription (its medicines and notes), then who exported it and when.
+export function historyContent(o: {
+  title: string;
+  patientName: string; detailLines: string[];
+  recordsLabel: string; noRecords: string;
+  records: { date: string; time: string; content: string; corrected: boolean }[];
+  prescriptionsLabel: string; noPrescriptions: string;
+  prescriptions: { date: string; corrected: boolean; notes: string | null; items: { name: string; dosage: string; frequency: string; duration: string }[] }[];
+  corrected: string;
+  exportedBy: string;
+}): { title: string; blocks: DocBlock[] } {
+  const blocks: DocBlock[] = [{ kind: "paragraph", text: o.patientName, bold: true }];
+  if (o.detailLines.length) blocks.push({ kind: "paragraph", text: o.detailLines.join(" · "), muted: true });
+  const stamp = (date: string, time: string, corrected: boolean) => [date, time].filter(Boolean).join(" ") + (corrected ? ` ${o.corrected}` : "");
+  blocks.push({ kind: "section", label: `${o.recordsLabel} (${o.records.length})` });
+  if (!o.records.length) blocks.push({ kind: "paragraph", text: o.noRecords, muted: true });
+  for (const r of o.records) {
+    blocks.push({ kind: "paragraph", text: stamp(r.date, r.time, r.corrected), muted: true });
+    blocks.push({ kind: "paragraph", text: r.content });
+  }
+  blocks.push({ kind: "section", label: `${o.prescriptionsLabel} (${o.prescriptions.length})` });
+  if (!o.prescriptions.length) blocks.push({ kind: "paragraph", text: o.noPrescriptions, muted: true });
+  for (const rx of o.prescriptions) {
+    blocks.push({ kind: "paragraph", text: stamp(rx.date, "", rx.corrected), muted: true });
+    blocks.push({
+      kind: "items",
+      items: rx.items.map((m) => ({ name: m.name, form: m.dosage || null, instructions: [m.frequency, m.duration].filter((x) => x?.trim()).join(" · ") })),
+    });
+    if (rx.notes?.trim()) blocks.push({ kind: "paragraph", text: rx.notes.trim(), muted: true });
+  }
+  blocks.push({ kind: "paragraph", text: o.exportedBy, muted: true });
+  return { title: o.title, blocks };
+}
+
+// The recibo (Brazil's simple receipt, Help G5; a Thai receipt is the legal
+// one, never designed): who paid, its number and date, the clinic's
+// registered name/CNPJ and address, the services with their amounts and the
+// total, how it was paid, and the Receita Saúde note when it applies.
+export function receiptContent(o: {
+  title: string;
+  patientLabel: string; patientName: string; idLines: string[];
+  number: string; date: string;
+  provider: string; clinic: string; address: string;
+  servicesLabel: string;
+  service: string; serviceDetail: string; amount: string;
+  extras: { name: string; amount: string }[];
+  totalLabel: string; total: string;
+  paymentLabel: string; payment: string;
+  note: string | null;
+}): { title: string; blocks: DocBlock[] } {
+  const blocks: DocBlock[] = [{ kind: "fields", cells: [[o.patientLabel, o.patientName], [o.title, `#${o.number} · ${o.date}`]] }];
+  if (o.idLines.length) blocks.push({ kind: "paragraph", text: o.idLines.join(" · "), muted: true });
+  const who = [o.provider, o.clinic, o.address].filter((x) => x.trim());
+  if (who.length) blocks.push({ kind: "paragraph", text: who.join("\n"), muted: true });
+  blocks.push({ kind: "section", label: o.servicesLabel });
+  blocks.push({
+    kind: "rows",
+    rows: [
+      { label: o.service, detail: o.serviceDetail, value: o.amount },
+      ...o.extras.map((x) => ({ label: x.name, value: x.amount })),
+      { label: o.totalLabel, value: o.total, bold: true },
+    ],
+  });
+  blocks.push({ kind: "paragraph", text: `${o.paymentLabel}: ${o.payment}` });
+  if (o.note?.trim()) blocks.push({ kind: "paragraph", text: o.note.trim(), muted: true });
+  return { title: o.title, blocks };
+}
+
+// The letterhead (02, 10-13): the design's page with an optional typed title
+// and body, printed and never stored. The typed stamp only under a body;
+// never a signature image, nor any patient data.
+export function letterheadContent(o: { title: string; body: string }): { title: string; blocks: DocBlock[]; signature: "stamp" | "none" } {
+  const body = o.body.trim();
+  return { title: o.title.trim(), blocks: body ? [{ kind: "paragraph", text: body }] : [], signature: body ? "stamp" : "none" };
+}

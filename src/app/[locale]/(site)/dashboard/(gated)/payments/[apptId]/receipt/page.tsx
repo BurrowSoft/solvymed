@@ -17,6 +17,9 @@ import { RECEITA_SAUDE_NOTE, ReceiptDocument } from "./ReceiptDocument";
 import { consultTypeKey } from "@/lib/consultType";
 import { hasAmount } from "@/lib/paymentRules";
 import { ReceiptNeedsAmount } from "./ReceiptNeedsAmount";
+import { loadStudioForDocument } from "@/lib/studio/forDocument";
+import { receiptContent } from "@/lib/studio/content";
+import { DesignedPrint } from "@/components/DesignedPrint";
 
 // The recibo's print view (Help G5 on the website; UX 36): the app's simple
 // recibo, for the doctor AND the secretary (payments are their job). A Thai
@@ -98,6 +101,47 @@ export default async function ReceiptPrintPage({
   const extras = (Array.isArray(a.extra_items) ? a.extra_items : []) as { name?: unknown; price?: unknown }[];
   const extrasTotal = extras.reduce((s, x) => s + (typeof x.price === "number" ? x.price : 0), 0);
   const date = String(a.date ?? "");
+  const number = `${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`;
+  const provider = [[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ");
+  const clinic = [header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ");
+  const address = [header.address, header.city, header.state].filter(Boolean).join(", ");
+  // A built-in type in the reader's language ("Consultation" → "Consulta");
+  // a clinic's own procedure name as written (d7).
+  const service = (() => { const raw = String(a.consultation_type ?? ""); const key = consultTypeKey(raw); return key ? tConsult(key) : raw; })();
+  const serviceDetail = `${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`;
+  const extraRows = extras.map((x) => ({ name: String(x.name ?? ""), amount: typeof x.price === "number" ? money(x.price) : "—" }));
+  const privatePay = a.payment_type === "private";
+  const paid = a.payment_status === "paid";
+  const note = profile.clinicTaxId === "cnpj" && !str(header.clinicCnpj) ? RECEITA_SAUDE_NOTE : null;
+
+  // Document Studio (PR4): with a saved design (and the document_studio
+  // flag), Print prints the designed PDF; a secretary prints it too.
+  const studio = await loadStudioForDocument(supabase, profId, () => "receipt", brand, {
+    fullName: header.fullName ?? "", specialty: header.specialty, registration: header.registration, clinicName: header.clinicName,
+  });
+  if (studio) {
+    return (
+      <DesignedPrint
+        backHref={back}
+        backLabel={t("backToPayments")}
+        fileName={`${t("receiptTitle")} ${number}.pdf`}
+        input={{
+          design: studio.design, locale, practice: studio.practice, logoUrls: studio.logos,
+          doc: {
+            ...receiptContent({
+              title: t("receiptTitle"), patientLabel: t("patient"), patientName: patient?.full_name ?? String(a.patient_name ?? ""), idLines,
+              number, date: docDate(country, date), provider, clinic, address,
+              servicesLabel: t("services"), service, serviceDetail, amount: money(base), extras: extraRows,
+              totalLabel: t("total"), total: money(base + extrasTotal),
+              paymentLabel: t("payment"), payment: `${privatePay ? t("privatePay") : t("insurance")} · ${paid ? t("paid") : t("pending")}`,
+              note,
+            }),
+            headerText: studio.texts.header, footerText: studio.texts.footer,
+          },
+        }}
+      />
+    );
+  }
 
   return (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
@@ -114,21 +158,19 @@ export default async function ReceiptPrintPage({
           }}
           patientName={patient?.full_name ?? String(a.patient_name ?? "")}
           idLines={idLines}
-          number={`${date.replace(/-/g, "")}-${apptId.slice(0, 6).toUpperCase()}`}
+          number={number}
           date={docDate(country, date)}
-          provider={[[header.fullName, header.registration].filter(Boolean).join(" · "), header.specialty].filter(Boolean).join(" — ")}
-          clinic={[header.clinicName, profile.clinicTaxId === "cnpj" && header.clinicCnpj ? `CNPJ ${formatCnpj(header.clinicCnpj)}` : null].filter(Boolean).join(" · ")}
-          address={[header.address, header.city, header.state].filter(Boolean).join(", ")}
-          // A built-in type in the reader's language ("Consultation" →
-          // "Consulta"); a clinic's own procedure name as written (d7).
-          service={(() => { const raw = String(a.consultation_type ?? ""); const key = consultTypeKey(raw); return key ? tConsult(key) : raw; })()}
-          serviceDetail={`${a.type === "online" ? t("online") : t("inPerson")} · ${docTime(a.start_time as string)}`}
+          provider={provider}
+          clinic={clinic}
+          address={address}
+          service={service}
+          serviceDetail={serviceDetail}
           amount={money(base)}
-          extras={extras.map((x) => ({ name: String(x.name ?? ""), amount: typeof x.price === "number" ? money(x.price) : "—" }))}
+          extras={extraRows}
           total={money(base + extrasTotal)}
-          privatePay={a.payment_type === "private"}
-          paid={a.payment_status === "paid"}
-          note={profile.clinicTaxId === "cnpj" && !str(header.clinicCnpj) ? RECEITA_SAUDE_NOTE : null}
+          privatePay={privatePay}
+          paid={paid}
+          note={note}
         />
       </div>
     </div>
