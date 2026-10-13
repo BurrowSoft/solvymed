@@ -2094,6 +2094,8 @@
       "internal": "内部文件"
     },
     "share": "与患者共享",
+    "notSharedYet": "尚未共享",
+    "dontShare": "不共享",
     "shareChecking": "正在检查患者是否能看到此副本…",
     "shareCheckFailed": "无法检查患者是否能看到此副本。请选择是否共享。",
     "shared": "已与患者共享",
@@ -2278,6 +2280,9 @@
   },
   "offline": {
     "banner": "没有网络连接。您可以查看已打开的内容，但更改不会被保存。"
+  },
+  "clockSkew": {
+    "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"
   },
   "common": {
     "discardTitle": "放弃更改？",

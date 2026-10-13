@@ -2094,6 +2094,8 @@
       "internal": "Interne Dokumente"
     },
     "share": "Mit dem Patienten teilen",
+    "notSharedYet": "Noch nicht geteilt",
+    "dontShare": "Nicht teilen",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Mit dem Patienten geteilt",
@@ -2278,6 +2280,9 @@
   },
   "offline": {
     "banner": "Keine Internetverbindung. Sie können sehen, was geöffnet ist, aber Änderungen werden nicht gespeichert."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
   },
   "common": {
     "discardTitle": "Änderungen verwerfen?",
