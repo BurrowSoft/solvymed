@@ -15,7 +15,9 @@
     "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
     "signupCta": "Bắt đầu dùng thử miễn phí",
     "haveAccount": "Đã có tài khoản?",
-    "preferApp": "Thích dùng ứng dụng? Tải về:"
+    "preferApp": "Thích dùng ứng dụng? Tải về:",
+    "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
+    "trialLineNoPrice": "Miễn phí {days} ngày · không cần thẻ tín dụng"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
