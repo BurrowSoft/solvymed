@@ -122,7 +122,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // 02). Until that's known the box and Save wait; when it can't be read
   // the doctor chooses (ec: unknown is not hidden). The doctor's own click
   // always wins.
-  const [share, setShare] = useState(state.mode === "new");
+  const [share, setShareOn] = useState(state.mode === "new");
+  // The choice as of the last change, read by Save itself (F1, fa: a new
+  // certificate saved with the box ticked sometimes didn't share): one source
+  // of truth that every change writes, never a value from an older render.
+  const shareChoice = useRef(state.mode === "new");
+  const setShare = (on: boolean) => { shareChoice.current = on; setShareOn(on); };
   const sourceId = existing?.id ?? null;
   const [shareState, setShareState] = useState<"known" | "checking" | "unknown">(canShare && sourceId ? "checking" : "known");
   const shareTouched = useRef(false);
@@ -205,6 +210,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const bad = validateFields(type, fields, body);
     if (bad) { setError(t(`err.${bad}`)); return; }
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
+    // The share decision is taken here, at the click, from the box as it is.
+    const wantShare = canShare && shareChoice.current && sharesSnapshot(type);
     setError("");
     start(async () => {
       const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
@@ -220,12 +227,14 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       }
       // The saved document, as the PDF needs it (the server's copy is the same).
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
-      const id = state.mode === "edit" ? state.doc.id : (r.data as string | null);
+      // A new one is saved under the form's id (216): that id even if the
+      // answer didn't carry it.
+      const id = state.mode === "edit" ? state.doc.id : ((r.data as string | null) ?? (state.mode === "new" ? clientId : null));
       if (onSaved) {
         onSaved(id && type ? {
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
           correctsId: state.mode === "new" ? null : state.doc.id,
-          share: canShare && share && sharesSnapshot(type),
+          share: wantShare,
         } : undefined);
       } else onClose();
     });
