@@ -3,7 +3,8 @@ import { act, cleanup, fireEvent, render, screen } from "@testing-library/react"
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
-// "Discard changes?" on New patient, New appointment and Reschedule (02):
+// "Discard changes?" on New patient, New appointment, Reschedule and Block
+// time (02):
 // with changes, ✕, a click outside, Escape and Cancel ask first; Keep
 // editing keeps what was typed, Discard closes. Clean, they close at once,
 // and Escape closes too.
@@ -24,10 +25,11 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/actions", () => ({
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/actions", () => ({ createPatient: vi.fn(), restorePatient: vi.fn() }));
 vi.mock("@/lib/dropQueryParam", () => ({ dropQueryParam: vi.fn() }));
 
-import { NewAppointmentButton, RescheduleButton } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/ScheduleClient";
+import { BlockTimeButton, NewAppointmentButton, RescheduleButton } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/ScheduleClient";
 import { NewPatientButton } from "@/app/[locale]/(site)/dashboard/(gated)/patients/PatientsClient";
 import { PracticeLocationsProvider } from "@/components/PracticeLocations";
 import { hasUnsavedChanges } from "@/components/DiscardGuard";
+import { createAppointment } from "@/app/[locale]/(site)/dashboard/(gated)/schedule/actions";
 
 const C = pt.common;
 const S = pt.schedule;
@@ -88,6 +90,33 @@ describe("New appointment", () => {
     expect(notes().value).toBe("");
   });
 
+  it("Esc on the question is Keep editing (ec)", async () => {
+    page();
+    open();
+    fireEvent.change(notes(), { target: { value: "Trazer exames" } });
+    await settle();
+    ways(S.newAppt).escape();
+    expect(asks()).toHaveTextContent(C.discardTitle);
+    ways(S.newAppt).escape();
+    expect(asks()).toBeNull();
+    expect(heading(S.newAppt)).not.toBeNull();
+    expect(notes().value).toBe("Trazer exames");
+  });
+
+  it("with the check-time question over it, Esc doesn't close or ask", async () => {
+    vi.mocked(createAppointment).mockResolvedValueOnce({ error: "needs_confirm", code: "needs_confirm", hours: { kind: "outside", start: "08:00", end: "18:00" }, blocked: null } as never);
+    page();
+    open();
+    fireEvent.change(notes(), { target: { value: "Trazer exames" } });
+    await settle();
+    await act(async () => { fireEvent.submit(notes().form!); });
+    expect(await screen.findByRole("heading", { name: S.checkTimeTitle })).toBeInTheDocument();
+    ways(S.newAppt).escape();
+    expect(asks()).toBeNull();
+    expect(heading(S.newAppt)).not.toBeNull();
+    expect(heading(S.checkTimeTitle)).not.toBeNull();
+  });
+
   it("a choice made by clicking (a location chip) counts as a change", async () => {
     page();
     open();
@@ -125,6 +154,37 @@ describe("Reschedule", () => {
     expect(asks()).toHaveTextContent(C.discardTitle);
     fireEvent.click(screen.getByRole("button", { name: C.discard }));
     expect(heading(S.rescheduleTitle)).toBeNull();
+  });
+});
+
+describe("Block time", () => {
+  const page = () => wrap(<BlockTimeButton defaultDate="2030-01-14" />);
+  const open = () => fireEvent.click(screen.getByRole("button", { name: S.blockTime }));
+  const reason = () => document.querySelector("input[name=reason]") as HTMLInputElement;
+
+  it.each(["x", "outside", "escape", "cancel"] as const)("clean: %s closes at once", async (way) => {
+    page();
+    open();
+    await settle();
+    ways(S.blockTime)[way]();
+    expect(asks()).toBeNull();
+    expect(heading(S.blockTime)).toBeNull();
+  });
+
+  it.each(["x", "outside", "escape", "cancel"] as const)("a reason typed: %s asks; Keep editing keeps it, Discard closes", async (way) => {
+    page();
+    open();
+    fireEvent.change(reason(), { target: { value: "Congresso" } });
+    await settle();
+    ways(S.blockTime)[way]();
+    expect(asks()).toHaveTextContent(C.discardTitle);
+    fireEvent.click(screen.getByRole("button", { name: C.keepEditing }));
+    expect(reason().value).toBe("Congresso");
+    ways(S.blockTime)[way]();
+    fireEvent.click(screen.getByRole("button", { name: C.discard }));
+    expect(heading(S.blockTime)).toBeNull();
+    open();
+    expect(reason().value).toBe("");
   });
 });
 
