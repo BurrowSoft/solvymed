@@ -2092,6 +2092,8 @@
       "internal": "Dokumen internal"
     },
     "share": "Bagikan ke pasien",
+    "shareChecking": "Memeriksa apakah pasien melihat salinan ini…",
+    "shareCheckFailed": "Kami tidak dapat memeriksa apakah pasien melihat salinan ini. Pilih apakah akan membagikannya.",
     "shared": "Dibagikan ke pasien",
     "notShared": "Hanya Anda yang dapat melihat ini",
     "replacedByNewer": "Diganti dengan salinan yang lebih baru",
@@ -2213,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Kami telah memperbarui Kebijakan Privasi kami",
-    "body": "Lihat apa yang berubah pada {date}.",
+    "body": "Lihat apa yang berubah.",
     "read": "Baca kebijakan",
     "ok": "OK",
     "close": "Tutup",

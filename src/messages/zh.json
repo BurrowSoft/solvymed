@@ -2092,6 +2092,8 @@
       "internal": "内部文件"
     },
     "share": "与患者共享",
+    "shareChecking": "正在检查患者是否能看到此副本…",
+    "shareCheckFailed": "无法检查患者是否能看到此副本。请选择是否共享。",
     "shared": "已与患者共享",
     "notShared": "仅您可见",
     "replacedByNewer": "已被较新的副本替换",
@@ -2213,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "我们更新了隐私政策",
-    "body": "查看 {date} 的变更内容。",
+    "body": "查看变更内容。",
     "read": "阅读政策",
     "ok": "确定",
     "close": "关闭",

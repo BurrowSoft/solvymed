@@ -2092,6 +2092,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartilhar com o paciente",
+    "shareChecking": "Verificando se o paciente vê esta cópia…",
+    "shareCheckFailed": "Não foi possível verificar se o paciente vê esta cópia. Escolha se quer compartilhá-la.",
     "shared": "Compartilhado com o paciente",
     "notShared": "Só você vê este documento",
     "replacedByNewer": "Substituído por uma cópia mais recente",
@@ -2213,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Atualizamos nossa Política de Privacidade",
-    "body": "Veja o que mudou em {date}.",
+    "body": "Veja o que mudou.",
     "read": "Ler a política",
     "ok": "OK",
     "close": "Fechar",

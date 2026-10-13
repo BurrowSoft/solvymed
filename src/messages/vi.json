@@ -2092,6 +2092,8 @@
       "internal": "Tài liệu nội bộ"
     },
     "share": "Chia sẻ với bệnh nhân",
+    "shareChecking": "Đang kiểm tra xem bệnh nhân có thấy bản sao này không…",
+    "shareCheckFailed": "Không thể kiểm tra xem bệnh nhân có thấy bản sao này không. Hãy chọn có chia sẻ hay không.",
     "shared": "Đã chia sẻ với bệnh nhân",
     "notShared": "Chỉ bạn xem được",
     "replacedByNewer": "Đã được thay bằng bản mới hơn",
@@ -2213,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Chúng tôi đã cập nhật Chính sách quyền riêng tư",
-    "body": "Xem những gì đã thay đổi vào {date}.",
+    "body": "Xem những gì đã thay đổi.",
     "read": "Đọc chính sách",
     "ok": "OK",
     "close": "Đóng",

@@ -7,13 +7,16 @@ import {
   type CertificateFields, type ControlledFields, type DeclarationFields, type DocFields, type DocLang,
   type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
+import { clinicDate } from "@/lib/clinicTime";
 import { correctMedicalDocument, createMedicalDocument, documentPrintData, updateMedicalDocument } from "../medical-documents-actions";
+import { copySharedNow } from "../documents-actions";
 import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
-import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
+import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -37,18 +40,23 @@ export type MedDoc = {
 // The languages' own names (the picker shows each in itself).
 const LANG_NAMES: Record<DocLang, string> = { "pt-BR": "Português", en: "English", th: "ไทย", es: "Español", de: "Deutsch", fr: "Français", it: "Italiano" };
 
-const today = () => {
+// Today in the PRACTICE's time zone (1.9.0, as the app's clinicToday): a
+// Brazilian practice on a computer set to Bangkok time defaulted its
+// documents to tomorrow. Without a zone (never on the patient page), the
+// browser's day.
+const today = (tz?: string) => {
+  if (tz) return clinicDate(new Date(), tz);
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 };
 
-function emptyFields(type: MedicalDocType): DocFields {
+function emptyFields(type: MedicalDocType, tz?: string): DocFields {
   switch (type) {
-    case "certificate": return { variant: "absence", date: today(), days: 1, start: today(), includeCid: false } as CertificateFields;
-    case "declaration": return { date: today(), from: "", to: "" } as DeclarationFields;
+    case "certificate": return { variant: "absence", date: today(tz), days: 1, start: today(tz), includeCid: false } as CertificateFields;
+    case "declaration": return { date: today(tz), from: "", to: "" } as DeclarationFields;
     case "exam_request": return { exams: [], indication: "", cid: "" } as ExamRequestFields;
     case "controlled_prescription": return { items: [{ name: "", dose: "", quantity: "", posology: "" }] } as ControlledFields;
-    case "th_certificate": return { examDate: today() } as ThCertificateFields;
+    case "th_certificate": return { examDate: today(tz) } as ThCertificateFields;
   }
 }
 
@@ -66,7 +74,7 @@ export function restEnd(start: string, days: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onAlreadySaved, onDirtyChange, reasonField, canShare = false }: {
+export function DocumentDialog({ state, patientId, patientName, country, hasPatientId, onClose, onSaved, onAlreadySaved, onDirtyChange, reasonField, canShare = false, timeZone }: {
   state: DocDialogState;
   patientId: string;
   patientName: string;
@@ -81,6 +89,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // Saved before the doctor's last changes (216, a retry): the host closes
   // the dialog and shows the stored version with a message.
   onAlreadySaved?: () => void;
+  // The practice's time zone: the default dates are its today.
+  timeZone?: string;
   // Whether anything changed since the dialog opened (12's #413 row, ad).
   onDirtyChange?: (dirty: boolean) => void;
   reasonField: React.ReactNode;
@@ -96,7 +106,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [type, setType] = useState<MedicalDocType | null>(existing?.doc_type ?? (state.mode === "new" ? state.type : null));
   const defaultLang: DocLang = (OFFERED_DOC_LANGS as readonly string[]).includes(uiLocale) ? (uiLocale as DocLang) : "en";
   const [lang, setLang] = useState<DocLang>(existing?.language ?? defaultLang);
-  const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type) : null);
+  const [fields, setFields] = useState<DocFields | null>(existing ? (existing.fields as DocFields) : type ? emptyFields(type, timeZone) : null);
   const [body, setBody] = useState(existing?.body ?? "");
   // The prefilled text follows the fields until the doctor edits it (1.9.0,
   // c5's rule, the same in the app): no stored flag; the text counts as
@@ -107,9 +117,37 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   const [fieldsChanged, setFieldsChanged] = useState(false);
   const [error, setError] = useState("");
   const [pending, start] = useTransition();
-  // ON by default (the A spec); never for the controlled prescription.
-  const [share, setShare] = useState(true);
+  // ON by default for a new one (the A spec); never for the controlled
+  // prescription. Editing / correcting: as its patient copy is now (1.9.0,
+  // 02). Until that's known the box and Save wait; when it can't be read
+  // the doctor chooses (ec: unknown is not hidden). The doctor's own click
+  // always wins.
+  const [share, setShareOn] = useState(state.mode === "new");
+  // The choice as of the last change, read by Save itself (F1, fa: a new
+  // certificate saved with the box ticked sometimes didn't share): one source
+  // of truth that every change writes, never a value from an older render.
+  const shareChoice = useRef(state.mode === "new");
+  const setShare = (on: boolean) => { shareChoice.current = on; setShareOn(on); };
+  const sourceId = existing?.id ?? null;
+  const [shareState, setShareState] = useState<"known" | "checking" | "unknown">(canShare && sourceId ? "checking" : "known");
+  const shareTouched = useRef(false);
+  useEffect(() => {
+    if (!canShare || !sourceId) return;
+    let live = true;
+    const done = (s: "on" | "off" | "unknown") => {
+      if (!live || shareTouched.current) return;
+      if (s === "unknown") { setShareState("unknown"); return; }
+      setShare(s === "on");
+      setShareState("known");
+    };
+    timeLimit(copySharedNow(patientId, "medical_document", sourceId), SHARE_CHECK_MS, "unknown" as const).then(done, () => done("unknown"));
+    return () => { live = false; };
+  }, [canShare, patientId, sourceId]);
   const types = documentTypesFor(country);
+  const shareShown = canShare && !!type && sharesSnapshot(type);
+  // Save waits for the copy's state (or the doctor's choice) only when the
+  // box is shown (never for the controlled prescription).
+  const shareWaits = shareShown && shareState !== "known";
   const effLang = (type && fixedLanguage(type)) ?? lang;
 
   // Changed since it opened: the host confirms before closing, and leaving
@@ -144,13 +182,13 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   // the end to start + days − 1, as the app (12's #413 row); the end stays
   // editable.
   const setRest = (patch: Partial<NonNullable<ThCertificateFields["rest"]>>) => {
-    const r = { ...((fields as ThCertificateFields).rest ?? { days: 1, start: today(), end: today() }), ...patch };
+    const r = { ...((fields as ThCertificateFields).rest ?? { days: 1, start: today(timeZone), end: today(timeZone) }), ...patch };
     if (("days" in patch || "start" in patch) && r.days >= 1 && /^\d{4}-\d{2}-\d{2}$/.test(r.start)) r.end = restEnd(r.start, r.days);
     setF({ rest: r } as Partial<ThCertificateFields>);
   };
   const pick = (ty: MedicalDocType) => {
     setType(ty);
-    const f = emptyFields(ty);
+    const f = emptyFields(ty, timeZone);
     setFields(f);
     setFieldsChanged(false);
     // A type that doesn't offer the chosen language (the Thai certificate:
@@ -168,9 +206,12 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   function save(e: React.FormEvent) {
     e.preventDefault();
     if (!type || !fields) return;
+    if (shareWaits) return;
     const bad = validateFields(type, fields, body);
     if (bad) { setError(t(`err.${bad}`)); return; }
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
+    // The share decision is taken here, at the click, from the box as it is.
+    const wantShare = canShare && shareChoice.current && sharesSnapshot(type);
     setError("");
     start(async () => {
       const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
@@ -186,12 +227,14 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       }
       // The saved document, as the PDF needs it (the server's copy is the same).
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
-      const id = state.mode === "edit" ? state.doc.id : (r.data as string | null);
+      // A new one is saved under the form's id (216): that id even if the
+      // answer didn't carry it.
+      const id = state.mode === "edit" ? state.doc.id : ((r.data as string | null) ?? (state.mode === "new" ? clientId : null));
       if (onSaved) {
         onSaved(id && type ? {
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
           correctsId: state.mode === "new" ? null : state.doc.id,
-          share: canShare && share && sharesSnapshot(type),
+          share: wantShare,
         } : undefined);
       } else onClose();
     });
@@ -334,7 +377,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
                 <DateInput value={(f!.examDate as string) ?? ""} onChange={(v) => setF({ examDate: v } as Partial<ThCertificateFields>)} className={input} />
               </label>
               <label className="flex items-center gap-2 text-sm text-slate-700">
-                <input type="checkbox" checked={!!f!.rest} onChange={(e) => setF({ rest: e.target.checked ? { days: 1, start: today(), end: today() } : undefined } as Partial<ThCertificateFields>)} className="h-4 w-4 accent-teal-600" />
+                <input type="checkbox" checked={!!f!.rest} onChange={(e) => setF({ rest: e.target.checked ? { days: 1, start: today(timeZone), end: today(timeZone) } : undefined } as Partial<ThCertificateFields>)} className="h-4 w-4 accent-teal-600" />
                 {t("rest")}
               </label>
               {!!f!.rest && (
@@ -368,16 +411,22 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           )}
 
           {state.mode === "correct" && reasonField}
-          {canShare && type && sharesSnapshot(type) && (
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} className="h-4 w-4 accent-teal-600" />
-              {tdocs("share")}
-            </label>
+          {shareShown && (
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" data-testid="share-with-patient" checked={share} disabled={shareState === "checking"}
+                  ref={(el) => { if (el) el.indeterminate = shareState === "unknown"; }}
+                  onChange={(e) => { shareTouched.current = true; setShareState("known"); setShare(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+                {tdocs("share")}
+              </label>
+              {shareState === "checking" && <p role="status" className="mt-1 text-xs text-slate-500">{tdocs("shareChecking")}</p>}
+              {shareState === "unknown" && <p role="alert" className="mt-1 text-xs text-amber-700">{tdocs("shareCheckFailed")}</p>}
+            </div>
           )}
           {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600">{tp("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white disabled:opacity-60">
+            <button type="submit" disabled={pending || shareWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white disabled:opacity-60">
               {pending ? tp("saving") : state.mode === "correct" ? tp("addCorrection") : t("save")}
             </button>
           </div>
