@@ -77,6 +77,7 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
   const tSettings = useTranslations("settings");
   const tBrand = useTranslations("brand");
   const tReload = useTranslations("versionGate");
+  const tDocsPdf = useTranslations("documents");
   const locale = useLocale();
 
   const start = useMemo(() => forEditing(initial), [initial]);
@@ -147,7 +148,29 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
     footerText: previewTexts?.footer ?? null,
   };
 
-  const typeLabel = (k: DocType) => (k === "prescription" ? tRx("title") : tDocType(k as "certificate"));
+  const typeLabel = (k: DocType) => (k === "prescription" ? tRx("title") : k === "letterhead" ? t("letterhead") : tDocType(k as "certificate"));
+
+  // The letterhead (PR4; 02, 10-13): the design as it stands on this page,
+  // with an optional typed title and body, printed and never stored. The
+  // typed stamp only under a body; never a signature image.
+  const [lhTitle, setLhTitle] = useState("");
+  const [lhBody, setLhBody] = useState("");
+  const [lhState, setLhState] = useState<"idle" | "busy" | "failed">("idle");
+  async function printLetterhead() {
+    setLhState("busy");
+    try {
+      const [{ renderInBrowser, printPdf }, { letterheadContent }] = await Promise.all([import("@/lib/pdf/browser"), import("@/lib/studio/content")]);
+      const lt = cleaned.texts.letterhead;
+      const bytes = await renderInBrowser({
+        design: cleaned, locale, practice, logoUrls: logos,
+        doc: { ...letterheadContent({ title: lhTitle, body: lhBody }), headerText: lt?.header ?? null, footerText: lt?.footer ?? null },
+      });
+      printPdf(bytes, `${t("letterhead")}.pdf`);
+      setLhState("idle");
+    } catch {
+      setLhState("failed");
+    }
+  }
   const presetId = design.palette.preset;
   const contacts = design.footer.contacts;
   const texts = design.texts[textType] ?? { header: null, footer: null };
@@ -287,6 +310,27 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
                     onChange={(e) => setText(part, e.target.value)} className="text-input" />
                 </div>
               ))}
+            </div>
+          </Card>
+
+          <Card title={t("letterhead")} description={t("letterheadHint")}>
+            <div className="grid gap-4" data-testid="studio-letterhead">
+              <div>
+                <label htmlFor="studio-lh-title" className="field-label">{t("letterheadTitle")}</label>
+                <input id="studio-lh-title" type="text" maxLength={120} value={lhTitle} onChange={(e) => setLhTitle(e.target.value)} className="text-input" />
+              </div>
+              <div>
+                <label htmlFor="studio-lh-body" className="field-label">{t("letterheadBody")}</label>
+                <textarea id="studio-lh-body" rows={6} maxLength={5000} value={lhBody} onChange={(e) => setLhBody(e.target.value)} className="text-input" />
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="button" data-testid="studio-print-letterhead" onClick={() => void printLetterhead()} disabled={lhState === "busy"}
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-slate-50 disabled:opacity-60">
+                  {t("printLetterhead")}
+                </button>
+                <p className="text-xs text-slate-500">{t("letterheadNotSaved")}</p>
+              </div>
+              {lhState === "failed" && <p role="alert" className="text-sm text-red-600">{tDocsPdf("pdfFailed")}</p>}
             </div>
           </Card>
         </div>

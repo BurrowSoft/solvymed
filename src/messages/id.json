@@ -2368,6 +2368,12 @@
     "save": "Simpan desain",
     "saved": "Desain disimpan. Dokumen Anda memakainya mulai sekarang.",
     "conflict": "Desain ini diubah di tempat lain. Muat ulang untuk melihat versi terbaru.",
-    "error": "Gagal menyimpan. Coba lagi."
+    "error": "Gagal menyimpan. Coba lagi.",
+    "letterhead": "Kop surat",
+    "letterheadHint": "Cetak halaman dengan desain Anda untuk surat dan panduan pasien. Tanpa teks, halaman tercetak kosong untuk ditulis tangan.",
+    "letterheadTitle": "Judul (opsional)",
+    "letterheadBody": "Teks (opsional)",
+    "letterheadNotSaved": "Yang Anda ketik di sini tidak disimpan.",
+    "printLetterhead": "Cetak kop surat"
   }
 }
