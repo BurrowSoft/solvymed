@@ -15,7 +15,9 @@
     "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple",
     "signupCta": "Mulai uji coba gratis",
     "haveAccount": "Sudah punya akun?",
-    "preferApp": "Lebih suka aplikasinya? Unduh di sini:"
+    "preferApp": "Lebih suka aplikasinya? Unduh di sini:",
+    "trialLine": "Gratis {days} hari · tanpa kartu kredit · lalu {price}/bulan",
+    "trialLineNoPrice": "Gratis {days} hari · tanpa kartu kredit"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
