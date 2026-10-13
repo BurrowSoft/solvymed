@@ -268,7 +268,9 @@ function drawFields(c: Ctx, cells: [string, string][]) {
       c.y -= 3;
       rule(c, c.color(f.line), 0.75, x, half);
     } else {
-      line(c, `${label}: ${value}`, { size: c.p.size.body, x, width: half });
+      // An empty label (the Thai certificate's date cell): the value alone,
+      // never ": 13 October 2026" (78/c5, ec).
+      line(c, label ? `${label}: ${value}` : value, { size: c.p.size.body, x, width: half });
     }
     bottom = Math.min(bottom, c.y);
   });
@@ -314,7 +316,7 @@ function drawNotes(c: Ctx, label: string, text: string) {
   } else if (c.p.header === "nameOnly") {
     line(c, text, { size: c.p.size.body, color: c.muted });
   } else {
-    line(c, `${label}: ${text}`, { size: c.p.size.body });
+    line(c, label ? `${label}: ${text}` : text, { size: c.p.size.body });
   }
 }
 

@@ -115,6 +115,13 @@ describe("Studio: every medical document's title and legal fields appear in ever
         const must = [content.title, "Beatriz Almeida", pr.displayName, pr.registrationLine, ...(m.body ? [m.body] : []), ...m.texts];
         if (m.type !== "th_certificate") must.push("123.456.789-09", dateLine(m.lang, "São Paulo", "2026-10-12"));
         for (const x of must) expect(text, `${m.type} · ${name}: "${x}"`).toContain(norm(x));
+        // The Thai certificate's date cell has no label: the date alone,
+        // never ": 13 October 2026" (78/c5, ec).
+        if (m.type === "th_certificate") {
+          const date = dateLine(m.lang, "", "2026-10-12");
+          expect(text, `${name}: the date`).toContain(norm(date));
+          expect(text, `${name}: no leading colon`).not.toContain(norm(`: ${date}`));
+        }
       }, 60_000);
     }
   }
