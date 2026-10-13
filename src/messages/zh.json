@@ -2092,6 +2092,8 @@
       "internal": "内部文件"
     },
     "share": "与患者共享",
+    "shareChecking": "正在检查患者是否能看到此副本…",
+    "shareCheckFailed": "无法检查患者是否能看到此副本。请选择是否共享。",
     "shared": "已与患者共享",
     "notShared": "仅您可见",
     "replacedByNewer": "已被较新的副本替换",
@@ -2187,6 +2189,7 @@
     "findings": "检查结果 / 意见",
     "rest": "需要休息",
     "refill": "重新填写正文",
+    "textMayNotMatch": "正文可能与您修改的字段不一致。",
     "items": "药品",
     "itemName": "药品",
     "dose": "剂量",
@@ -2212,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "我们更新了隐私政策",
-    "body": "查看 {date} 的变更内容。",
+    "body": "查看变更内容。",
     "read": "阅读政策",
     "ok": "确定",
     "close": "关闭",
@@ -2267,5 +2270,11 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "adjust": "调整"
+  },
+  "save": {
+    "alreadySavedChanged": "此内容在您最后一次修改之前已保存。之后的修改未生效，请查看已保存的版本。"
+  },
+  "offline": {
+    "banner": "没有网络连接。您可以查看已打开的内容，但更改不会被保存。"
   }
 }

@@ -59,7 +59,9 @@ async function caller(request: NextRequest): Promise<{ supabase: SupabaseClient;
 }
 
 // brand-assets + brand-staging: the 1.5.0 brand (38: purge both prefixes).
-const PROFESSIONAL_IMAGE_BUCKETS = ["profile-photos", "document-logos", "brand-assets", "brand-staging"];
+// signature-assets: Document Studio's private signatures (migration 221,
+// flat under <uid>/; the brand's new kinds stay in brand-assets).
+const PROFESSIONAL_IMAGE_BUCKETS = ["profile-photos", "document-logos", "brand-assets", "brand-staging", "signature-assets"];
 
 // Deletes everything under <uid>/ in the professional's image buckets.
 // Failures are logged (bucket and error name only) and never change the

@@ -2092,6 +2092,8 @@
       "internal": "內部文件"
     },
     "share": "與病患分享",
+    "shareChecking": "正在檢查患者是否能看到此副本…",
+    "shareCheckFailed": "無法檢查患者是否能看到此副本。請選擇是否分享。",
     "shared": "已與病患分享",
     "notShared": "僅您可見",
     "replacedByNewer": "已被較新的副本取代",
@@ -2187,6 +2189,7 @@
     "findings": "檢查結果 / 意見",
     "rest": "需要休養",
     "refill": "重新填寫內文",
+    "textMayNotMatch": "內文可能與您修改的欄位不一致。",
     "items": "藥品",
     "itemName": "藥品",
     "dose": "劑量",
@@ -2212,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "我們更新了隱私權政策",
-    "body": "查看 {date} 的變更內容。",
+    "body": "查看變更內容。",
     "read": "閱讀政策",
     "ok": "確定",
     "close": "關閉",
@@ -2267,5 +2270,11 @@
     "zoomIn": "放大",
     "zoomOut": "縮小",
     "adjust": "調整"
+  },
+  "save": {
+    "alreadySavedChanged": "此內容在您最後一次修改之前已儲存。之後的修改未套用，請查看已儲存的版本。"
+  },
+  "offline": {
+    "banner": "沒有網路連線。您可以查看已開啟的內容，但變更不會被儲存。"
   }
 }

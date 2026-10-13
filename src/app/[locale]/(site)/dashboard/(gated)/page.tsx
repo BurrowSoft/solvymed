@@ -20,7 +20,6 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { MassMessageButton } from "./MassMessageButton";
 import { PrivacyNoticeCard } from "@/components/PrivacyNoticeCard";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
-import { PRIVACY_VERSION } from "@/lib/legalVersions";
 
 
 function statusBadge(status: string) {
@@ -168,12 +167,12 @@ export default async function DashboardPage({
   // The practice's calendar, the reader's words (UX 5 Oct: a TH clinic's year in BE).
   const todayFormatted = formatDateLabel(locale, today, { weekday: "long", year: "numeric", month: "long", day: "numeric" }, countryProfile(practiceCountry).calendar);
   // A newer privacy policy than this account accepted (migration 204; none
-  // before it). Its date is a system date: the reader's calendar.
+  // before it).
   const privacyNotice = privacyNoticeDue(await readAcceptedPrivacy(supabase));
 
   return (
     <div className="p-6 lg:p-8 max-w-7xl">
-      {privacyNotice && <PrivacyNoticeCard locale={locale} date={formatDateLabel(locale, PRIVACY_VERSION, { day: "numeric", month: "long", year: "numeric" })} />}
+      {privacyNotice && <PrivacyNoticeCard locale={locale} />}
       {/* Greeting */}
       <div className="mb-8 flex items-start justify-between gap-4">
         <div data-tour="home">

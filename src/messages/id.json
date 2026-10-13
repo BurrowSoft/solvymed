@@ -2092,6 +2092,8 @@
       "internal": "Dokumen internal"
     },
     "share": "Bagikan ke pasien",
+    "shareChecking": "Memeriksa apakah pasien melihat salinan ini…",
+    "shareCheckFailed": "Kami tidak dapat memeriksa apakah pasien melihat salinan ini. Pilih apakah akan membagikannya.",
     "shared": "Dibagikan ke pasien",
     "notShared": "Hanya Anda yang dapat melihat ini",
     "replacedByNewer": "Diganti dengan salinan yang lebih baru",
@@ -2187,6 +2189,7 @@
     "findings": "Temuan / pendapat",
     "rest": "Perlu istirahat",
     "refill": "Isi ulang teks",
+    "textMayNotMatch": "Teks mungkin tidak sesuai dengan kolom yang Anda ubah.",
     "items": "Obat",
     "itemName": "Obat",
     "dose": "Dosis",
@@ -2212,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Kami telah memperbarui Kebijakan Privasi kami",
-    "body": "Lihat apa yang berubah pada {date}.",
+    "body": "Lihat apa yang berubah.",
     "read": "Baca kebijakan",
     "ok": "OK",
     "close": "Tutup",
@@ -2267,5 +2270,11 @@
     "zoomIn": "Perbesar",
     "zoomOut": "Perkecil",
     "adjust": "Sesuaikan"
+  },
+  "save": {
+    "alreadySavedChanged": "Ini sudah tersimpan sebelum perubahan terakhir Anda. Perubahan setelahnya tidak diterapkan; periksa versi yang tersimpan."
+  },
+  "offline": {
+    "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   }
 }

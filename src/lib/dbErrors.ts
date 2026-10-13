@@ -13,7 +13,8 @@ export type KnownDbError =
   | "subscription_active"
   | "invalid_th_id"
   | "invalid_birth_date"
-  | "invalid_cns";
+  | "invalid_cns"
+  | "id_conflict";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -30,6 +31,9 @@ const KNOWN: KnownDbError[] = [
   "invalid_birth_date",
   // A CNS failing its check (138).
   "invalid_cns",
+  // A save's id already belongs to something else (216, saving once): the
+  // form takes a new id; shown as the generic error.
+  "id_conflict",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.

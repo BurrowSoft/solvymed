@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { NETWORK_FAILURE, safeCall } from "@/lib/netError";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { keepInvitedPatient, removeInvitedPatient } from "./patients/actions";
@@ -25,7 +26,8 @@ export function InvitedPatientsCard({ patients, total, prefix }: { patients: Inv
     setErrors((e) => ({ ...e, [id]: "" }));
     setPendingId(id);
     start(async () => {
-      const r = kind === "keep" ? await keepInvitedPatient(id) : await removeInvitedPatient(id);
+      // No answer (1.9.0): the row's error, and its buttons come back.
+      const r = await safeCall(() => (kind === "keep" ? keepInvitedPatient(id) : removeInvitedPatient(id)), NETWORK_FAILURE);
       setPendingId(null);
       if (r.ok) setDone((d) => ({ ...d, [id]: kind === "keep" ? "kept" : "removed" }));
       else setErrors((e) => ({ ...e, [id]: t("invitedError") }));
@@ -51,11 +53,11 @@ export function InvitedPatientsCard({ patients, total, prefix }: { patients: Inv
               {errors[p.id] && <p className="text-xs text-red-600">{errors[p.id]}</p>}
             </div>
             <div className="flex shrink-0 gap-2">
-              <button type="button" disabled={pendingId === p.id} aria-busy={pendingId === p.id} onClick={() => act(p.id, "keep", p.full_name)}
+              <button data-server type="button" disabled={pendingId === p.id} aria-busy={pendingId === p.id} onClick={() => act(p.id, "keep", p.full_name)}
                 className="rounded-lg bg-teal-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-teal-700 disabled:opacity-60">
                 {t("invitedKeep")}
               </button>
-              <button type="button" disabled={pendingId === p.id} onClick={() => act(p.id, "remove", p.full_name)}
+              <button data-server type="button" disabled={pendingId === p.id} onClick={() => act(p.id, "remove", p.full_name)}
                 className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">
                 {t("invitedRemove")}
               </button>

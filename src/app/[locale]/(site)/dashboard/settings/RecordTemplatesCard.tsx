@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { RECORD_PRESETS, presetToTemplate } from "@/lib/recordPresets";
 import { SECTION_HINT_MAX, SECTION_TITLE_MAX, TEMPLATE_NAME_MAX, TEMPLATE_SECTIONS_MAX, TEMPLATES_PER_DOCTOR, type RecordTemplate } from "@/lib/recordTemplates";
 import { deleteRecordTemplate, saveRecordTemplate, type TemplateError } from "./record-template-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // Settings → Record templates (1.8.0 D; server flag 'record_templates').
 // A new template starts blank or as a copy of a specialty preset, in the UI
@@ -28,7 +29,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [busy, start] = useTransition();
 
-  const errorText = (c: TemplateError) =>
+  const errorText = (c: TemplateError | "network") =>
     t(c === "name" ? "errName" : c === "sections" ? "errSections" : c === "title" ? "errTitle" : c === "hint" ? "errHint" : c === "limit" ? "errLimit" : "errFailed");
   const atLimit = rows.length >= TEMPLATES_PER_DOCTOR;
 
@@ -63,7 +64,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
     const d = draft;
     setMsg(null);
     start(async () => {
-      const r = await saveRecordTemplate(d.id, { name: d.name, sections: d.rows.map((x) => ({ title: x.title, hint: x.hint })) });
+      const r = await safeCall(() => saveRecordTemplate(d.id, { name: d.name, sections: d.rows.map((x) => ({ title: x.title, hint: x.hint })) }), NETWORK_FAILURE);
       if (!r.ok) { setMsg({ kind: "error", text: errorText(r.code) }); return; }
       setRows((prev) => (d.id ? prev.map((x) => (x.id === r.row.id ? r.row : x)) : [...prev, r.row]));
       setDraft(null);
@@ -75,7 +76,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
     if (!window.confirm(t("deleteConfirm", { name: r.name }))) return;
     setMsg(null);
     start(async () => {
-      const res = await deleteRecordTemplate(r.id);
+      const res = await safeCall(() => deleteRecordTemplate(r.id), NETWORK_FAILURE);
       if (res.ok) setRows((prev) => prev.filter((x) => x.id !== r.id));
       else setMsg({ kind: "error", text: t("errFailed") });
     });
@@ -136,7 +137,7 @@ export function RecordTemplatesCard({ initial, loadFailed }: { initial: RecordTe
                   </div>
                   <div className="flex shrink-0 gap-2">
                     <button type="button" onClick={() => openEdit(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-teal-700 hover:bg-teal-50">{t("edit")}</button>
-                    <button type="button" onClick={() => remove(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50">{t("delete")}</button>
+                    <button data-server type="button" onClick={() => remove(r)} disabled={busy} className="rounded-lg px-2.5 py-1.5 text-sm font-semibold text-red-600 hover:bg-red-50">{t("delete")}</button>
                   </div>
                 </li>
               ))}

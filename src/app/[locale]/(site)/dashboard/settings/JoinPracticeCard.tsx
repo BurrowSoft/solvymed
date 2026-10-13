@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { acceptSecretaryInvite } from "@/app/[locale]/(site)/join/secretary/[code]/actions";
 import { ERROR_KEY } from "@/app/[locale]/(site)/join/secretary/[code]/InviteDecision";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // "Entrar na equipe de outro médico" (0a slice 1b on the website, cf; the
 // app's JoinPracticeSheet): a secretary already on one team types the invite
@@ -28,7 +29,7 @@ export function JoinPracticeCard() {
     setError("");
     setJoined("");
     start(async () => {
-      const r = await acceptSecretaryInvite(code);
+      const r = await safeCall(() => acceptSecretaryInvite(code), NETWORK_FAILURE);
       if (!r.ok) {
         setError(ts(ERROR_KEY[r.code] ?? "genericError"));
         return;
@@ -64,7 +65,7 @@ export function JoinPracticeCard() {
           maxLength={64}
           className="min-w-0 flex-1 rounded-xl border border-slate-200 px-4 py-2.5 text-sm uppercase text-slate-900 focus:border-teal-500 focus:outline-none"
         />
-        <button
+        <button data-server
           type="button"
           onClick={join}
           disabled={pending || !code.trim()}

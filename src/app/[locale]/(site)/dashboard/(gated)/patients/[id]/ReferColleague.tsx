@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { listColleagues } from "../../../colleague-actions";
 import { colleagueLink, colleagueName, firstName, type ColleagueRow } from "@/lib/colleagues";
 import { whatsappLink } from "@/lib/whatsappLink";
+import { safeCall,  } from "@/lib/netError";
 
 // The patient page's "Indicar colega" (167; doctors only, behind
 // liveFeatures.colleagues): pick one of your colleagues, and the message with
@@ -31,7 +32,7 @@ export function ReferColleague({ patientName, patientPhone, practiceCountry, wha
     setChosen(null);
     setCopied(false);
     start(async () => {
-      const r = await listColleagues();
+      const r = await safeCall(() => listColleagues(), { ok: false } as const);
       setFailed(!r.ok);
       setRows(r.ok ? r.rows.filter((c) => c.available) : []);
     });

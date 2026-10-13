@@ -6,6 +6,7 @@ import { formatShortDate } from "@/lib/dateLabels";
 import { toLocalDateString } from "@/lib/slots";
 import { addColleague, removeColleague } from "../colleague-actions";
 import { colleagueLogoUrl, colleagueName, type ColleagueError, type ColleagueRow } from "@/lib/colleagues";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // Settings → "Meus colegas" (167; doctors only, behind liveFeatures.colleagues):
 // add by a colleague's exact public code, remove; only the doctor sees the
@@ -19,7 +20,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
   const [msg, setMsg] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
   const [busy, start] = useTransition();
 
-  const errorText = (c: ColleagueError) =>
+  const errorText = (c: ColleagueError | "network") =>
     t(c === "notFound" ? "notFound" : c === "self" ? "self" : c === "limit" ? "limit" : c === "tooMany" ? "tooMany" : "failed");
 
   function add(e: React.FormEvent) {
@@ -27,7 +28,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
     if (!code.trim()) return;
     setMsg(null);
     start(async () => {
-      const r = await addColleague(code);
+      const r = await safeCall(() => addColleague(code), NETWORK_FAILURE);
       if (!r.ok) { setMsg({ kind: "error", text: errorText(r.code) }); return; }
       setRows((prev) => [...prev.filter((x) => x.colleague_id !== r.row.colleague_id), r.row]
         .sort((a, b) => colleagueName(a).localeCompare(colleagueName(b))));
@@ -43,7 +44,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
     const id = c.colleague_id;
     setMsg(null);
     start(async () => {
-      const r = await removeColleague(id);
+      const r = await safeCall(() => removeColleague(id), NETWORK_FAILURE);
       if (r.ok) setRows((prev) => prev.filter((x) => x.colleague_id !== id));
       else setMsg({ kind: "error", text: t("failed") });
     });
@@ -91,7 +92,7 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
                     <p className="truncate text-xs text-slate-500">{c.available ? c.specialty ?? "" : t("addedOn", { date: formatShortDate(locale, toLocalDateString(new Date(c.added_at))) })}</p>
                   </div>
                 </div>
-                <button type="button" disabled={busy} onClick={() => remove(c)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
+                <button data-server type="button" disabled={busy} onClick={() => remove(c)} className="shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 disabled:opacity-50">
                   {t("remove")}
                 </button>
               </li>

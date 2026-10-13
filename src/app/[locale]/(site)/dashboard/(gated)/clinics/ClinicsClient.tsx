@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { addClinic, deleteClinic, locateClinicCity, makePrimaryClinic, updateClinic, updateClinicLocation } from "./actions";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 // Leaflet needs the browser, and the tiles should load only when a doctor
 // opens the pin dialog: loaded on demand, never on the server.
@@ -124,7 +125,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     const { lat, lng } = pinPos;
     setPinError("");
     startTransition(async () => {
-      const result = await updateClinicLocation(id, lat, lng);
+      const result = await safeCall(() => updateClinicLocation(id, lat, lng), NETWORK_ERROR);
       if (result.error) {
         setPinError(t("genericError"));
         return;
@@ -165,10 +166,13 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   function handleMakePrimary(id: string) {
     setConfirmPrimary(null);
     startTransition(async () => {
-      const result = await makePrimaryClinic(id);
+      const result = await safeCall(() => makePrimaryClinic(id), NETWORK_ERROR);
       if (!result.error) {
         setClinics((prev) => prev.map((c) => ({ ...c, is_primary: c.id === id })).sort((a, b) => Number(!!b.is_primary) - Number(!!a.is_primary)));
         router.refresh();
+      } else {
+        // It failed silently before (1.9.0).
+        setError(t("genericError"));
       }
     });
   }
@@ -182,9 +186,11 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     if (!window.confirm(t("deleteConfirm", { name }))) return;
     setDeletingId(id);
     startTransition(async () => {
-      const result = await deleteClinic(id);
+      const result = await safeCall(() => deleteClinic(id), NETWORK_ERROR);
       if (!result.error) {
         setClinics((prev) => prev.filter((c) => c.id !== id));
+      } else {
+        setError(t("genericError"));
       }
       setDeletingId(null);
     });
@@ -371,7 +377,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                   </form>
                 )}
               </div>
-              <button
+              <button data-server
                 onClick={() => handleDelete(clinic.id, clinic.name)}
                 disabled={deletingId === clinic.id || isPending}
                 title={t("delete")}
@@ -395,7 +401,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
             <p className="mt-2 text-sm text-slate-600">{tl("primaryConfirm", { name: confirmPrimary.name })}</p>
             <div className="mt-4 flex justify-end gap-3">
               <button type="button" onClick={() => setConfirmPrimary(null)} className="text-sm text-slate-500 hover:text-slate-700">{t("cancel")}</button>
-              <button type="button" disabled={isPending} onClick={() => handleMakePrimary(confirmPrimary.id)}
+              <button data-server type="button" disabled={isPending} onClick={() => handleMakePrimary(confirmPrimary.id)}
                 className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">{tl("makePrimary")}</button>
             </div>
           </div>
@@ -430,7 +436,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
               <button type="button" onClick={() => setPinClinic(null)} className="text-sm text-slate-500 hover:text-slate-700">
                 {t("cancel")}
               </button>
-              <button
+              <button data-server
                 type="button"
                 onClick={savePin}
                 disabled={isPending || !pinPlaced}
