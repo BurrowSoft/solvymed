@@ -15,7 +15,9 @@
     "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple",
     "signupCta": "Kostenlos testen",
     "haveAccount": "Schon ein Konto?",
-    "preferApp": "Lieber die App? Hier herunterladen:"
+    "preferApp": "Lieber die App? Hier herunterladen:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",
@@ -2415,5 +2417,13 @@
     "signaturePrivate": "It stays private and is placed only on the documents you issue: never on posters, letterheads or documents your team issues.",
     "signatureLater": "Changing or removing it affects only documents issued afterwards.",
     "signatureWhere": "Your signature image appears on the copy shared with the patient. Printed documents show your typed stamp, to sign by hand."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Änderungen verwerfen?",
+    "discard": "Verwerfen",
+    "keepEditing": "Weiter bearbeiten"
   }
 }

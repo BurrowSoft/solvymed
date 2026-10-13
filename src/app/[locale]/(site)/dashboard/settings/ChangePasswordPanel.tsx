@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
@@ -23,6 +24,8 @@ export function ChangePasswordPanel({ email, locale }: { email: string; locale: 
   const [pending, setPending] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [captchaReset, setCaptchaReset] = useState(0);
+  // Typed passwords: leaving the page asks first; Cancel discards (02).
+  useLeaveGuard(open && !done && !!(current || next || confirm));
 
   function reset() {
     setCurrent(""); setNext(""); setConfirm(""); setError("");

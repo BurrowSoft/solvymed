@@ -15,7 +15,9 @@
     "iosBetaHint": "Richiede l'app gratuita TestFlight di Apple",
     "signupCta": "Inizia la prova gratuita",
     "haveAccount": "Hai già un account?",
-    "preferApp": "Preferisci l'app? Scaricala:"
+    "preferApp": "Preferisci l'app? Scaricala:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda intelligente",
@@ -2415,5 +2417,13 @@
     "signaturePrivate": "It stays private and is placed only on the documents you issue: never on posters, letterheads or documents your team issues.",
     "signatureLater": "Changing or removing it affects only documents issued afterwards.",
     "signatureWhere": "Your signature image appears on the copy shared with the patient. Printed documents show your typed stamp, to sign by hand."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Scartare le modifiche?",
+    "discard": "Scarta",
+    "keepEditing": "Continua a modificare"
   }
 }

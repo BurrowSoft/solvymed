@@ -15,7 +15,9 @@
     "iosBetaHint": "需要 Apple 免费的 TestFlight 应用",
     "signupCta": "开始免费试用",
     "haveAccount": "已有账户？",
-    "preferApp": "更喜欢用应用？在此下载："
+    "preferApp": "更喜欢用应用？在此下载：",
+    "trialLine": "免费 {days} 天 · 无需信用卡 · 之后每月 {price}",
+    "trialLineNoPrice": "免费 {days} 天 · 无需信用卡"
   },
   "highlights": {
     "h1": "智能排程",
@@ -2415,5 +2417,13 @@
     "signaturePrivate": "签名图片保持私密，只会放在您本人开具的文件上：绝不会出现在海报、信笺或您团队开具的文件上。",
     "signatureLater": "更换或删除只影响之后开具的文件。",
     "signatureWhere": "您的签名图片会出现在与患者共享的副本上。打印的文件显示您输入的签章信息，供您亲笔签名。"
+  },
+  "clockSkew": {
+    "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"
+  },
+  "common": {
+    "discardTitle": "放弃更改？",
+    "discard": "放弃",
+    "keepEditing": "继续编辑"
   }
 }

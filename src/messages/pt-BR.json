@@ -15,7 +15,9 @@
     "iosBetaHint": "Requer o app TestFlight gratuito da Apple",
     "signupCta": "Comece seu teste grátis",
     "haveAccount": "Já tem conta?",
-    "preferApp": "Prefere o app? Baixe aqui:"
+    "preferApp": "Prefere o app? Baixe aqui:",
+    "trialLine": "{days} dias grátis · sem cartão de crédito · depois {price}/mês",
+    "trialLineNoPrice": "{days} dias grátis · sem cartão de crédito"
   },
   "highlights": {
     "h1": "Agendamento inteligente",
@@ -2415,5 +2417,13 @@
     "signaturePrivate": "Ela fica privada e só é colocada nos documentos que você emite: nunca em cartazes, papéis timbrados ou documentos emitidos pela sua equipe.",
     "signatureLater": "Trocar ou remover a imagem afeta só os documentos emitidos depois.",
     "signatureWhere": "A imagem da sua assinatura aparece na cópia compartilhada com o paciente. Os documentos impressos mostram o seu carimbo digitado, para assinar à mão."
+  },
+  "clockSkew": {
+    "banner": "A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo."
+  },
+  "common": {
+    "discardTitle": "Descartar alterações?",
+    "discard": "Descartar",
+    "keepEditing": "Continuar editando"
   }
 }

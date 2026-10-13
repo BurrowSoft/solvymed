@@ -15,7 +15,9 @@
     "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
     "signupCta": "Bắt đầu dùng thử miễn phí",
     "haveAccount": "Đã có tài khoản?",
-    "preferApp": "Thích dùng ứng dụng? Tải về:"
+    "preferApp": "Thích dùng ứng dụng? Tải về:",
+    "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
+    "trialLineNoPrice": "Miễn phí {days} ngày · không cần thẻ tín dụng"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -2415,5 +2417,13 @@
     "signaturePrivate": "Hình này được giữ riêng tư và chỉ đặt trên tài liệu do bạn phát hành: không bao giờ trên áp phích, giấy tiêu đề hay tài liệu do nhóm của bạn phát hành.",
     "signatureLater": "Thay đổi hoặc xóa chỉ ảnh hưởng đến tài liệu phát hành sau đó.",
     "signatureWhere": "Hình chữ ký của bạn xuất hiện trên bản sao chia sẻ với bệnh nhân. Tài liệu in hiển thị con dấu đánh máy của bạn để ký tay."
+  },
+  "clockSkew": {
+    "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."
+  },
+  "common": {
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục sửa"
   }
 }
