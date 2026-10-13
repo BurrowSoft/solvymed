@@ -220,7 +220,7 @@
     "what": "The offline guard (1.9.0 item 1.2, specs/offline-guard.md) is live on BOTH platforms: the website's banner + guard on www AND the app's offline banner + guard in a RELEASED build (OTA or store). Gates Help K7 and the App Map's offline rule."
   },
   "share-intent-recording": {
-    "met": false,
+    "met": true,
     "what": "Migration 220 is applied on production: saves record the share intent (a new document's share_intended_at, create_prescription p_share, mark_share_intent after an edit or a correction). Invisible; it starts early so that on the day not-shared-marker-live flips, shares that failed in between show the mark too (02)."
   },
   "not-shared-marker-live": {
