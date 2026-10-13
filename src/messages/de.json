@@ -2215,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Wir haben unsere Datenschutzerklärung aktualisiert",
-    "body": "Sehen Sie, was sich am {date} geändert hat.",
+    "body": "Sehen Sie, was sich geändert hat.",
     "read": "Erklärung lesen",
     "ok": "OK",
     "close": "Schließen",

@@ -1,10 +1,11 @@
 import { LOCALES, expect, expectNoRawKeys, gotoIn, test } from "./harness";
-import { PRIVACY_VERSION, TERMS_VERSION, legalDateLabel } from "../../src/lib/legalVersions";
+import { PRIVACY_PUBLISHED, TERMS_PUBLISHED, legalDateLabel } from "../../src/lib/legalVersions";
 import ptBR from "../../src/messages/pt-BR.json";
 import en from "../../src/messages/en.json";
 import th from "../../src/messages/th.json";
 
-// The legal pages show the versions the code asks people to accept, and the
+// The legal pages show the day their text went live (the PUBLISHED dates,
+// never the version IDs; #531), and the
 // Founders page has its form, consent and privacy notice. No fixtures. The
 // Founders form is never submitted: /api/founders/apply is aborted, and the
 // test fails if a POST is even attempted.
@@ -15,12 +16,12 @@ const docLang = (code: string) => (code === "pt-BR" ? "pt-BR" : "en") as "pt-BR"
 const updatedPrefix = { "pt-BR": "Última atualização:", en: "Last updated:" } as const;
 
 for (const locale of LOCALES) {
-  for (const [path, version] of [["/privacy", PRIVACY_VERSION], ["/terms", TERMS_VERSION]] as const) {
-    test(`${path} shows version ${version} (${locale.code})`, async ({ page }) => {
+  for (const [path, published] of [["/privacy", PRIVACY_PUBLISHED], ["/terms", TERMS_PUBLISHED]] as const) {
+    test(`${path} shows its published date ${published} (${locale.code})`, async ({ page }) => {
       const res = await gotoIn(page, locale, path);
       expect(res?.status()).toBeLessThan(400);
       const lang = docLang(locale.code);
-      await expect(page.getByText(`${updatedPrefix[lang]} ${legalDateLabel(lang, version)}`)).toBeVisible();
+      await expect(page.getByText(`${updatedPrefix[lang]} ${legalDateLabel(lang, published)}`)).toBeVisible();
     });
   }
 
