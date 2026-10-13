@@ -2094,6 +2094,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartilhar com o paciente",
+    "notSharedYet": "Ainda não compartilhado",
+    "dontShare": "Não compartilhar",
     "shareChecking": "Verificando se o paciente vê esta cópia…",
     "shareCheckFailed": "Não foi possível verificar se o paciente vê esta cópia. Escolha se quer compartilhá-la.",
     "shared": "Compartilhado com o paciente",
@@ -2278,6 +2280,9 @@
   },
   "offline": {
     "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
+  },
+  "clockSkew": {
+    "banner": "A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo."
   },
   "common": {
     "discardTitle": "Descartar alterações?",
