@@ -153,3 +153,34 @@ describe("a network error in the share step is the generic failure, not the acce
     expect(await prescriptionSnapshotData(PAT, RX1)).toEqual({ ok: false, code: "generic" });
   });
 });
+
+describe("a late share, then Try again: no second copy of a new document (1.9.0, ec)", () => {
+  const share = (replacesSourceId: string | null) => shareSnapshot({
+    doctorId: "11111111-1111-4111-8111-111111111111", patientId: PAT, bytes: new Uint8Array([37, 80, 68, 70]),
+    source: "prescription", sourceId: RX1, replacesSourceId, folderKey: "prescriptions", title: "Receita 08/10/2026",
+  });
+
+  it("its live copy is already in the folder: done, nothing uploaded or registered", async () => {
+    h.log.length = 0; h.fnCalls.length = 0;
+    h.docs = [{ id: "d0000000-0000-4000-8000-00000000000d", source: "prescription", prescription_id: RX1, replaced: false }];
+    expect(await share(null)).toBe("shared");
+    expect(h.log).toEqual(["rpc:get_document_folders", "rpc:list_patient_documents"]);
+    expect(h.fnCalls).toHaveLength(0);
+  });
+
+  it("no live copy (none, replaced, or hidden by the doctor): shared as usual", async () => {
+    for (const docs of [[], [{ id: "x", source: "prescription", prescription_id: RX1, replaced: true }], [{ id: "y", source: "prescription", prescription_id: RX1, replaced: false, hidden_at: "2026-10-10T10:00:00Z" }]]) {
+      h.log.length = 0; h.fnCalls.length = 0;
+      h.docs = docs;
+      expect(await share(null)).toBe("shared");
+      expect(h.log).toEqual(["rpc:get_document_folders", "rpc:list_patient_documents", "upload", "fn:register"]);
+    }
+  });
+
+  it("an edit still replaces its copy (the check is for new documents only)", async () => {
+    h.log.length = 0; h.fnCalls.length = 0;
+    h.docs = [{ id: "d0000000-0000-4000-8000-00000000000d", source: "prescription", prescription_id: RX1, replaced: false }];
+    expect(await share(RX1)).toBe("shared");
+    expect(h.fnCalls[0]).toMatchObject({ replaces_id: "d0000000-0000-4000-8000-00000000000d" });
+  });
+});

@@ -58,3 +58,28 @@ export async function attempt<T>(fn: () => Promise<T>): Promise<{ ok: true; valu
     return { ok: false, network: isNetworkError(e) };
   }
 }
+
+// A call that may hang (a stalled upload): after `ms`, `onTimeout` instead.
+// The call itself isn't cancelled (the browser can't stop a server action);
+// the place shows its failure with a retry instead of waiting forever.
+export function timeLimit<T, F>(p: Promise<T>, ms: number, onTimeout: F): Promise<T | F> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => resolve(onTimeout), ms);
+    p.then((v) => { clearTimeout(timer); resolve(v); }, (e) => { clearTimeout(timer); reject(e); });
+  });
+}
+
+// A task that must not run twice at once (a share whose page gave up while
+// it was still running): calling again while a run is in flight returns that
+// same run; once it settles, the next call starts a new one.
+const WRAPPED = new WeakSet<object>();
+export function untilDone<T>(task: () => Promise<T>): () => Promise<T> {
+  if (WRAPPED.has(task)) return task;
+  let inflight: Promise<T> | null = null;
+  const once = () => {
+    if (!inflight) inflight = task().finally(() => { inflight = null; });
+    return inflight;
+  };
+  WRAPPED.add(once);
+  return once;
+}

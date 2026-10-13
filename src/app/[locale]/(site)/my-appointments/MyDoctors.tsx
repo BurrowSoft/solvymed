@@ -7,6 +7,7 @@ import type { MyDoctor } from "@/lib/myDoctors";
 import { shortDoctorName } from "@/lib/doctorName";
 import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent";
 import { connectDoctor, disconnectDoctor } from "./doctor-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // Minhas consultas → "Seu médico" / "Meus médicos" (1.5.0, migration 164;
 // behind liveFeatures.multiDoctor). Each doctor the patient connected to is
@@ -54,7 +55,7 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
   const image = doctor.logoUrl ?? doctor.photoUrl;
 
   const disconnect = () => start(async () => {
-    const r = await disconnectDoctor(doctor.id);
+    const r = await safeCall(() => disconnectDoctor(doctor.id), NETWORK_FAILURE);
     setConfirming(false);
     if (r.ok) { onNote({ kind: "ok", text: t("disconnected", { doctor: doctor.name }) }); router.refresh(); return; }
     if (r.code === "has_future_visits") { setBlocked(true); return; }
@@ -114,7 +115,9 @@ function AddDoctor({ onDone, onCancel }: { onDone: (n: { kind: "ok" | "error"; t
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     start(async () => {
-      const r = await connectDoctor(code);
+      const r = await safeCall(() => connectDoctor(code), { outcome: "network" } as const);
+      // No answer (1.9.0): try again, not "contact the clinic".
+      if (r.outcome === "network") { onDone({ kind: "error", text: tInvite("linkFailed") }); return; }
       if (r.outcome === "connected") { onDone({ kind: "ok", text: t("connected", { doctor: r.doctor }) }); router.refresh(); return; }
       if (r.outcome === "already_connected") { onDone({ kind: "ok", text: t("alreadyConnected", { doctor: r.doctor }) }); return; }
       onDone({ kind: "error", text: r.outcome === "too_many_attempts" ? tInvite("tooManyAttempts") : tInvite("codeUnavailable") });

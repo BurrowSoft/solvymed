@@ -214,5 +214,9 @@
   "clock-skew-live": {
     "met": false,
     "what": "The wrong-clock guard (1.9.0 item 1.7) is live on BOTH platforms: the website's ClockSkewGuard on www AND the app's version in a RELEASED build. Gates Help K8 and the App Map's wrong-clock rule."
+  },
+  "save-once-live": {
+    "met": true,
+    "what": "Saved once is live on BOTH platforms: the website's PR3 (#524) and its follow-up (#526) are merged, and the app's update (PR A, idempotent saves, migration 216; 01a13204) passed 78's row (02, 2026-10-13). A retry after a lost answer never makes a second record; a retry with changes shows \"already saved\" and the stored version (Help K9)."
   }
 }

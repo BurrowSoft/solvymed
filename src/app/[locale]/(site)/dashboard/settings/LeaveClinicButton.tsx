@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { leaveClinic } from "./team-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 export function LeaveClinicButton({ doctorName, locale }: { doctorName: string | null; locale: string }) {
   const t = useTranslations("secretary");
@@ -17,7 +18,7 @@ export function LeaveClinicButton({ doctorName, locale }: { doctorName: string |
     if (!ok) return;
     setError("");
     start(async () => {
-      const result = await leaveClinic();
+      const result = await safeCall(() => leaveClinic(), NETWORK_FAILURE);
       if (!result.ok) {
         setError(t("genericError"));
         return;

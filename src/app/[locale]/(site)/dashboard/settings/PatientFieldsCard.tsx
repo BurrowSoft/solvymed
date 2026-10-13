@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
 import { fieldsFor, ruleOf, type FieldKey, type FieldRule, type PatientFieldRules } from "@/lib/patientFields";
 import { savePatientFields } from "./patient-fields-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // 1.8.0 C1: Settings → "Cadastro do paciente" (doctors). A choice per detail:
 // Required / Optional / Hidden; name is always required (phone stays optional).
@@ -22,7 +23,7 @@ export function PatientFieldsCard({ rules, country }: { rules: PatientFieldRules
   function save(next: Record<FieldKey, FieldRule>) {
     setStatus("");
     start(async () => {
-      const r = await savePatientFields(next);
+      const r = await safeCall(() => savePatientFields(next), NETWORK_FAILURE);
       setStatus(r.ok ? "saved" : "failed");
     });
   }

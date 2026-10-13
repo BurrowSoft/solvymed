@@ -16,8 +16,6 @@ import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadMyDocumentDoctors } from "./document-actions";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
-import { PRIVACY_VERSION } from "@/lib/legalVersions";
-import { formatDateLabel } from "@/lib/dateLabels";
 
 export type PatientAppointment = {
   // 1.8.0 F (migration 200): the visit's location, only with 2+ shown.
@@ -178,9 +176,7 @@ export default async function MyAppointmentsPage({
     ...(doctors ?? []).filter((d) => d.id !== myProfessionalId).map((d) => ({ id: d.id, name: d.name })),
   ];
   const selfPrompts = await loadSelfFieldPrompts(supabase, selfDoctors);
-  const privacyNoticeDate = privacyNoticeDue(await readAcceptedPrivacy(supabase))
-    ? formatDateLabel(locale, PRIVACY_VERSION, { day: "numeric", month: "long", year: "numeric" })
-    : null;
+  const privacyNotice = privacyNoticeDue(await readAcceptedPrivacy(supabase));
 
   return (
     <>
@@ -189,7 +185,7 @@ export default async function MyAppointmentsPage({
     <ClockSkewGuard />
     <MyAppointmentsClient
       connectedClinicName={connectedClinicName}
-      privacyNoticeDate={privacyNoticeDate}
+      privacyNotice={privacyNotice}
       selfPrompts={selfPrompts}
       upcoming={upcoming ?? []}
       past={past ?? []}

@@ -11,7 +11,7 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
-import { localDay } from "@/lib/patientDocuments";
+import { localDay, SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -21,7 +21,7 @@ import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type
 import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
-import { loadPatientDocuments } from "../documents-actions";
+import { copySharedNow, loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -31,7 +31,7 @@ import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
-import { safeCall, NETWORK_ERROR, NETWORK_FAILURE } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -799,6 +799,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const [lastSwitch, setLastSwitch] = useState<{ fromId: string; sections: SectionsState; freeText: string } | null>(null);
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
+  const tsave = useTranslations("save");
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -806,8 +807,16 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(records);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
+  // The try number for that id (a retry after the form changed: 216, c5).
+  const tries = useRef(0);
   function open(d: RecordDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
+    tries.current = 0;
     // A record written with sections is edited / corrected with the same ones.
     const own = d.mode !== "new" ? d.record.sections : null;
     setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
@@ -849,13 +858,19 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
       formData.set("template_name", sections.templateName ?? "");
     }
     setError("");
+    formData.set("client_id", clientId.current);
+    formData.set("client_try", String(++tries.current));
     startTransition(async () => {
       const result =
         dialog.mode === "new" ? await safeCall(() => createRecord(patientId, formData), NETWORK_ERROR)
         : dialog.mode === "edit" ? await safeCall(() => updateRecord(dialog.record.id, patientId, formData), NETWORK_ERROR)
         : await safeCall(() => addRecordCorrection(dialog.record.id, patientId, formData), NETWORK_ERROR);
+      // The id was someone else's: a new one for the next try.
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
       setDialog(null);
+      // Saved before the last changes: the list shows the saved version.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) setListError(tsave("alreadySavedChanged"));
     });
   }
 
@@ -1048,15 +1063,22 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       for (const el of others) el.removeAttribute("inert");
     };
   }, [sharing]);
+  const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
+    // One run at a time for a document: Try again waits for a run that timed
+    // out on the page but is still going (ec; the app's shareUntilDone),
+    // instead of starting a second one that could adopt its upload.
+    const run = untilDone(make);
     setShareIssue(null);
     setSharing(true);
     let outcome: string;
-    try { outcome = await make(); } catch { outcome = "failed"; } finally { setSharing(false); }
+    // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
+    // "couldn't share" + Try again, never an endless modal over the page.
+    try { outcome = await timeLimit(run(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
-      retry: outcome === "storageFull" ? null : () => { void runShare(make); },
+      retry: outcome === "storageFull" ? null : () => { void runShare(run); },
     });
   }
   function shareRx(rxId: string, correctsId: string | null) {
@@ -1161,35 +1183,80 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   }
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
+  // The practice's time zone: the document dialog's default dates are its today.
+  const timeZone = useContext(TimeZoneContext);
+  const tsave = useTranslations("save");
   const [dialog, setDialog] = useState<RxDialog | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [listError, setListError] = useState("");
   const [medications, setMedications] = useState<MedRow[]>([medRow()]);
-  // "Compartilhar com o paciente" (1.8.0 B2): ON by default.
+  // "Compartilhar com o paciente" (1.8.0 B2): ON for a new one; editing /
+  // correcting, as its patient copy is now (1.9.0, 02): off until known,
+  // and the doctor's own click wins.
   const [shareRxOn, setShareRxOn] = useState(true);
+  const shareRxTouched = useRef(false);
+  // Editing / correcting: the box and Save wait for the copy's state; when
+  // it can't be read the doctor chooses (ec, #528).
+  const [shareRxState, setShareRxState] = useState<"known" | "checking" | "unknown">("known");
+  const shareRxWaits = canShare && !!dialog && shareRxState !== "known";
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
+  // The try number for that id (a retry after the form changed: 216, c5).
+  const tries = useRef(0);
   function open(d: RxDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
+    tries.current = 0;
     const items = d.mode === "new" ? [] : d.rx.prescription_items;
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
-    setShareRxOn(true);
+    shareRxTouched.current = false;
+    setShareRxOn(d.mode === "new");
+    setShareRxState(d.mode !== "new" && canShare ? "checking" : "known");
+    openRx.current = d.mode === "new" ? null : d.rx.id;
     setDialog(d);
+    if (d.mode !== "new" && canShare) {
+      const rxId = d.rx.id;
+      const done = (s: "on" | "off" | "unknown") => { if (!shareRxTouched.current) setDialogShare(rxId, s); };
+      timeLimit(copySharedNow(patientId, "prescription", rxId), SHARE_CHECK_MS, "unknown" as const).then(done, () => done("unknown"));
+    }
+  }
+  // Only while that dialog is still the one open.
+  const openRx = useRef<string | null>(null);
+  useEffect(() => { openRx.current = dialog && dialog.mode !== "new" ? dialog.rx.id : null; }, [dialog]);
+  function setDialogShare(rxId: string, s: "on" | "off" | "unknown") {
+    if (openRx.current !== rxId) return;
+    if (s === "unknown") { setShareRxState("unknown"); return; }
+    setShareRxOn(s === "on");
+    setShareRxState("known");
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!dialog) return;
+    if (!dialog || shareRxWaits) return;
     const formData = new FormData(formRef.current!);
     setError("");
+    formData.set("client_id", clientId.current);
+    formData.set("client_try", String(++tries.current));
     startTransition(async () => {
       const result =
         dialog.mode === "new" ? await safeCall(() => createPrescription(patientId, formData), NETWORK_ERROR)
         : dialog.mode === "edit" ? await safeCall(() => updatePrescription(dialog.rx.id, patientId, formData), NETWORK_ERROR)
         : await safeCall(() => addPrescriptionCorrection(dialog.rx.id, patientId, formData), NETWORK_ERROR);
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
+      // Saved before the last changes: the saved version stays (shown in the
+      // list), nothing is shared from this form.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) {
+        setDialog(null);
+        setListError(tsave("alreadySavedChanged"));
+        return;
+      }
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
       const sharing = canShare && shareRxOn && !!savedId;
@@ -1324,8 +1391,10 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               hasPatientId={medicalDocs.hasPatientId}
               onClose={closeDoc}
               onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
+              onAlreadySaved={() => { discardDoc(); setListError(tsave("alreadySavedChanged")); }}
               canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}
+              timeZone={timeZone}
               reasonField={<ReasonField />}
             />
           )}
@@ -1364,15 +1433,21 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           </div>
           {dialog?.mode === "correct" && <ReasonField />}
           {canShare && dialog && (
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" checked={shareRxOn} onChange={(e) => setShareRxOn(e.target.checked)} className="h-4 w-4 accent-teal-600" />
-              {tdocs("share")}
-            </label>
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" data-testid="share-rx-with-patient" checked={shareRxOn} disabled={shareRxState === "checking"}
+                  ref={(el) => { if (el) el.indeterminate = shareRxState === "unknown"; }}
+                  onChange={(e) => { shareRxTouched.current = true; setShareRxState("known"); setShareRxOn(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+                {tdocs("share")}
+              </label>
+              {shareRxState === "checking" && <p role="status" className="mt-1 text-xs text-slate-500">{tdocs("shareChecking")}</p>}
+              {shareRxState === "unknown" && <p role="alert" className="mt-1 text-xs text-amber-700">{tdocs("shareCheckFailed")}</p>}
+            </div>
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending || shareRxWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : dialog?.mode === "correct" ? t("addCorrection") : t("savePrescription")}
             </button>
           </div>

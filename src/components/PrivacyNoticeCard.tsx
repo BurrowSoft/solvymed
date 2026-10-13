@@ -6,11 +6,13 @@ import { Link } from "@/i18n/navigation";
 import { DISMISS_KEY } from "@/lib/privacyNotice";
 import { acknowledgePrivacyNotice } from "@/lib/privacyNoticeActions";
 import { useTour } from "@/components/tour/TourProvider";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // "We've updated our Privacy Policy" (cf, 6 Oct): shown by the page only when
 // the caller's accepted version is older (lib/privacyNotice). "OK" records
 // it; the X hides it for this browser session only. Never blocks anything.
-export function PrivacyNoticeCard({ date, locale }: { date: string; locale: string }) {
+// No date (02, 10-13): a version is an ID, not the day the text changed.
+export function PrivacyNoticeCard({ locale }: { locale: string }) {
   const t = useTranslations("privacyNotice");
   const [hidden, setHidden] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -33,7 +35,7 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
   function ok() {
     setFailed(false);
     start(async () => {
-      const r = await acknowledgePrivacyNotice(locale);
+      const r = await safeCall(() => acknowledgePrivacyNotice(locale), NETWORK_FAILURE);
       if (r.ok) setHidden(true);
       else setFailed(true);
     });
@@ -44,7 +46,7 @@ export function PrivacyNoticeCard({ date, locale }: { date: string; locale: stri
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-sm font-bold text-teal-900">{t("title")}</p>
-          <p className="mt-1 text-sm text-teal-900">{t("body", { date })}</p>
+          <p className="mt-1 text-sm text-teal-900">{t("body")}</p>
         </div>
         <button type="button" onClick={close} aria-label={t("close")} className="shrink-0 rounded-lg px-2 py-1 text-lg leading-none text-teal-800 hover:bg-teal-100">×</button>
       </div>

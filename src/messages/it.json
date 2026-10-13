@@ -2092,6 +2092,8 @@
       "internal": "Documenti interni"
     },
     "share": "Condividi con il paziente",
+    "shareChecking": "Checking whether the patient sees this copy…",
+    "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Condiviso con il paziente",
     "notShared": "Solo tu puoi vederlo",
     "replacedByNewer": "Sostituito da una copia più recente",
@@ -2187,6 +2189,7 @@
     "findings": "Esito / parere",
     "rest": "Deve riposare",
     "refill": "Compila di nuovo il testo",
+    "textMayNotMatch": "The text may not match the fields you changed.",
     "items": "Farmaci",
     "itemName": "Farmaco",
     "dose": "Dose",
@@ -2212,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Abbiamo aggiornato la nostra Informativa sulla privacy",
-    "body": "Scopri cosa è cambiato il {date}.",
+    "body": "Scopri cosa è cambiato.",
     "read": "Leggi l'informativa",
     "ok": "OK",
     "close": "Chiudi",
@@ -2267,6 +2270,9 @@
     "zoomIn": "Ingrandisci",
     "zoomOut": "Riduci",
     "adjust": "Regola"
+  },
+  "save": {
+    "alreadySavedChanged": "This was already saved before your last changes. Your later changes weren't applied; check the saved version."
   },
   "offline": {
     "banner": "Nessuna connessione a Internet. Puoi vedere ciò che è aperto, ma le modifiche non verranno salvate."
