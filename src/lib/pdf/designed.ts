@@ -25,17 +25,20 @@ export type DesignedInput = {
     locations: { name: string; lines: string[] }[];
   };
   logos: { square: Uint8Array | null; wide: Uint8Array | null; reversed: Uint8Array | null };
-  doc: {
-    title: string;
-    patientLabel: string;
-    patientName: string;
-    dateLabel: string;
-    date: string;
-    items: { name: string; form?: string | null; instructions: string }[];
-    notesLabel: string;
-    notes: string | null;
-  };
+  // What the document says, as blocks (lib/studio/content builds them per
+  // document type, in the order today's PDFs use).
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null };
 };
+
+export type DocBlock =
+  | { kind: "fields"; cells: [string, string][] }
+  | { kind: "items"; items: { name: string; form?: string | null; instructions: string }[] }
+  | { kind: "notes"; label: string; text: string }
+  | { kind: "section"; label: string }
+  | { kind: "paragraph"; text: string; muted?: boolean; bold?: boolean }
+  | { kind: "bullets"; items: string[] }
+  | { kind: "checked"; text: string }
+  | { kind: "dateLine"; text: string };
 
 type Ctx = {
   pdf: PDFDocument;
@@ -192,10 +195,9 @@ function drawTitle(c: Ctx, title: string) {
   }
 }
 
-function drawFields(c: Ctx, input: DesignedInput) {
+function drawFields(c: Ctx, cells: [string, string][]) {
   const f = c.d.field;
   const half = (c.width - 18) / 2;
-  const cells: [string, string][] = [[input.doc.patientLabel, input.doc.patientName], [input.doc.dateLabel, input.doc.date]];
   const top = c.y;
   let bottom = top;
   cells.forEach(([label, value], i) => {
@@ -223,8 +225,8 @@ function drawFields(c: Ctx, input: DesignedInput) {
   c.y = bottom;
 }
 
-function drawItems(c: Ctx, input: DesignedInput) {
-  input.doc.items.forEach((it, i) => {
+function drawItems(c: Ctx, items: { name: string; form?: string | null; instructions: string }[]) {
+  items.forEach((it, i) => {
     const head = it.form ? `${it.name} · ${it.form}` : it.name;
     if (c.p.items === "numbered") {
       const r = 9.75;
@@ -251,16 +253,48 @@ function drawItems(c: Ctx, input: DesignedInput) {
     }
     c.y -= c.p.gap * 0.55;
   });
-  if (input.doc.notes) {
-    if (c.p.title === "bar" && c.d.sectionBar.fill !== "none") {
-      drawTitle(c, input.doc.notesLabel);
-      c.y -= 6;
-      line(c, input.doc.notes, { size: c.p.size.body });
-    } else if (c.p.header === "nameOnly") {
-      line(c, input.doc.notes, { size: c.p.size.body, color: c.muted });
-    } else {
-      line(c, `${input.doc.notesLabel}: ${input.doc.notes}`, { size: c.p.size.body });
+}
+
+function drawNotes(c: Ctx, label: string, text: string) {
+  if (c.p.title === "bar" && c.d.sectionBar.fill !== "none") {
+    drawTitle(c, label);
+    c.y -= 6;
+    line(c, text, { size: c.p.size.body });
+  } else if (c.p.header === "nameOnly") {
+    line(c, text, { size: c.p.size.body, color: c.muted });
+  } else {
+    line(c, `${label}: ${text}`, { size: c.p.size.body });
+  }
+}
+
+// A section heading inside the document (e.g. "I request:", the findings):
+// the layout's section bar when it has one, else a bold line.
+function drawSection(c: Ctx, label: string) {
+  if (c.p.title === "bar" && c.d.sectionBar.fill !== "none") { drawTitle(c, label); c.y -= 6; }
+  else line(c, label, { size: c.p.size.body, bold: true });
+}
+
+function drawBlock(c: Ctx, b: DocBlock) {
+  const body = c.p.size.body;
+  switch (b.kind) {
+    case "fields": drawFields(c, b.cells); c.y -= c.p.gap; return;
+    case "items": drawItems(c, b.items); return;
+    case "notes": drawNotes(c, b.label, b.text); return;
+    case "section": drawSection(c, b.label); return;
+    case "paragraph": line(c, b.text, { size: body, color: b.muted ? c.muted : c.ink, bold: b.bold, spacing: 1.55 }); c.y -= c.p.gap * 0.4; return;
+    case "bullets": for (const t of b.items) line(c, `•  ${t}`, { size: body, x: c.left + 12, width: c.width - 12 }); c.y -= c.p.gap * 0.4; return;
+    case "checked": {
+      const s = body * 0.75;
+      const y0 = c.y;
+      line(c, b.text, { size: body, x: c.left + s + 8, width: c.width - s - 8 });
+      const by = y0 - body * 1.4 + body * 0.2;
+      c.page.drawRectangle({ x: c.left, y: by, width: s, height: s, borderColor: c.ink, borderWidth: 0.75 });
+      c.page.drawLine({ start: { x: c.left + s * 0.2, y: by + s * 0.5 }, end: { x: c.left + s * 0.42, y: by + s * 0.22 }, thickness: 1, color: c.ink });
+      c.page.drawLine({ start: { x: c.left + s * 0.42, y: by + s * 0.22 }, end: { x: c.left + s * 0.85, y: by + s * 0.82 }, thickness: 1, color: c.ink });
+      c.y -= c.p.gap * 0.4;
+      return;
     }
+    case "dateLine": c.y -= c.p.gap * 0.4; line(c, b.text, { size: body, align: "right" }); return;
   }
 }
 
@@ -342,6 +376,8 @@ function drawBottom(c: Ctx, input: DesignedInput) {
   line(c, input.practice.displayName, { size: c.p.size.body, bold: true, x: sx, width: sig.width, align: sig.align });
   const cred = [input.practice.specialty, input.practice.registrationLine].filter(Boolean).join(" · ");
   if (cred) line(c, cred, { size: c.p.size.small, x: sx, width: sig.width, align: sig.align, color: c.muted });
+  // A patient's copy (unsigned): its line under the signature block.
+  if (input.doc.unsignedLine) line(c, input.doc.unsignedLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
 }
 
 export async function renderDesignedDocument(input: DesignedInput, fontBytes: FontBytes): Promise<Uint8Array> {
@@ -368,9 +404,7 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
   c.y -= p.gap;
   drawTitle(c, input.doc.title);
   c.y -= p.gap * 0.6;
-  drawFields(c, input);
-  c.y -= p.gap;
-  drawItems(c, input);
+  for (const b of input.doc.blocks) drawBlock(c, b);
   drawBottom(c, input);
   return pdf.save();
 }

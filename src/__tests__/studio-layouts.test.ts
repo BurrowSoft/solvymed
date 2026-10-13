@@ -7,6 +7,7 @@ import { renderDesignedDocument } from "@/lib/pdf/designed";
 import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { validateDesign } from "@/lib/studio/design";
 import { LAYOUT_PRESETS, presetFor } from "@/lib/studio/layouts";
+import { medicalDocumentContent, prescriptionContent } from "@/lib/studio/content";
 import { compareGolden, GOLDEN_TOLERANCE, renderPdfPage } from "./helpers/golden";
 
 // Document Studio PR2: the four approved layouts (specs/studio-layouts),
@@ -37,7 +38,7 @@ async function render(design: Parameters<typeof renderDesignedDocument>[0]["desi
     design, locale: "pt-BR",
     practice: { displayName: pr.displayName, specialty: pr.specialty, registrationLine: pr.registrationLine, clinicName: pr.clinicName, locations: pr.locations },
     logos: { square: ring(design.palette.primary), wide: null, reversed: ring("#F5F5F0") },
-    doc: { title: doc.title, patientLabel: "Paciente", patientName: doc.patientName, dateLabel: "Data", date: "12/10/2026", items: doc.items, notesLabel: "Orientações", notes: doc.notes },
+    doc: prescriptionContent({ title: doc.title, patientLabel: "Paciente", patientName: doc.patientName, dateLabel: "Data", date: "12/10/2026", items: doc.items, notesLabel: "Orientações", notes: doc.notes }),
   }, await loadDesignFontBytes(design.font, async (p) => read(p)));
 }
 
@@ -57,4 +58,28 @@ describe("Studio layouts", () => {
       expect(r.diffRatio).toBeLessThanOrEqual(GOLDEN_TOLERANCE);
     }, 60_000);
   }
+});
+
+// Every designable document type draws through the same blocks, with its
+// own wording (lib/studio/content, the same as today's PDFs).
+describe("Studio layouts: the other document types", () => {
+  const designs = (name: string) => JSON.parse(readFileSync(join(FIX, "designs", `${name}.json`), "utf8"));
+  const pr = sample.practice;
+  const renderWith = async (design: ReturnType<typeof designs>, locale: string, doc: ReturnType<typeof medicalDocumentContent>) =>
+    renderDesignedDocument({
+      design, locale,
+      practice: { displayName: pr.displayName, specialty: pr.specialty, registrationLine: pr.registrationLine, clinicName: pr.clinicName, locations: pr.locations },
+      logos: { square: ring(design.palette.primary), wide: null, reversed: ring("#F5F5F0") },
+      doc,
+    }, await loadDesignFontBytes(design.font, async (p) => read(p)));
+  const base = { issued: "2026-10-12", city: "São Paulo", place: "Clínica Vida Plena", signerName: pr.displayName, unsignedLine: null };
+
+  it.each([
+    ["certificate-classic", "classic", "pt-BR", medicalDocumentContent({ ...base, type: "certificate", lang: "pt-BR", fields: { variant: "absence", date: "2026-10-12", days: 2, start: "2026-10-12", includeCid: true, cid: "J06.9" }, body: "Atesto, para os devidos fins, que Beatriz Almeida esteve sob meus cuidados nesta data e necessita de 2 (dois) dias de afastamento de suas atividades.", patientName: "Beatriz Almeida", patientId: { label: "CPF", value: "000.000.000-00" } })],
+    ["exam-request-elegant", "elegant", "pt-BR", medicalDocumentContent({ ...base, type: "exam_request", lang: "pt-BR", fields: { exams: ["Hemograma completo", "Glicemia de jejum", "TSH"], indication: "Check-up anual", cid: "Z00.0" }, body: "", patientName: "Beatriz Almeida", patientId: null })],
+    ["th-certificate-modern", "modern", "th", medicalDocumentContent({ ...base, type: "th_certificate", lang: "th", fields: { examDate: "2026-10-12", rest: { days: 2, start: "2026-10-12", end: "2026-10-13" } }, body: "มีไข้และเจ็บคอ ควรพักผ่อน", city: "", place: "คลินิกวิดาเปลนา", patientName: "สมหญิง ใจดี", patientId: { label: "เลขประจำตัวประชาชน", value: "1-2345-67890-12-3" }, licenceNo: "ว.12345", unsignedLine: "สำเนาไม่มีลายมือชื่อ สำหรับผู้ป่วยใช้อ้างอิง" })],
+  ] as const)("%s", async (name, layout, locale, doc) => {
+    const png = await renderPdfPage(await renderWith(designs(layout), locale, doc), 0, 1);
+    expect(compareGolden(`studio-${name}`, png).diffRatio).toBeLessThanOrEqual(GOLDEN_TOLERANCE);
+  }, 60_000);
 });
