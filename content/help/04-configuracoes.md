@@ -333,3 +333,27 @@ Thai title: "ข้อมูลผู้ป่วย"
 {pending:c2-patient-step-live} ผู้ป่วยที่มีบัญชีจะเห็นการ์ด "{แพทย์} ขอข้อมูลเพิ่มเติม" ใน นัดหมายของฉัน เมื่อข้อมูลที่จำเป็นในแฟ้มของตนยังว่างอยู่: **กรอกข้อมูล** จะเปิดเฉพาะช่องเหล่านั้น (โดยไม่แสดงข้อมูลที่คุณมีอยู่แล้ว) และสิ่งที่ผู้ป่วยกรอกจะเข้าแฟ้มและถูกบันทึกใน **บันทึกการเข้าถึง** **ไว้ภายหลัง** จะซ่อนการ์ดจนกว่าคุณจะกำหนดให้ข้อมูลอื่นเป็นข้อมูลที่จำเป็น หมายเหตุภายในจะไม่ถูกขอจากผู้ป่วย และการ์ดจะไม่ขัดขวางการขอนัด
 `open:settings-patient-fields`
 `requires:patient-fields-live`
+
+---
+## C17. Document Studio / Document Studio
+**pt-BR**
+Em **Configurações → Minha marca → Document Studio**, escolha a aparência de todos os seus documentos: o **Modelo** (Clássico, Elegante, Moderno ou Minimalista; novos modelos são adicionados regularmente), as **Cores** (quatro paletas prontas ou a sua **Cor principal**, **Destaque** e **Fundo**), a **Fonte** (Sarabun, Trirong ou Prompt), como aparece o seu **Nome**, o **Logo no cabeçalho** e, se quiser, o logo suave atrás do texto, as **Faixas de seção**, os **Campos de paciente e data**, o **Rodapé** (1 a 3 colunas, os seus locais de atendimento e até 6 contatos: telefone, WhatsApp, LINE, Instagram, site ou e-mail) e a **Faixa inferior**. Os **Textos de cabeçalho e rodapé** são definidos por tipo de documento.
+Escolher um modelo aplica a aparência sugerida dele (fonte, faixas de seção, campos e faixa inferior); as suas cores, o logo, o rodapé e os textos continuam, e tudo pode ser mudado depois.
+A **Prévia** mostra uma receita de exemplo com as suas escolhas, como ela sai no PDF. Em **Salvar design**, os documentos que você abrir, imprimir ou compartilhar a partir daí usam o novo visual; as cópias já compartilhadas com pacientes mantêm o visual com que foram compartilhadas.
+O nome, a especialidade, o registro e os logos vêm de **Minha marca**. No Brasil, a receita de controle especial mantém o layout legal; na Tailândia, o recibo.
+Se o design foi alterado em outro lugar (outro aparelho ou outra aba) depois que você abriu a página, **Salvar design** não sobrescreve: aparece um aviso para recarregar a página. Só o médico edita o design.
+**en**
+In **Settings → My brand → Document Studio**, choose the look of all your documents: the **Layout** (Classic, Elegant, Modern or Minimal; more layouts are added regularly), the **Colours** (four ready-made palettes, or your own **Main colour**, **Accent** and **Background**), the **Typeface** (Sarabun, Trirong or Prompt), how your **Name** appears, the **Logo in the header** and, if you like, the logo shown faintly behind the text, the **Section bars**, the **Patient and date fields**, the **Footer** (1 to 3 columns, your practice locations and up to 6 contacts: phone, WhatsApp, LINE, Instagram, website or e-mail) and the **Bottom band**. The **Header and footer texts** are set per document type.
+Picking a layout applies its suggested look (typeface, section bars, fields and bottom band); your colours, logo, footer and texts stay, and you can change everything afterwards.
+The **Preview** shows a sample prescription with your choices, as it comes out in the PDF. After **Save design**, the documents you open, print or share from then on use the new look; copies already shared with patients keep the look they were shared with.
+The name, specialty, registration and logos come from **My brand**. In Brazil, the special control prescription keeps its legal layout; in Thailand, the receipt does.
+If the design was changed elsewhere (another device or tab) after you opened the page, **Save design** doesn't overwrite it: a message asks you to reload the page. Only the doctor edits the design.
+Thai title: "Document Studio"
+**th**
+ใน **การตั้งค่า → แบรนด์ของฉัน → Document Studio** เลือกรูปลักษณ์ของเอกสารทั้งหมดของคุณ ได้แก่ **รูปแบบ** (คลาสสิก สง่างาม ทันสมัย หรือมินิมอล และมีรูปแบบใหม่เพิ่มเข้ามาเรื่อย ๆ) **สี** (ชุดสีสำเร็จรูปสี่ชุด หรือ **สีหลัก** **สีเน้น** และ **พื้นหลัง** ของคุณเอง) **แบบอักษร** (Sarabun, Trirong หรือ Prompt) การแสดง **ชื่อ** **โลโก้ที่ส่วนหัว** และโลโก้จาง ๆ ด้านหลังข้อความ (ถ้าต้องการ) **แถบหัวข้อ** **ช่องผู้ป่วยและวันที่** **ส่วนท้าย** (1 ถึง 3 คอลัมน์ สถานที่ให้บริการ และช่องทางติดต่อได้สูงสุด 6 รายการ: โทรศัพท์ WhatsApp LINE Instagram เว็บไซต์ หรืออีเมล) และ **แถบด้านล่าง** ส่วน **ข้อความส่วนหัวและส่วนท้าย** กำหนดแยกตามประเภทเอกสาร
+การเลือกรูปแบบจะใช้รูปลักษณ์ที่แนะนำของรูปแบบนั้น (แบบอักษร แถบหัวข้อ ช่องข้อมูล และแถบด้านล่าง) โดยสี โลโก้ ส่วนท้าย และข้อความของคุณยังคงอยู่ และเปลี่ยนทุกอย่างได้ภายหลัง
+**ตัวอย่าง** แสดงใบสั่งยาตัวอย่างตามที่คุณเลือก เหมือนกับที่ออกมาใน PDF เมื่อกด **บันทึกการออกแบบ** เอกสารที่คุณเปิด พิมพ์ หรือแชร์หลังจากนั้นจะใช้รูปลักษณ์ใหม่ ส่วนสำเนาที่แชร์กับผู้ป่วยไปแล้วจะคงรูปลักษณ์เดิมตอนที่แชร์
+ชื่อ สาขาความเชี่ยวชาญ เลขที่ใบอนุญาต และโลโก้มาจาก **แบรนด์ของฉัน** ในบราซิล ใบสั่งยาควบคุมพิเศษยังคงใช้รูปแบบตามกฎหมาย และในประเทศไทย ใบเสร็จรับเงินก็เช่นกัน
+หากการออกแบบถูกแก้ไขจากที่อื่น (อุปกรณ์หรือแท็บอื่น) หลังจากที่คุณเปิดหน้านี้ **บันทึกการออกแบบ** จะไม่เขียนทับ แต่จะแสดงข้อความให้โหลดหน้าใหม่ เฉพาะแพทย์เท่านั้นที่แก้ไขการออกแบบได้
+`open:settings-studio`
+`requires:document-studio-live`

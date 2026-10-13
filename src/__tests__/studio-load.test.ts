@@ -7,7 +7,7 @@ import type { LegacyStyle } from "@/lib/studio/resolve";
 // saved, valid design, every document is drawn exactly as today.
 
 const cond = vi.hoisted(() => ({ live: false }));
-vi.mock("@/lib/conditions", () => ({ conditionMet: (id: string) => id === "document-studio-live" && cond.live }));
+vi.mock("@/lib/studio/live", () => ({ studioEnabled: async () => cond.live }));
 
 import { designDocType, documentStyle, loadPracticeDesign } from "@/lib/studio/load";
 

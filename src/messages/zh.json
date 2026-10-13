@@ -2281,6 +2281,99 @@
   "offline": {
     "banner": "没有网络连接。您可以查看已打开的内容，但更改不会被保存。"
   },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "让您的文件呈现诊所的风格。所有文件都采用同一风格。",
+    "legalNote": {
+      "BR": "特殊管控处方保留法定版式。",
+      "TH": "收据保留法定版式。"
+    },
+    "layout": "版式",
+    "layouts": {
+      "classic": "经典",
+      "elegant": "雅致",
+      "modern": "现代",
+      "minimal": "极简"
+    },
+    "moreLayouts": "我们会定期添加新版式。",
+    "unknownLayout": "此设计使用了较新版本的版式。在您选择其他版式之前，这里将显示为经典版式。",
+    "colours": "颜色",
+    "presets": {
+      "solvymed": "SolvyMed 蓝",
+      "sageSand": "鼠尾草绿与沙色",
+      "forestCream": "森林绿与奶油色",
+      "navyGold": "藏青与金色",
+      "custom": "自定义"
+    },
+    "palette": {
+      "primary": "主色",
+      "accent": "强调色",
+      "light": "背景"
+    },
+    "typeface": "字体",
+    "nameStyle": "姓名",
+    "nameStyles": {
+      "regular": "常规",
+      "spaced": "宽间距大写",
+      "large": "大号"
+    },
+    "logo": "页眉中的标志",
+    "logos": {
+      "wide": "横版标志",
+      "square": "方形标志",
+      "reversed": "反色标志",
+      "none": "无标志"
+    },
+    "watermark": "在文字后方淡淡显示标志",
+    "sizes": {
+      "s": "小",
+      "m": "中",
+      "l": "大"
+    },
+    "sectionBars": "分节色条",
+    "sectionFills": {
+      "none": "无",
+      "primary": "主色",
+      "accent": "强调色"
+    },
+    "fields": "患者和日期栏",
+    "fieldStyles": {
+      "plain": "简洁",
+      "underline": "下划线",
+      "box": "方框"
+    },
+    "footer": "页脚",
+    "columns": "栏数",
+    "showLocations": "显示诊所地点",
+    "contacts": "联系方式",
+    "addContact": "添加联系方式",
+    "contactKinds": {
+      "phone": "电话",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "网站",
+      "email": "电子邮件"
+    },
+    "band": "底部色带",
+    "bandStyles": {
+      "none": "无",
+      "flat": "平直",
+      "twoTone": "双色",
+      "rounded": "圆弧",
+      "angled": "斜角"
+    },
+    "texts": "页眉和页脚文字",
+    "headerText": "页眉文字",
+    "footerText": "页脚文字",
+    "preview": "预览",
+    "previewNote": "示例数据。您的实际文件将使用患者的信息。",
+    "previewFailed": "无法显示预览。您仍可保存设计。",
+    "save": "保存设计",
+    "saved": "设计已保存。从现在起您的文件将使用此设计。",
+    "conflict": "此设计已在其他地方被修改。请重新加载以查看最新版本。",
+    "error": "无法保存。请重试。"
+  },
   "clockSkew": {
     "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"
   },

@@ -190,6 +190,8 @@ const WEB_SCREENS: Record<string, string> = {
   "settings-team": "/dashboard/settings#team",
   "settings-financial": "/dashboard/settings#clinic",
   "settings-patient-fields": "/dashboard/settings#patient-fields",
+  // Document Studio (C17): its own page on the web, opened from My brand.
+  "settings-studio": "/dashboard/settings/studio",
   // The practice's clinics and locations (C15): their own page on the web;
   // the app opens Settings → My Clinic ({ section: "clinic" }, 42).
   "settings-clinic": "/dashboard/clinics",

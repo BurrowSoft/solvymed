@@ -27,7 +27,10 @@ export type DesignedInput = {
   logos: { square: Uint8Array | null; wide: Uint8Array | null; reversed: Uint8Array | null };
   // What the document says, as blocks (lib/studio/content builds them per
   // document type, in the order today's PDFs use).
-  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null };
+  // headerText / footerText: the design's texts for this document type
+  // (design.texts, carried over from Document Templates): a muted line under
+  // the title, a small line above the footer.
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null };
 };
 
 export type DocBlock =
@@ -367,6 +370,16 @@ function drawBottom(c: Ctx, input: DesignedInput) {
     c.y = base + footerH + 6;
     rule(c, hexColor("#D9DED9"), 0.75);
   }
+  // The type's footer text: above the footer (and its rule); the signature
+  // moves up by its height.
+  const footerText = input.doc.footerText?.trim();
+  if (footerText) {
+    const n = wrapText(footerText, c.fonts.regular, size, c.width, c.locale).length;
+    const top = base + footerH + (groups.length ? 12 : 0) + n * lh;
+    c.y = top;
+    line(c, footerText, { size, color: c.muted, spacing: 1.5 });
+    footerH = top - base;
+  }
   // Sidebar layouts put the contacts in the column.
   if (c.p.sidebar > 0 && c.d.footer.contacts.length) {
     const saved = { left: c.left, width: c.width, y: c.y };
@@ -411,6 +424,11 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
   drawHeader(c, input, headerLogo(c, logos));
   c.y -= p.gap;
   drawTitle(c, input.doc.title);
+  const headerText = input.doc.headerText?.trim();
+  if (headerText) {
+    c.y -= 4;
+    line(c, headerText, { size: p.size.body, color: muted });
+  }
   c.y -= p.gap * 0.6;
   for (const b of input.doc.blocks) drawBlock(c, b);
   drawBottom(c, input);

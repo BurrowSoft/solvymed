@@ -2281,6 +2281,99 @@
   "offline": {
     "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
   },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Beri dokumen Anda tampilan praktik Anda. Semua dokumen mengikuti tampilan yang sama.",
+    "legalNote": {
+      "BR": "Resep obat kontrol khusus tetap memakai tata letak resminya.",
+      "TH": "Kuitansi tetap memakai tata letak resminya."
+    },
+    "layout": "Tata letak",
+    "layouts": {
+      "classic": "Klasik",
+      "elegant": "Elegan",
+      "modern": "Modern",
+      "minimal": "Minimalis"
+    },
+    "moreLayouts": "Tata letak baru ditambahkan secara berkala.",
+    "unknownLayout": "Desain ini memakai tata letak dari versi yang lebih baru. Di sini tampil sebagai Klasik sampai Anda memilih yang lain.",
+    "colours": "Warna",
+    "presets": {
+      "solvymed": "Biru SolvyMed",
+      "sageSand": "Sage & pasir",
+      "forestCream": "Hijau hutan & krem",
+      "navyGold": "Biru dongker & emas",
+      "custom": "Kustom"
+    },
+    "palette": {
+      "primary": "Warna utama",
+      "accent": "Aksen",
+      "light": "Latar"
+    },
+    "typeface": "Jenis huruf",
+    "nameStyle": "Nama",
+    "nameStyles": {
+      "regular": "Biasa",
+      "spaced": "Kapital berjarak",
+      "large": "Besar"
+    },
+    "logo": "Logo di kop",
+    "logos": {
+      "wide": "Logo lebar",
+      "square": "Logo persegi",
+      "reversed": "Logo terbalik",
+      "none": "Tanpa logo"
+    },
+    "watermark": "Tampilkan logo samar di belakang teks",
+    "sizes": {
+      "s": "Kecil",
+      "m": "Sedang",
+      "l": "Besar"
+    },
+    "sectionBars": "Bilah bagian",
+    "sectionFills": {
+      "none": "Tidak ada",
+      "primary": "Warna utama",
+      "accent": "Aksen"
+    },
+    "fields": "Kolom pasien dan tanggal",
+    "fieldStyles": {
+      "plain": "Polos",
+      "underline": "Bergaris bawah",
+      "box": "Berbingkai"
+    },
+    "footer": "Kaki halaman",
+    "columns": "Kolom",
+    "showLocations": "Tampilkan lokasi praktik",
+    "contacts": "Kontak",
+    "addContact": "Tambah kontak",
+    "contactKinds": {
+      "phone": "Telepon",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Situs web",
+      "email": "Email"
+    },
+    "band": "Pita bawah",
+    "bandStyles": {
+      "none": "Tidak ada",
+      "flat": "Datar",
+      "twoTone": "Dua warna",
+      "rounded": "Melengkung",
+      "angled": "Miring"
+    },
+    "texts": "Teks kop dan kaki halaman",
+    "headerText": "Teks kop",
+    "footerText": "Teks kaki halaman",
+    "preview": "Pratinjau",
+    "previewNote": "Data contoh. Dokumen asli Anda memakai data pasien Anda.",
+    "previewFailed": "Pratinjau tidak dapat ditampilkan. Desain Anda tetap bisa disimpan.",
+    "save": "Simpan desain",
+    "saved": "Desain disimpan. Dokumen Anda memakainya mulai sekarang.",
+    "conflict": "Desain ini diubah di tempat lain. Muat ulang untuk melihat versi terbaru.",
+    "error": "Gagal menyimpan. Coba lagi."
+  },
   "clockSkew": {
     "banner": "Tanggal dan waktu di perangkat Anda tampaknya salah. Aktifkan tanggal dan waktu otomatis, lalu coba lagi."
   },
