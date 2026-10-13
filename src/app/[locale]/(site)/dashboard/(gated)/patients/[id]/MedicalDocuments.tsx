@@ -17,6 +17,8 @@ import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
 import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
+import { renderDesignedDocument } from "@/lib/pdf/designed";
+import { medicalDocumentContent } from "@/lib/studio/content";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -481,6 +483,24 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
       brand,
     }, fonts);
     return { ok: true, bytes };
+  }
+  // Document Studio: the whole document in the practice's saved design
+  // (behind document-studio-live; the server sends studio only then; the
+  // controlled prescription returned above: a legal layout, never designed).
+  if (d.studio) {
+    const [studioFonts, square, wide, reversed] = await Promise.all([
+      loadDesignFontBytes(d.studio.design.font), fetchBytes(d.studio.logos.square), fetchBytes(d.studio.logos.wide), fetchBytes(d.studio.logos.reversed),
+    ]);
+    const designed = await renderDesignedDocument({
+      design: d.studio.design, locale: doc.language, practice: d.studio.practice, logos: { square, wide, reversed },
+      doc: medicalDocumentContent({
+        type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
+        issued: issuedIso, city: d.doctor.city ?? "", place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),
+        patientName: d.patient.name, patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
+        signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
+      }),
+    }, studioFonts);
+    return { ok: true, bytes: designed };
   }
   const bytes = await renderMedicalDocumentPdf({
     locationLines: d.locationLines,

@@ -12,6 +12,7 @@ import { docDate, toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { documentStyle } from "@/lib/studio/load";
+import { loadStudioForDocument, type StudioDocData } from "@/lib/studio/forDocument";
 import type { FontId } from "@/lib/studio/design";
 import { readLocationLines } from "@/lib/locationLines";
 import { conditionMet } from "@/lib/conditions";
@@ -44,6 +45,9 @@ export type RxSnapshotData = {
   locationLines: string[];
   // Document Studio: the typeface (today's, Sarabun, until a design is saved).
   fontId: FontId;
+  // Document Studio: the saved design to draw the whole prescription in;
+  // null = today's PDF.
+  studio: StudioDocData | null;
 };
 
 // The prescription as printed (its print view's data), read only once the
@@ -88,6 +92,7 @@ export async function prescriptionSnapshotData(patientId: string, rxId: string):
       brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: s.brandColor ?? b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
       locationLines: await readLocationLines(me.supabase, me.uid),
       fontId: s.fontId,
+      studio: await loadStudioForDocument(me.supabase, me.uid, () => "prescription", brandRow, { fullName: pr?.full_name ?? "", registration: pr?.professional_registration ?? null }),
     },
   };
 }
