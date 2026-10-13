@@ -1190,7 +1190,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
-            <NotShared source="medical_document" id={doc.id} share={() => shareDoc(doc, doc.corrects_id ?? null)} />
+            {/* A late first share is an on-demand copy: the typed stamp only,
+                never the signature image (02, rule A: issued = false). */}
+            <NotShared source="medical_document" id={doc.id} share={() => shareDoc(doc, doc.corrects_id ?? null, false)} />
           </div>
           <div className="flex items-center gap-1">
             <button data-server type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
@@ -1322,7 +1324,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           <div className="flex items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date, practiceCalendar)}</span>
-            <NotShared source="prescription" id={rx.id} share={() => shareRx(rx.id, rx.corrects_id ?? null)} />
+            {/* A late first share: the typed stamp only (02, issued = false). */}
+            <NotShared source="prescription" id={rx.id} share={() => shareRx(rx.id, rx.corrects_id ?? null, false)} />
           </div>
           <div className="flex items-center gap-1">
             {/* The print view (Help P6): "Imprimir / Salvar PDF" there. */}
