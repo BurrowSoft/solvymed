@@ -2094,6 +2094,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartir con el paciente",
+    "notSharedYet": "Aún no compartido",
+    "dontShare": "No compartir",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Compartido con el paciente",

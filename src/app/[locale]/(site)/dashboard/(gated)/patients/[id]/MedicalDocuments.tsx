@@ -221,7 +221,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     if (canShare && share && sharesSnapshot(type) && !wantShare) signalShareCheck("choice_mismatch", state.mode, { wantShare, hasId: null }, clientId);
     setError("");
     start(async () => {
-      const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
+      // share: the intent, recorded with the save (1.4, 220).
+      const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current, share: wantShare };
       const r = state.mode === "new" ? await safeCall(() => createMedicalDocument(patientId, payload), NETWORK_FAILURE)
         : state.mode === "edit" ? await safeCall(() => updateMedicalDocument(state.doc.id, patientId, payload), NETWORK_FAILURE)
         : await safeCall(() => correctMedicalDocument(state.doc.id, patientId, { ...payload, reason }), NETWORK_FAILURE);
