@@ -84,6 +84,11 @@ export function planSummary(sub: EffectiveSub | null): PlanSummary | null {
  */
 export type PlanPrice = { amount: string; currency: 'brl' | 'thb' | 'usd'; unitAmount: number };
 
+// The free trial's length: set at sign-up by the server
+// (_set_professional_trial, migration 077: now() + 15 days, no payment
+// method). The website's texts take it from here, never a second "15".
+export const TRIAL_DAYS = 15;
+
 export function getPlanPrice(country: string | null | undefined): PlanPrice {
   const kind = countryProfile(country).kind;
   if (kind === 'BR') return { amount: 'R$ 89', currency: 'brl', unitAmount: 8900 };

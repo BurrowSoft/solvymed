@@ -15,7 +15,9 @@
     "iosBetaHint": "Erfordert die kostenlose TestFlight-App von Apple",
     "signupCta": "Kostenlos testen",
     "haveAccount": "Schon ein Konto?",
-    "preferApp": "Lieber die App? Hier herunterladen:"
+    "preferApp": "Lieber die App? Hier herunterladen:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Intelligente Terminplanung",
@@ -2276,5 +2278,10 @@
   },
   "offline": {
     "banner": "Keine Internetverbindung. Sie können sehen, was geöffnet ist, aber Änderungen werden nicht gespeichert."
+  },
+  "common": {
+    "discardTitle": "Änderungen verwerfen?",
+    "discard": "Verwerfen",
+    "keepEditing": "Weiter bearbeiten"
   }
 }

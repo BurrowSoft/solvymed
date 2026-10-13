@@ -15,7 +15,9 @@
     "iosBetaHint": "需要 Apple 免费的 TestFlight 应用",
     "signupCta": "开始免费试用",
     "haveAccount": "已有账户？",
-    "preferApp": "更喜欢用应用？在此下载："
+    "preferApp": "更喜欢用应用？在此下载：",
+    "trialLine": "免费 {days} 天 · 无需信用卡 · 之后每月 {price}",
+    "trialLineNoPrice": "免费 {days} 天 · 无需信用卡"
   },
   "highlights": {
     "h1": "智能排程",
@@ -2276,5 +2278,10 @@
   },
   "offline": {
     "banner": "没有网络连接。您可以查看已打开的内容，但更改不会被保存。"
+  },
+  "common": {
+    "discardTitle": "放弃更改？",
+    "discard": "放弃",
+    "keepEditing": "继续编辑"
   }
 }

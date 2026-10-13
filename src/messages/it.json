@@ -15,7 +15,9 @@
     "iosBetaHint": "Richiede l'app gratuita TestFlight di Apple",
     "signupCta": "Inizia la prova gratuita",
     "haveAccount": "Hai già un account?",
-    "preferApp": "Preferisci l'app? Scaricala:"
+    "preferApp": "Preferisci l'app? Scaricala:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda intelligente",
@@ -2276,5 +2278,10 @@
   },
   "offline": {
     "banner": "Nessuna connessione a Internet. Puoi vedere ciò che è aperto, ma le modifiche non verranno salvate."
+  },
+  "common": {
+    "discardTitle": "Scartare le modifiche?",
+    "discard": "Scarta",
+    "keepEditing": "Continua a modificare"
   }
 }
