@@ -76,7 +76,8 @@ export function PatientPicker({
     if (e.key === "ArrowDown") { e.preventDefault(); setActive((a) => (a + 1) % rows.length); }
     else if (e.key === "ArrowUp") { e.preventDefault(); setActive((a) => (a <= 0 ? rows.length - 1 : a - 1)); }
     else if (e.key === "Enter" && active >= 0) { e.preventDefault(); choose(active); }
-    else if (e.key === "Escape") { setOpen(false); setActive(-1); }
+    // Closes the list only, not the dialog around it.
+    else if (e.key === "Escape") { e.preventDefault(); setOpen(false); setActive(-1); }
   }
 
   return (

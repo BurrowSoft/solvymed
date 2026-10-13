@@ -26,6 +26,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
+import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -350,7 +351,10 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
   const [error, setError] = useState("");
   const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
   const [pending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
+  // Closing it with a new date or time picked asks first (02).
+  const guard = useFormDirty(open);
+  const formRef = guard.ref;
+  const discard = useDialogDiscard(open, guard.dirty, () => setOpen(false), ask !== null);
 
   function submit(formData: FormData) {
     setError("");
@@ -394,8 +398,9 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
         </svg>
       </button>
 
-      <Dialog open={open} onClose={() => setOpen(false)} title={t("rescheduleTitle")}>
-        <form ref={formRef} onSubmit={(e) => { e.preventDefault(); submit(new FormData(formRef.current!)); }} className="space-y-4">
+      <Dialog open={open} onClose={discard.requestClose} title={t("rescheduleTitle")}>
+        {discard.dialog}
+        <form {...guard.formProps} onSubmit={(e) => { e.preventDefault(); submit(new FormData(formRef.current!)); }} className="space-y-4">
           <input type="hidden" name="id" value={id} />
           <div>
             <FieldLabel>{t("date")} *</FieldLabel>
@@ -404,7 +409,7 @@ export function RescheduleButton({ id, date, start, durationMin = 30 }: { id: st
           <p className="text-xs text-slate-500">{t("rescheduleHint")}</p>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+            <button type="button" onClick={discard.requestClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : t("reschedule")}
             </button>
@@ -479,7 +484,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const [occurrences, setOccurrences] = useState(String(DEFAULT_OCCURRENCES));
   const uiLocale = useLocale();
   const practiceCalendar = usePracticeCalendar();
-  const formRef = useRef<HTMLFormElement>(null);
+  // Closing it with changes asks first (02).
+  const guard = useFormDirty(open);
+  const formRef = guard.ref;
   // 1.8.0 F: with 2+ locations, chips preselect the chosen day's location
   // (its hours, else the primary: what the database would pick). Only a
   // chip the user taps is posted; otherwise the database fills it.
@@ -536,6 +543,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   // Blocked time / outside the working hours: ONE question listing both,
   // then book anyway on [Agendar] (UX 2026-09-28). The form data waits here.
   const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
+  const discard = useDialogDiscard(open, guard.dirty, () => setOpen(false), ask !== null);
   // Saved once (216): one id per open, sent with every try.
   const saveOnce = useRef({ id: "", tries: 0 });
 
@@ -604,8 +612,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
         </button>
       )}
 
-      <Dialog open={open} onClose={() => setOpen(false)} title={t("newAppt")}>
-        <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
+      <Dialog open={open} onClose={discard.requestClose} title={t("newAppt")}>
+        {discard.dialog}
+        <form {...guard.formProps} onSubmit={handleSubmit} className="space-y-4">
           {prefill?.patientId && <input type="hidden" name="patient_id" value={prefill.patientId} />}
           <div>
             <FieldLabel>{t("patientName")} *</FieldLabel>
@@ -729,7 +738,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
+            <button type="button" onClick={discard.requestClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>

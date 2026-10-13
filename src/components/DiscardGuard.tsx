@@ -66,7 +66,27 @@ export function useFormDirty(enabled = true, key: unknown = null) {
     setDirty(false);
   }, []);
   useLeaveGuard(enabled && dirty);
-  return { ref, dirty: enabled && dirty, markClean, formProps: { ref, onChange: check, onInput: check } };
+  // onClick too: pickers made of buttons (a calendar day, a time chip, a
+  // location chip) change hidden inputs without an input event.
+  return { ref, dirty: enabled && dirty, markClean, formProps: { ref, onChange: check, onInput: check, onClick: check } };
+}
+
+// A dialog closing with its form unsaved: ✕, a click outside, Escape and the
+// dialog's own Cancel all ask "Discard changes?" while `dirty`; a clean one
+// closes at once (02: the clinical dialogs, New patient and appointments).
+// `paused`: another question is over this dialog (Escape is its, not ours).
+export function useDialogDiscard(open: boolean, dirty: boolean, close: () => void, paused = false) {
+  const { ask, dialog, asking } = useDiscardAsk();
+  const tryClose = useRef(() => {});
+  tryClose.current = () => ask(dirty, close);
+  useEffect(() => {
+    if (!open || paused) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !e.defaultPrevented) tryClose.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, paused]);
+  const requestClose = useCallback(() => tryClose.current(), []);
+  return { requestClose, dialog, asking };
 }
 
 // "Discard changes?" [Discard] [Keep editing], inline where it's asked.
