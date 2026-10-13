@@ -1,4 +1,5 @@
 import { thaiEnabled } from "./publicLocales";
+import { getPlanPrice } from "./subscription";
 
 // Which country's price the public /pricing page shows (Sprint TH, TH-8).
 // Before the Thai release (NEXT_PUBLIC_THAI_ENABLED) there's one live
@@ -25,4 +26,15 @@ export function pricingCountry(
 // The country code getPlanPrice takes for each choice.
 export function pricingCountryCode(choice: PricingChoice): string {
   return choice;
+}
+
+// The landing's trial line (02, the YouTube links): the price of the page's
+// country, from the same table checkout charges (Portuguese = Brazil, Thai =
+// Thailand); any other language shows the line without a price (its country
+// isn't known without geo, and the landing stays static).
+const LANDING_COUNTRY: Readonly<Record<string, PricingChoice>> = { "pt-BR": "BR", th: "TH" };
+export function landingPrice(locale: string, offered: boolean = thaiEnabled): string | null {
+  const country = LANDING_COUNTRY[locale];
+  if (!country || (country === "TH" && !offered)) return null;
+  return getPlanPrice(country).amount;
 }
