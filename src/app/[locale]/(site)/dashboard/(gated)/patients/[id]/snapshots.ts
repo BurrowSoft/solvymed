@@ -65,15 +65,10 @@ export async function shareDocumentSnapshot(opts: {
     return await shareSnapshot({
       doctorId: opts.doctorId, patientId: opts.patientId, bytes: r.bytes, source: "medical_document", sourceId: doc.id,
       replacesSourceId: opts.correctsId, folderKey: SNAPSHOT_FOLDER[doc.doc_type],
-      title: snapshotTitle(doc.doc_type, doc.language, issuedDay(doc.created_at)),
+      // The day the PDF prints (the practice's, makeDocumentPdf).
+      title: snapshotTitle(doc.doc_type, doc.language, r.issued),
     });
   } catch {
     return "failed";
   }
-}
-
-// The issue day as the PDF prints it (makeDocumentPdf: the local day).
-function issuedDay(createdAt: string): string {
-  const c = new Date(createdAt);
-  return `${c.getFullYear()}-${String(c.getMonth() + 1).padStart(2, "0")}-${String(c.getDate()).padStart(2, "0")}`;
 }

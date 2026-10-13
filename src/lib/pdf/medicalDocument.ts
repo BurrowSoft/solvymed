@@ -6,7 +6,7 @@
 // prescription has its own Anvisa layout (controlledPrescription.ts).
 import { MUTED, Writer, hexColor, type FontBytes } from "./document";
 import {
-  PRINT, fill, longDate, thCertWords,
+  PRINT, fill, longDate, placeText, thCertWords,
   type CertificateFields, type DocLang, type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "../medicalDocuments";
 
@@ -18,7 +18,8 @@ export type MedicalDocPdfInput = {
   // The issue date (YYYY-MM-DD, the practice's day) and the city for the date line.
   issued: string;
   city: string;
-  // The Thai certificate's "place of examination": the clinic's name and address.
+  // The Thai certificate's "place of examination": the clinic's name and
+  // address; empty prints a line to fill in (placeText).
   place: string;
   patientName: string;
   patientId: { label: string; value: string } | null;
@@ -75,7 +76,7 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     const t = input.fields as ThCertificateFields;
     const tw = thCertWords(input.lang);
     // The place and the date on one line (53: the date sat a line low).
-    writer.pair(`${tw.place}: ${input.place}`, dateLine(input.lang, "", input.issued), { size: 11 });
+    writer.pair(`${tw.place}: ${placeText(input.place)}`, dateLine(input.lang, "", input.issued), { size: 11 });
     writer.gap(10);
     writer.text(`${tw.iDoctor} ${input.signerName}${input.licenceNo?.trim() ? ` ${tw.licence} ${input.licenceNo.trim()}` : ""}`, { size: 11 });
     writer.text(`${tw.examined} ${input.patientName}${input.patientId ? ` ${input.patientId.label} ${input.patientId.value}` : ""}`, { size: 11 });
