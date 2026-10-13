@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { conditionMet } from "@/lib/conditions";
+import { studioEnabled } from "./live";
 import { assetUrl, type Brand } from "@/lib/brand";
 import { withBrandTitle } from "@/lib/doctorName";
 import { sortLocations, type PracticeLocation } from "@/lib/locations";
@@ -21,9 +21,11 @@ export type StudioDocData = {
     locations: { name: string; lines: string[] }[];
   };
   logos: { square: string | null; wide: string | null; reversed: string | null };
+  // The design's texts for this document type (header / footer), or null.
+  texts: { header: string | null; footer: string | null };
 };
 
-type DesignRow = { design?: unknown; saved?: unknown; assets?: { logoSquare?: string | null; logoWide?: string | null; logoReversed?: string | null } | null };
+export type DesignRow = { design?: unknown; saved?: unknown; assets?: { logoSquare?: string | null; logoWide?: string | null; logoReversed?: string | null } | null };
 
 // Every location of the practice, primary first, as the footer prints them
 // (its name, the address, the city and state; the phone is a contact).
@@ -46,31 +48,51 @@ export async function loadStudioForDocument(
   brand: Brand | null,
   profile: { fullName: string; specialty?: string | null; registration?: string | null; clinicName?: string | null },
 ): Promise<StudioDocData | null> {
-  if (!conditionMet("document-studio-live")) return null;
+  if (!studioEnabled()) return null;
   try {
     const { data, error } = await supabase.rpc("get_practice_design");
     if (error || !data) return null;
     const row = (Array.isArray(data) ? data[0] : data) as DesignRow | undefined;
     if (!row || row.saved !== true || !validateDesign(row.design).ok) return null;
-    if (!(await type())) return null;
-    const a = row.assets ?? {};
-    const own = (url: string | null, ok: boolean | undefined) => (ok ? url : null);
+    const docType = await type();
+    if (!docType) return null;
+    const design = row.design as Design;
+    const tx = design.texts[docType];
     return {
-      design: row.design as Design,
-      practice: {
-        displayName: withBrandTitle(brand?.title, brand?.displayName?.trim() || profile.fullName),
-        specialty: brand?.specialty?.trim() || profile.specialty?.trim() || null,
-        registrationLine: brand?.registrationLine?.trim() || profile.registration?.trim() || null,
-        clinicName: profile.clinicName?.trim() || null,
-        locations: await readStudioLocations(supabase, professionalId),
-      },
-      logos: {
-        square: assetUrl(supabase, a.logoSquare) ?? own(brand?.logoSquareUrl ?? null, brand?.own.logo_square),
-        wide: assetUrl(supabase, a.logoWide) ?? own(brand?.logoWideUrl ?? null, brand?.own.logo_wide),
-        reversed: assetUrl(supabase, a.logoReversed),
-      },
+      design,
+      practice: studioPractice(brand, profile, await readStudioLocations(supabase, professionalId)),
+      logos: studioLogos(supabase, row.assets, brand),
+      texts: { header: tx?.header?.trim() || null, footer: tx?.footer?.trim() || null },
     };
   } catch {
     return null;
   }
+}
+
+// The practice as a design shows it (My brand first, then the profile);
+// shared with the Studio editor's preview.
+export function studioPractice(
+  brand: Brand | null,
+  profile: { fullName: string; specialty?: string | null; registration?: string | null; clinicName?: string | null },
+  locations: { name: string; lines: string[] }[],
+): StudioDocData["practice"] {
+  return {
+    displayName: withBrandTitle(brand?.title, brand?.displayName?.trim() || profile.fullName),
+    specialty: brand?.specialty?.trim() || profile.specialty?.trim() || null,
+    registrationLine: brand?.registrationLine?.trim() || profile.registration?.trim() || null,
+    clinicName: profile.clinicName?.trim() || null,
+    locations,
+  };
+}
+
+// The design's logos: its own assets (221), else the doctor's own My brand
+// uploads (never a legacy image).
+export function studioLogos(supabase: SupabaseClient, assets: DesignRow["assets"], brand: Brand | null): StudioDocData["logos"] {
+  const a = assets ?? {};
+  const own = (url: string | null, ok: boolean | undefined) => (ok ? url : null);
+  return {
+    square: assetUrl(supabase, a.logoSquare) ?? own(brand?.logoSquareUrl ?? null, brand?.own.logo_square),
+    wide: assetUrl(supabase, a.logoWide) ?? own(brand?.logoWideUrl ?? null, brand?.own.logo_wide),
+    reversed: assetUrl(supabase, a.logoReversed),
+  };
 }

@@ -2276,5 +2276,98 @@
   },
   "offline": {
     "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
+  },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Dê aos seus documentos a identidade visual do seu consultório. Todos os documentos seguem o mesmo visual.",
+    "legalNote": {
+      "BR": "A receita de controle especial mantém o layout legal.",
+      "TH": "O recibo mantém o layout legal."
+    },
+    "layout": "Modelo",
+    "layouts": {
+      "classic": "Clássico",
+      "elegant": "Elegante",
+      "modern": "Moderno",
+      "minimal": "Minimalista"
+    },
+    "moreLayouts": "Novos modelos são adicionados regularmente.",
+    "unknownLayout": "Este design usa um modelo de uma versão mais nova. Aqui ele aparece como Clássico até você escolher outro.",
+    "colours": "Cores",
+    "presets": {
+      "solvymed": "Azul SolvyMed",
+      "sageSand": "Sálvia e areia",
+      "forestCream": "Floresta e creme",
+      "navyGold": "Marinho e dourado",
+      "custom": "Personalizada"
+    },
+    "palette": {
+      "primary": "Cor principal",
+      "accent": "Destaque",
+      "light": "Fundo"
+    },
+    "typeface": "Fonte",
+    "nameStyle": "Nome",
+    "nameStyles": {
+      "regular": "Normal",
+      "spaced": "Maiúsculas espaçadas",
+      "large": "Grande"
+    },
+    "logo": "Logo no cabeçalho",
+    "logos": {
+      "wide": "Logo horizontal",
+      "square": "Logo quadrado",
+      "reversed": "Logo invertido",
+      "none": "Sem logo"
+    },
+    "watermark": "Mostrar o logo suave atrás do texto",
+    "sizes": {
+      "s": "Pequeno",
+      "m": "Médio",
+      "l": "Grande"
+    },
+    "sectionBars": "Faixas de seção",
+    "sectionFills": {
+      "none": "Nenhuma",
+      "primary": "Cor principal",
+      "accent": "Destaque"
+    },
+    "fields": "Campos de paciente e data",
+    "fieldStyles": {
+      "plain": "Simples",
+      "underline": "Sublinhado",
+      "box": "Em caixa"
+    },
+    "footer": "Rodapé",
+    "columns": "Colunas",
+    "showLocations": "Mostrar os locais de atendimento",
+    "contacts": "Contatos",
+    "addContact": "Adicionar contato",
+    "contactKinds": {
+      "phone": "Telefone",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Site",
+      "email": "E-mail"
+    },
+    "band": "Faixa inferior",
+    "bandStyles": {
+      "none": "Nenhuma",
+      "flat": "Lisa",
+      "twoTone": "Duas cores",
+      "rounded": "Arredondada",
+      "angled": "Inclinada"
+    },
+    "texts": "Textos de cabeçalho e rodapé",
+    "headerText": "Texto do cabeçalho",
+    "footerText": "Texto do rodapé",
+    "preview": "Prévia",
+    "previewNote": "Dados de exemplo. Seus documentos reais usam os dados dos seus pacientes.",
+    "previewFailed": "Não foi possível mostrar a prévia. Seu design ainda pode ser salvo.",
+    "save": "Salvar design",
+    "saved": "Design salvo. Seus documentos passam a usar este visual.",
+    "conflict": "Este design foi alterado em outro lugar. Recarregue para ver a versão mais recente.",
+    "error": "Não foi possível salvar. Tente de novo."
   }
 }

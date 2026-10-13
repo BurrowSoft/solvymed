@@ -179,9 +179,22 @@ export function paletteColor(d: Pick<Design, "palette">, ref: PaletteRef): strin
   return d.palette[ref];
 }
 
-// The contacts a practice country offers (country config, never if-BR):
-// WhatsApp in Brazil, LINE in Thailand, the rest everywhere.
-export function contactKindsFor(country: string | null | undefined): ContactKind[] {
-  const extra: Record<string, ContactKind[]> = { BR: ["whatsapp"], TH: ["line"] };
-  return ["phone", ...(extra[country ?? ""] ?? []), "instagram", "site", "email"];
+// What the editor does per practice country (country config, never if-BR;
+// a new country = one entry here). Every contact kind is offered
+// everywhere; only the kind a new contact starts with follows the country
+// (02, 10-13). legalNote: the strings key naming the country's legal layout
+// (strings.json legalNote.<key>); null = no note.
+export type StudioCountry = { contact: ContactKind; legalNote: "BR" | "TH" | null };
+const STUDIO_COUNTRIES: Readonly<Record<string, StudioCountry>> = {
+  BR: { contact: "whatsapp", legalNote: "BR" },
+  TH: { contact: "line", legalNote: "TH" },
+};
+// The explicit default: any other country (or an unknown one).
+const STUDIO_COUNTRY_DEFAULT: StudioCountry = { contact: "phone", legalNote: null };
+
+export function studioCountry(country: string | null | undefined): StudioCountry {
+  return STUDIO_COUNTRIES[(country ?? "").toUpperCase()] ?? STUDIO_COUNTRY_DEFAULT;
+}
+export function defaultContactKind(country: string | null | undefined): ContactKind {
+  return studioCountry(country).contact;
 }

@@ -13,6 +13,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { doctorColors } from "@/lib/doctorPalette";
 import { conditionMet } from "@/lib/conditions";
+import { studioEnabled } from "@/lib/studio/live";
 import { SolvyAiSettingsCard } from "@/components/solvyai/SolvyAiSettings";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 import { countryProfile, messagingChannel } from "@/lib/country";
@@ -285,6 +286,7 @@ export default async function SettingsPage({
             values={brandRow}
             valuesFailed={brandRowFailed}
             country={practiceCountry}
+            studioHref={studioEnabled() ? `${locale === "en" ? "" : `/${locale}`}/dashboard/settings/studio` : null}
             fallback={{
               fullName: prof.full_name ?? "",
               specialty: prof.specialty ?? "",

@@ -493,12 +493,15 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     ]);
     const designed = await renderDesignedDocument({
       design: d.studio.design, locale: doc.language, practice: d.studio.practice, logos: { square, wide, reversed },
-      doc: medicalDocumentContent({
-        type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
-        issued: issuedIso, city: d.doctor.city ?? "", place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),
-        patientName: d.patient.name, patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
-        signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
-      }),
+      doc: {
+        ...medicalDocumentContent({
+          type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
+          issued: issuedIso, city: d.doctor.city ?? "", place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),
+          patientName: d.patient.name, patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
+          signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
+        }),
+        headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+      },
     }, studioFonts);
     return { ok: true, bytes: designed };
   }

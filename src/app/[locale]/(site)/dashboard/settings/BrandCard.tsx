@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
@@ -26,7 +27,7 @@ export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country }: {
+export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country, studioHref = null }: {
   uid: string;
   // Images, URLs and the preview (get_practice_brand).
   brand: Brand | null;
@@ -39,9 +40,12 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   fallback: { fullName: string; specialty: string; registration: string };
   // The PRACTICE country: the registration example follows it (registry).
   country?: string | null;
+  // Document Studio's page (PR3), only once Studio is live; null = no button.
+  studioHref?: string | null;
 }) {
   const t = useTranslations("brand");
   const tSettings = useTranslations("settings");
+  const tStudio = useTranslations("studio");
   const registrationExample = tSettings(countryProfile(country).examples.registration);
   const router = useRouter();
   const [displayName, setDisplayName] = useState(values?.display_name ?? "");
@@ -220,6 +224,15 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
           {state === "saved" && <span role="status" className="text-sm font-medium text-teal-700">{t("saved")}</span>}
           {state === "error" && <span role="alert" className="text-sm text-red-600">{t("saveError")}</span>}
         </div>
+
+        {studioHref && (
+          <div data-testid="brand-studio" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
+            <p className="min-w-0 flex-1 text-sm text-slate-600">{tStudio("intro")}</p>
+            <Link href={studioHref} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-slate-50">
+              {tStudio("open")}
+            </Link>
+          </div>
+        )}
       </div>
     </Card>
   );
