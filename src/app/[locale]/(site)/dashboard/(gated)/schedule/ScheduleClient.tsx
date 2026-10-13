@@ -25,7 +25,7 @@ import { forRow, useRowAction } from "@/components/RowPractice";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
-import { safeCall } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -289,8 +289,11 @@ export function AppointmentStatusSelect({ id, current }: { id: string; current: 
     startTransition(async () => {
       const result = await safeCall(() => updateStatus(id, newStatus, why), { error: "network", code: "generic" } as const);
       if (result?.error) {
-        setStatus(previous);
         setError(actionErrorMessage(t, result.code));
+        // A cancel with a reason: the reason box comes back with the typed
+        // reason (it was lost on a failed save, 1.9.0).
+        if (why !== undefined) { setAsking({ previous }); return; }
+        setStatus(previous);
         return;
       }
       if ("undo" in result) offerUndo(result.undo);
@@ -427,7 +430,11 @@ export function DeleteAppointmentButton({ id }: { id: string }) {
 
   function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
-    startTransition(async () => { await safeCall(() => remove(id), null); });
+    startTransition(async () => {
+      const r = await safeCall(() => remove(id), NETWORK_ERROR);
+      // It failed silently before (1.9.0, ec).
+      if (r && typeof r === "object" && "error" in r && r.error) alert(t("genericError"));
+    });
   }
 
   return (
@@ -459,6 +466,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
+  const tsave = useTranslations("save");
   const { locale } = useParams<{ locale: string }>();
   const settingsProceduresHref = `${locale === "en" ? "" : `/${locale}`}/dashboard/settings#procedures`;
   const [open, setOpen] = useState(false);
@@ -498,6 +506,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
     setOccurrences(String(DEFAULT_OCCURRENCES));
     setPickedLocation(null);
     setError("");
+    saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
     setOpen(true);
   }
 
@@ -527,9 +536,14 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   // Blocked time / outside the working hours: ONE question listing both,
   // then book anyway on [Agendar] (UX 2026-09-28). The form data waits here.
   const [ask, setAsk] = useState<{ text: string; formData: FormData } | null>(null);
+  // Saved once (216): one id per open, sent with every try.
+  const saveOnce = useRef({ id: "", tries: 0 });
 
   function submit(formData: FormData) {
     setError("");
+    if (!saveOnce.current.id) saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
+    formData.set("client_id", saveOnce.current.id);
+    formData.set("client_try", String(++saveOnce.current.tries));
     startTransition(async () => {
       const result = await safeCall(() => create(formData), { error: "network", code: "generic" } as const);
       // In a series, which date (the app names it too).
@@ -555,6 +569,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.code === "invalid_occurrences") { setError(t("occurrencesRange", { min: MIN_OCCURRENCES, max: MAX_OCCURRENCES })); return; }
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
+      saveOnce.current = { id: "", tries: 0 };
+      // Saved before the last changes: the agenda shows the saved one.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) { alert(tsave("alreadySavedChanged")); return; }
       if (result && "undo" in result) offerUndo(result.undo);
     });
   }
@@ -736,20 +753,29 @@ export function BlockTimeButton({ defaultDate }: { defaultDate: string }) {
   // In "Todos" (166), for the doctor chosen first; else as before.
   const block = useRowAction("blockTime", blockTime);
   const tDate = useTranslations("dateInput");
+  const tsave = useTranslations("save");
   const [open, setOpen] = useState(false);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
+  // Saved once (216): one id per open, sent with every try.
+  const saveOnce = useRef({ id: "", tries: 0 });
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const formData = new FormData(formRef.current!);
     setError("");
+    if (!saveOnce.current.id) saveOnce.current = { id: crypto.randomUUID(), tries: 0 };
+    formData.set("client_id", saveOnce.current.id);
+    formData.set("client_try", String(++saveOnce.current.tries));
     startTransition(async () => {
       const result = await safeCall(() => block(formData), { error: "network", code: "generic" } as const);
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
       formRef.current?.reset();
+      saveOnce.current = { id: "", tries: 0 };
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) alert(tsave("alreadySavedChanged"));
     });
   }
 

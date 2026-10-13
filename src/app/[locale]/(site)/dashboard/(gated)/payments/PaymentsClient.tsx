@@ -7,7 +7,7 @@ import { markPaid, markUnpaid, setPaymentAmount } from "./actions";
 import { useRowAction } from "@/components/RowPractice";
 import { currencySymbol, formatMoney, parseMoney } from "@/lib/money";
 import type { Currency } from "@/lib/country";
-import { safeCall } from "@/lib/netError";
+import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 
 
 const ERROR_CODE_KEY: Record<string, string> = {
@@ -243,7 +243,11 @@ export function MarkUnpaidButton({ id }: { id: string }) {
     <button data-server
       onClick={() => {
         if (!confirm(t("revertConfirm"))) return;
-        startTransition(async () => { await safeCall(() => unpaid(id), null); });
+        startTransition(async () => {
+          const r = await safeCall(() => unpaid(id), NETWORK_ERROR);
+          // It failed silently before (1.9.0, ec).
+          if (r && typeof r === "object" && "error" in r && r.error) alert(t("errorGeneric"));
+        });
       }}
       disabled={pending}
       className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 transition disabled:opacity-60"

@@ -10,6 +10,7 @@ import { selfMissing, selfValues, type SelfPrompt } from "@/lib/selfFields";
 import type { FieldKey } from "@/lib/patientFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { dismissSelfFields, saveSelfFields } from "./self-fields-actions";
+import { safeCall } from "@/lib/netError";
 
 // 1.8.0 C2 (ad): "{doctor} pediu alguns dados" on My appointments, one card
 // per doctor whose required details are still empty in their record. It
@@ -56,7 +57,7 @@ function CompleteRegistrationCard({ prompt, onDone }: { prompt: SelfPrompt; onDo
       {state === "card" ? (
         <div className="mt-3 flex gap-2">
           <button type="button" onClick={() => setState("form")} className="rounded-lg bg-teal-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-teal-700">{t("complete")}</button>
-          <button data-server type="button" disabled={pending} onClick={() => start(async () => { if (await dismissSelfFields(prompt.doctorId)) setState("gone"); })}
+          <button data-server type="button" disabled={pending} onClick={() => start(async () => { if (await safeCall(() => dismissSelfFields(prompt.doctorId), false)) setState("gone"); })}
             className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">{t("notNow")}</button>
         </div>
       ) : (
@@ -99,7 +100,7 @@ function SelfFieldsForm({ prompt, onDone, onCancel }: { prompt: SelfPrompt; onDo
     if (left.length) { setError(tf("missing", { fields: left.map(missing).join(", ") })); return; }
     setError("");
     start(async () => {
-      const r = await saveSelfFields(prompt.doctorId, values);
+      const r = await safeCall(() => saveSelfFields(prompt.doctorId, values), { ok: false as const, error: "generic" as const, key: undefined });
       if (r.ok) { onDone(); return; }
       // 212 names the field: a refused value, or the one holding a duplicate ID / e-mail.
       if (r.key && (prompt.keys as string[]).includes(r.key) && (r.error === "invalid" || r.error === "id_in_use")) {

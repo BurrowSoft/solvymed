@@ -98,3 +98,75 @@ describe("Receitas e documentos", () => {
     expect(within(dialog).queryByRole("button", { name: T.type.controlled_prescription })).toBeNull();
   });
 });
+
+describe("the text follows its fields (1.9.0, c5's rule, the same in the app)", () => {
+  const certificate = () => {
+    open("BR", []);
+    fireEvent.click(screen.getByRole("button", { name: T.addDocument }));
+    const dialog = screen.getByTestId("document-dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: T.type.certificate }));
+    return { dialog, text: within(dialog).getByLabelText(T.body) as HTMLTextAreaElement };
+  };
+
+  it("edited text is kept when a field changes, with the note and the refill; refilling clears both", () => {
+    const { dialog, text } = certificate();
+    expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
+    // The doctor's own words, then the days change: kept, with the note.
+    fireEvent.change(text, { target: { value: `${text.value} Repouso absoluto.` } });
+    // Edited, but no field changed yet: the refill button, no note.
+    expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
+    expect(within(dialog).getByRole("button", { name: T.refill })).toBeInTheDocument();
+    fireEvent.change(within(dialog).getByLabelText(T.days), { target: { value: "3" } });
+    expect(text.value).toContain("Repouso absoluto.");
+    expect(text.value).toContain("necessita de 1 dia(s)");
+    expect(within(dialog).getByTestId("text-mismatch")).toHaveTextContent(T.textMayNotMatch);
+    fireEvent.click(within(dialog).getByRole("button", { name: T.refill }));
+    expect(text.value).toContain("necessita de 3 dia(s)");
+    expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
+    expect(within(dialog).queryByRole("button", { name: T.refill })).toBeNull();
+  });
+
+  it("untouched text (only trailing spaces added) still follows the fields", () => {
+    const { dialog, text } = certificate();
+    fireEvent.change(text, { target: { value: `${text.value}   ` } });
+    fireEvent.change(within(dialog).getByLabelText(T.days), { target: { value: "4" } });
+    expect(text.value).toContain("necessita de 4 dia(s)");
+    expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
+  });
+
+  it("a saved certificate reopened: its generated text still follows the fields (no stored flag)", async () => {
+    const { prefilledBody } = await import("@/lib/medicalDocuments");
+    const fields = { variant: "absence", date: "2026-10-06", days: 2, start: "2026-10-06", includeCid: false } as const;
+    const saved: MedDoc = { ...doc, id: "d2", fields: { ...fields }, body: prefilledBody("certificate", fields as never, "pt-BR", "Ana Souza"), created_at: new Date().toISOString(), created_by: "doc" } as MedDoc;
+    open("BR", [saved]);
+    fireEvent.click(within(screen.getByTestId("medical-doc")).getByRole("button", { name: pt.patientDetail.editEntry }));
+    const dialog = screen.getByTestId("document-dialog");
+    const text = within(dialog).getByLabelText(T.body) as HTMLTextAreaElement;
+    fireEvent.change(within(dialog).getByLabelText(T.days), { target: { value: "3" } });
+    expect(text.value).toContain("necessita de 3 dia(s)");
+    expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
+  });
+});
+
+describe("a new document's dates default to the PRACTICE's today (1.9.0, as the app's clinicToday)", () => {
+  it("20:00 in São Paulo is already tomorrow in Bangkok: a Bangkok practice's certificate starts tomorrow", () => {
+    vi.useFakeTimers({ now: new Date("2026-10-13T20:00:00-03:00"), shouldAdvanceTime: true });
+    try {
+      render(
+        <NextIntlClientProvider locale="pt-BR" messages={pt}>
+          <PatientTabs patient={patient} records={[]} prescriptions={[]} appointments={[]} locale="pt-BR" currentUserId="doc" timeZone="Asia/Bangkok"
+            medicalDocs={{ list: [], country: "BR", hasPatientId: true }} />
+        </NextIntlClientProvider>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: T.tabTitle.replace("{n}", "0") }));
+      fireEvent.click(screen.getByRole("button", { name: T.addDocument }));
+      const dialog = screen.getByTestId("document-dialog");
+      fireEvent.click(within(dialog).getByRole("button", { name: T.type.certificate }));
+      // The browser (the test runs in São Paulo time) says the 13th; the practice says the 14th.
+      expect((within(dialog).getByLabelText(T.body) as HTMLTextAreaElement).value).toContain("14 de outubro de 2026");
+      expect(within(dialog).getAllByDisplayValue("14/10/2026").length).toBeGreaterThan(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});

@@ -43,7 +43,7 @@ const F = (id: string, defaultKey: DocFolder["defaultKey"], shared: boolean, pos
 const FOLDERS: DocFolder[] = [F("f-exams", "exams", true, 1), F("f-int", "internal", false, 5)];
 const doc = (o: Partial<PatientDocument>): PatientDocument => ({
   id: "d1", folderId: "f-exams", title: "Hemograma", mime: "application/pdf", sizeBytes: 2048, source: "doctor_upload",
-  replacesId: null, replaced: false, shared: true, uploadedByRole: "professional", doctorOpenedAt: null,
+  prescriptionId: null, medicalDocumentId: null, replacesId: null, replaced: false, shared: true, uploadedByRole: "professional", doctorOpenedAt: null,
   createdAt: "2026-10-01T12:00:00Z", storagePath: "doc/pat/00000000-0000-4000-8000-0000000000d1.pdf", hidden: null, ...o,
 });
 const DOCS: PatientDocument[] = [

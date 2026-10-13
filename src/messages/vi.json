@@ -2092,6 +2092,8 @@
       "internal": "Tài liệu nội bộ"
     },
     "share": "Chia sẻ với bệnh nhân",
+    "shareChecking": "Đang kiểm tra xem bệnh nhân có thấy bản sao này không…",
+    "shareCheckFailed": "Không thể kiểm tra xem bệnh nhân có thấy bản sao này không. Hãy chọn có chia sẻ hay không.",
     "shared": "Đã chia sẻ với bệnh nhân",
     "notShared": "Chỉ bạn xem được",
     "replacedByNewer": "Đã được thay bằng bản mới hơn",
@@ -2187,6 +2189,7 @@
     "findings": "Kết quả / ý kiến",
     "rest": "Cần nghỉ ngơi",
     "refill": "Điền lại nội dung",
+    "textMayNotMatch": "Nội dung có thể không khớp với các trường bạn đã thay đổi.",
     "items": "Thuốc",
     "itemName": "Thuốc",
     "dose": "Liều",
@@ -2212,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Chúng tôi đã cập nhật Chính sách quyền riêng tư",
-    "body": "Xem những gì đã thay đổi vào {date}.",
+    "body": "Xem những gì đã thay đổi.",
     "read": "Đọc chính sách",
     "ok": "OK",
     "close": "Đóng",
@@ -2267,6 +2270,9 @@
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ",
     "adjust": "Điều chỉnh"
+  },
+  "save": {
+    "alreadySavedChanged": "Mục này đã được lưu trước những thay đổi gần nhất của bạn. Các thay đổi sau đó chưa được áp dụng; hãy kiểm tra phiên bản đã lưu."
   },
   "offline": {
     "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
