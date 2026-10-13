@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import en from "@/messages/en.json";
 import { DEFAULT_DESIGN } from "@/lib/studio/design";
@@ -12,6 +12,7 @@ const save = vi.fn();
 vi.mock("@/app/[locale]/(site)/dashboard/settings/studio-actions", () => ({ saveMyDesign: (...a: unknown[]) => save(...a) }));
 // The preview draws a real PDF; not needed here.
 vi.mock("@/app/[locale]/(site)/dashboard/settings/studio/StudioPreview", () => ({ StudioPreview: () => null }));
+vi.mock("@/app/[locale]/(site)/dashboard/settings/studio/StudioPosters", () => ({ StudioPosters: () => null }));
 // The save's time limit, shortened (fake timers stall the provider).
 vi.mock("@/lib/netError", async (orig) => {
   const actual = await orig<typeof import("@/lib/netError")>();
@@ -27,7 +28,7 @@ function show() {
       <StudioEditor
         initial={structuredClone(DEFAULT_DESIGN)} saved={false} version={3} country="BR"
         practice={{ displayName: "Dr. Test", specialty: null, registrationLine: null, clinicName: null, locations: [] }}
-        logos={{ square: null, wide: null, reversed: null }} textTypes={["prescription"]} backHref="/dashboard/settings"
+        logos={{ square: null, wide: null, reversed: null }} textTypes={["prescription"]} backHref="/dashboard/settings" posterHours={null} inviteUrl={null}
       />
     </NextIntlClientProvider>,
   );
@@ -54,8 +55,9 @@ describe("Studio editor: saving", () => {
     show();
     await act(async () => { fireEvent.click(screen.getByTestId("studio-save")); });
     expect(screen.getByTestId("studio-save").textContent).toBe(en.brand.saving);
-    await act(async () => { await new Promise((r) => setTimeout(r, 80)); });
-    expect(screen.getByRole("alert").textContent).toBe(en.studio.error);
+    // Waits for the limit (30 ms here) without a fixed sleep: under a busy
+    // full suite a fixed wait lost the race.
+    await waitFor(() => expect(screen.getByRole("alert").textContent).toBe(en.studio.error));
     expect(screen.getByTestId("studio-save").textContent).toBe(en.studio.save);
     await act(async () => { late({ ok: false, code: "conflict" }); });
   });

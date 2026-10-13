@@ -2404,6 +2404,38 @@
     "letterheadTitle": "Title (optional)",
     "letterheadBody": "Text (optional)",
     "letterheadNotSaved": "What you type here isn't saved.",
-    "printLetterhead": "Print letterhead"
+    "printLetterhead": "Print letterhead",
+    "posters": "Posters",
+    "postersHint": "Posters and social images in your design. Never with patient data.",
+    "poster": {
+      "template": "Template",
+      "templates": {
+        "hours": "Opening hours",
+        "service": "A service",
+        "announcement": "Announcement",
+        "booking": "Book online"
+      },
+      "format": "Format",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Instagram post (PNG)",
+        "story": "Instagram story (PNG)"
+      },
+      "headline": "Headline",
+      "text": "Text",
+      "note": "Note (optional)",
+      "serviceName": "Service",
+      "serviceDescription": "Short description",
+      "price": "Price (optional)",
+      "download": "Download",
+      "defaultHours": "Opening hours",
+      "defaultBooking": "Book your appointment",
+      "scanToBook": "Scan to book",
+      "closed": "Closed",
+      "noInviteCode": "The booking poster needs your patient invite code (Settings → Patient invite link).",
+      "newCodeNote": "If you generate a new invite code, download your posters again; the old QR will stop working.",
+      "noHours": "Set your working hours in Settings first."
+    }
   }
 }

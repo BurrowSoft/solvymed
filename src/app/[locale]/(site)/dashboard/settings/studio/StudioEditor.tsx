@@ -7,6 +7,7 @@ import { Card } from "../SettingsClient";
 import { ReloadButton } from "@/components/ReloadButton";
 import { timeLimit } from "@/lib/netError";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
+import { StudioPosters, type PosterDay } from "./StudioPosters";
 import { saveMyDesign } from "../studio-actions";
 import {
   CONTACT_KINDS, CURATED_FONTS, LAYOUTS, PALETTE_PRESETS, defaultContactKind, studioCountry,
@@ -68,9 +69,12 @@ type Props = {
   logos: StudioDocData["logos"];
   textTypes: DocType[];
   backHref: string;
+  // Posters (PR5): the week's hours and the booking poster's invite link.
+  posterHours: PosterDay[] | null;
+  inviteUrl: string | null;
 };
 
-export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref }: Props) {
+export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref, posterHours, inviteUrl }: Props) {
   const t = useTranslations("studio");
   const tRx = useTranslations("prescriptionDoc");
   const tDocType = useTranslations("documents.type");
@@ -333,6 +337,8 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
               {lhState === "failed" && <p role="alert" className="text-sm text-red-600">{tDocsPdf("pdfFailed")}</p>}
             </div>
           </Card>
+
+          <StudioPosters design={cleaned} country={country} practice={practice} logos={logos} hours={posterHours} inviteUrl={inviteUrl} />
         </div>
 
         <div className="min-w-0">

@@ -2374,6 +2374,38 @@
     "letterheadTitle": "タイトル（任意）",
     "letterheadBody": "本文（任意）",
     "letterheadNotSaved": "ここに入力した内容は保存されません。",
-    "printLetterhead": "レターヘッドを印刷"
+    "printLetterhead": "レターヘッドを印刷",
+    "posters": "ポスター",
+    "postersHint": "デザインを使ったポスターとSNS用画像。患者さんのデータは含みません。",
+    "poster": {
+      "template": "テンプレート",
+      "templates": {
+        "hours": "診療時間",
+        "service": "サービス",
+        "announcement": "お知らせ",
+        "booking": "オンライン予約"
+      },
+      "format": "形式",
+      "formats": {
+        "a4": "A4（PDF）",
+        "a3": "A3（PDF）",
+        "post": "Instagram投稿（PNG）",
+        "story": "Instagramストーリー（PNG）"
+      },
+      "headline": "見出し",
+      "text": "本文",
+      "note": "メモ（任意）",
+      "serviceName": "サービス",
+      "serviceDescription": "短い説明",
+      "price": "料金（任意）",
+      "download": "ダウンロード",
+      "defaultHours": "診療時間",
+      "defaultBooking": "ご予約はこちら",
+      "scanToBook": "スキャンして予約",
+      "closed": "休診",
+      "noInviteCode": "予約ポスターには患者招待コードが必要です（設定 → 患者招待リンク）。",
+      "newCodeNote": "新しい招待コードを作成したら、ポスターを再度ダウンロードしてください。古いQRは使えなくなります。",
+      "noHours": "先に設定で診療時間を設定してください。"
+    }
   }
 }

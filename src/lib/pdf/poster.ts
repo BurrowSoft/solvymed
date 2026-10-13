@@ -73,9 +73,17 @@ function drawQr(page: PDFPage, url: string, x: number, y: number, side: number) 
   const quiet = 2;
   const cell = side / (n + quiet * 2);
   page.drawRectangle({ x, y, width: side, height: side, color: WHITE });
+  // Each row's dark modules as merged runs, overlapping the next row a
+  // little: no hairline seams between modules (scanners read them as
+  // light; at print resolution a QR then fails to decode).
+  const seam = cell * 0.08;
   for (let r = 0; r < n; r++) {
-    for (let col = 0; col < n; col++) {
-      if (qr.isDark(r, col)) page.drawRectangle({ x: x + (col + quiet) * cell, y: y + side - (r + quiet + 1) * cell, width: cell + 0.05, height: cell + 0.05, color: rgb(0, 0, 0) });
+    for (let col = 0; col < n; ) {
+      if (!qr.isDark(r, col)) { col++; continue; }
+      let end = col;
+      while (end + 1 < n && qr.isDark(r, end + 1)) end++;
+      page.drawRectangle({ x: x + (col + quiet) * cell, y: y + side - (r + quiet + 1) * cell - (r + 1 < n ? seam : 0), width: (end - col + 1) * cell, height: cell + (r + 1 < n ? seam : 0), color: rgb(0, 0, 0) });
+      col = end + 1;
     }
   }
 }
