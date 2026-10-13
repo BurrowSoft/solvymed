@@ -41,7 +41,7 @@ describe("document_share_check", () => {
   it("a share saved only by the form-id fallback: one warning, the reason/mode/flags only", async () => {
     await saveNewCertificate();
     await waitFor(() => expect(h.captured).toHaveLength(1));
-    expect(h.captured[0]).toEqual({ msg: "document_share_check", ctx: { level: "warning", tags: { reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "yes" } } });
+    expect(h.captured[0]).toEqual({ msg: "document_share_check", ctx: { level: "warning", tags: { reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "no" } } });
   });
 
   it("a normal save (the answer carries the id): nothing is sent", async () => {
@@ -54,11 +54,11 @@ describe("document_share_check", () => {
   it("through the scrub: the tags stay; the user is the internal id only (no e-mail, no IP)", () => {
     const event = {
       message: "document_share_check",
-      tags: { reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "yes" },
+      tags: { reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "no" },
       user: { id: "33333333-3333-4333-8333-333333333333", email: "dr@example.com", ip_address: "203.0.113.9" },
     };
     const out = scrubEvent(event as never) as unknown as { tags: Record<string, string>; user: Record<string, unknown> };
-    expect(out.tags).toEqual({ reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "yes" });
+    expect(out.tags).toEqual({ reason: "id_fallback", mode: "new", wantShare: "yes", hasId: "no" });
     expect(out.user).toEqual({ id: "33333333-3333-4333-8333-333333333333" });
   });
 });

@@ -12,14 +12,15 @@ export type ShareSignalReason = "id_fallback" | "choice_mismatch";
 
 const sent = new Set<string>();
 
-export function signalShareCheck(reason: ShareSignalReason, mode: "new" | "edit" | "correct", flags: { wantShare: boolean; hasId: boolean }, onceKey: string): void {
+// hasId: whether the save's answer carried the new id (null before a save).
+export function signalShareCheck(reason: ShareSignalReason, mode: "new" | "edit" | "correct", flags: { wantShare: boolean; hasId: boolean | null }, onceKey: string): void {
   const key = `${onceKey}:${reason}`;
   if (sent.has(key)) return;
   sent.add(key);
   try {
     Sentry.captureMessage("document_share_check", {
       level: "warning",
-      tags: { reason, mode, wantShare: flags.wantShare ? "yes" : "no", hasId: flags.hasId ? "yes" : "no" },
+      tags: { reason, mode, wantShare: flags.wantShare ? "yes" : "no", hasId: flags.hasId === null ? "n/a" : flags.hasId ? "yes" : "no" },
     });
   } catch {
     /* monitoring never affects the page */

@@ -214,7 +214,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     // The share decision is taken here, at the click, from the box as it is.
     const wantShare = canShare && shareChoice.current && sharesSnapshot(type);
     // The box shown ticked but the choice read as off: the F1 shape (ec).
-    if (canShare && share && sharesSnapshot(type) && !wantShare) signalShareCheck("choice_mismatch", state.mode, { wantShare, hasId: true }, clientId);
+    if (canShare && share && sharesSnapshot(type) && !wantShare) signalShareCheck("choice_mismatch", state.mode, { wantShare, hasId: null }, clientId);
     setError("");
     start(async () => {
       const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
@@ -234,7 +234,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       // answer didn't carry it.
       const id = state.mode === "edit" ? state.doc.id : ((r.data as string | null) ?? (state.mode === "new" ? clientId : null));
       // A share that only the form-id fallback saved (#536): the evidence F1 lacked.
-      if (wantShare && state.mode !== "edit" && !r.data) signalShareCheck("id_fallback", state.mode, { wantShare, hasId: !!id }, clientId);
+      if (wantShare && state.mode !== "edit" && !r.data) signalShareCheck("id_fallback", state.mode, { wantShare, hasId: !!r.data }, clientId);
       if (onSaved) {
         onSaved(id && type ? {
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
