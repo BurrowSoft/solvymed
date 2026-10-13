@@ -6,6 +6,7 @@
 import { rgb } from "pdf-lib";
 import { drawShaped, wrapText } from "./text";
 import { FAINT, INK, LINE, MARGIN, MUTED, Writer, hexColor, tint, type FontBytes } from "./document";
+import type { FontId } from "@/lib/studio/design";
 
 export type RxPdfLabels = {
   title: string; patient: string; date: string; medications: string; medication: string;
@@ -28,6 +29,8 @@ export type RxPdfInput = {
   signerRegistration: string | null;
   // No drawn signature on the website: a copy for the patient says so (cf).
   forPatient: boolean;
+  // The design's typeface (Document Studio); Sarabun when absent.
+  fontId?: FontId;
 };
 
 const COLS = [0.34, 0.22, 0.22, 0.22];
@@ -44,7 +47,7 @@ export async function renderPrescriptionPdf(input: RxPdfInput, fonts: FontBytes)
     signerName: input.signerName, signerRegistration: input.signerRegistration,
     unsignedLine: input.forPatient ? labels.unsignedCopy : null,
     locale: input.locale,
-  }, fonts);
+  }, fonts, input.fontId);
 
   w.section(labels.patient, input.patientName, input.patientAddress || undefined);
   w.section(labels.date, input.corrected ? `${input.date} ${labels.corrected}` : input.date);
