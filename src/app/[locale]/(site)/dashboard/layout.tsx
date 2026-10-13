@@ -30,6 +30,7 @@ import { TeamAccessWatch } from "@/components/TeamAccessWatch";
 import { LocaleRedirect } from "@/components/LocaleRedirect";
 import { OfflineGuard } from "@/components/OfflineGuard";
 import { ClockSkewGuard } from "@/components/ClockSkewGuard";
+import { NavigationGuard } from "@/components/DiscardGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
 
 function isVersionBelow(current: string, minimum: string): boolean {
@@ -221,6 +222,8 @@ export default async function DashboardLayout({
     <div data-theme={theme} data-theme-root className="contents">
     <OfflineGuard />
     <ClockSkewGuard />
+    {/* Leaving a page with unsaved settings asks first (1.9.0, 02). */}
+    <NavigationGuard />
     <TourProvider
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}

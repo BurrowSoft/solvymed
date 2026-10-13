@@ -15,7 +15,9 @@
     "iosBetaHint": "Nécessite l'app gratuite TestFlight d'Apple",
     "signupCta": "Commencez votre essai gratuit",
     "haveAccount": "Vous avez déjà un compte ?",
-    "preferApp": "Vous préférez l'application ? Téléchargez-la :"
+    "preferApp": "Vous préférez l'application ? Téléchargez-la :",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda intelligente",
@@ -2279,5 +2281,10 @@
   },
   "clockSkew": {
     "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Abandonner les modifications ?",
+    "discard": "Abandonner",
+    "keepEditing": "Continuer la modification"
   }
 }

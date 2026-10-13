@@ -14,7 +14,14 @@
 export const DESIGN_VERSION = 1;
 export const DESIGN_MAX_BYTES = 32 * 1024;
 
+// The layouts THIS client knows (its presets: the picker offers these, the
+// renderers draw these). Layouts are data and more get added (Vitor 10-14):
+// a design stores the layout's id, any well-formed one is valid (LAYOUT_ID),
+// so a design saved with a newer layout passes everywhere; a client that
+// doesn't know it draws Classic (layoutFor) and keeps the id when saving
+// other changes (02: only the doctor's own pick changes it).
 export const LAYOUTS = ["classic", "elegant", "modern", "minimal"] as const;
+export const LAYOUT_ID = /^[a-z][a-z0-9-]{1,31}$/;
 // "system": only an unsaved / migrated design (today's look, 02 (A)): saving
 // a design picks one of the curated fonts.
 export const FONTS = ["system", "sarabun", "trirong", "prompt"] as const;
@@ -26,7 +33,14 @@ export const DOC_TYPES = ["prescription", "certificate", "declaration", "exam_re
 // and the Thai receipt (lawyer-reviewed) take brand hooks only.
 export const NON_DESIGNABLE = ["controlled_prescription", "thai_receipt"] as const;
 
-export type Layout = (typeof LAYOUTS)[number];
+export type KnownLayout = (typeof LAYOUTS)[number];
+// A stored layout id: a known one, or one a newer client added.
+export type Layout = string;
+
+// The layout to draw: the stored one when this client knows it, else Classic.
+export function layoutFor(id: string): KnownLayout {
+  return (LAYOUTS as readonly string[]).includes(id) ? (id as KnownLayout) : "classic";
+}
 export type FontId = (typeof FONTS)[number];
 export type PaletteRef = (typeof PALETTE_REFS)[number];
 export type ContactKind = (typeof CONTACT_KINDS)[number];
@@ -102,7 +116,7 @@ export function validateDesign(input: unknown): Check {
   const e0 = onlyKeys(input, top, "design"); if (e0) return { ok: false, error: e0 };
   const d = input as Record<string, unknown>;
   if (d.v !== DESIGN_VERSION) return { ok: false, error: "design.v" };
-  if (!oneOf(d.layout, LAYOUTS)) return { ok: false, error: "design.layout" };
+  if (typeof d.layout !== "string" || !LAYOUT_ID.test(d.layout)) return { ok: false, error: "design.layout" };
   if (!oneOf(d.font, FONTS)) return { ok: false, error: "design.font" };
 
   const p = d.palette; if (!isObj(p)) return { ok: false, error: "palette" };
