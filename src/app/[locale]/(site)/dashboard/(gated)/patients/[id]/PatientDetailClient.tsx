@@ -11,7 +11,8 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
-import { localDay, SHARE_CHECK_MS } from "@/lib/patientDocuments";
+import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
+import { clinicDate } from "@/lib/clinicTime";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -1153,11 +1154,12 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
       // The special control prescription is print-only (ad, as the app):
-      // the print dialog opens on its two copies; the others download.
+      // the print dialog opens on its two copies; the others download, named
+      // with the day the PDF prints (the practice's; ec/fa on #551).
       if (doc.doc_type === "controlled_prescription") {
         const url = printPdf(r.bytes);
         setPrinted((p) => { if (p[doc.id]) URL.revokeObjectURL(p[doc.id]); return { ...p, [doc.id]: url }; });
-      } else downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${localDay(doc.created_at)}.pdf`);
+      } else downloadPdf(r.bytes, `${td(`type.${doc.doc_type}`)} ${r.issued}.pdf`);
     } catch {
       setListError(td("pdfFailed"));
     } finally {
@@ -1189,7 +1191,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           <div className="flex flex-wrap items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
-            <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
+            {/* The issue day on the practice's calendar, as the PDF (#551). */}
+            <span data-testid="medical-doc-date" className="text-xs font-semibold text-slate-500">{formatShortDate(locale, clinicDate(new Date(doc.created_at), timeZone))}</span>
             <NotShared source="medical_document" id={doc.id} share={() => shareDoc(doc, doc.corrects_id ?? null)} />
           </div>
           <div className="flex items-center gap-1">
