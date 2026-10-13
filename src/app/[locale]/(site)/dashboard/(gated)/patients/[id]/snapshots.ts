@@ -5,7 +5,7 @@ import { renderPrescriptionPdf, type RxPdfLabels } from "@/lib/pdf/prescription"
 import { renderDesignedDocument } from "@/lib/pdf/designed";
 import { prescriptionContent } from "@/lib/studio/content";
 import { shareSnapshot, type ShareOutcome } from "@/lib/shareSnapshot";
-import { SNAPSHOT_FOLDER, sharesSnapshot, snapshotTitle, snapshotUnsignedLine } from "@/lib/medicalDocuments";
+import { SNAPSHOT_FOLDER, sharesSnapshot, snapshotImageCopyLine, snapshotTitle, snapshotUnsignedLine } from "@/lib/medicalDocuments";
 import { prescriptionSnapshotData } from "../snapshot-actions";
 import { makeDocumentPdf, type MedDoc } from "./MedicalDocuments";
 import { createClient } from "@/lib/supabase/client";
@@ -57,6 +57,7 @@ export async function shareRxSnapshot(opts: {
             notesLabel: L.notes, notes: d.notes, unsignedLine: L.unsignedCopy,
           }),
           headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+          imageCopyLine: signatureImage ? L.imageCopy ?? null : null,
         },
       }, studioFonts);
       return await shareSnapshot({
@@ -94,7 +95,7 @@ export async function shareDocumentSnapshot(opts: {
   const { doc } = opts;
   if (!sharesSnapshot(doc.doc_type)) return "notShared";
   try {
-    const r = await makeDocumentPdf(opts.patientId, doc, { footer: opts.footer, unsignedCopy: snapshotUnsignedLine(doc.language) }, { withSignature: opts.issued });
+    const r = await makeDocumentPdf(opts.patientId, doc, { footer: opts.footer, unsignedCopy: snapshotUnsignedLine(doc.language), imageCopy: snapshotImageCopyLine(doc.language) }, { withSignature: opts.issued });
     if (!r.ok) return r.code === "access_log_failed" ? "accessLog" : "failed";
     return await shareSnapshot({
       doctorId: opts.doctorId, patientId: opts.patientId, bytes: r.bytes, source: "medical_document", sourceId: doc.id,

@@ -38,13 +38,50 @@ describe("the renderer", () => {
     const base = {
       locale: "pt-BR", practice: { displayName: "Dra. Helena Duarte", specialty: null, registrationLine: "CRM-SP 000000", clinicName: null, locations: [] },
       logos: { square: null, wide: null, reversed: null },
-      doc: prescriptionContent({ title: "Receituário", patientLabel: "Paciente", patientName: "B", dateLabel: "Data", date: "12/10/2026", items: [{ name: "X", instructions: "y" }], notesLabel: "N", notes: null }),
+      doc: {
+        ...prescriptionContent({ title: "Receituário", patientLabel: "Paciente", patientName: "B", dateLabel: "Data", date: "12/10/2026", items: [{ name: "X", instructions: "y" }], notesLabel: "N", notes: null, unsignedLine: "Cópia sem assinatura, para consulta do paciente." }),
+        imageCopyLine: "Cópia para consulta do paciente. Sem assinatura digital.",
+      },
     };
     expect(await imageCount(await renderDesignedDocument({ ...base, design: d, signatureImage: signaturePng() }, fonts))).toBe(1);
     expect(await imageCount(await renderDesignedDocument({ ...base, design: d }, fonts))).toBe(0);
     expect(await imageCount(await renderDesignedDocument({ ...base, design: { ...d, signature: { ...d.signature, image: false } }, signatureImage: signaturePng() }, fonts))).toBe(0);
   }, 60_000);
+
+  // 02: the image never appears without "… Sem assinatura digital.", which
+  // then replaces "Cópia sem assinatura…" (that line stays for every copy
+  // without the image).
+  it("the image only with its copy line, which replaces the unsigned line", async () => {
+    const { renderDesignedDocument } = await import("@/lib/pdf/designed");
+    const { loadDesignFontBytes } = await import("@/lib/pdf/fonts");
+    const { prescriptionContent } = await import("@/lib/studio/content");
+    const d = design();
+    const fonts = await loadDesignFontBytes(d.font, async (p) => read(p));
+    const doc = prescriptionContent({ title: "Receituário", patientLabel: "Paciente", patientName: "B", dateLabel: "Data", date: "12/10/2026", items: [{ name: "X", instructions: "y" }], notesLabel: "N", notes: null, unsignedLine: "Cópia sem assinatura, para consulta do paciente." });
+    const base = { design: d, locale: "pt-BR", practice: { displayName: "Dra. Helena Duarte", specialty: null, registrationLine: "CRM-SP 000000", clinicName: null, locations: [] }, logos: { square: null, wide: null, reversed: null }, signatureImage: signaturePng() };
+    // No copy line: no image, the unsigned line as before.
+    const without = await renderDesignedDocument({ ...base, doc }, fonts);
+    expect(await imageCount(without)).toBe(0);
+    expect(await textOf(without)).toContain(n("Cópia sem assinatura"));
+    // With it: the image and its line, never the unsigned one.
+    const withLine = await renderDesignedDocument({ ...base, doc: { ...doc, imageCopyLine: "Cópia para consulta do paciente. Sem assinatura digital." } }, fonts);
+    expect(await imageCount(withLine)).toBe(1);
+    expect(await textOf(withLine)).toContain(n("Sem assinatura digital."));
+    expect(await textOf(withLine)).not.toContain(n("Cópia sem assinatura"));
+  }, 60_000);
 });
+
+async function textOf(bytes: Uint8Array): Promise<string> {
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const doc = await pdfjs.getDocument({ data: bytes.slice(), disableFontFace: true, useSystemFonts: false, isEvalSupported: false }).promise;
+  try {
+    const tc = await (await doc.getPage(1)).getTextContent();
+    return n(tc.items.map((x) => ("str" in x ? x.str : "")).join(""));
+  } finally {
+    await doc.destroy();
+  }
+}
+function n(s: string) { return s.replace(/\s+/g, "").toLocaleLowerCase("pt-BR"); }
 
 describe("on-demand renders never take a signature", () => {
   it("the print pages' browser render has no signature input", async () => {

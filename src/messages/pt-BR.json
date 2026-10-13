@@ -2147,7 +2147,8 @@
     "removeUploadHint": "Você pode remover até o seu médico abrir o documento (em até 24 h).",
     "removeUploadConfirm": "Remover este documento? Ele será excluído.",
     "titleLabel": "Título",
-    "move": "Mover para pasta"
+    "move": "Mover para pasta",
+    "imageCopy": "Cópia para consulta do paciente. Sem assinatura digital."
   },
   "documents": {
     "tabTitle": "Receitas e documentos ({n})",

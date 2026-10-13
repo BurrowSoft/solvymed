@@ -2147,7 +2147,8 @@
     "removeUploadHint": "担当医が開くまで(24 時間以内)取り消せます。",
     "removeUploadConfirm": "この書類を取り消しますか?削除されます。",
     "titleLabel": "タイトル",
-    "move": "フォルダーに移動"
+    "move": "フォルダーに移動",
+    "imageCopy": "患者さんの参考用の控えです。電子署名はありません。"
   },
   "documents": {
     "tabTitle": "処方箋と書類 ({n})",

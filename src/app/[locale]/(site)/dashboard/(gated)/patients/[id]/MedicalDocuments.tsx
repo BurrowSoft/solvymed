@@ -463,7 +463,7 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 // (documentPrintData fails closed). Returns the bytes, or an error code.
 // withSignature: only the patient's copy made when the document is issued
 // (02, 10-13); downloads and prints show the typed stamp only.
-export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null }, opts: { withSignature?: boolean } = {}):
+export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
   Promise<{ ok: true; bytes: Uint8Array } | { ok: false; code: string }> {
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
@@ -513,6 +513,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
           signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
         }),
         headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+        imageCopyLine: signatureImage ? words.imageCopy ?? null : null,
       },
     }, studioFonts);
     return { ok: true, bytes: designed };

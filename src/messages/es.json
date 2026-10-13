@@ -2147,7 +2147,8 @@
     "removeUploadHint": "Puedes quitarlo hasta que tu médico lo abra (en 24 h).",
     "removeUploadConfirm": "¿Quitar este documento? Se eliminará.",
     "titleLabel": "Título",
-    "move": "Mover a la carpeta"
+    "move": "Mover a la carpeta",
+    "imageCopy": "Copia para consulta del paciente. Sin firma digital."
   },
   "documents": {
     "tabTitle": "Recetas y documentos ({n})",

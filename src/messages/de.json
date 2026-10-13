@@ -2147,7 +2147,8 @@
     "removeUploadHint": "Sie können es entfernen, bis Ihr Arzt es öffnet (innerhalb von 24 h).",
     "removeUploadConfirm": "Dieses Dokument entfernen? Es wird gelöscht.",
     "titleLabel": "Titel",
-    "move": "In Ordner verschieben"
+    "move": "In Ordner verschieben",
+    "imageCopy": "Kopie zur Information des Patienten. Nicht digital signiert."
   },
   "documents": {
     "tabTitle": "Rezepte und Dokumente ({n})",

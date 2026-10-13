@@ -2147,7 +2147,8 @@
     "removeUploadHint": "Anda dapat menghapusnya sampai dokter membukanya (dalam 24 jam).",
     "removeUploadConfirm": "Hapus dokumen ini? Dokumen akan dihapus.",
     "titleLabel": "Judul",
-    "move": "Pindahkan ke folder"
+    "move": "Pindahkan ke folder",
+    "imageCopy": "Salinan untuk referensi pasien. Tidak ditandatangani secara digital."
   },
   "documents": {
     "tabTitle": "Resep dan dokumen ({n})",

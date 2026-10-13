@@ -39,7 +39,10 @@ export type DesignedInput = {
   // 02); default: the typed stamp.
   // runningHead: on a continuation page, a small line at the top (the
   // patient and the date, 02: a loose page 2 is never another patient's).
-  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none"; runningHead?: string | null };
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none"; runningHead?: string | null;
+  // The line printed under a signature image instead of unsignedLine
+  // ("… Not digitally signed."). Without it the image is never drawn (02).
+  imageCopyLine?: string | null };
 };
 
 export type DocBlock =
@@ -487,8 +490,10 @@ function layoutBottom(c: Ctx, input: DesignedInput, sigImage: PDFImage | null): 
       line(c, input.practice.displayName, { size: c.p.size.body, bold: true, x: sx, width: sig.width, align: sig.align });
       const cred = [input.practice.specialty, input.practice.registrationLine].filter(Boolean).join(" · ");
       if (cred) line(c, cred, { size: c.p.size.small, x: sx, width: sig.width, align: sig.align, color: c.muted });
-      // A patient's copy (unsigned): its line under the signature block.
-      if (input.doc.unsignedLine) line(c, input.doc.unsignedLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
+      // A patient's copy: its line under the signature block ("unsigned
+      // copy", or with the image, "… not digitally signed").
+      const copyLine = sigImage ? input.doc.imageCopyLine : input.doc.unsignedLine;
+      if (copyLine) line(c, copyLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
     },
   };
 }
@@ -532,7 +537,7 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
   };
   // The signature image only when the design turns it on and the caller
   // passed it (an issue-time patient copy).
-  const sigImage = d.signature.image && input.signatureImage ? await embedImage(pdf, input.signatureImage) : null;
+  const sigImage = d.signature.image && input.signatureImage && input.doc.imageCopyLine?.trim() ? await embedImage(pdf, input.signatureImage) : null;
   const bottom = layoutBottom(c, input, sigImage);
   drawPage(c, wm);
   drawHeader(c, input, headerLogo(c, logos));

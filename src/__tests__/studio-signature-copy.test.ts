@@ -41,15 +41,44 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/snapshot-actions", () 
   }),
 }));
 
+// The special control prescription: its fixed legal layout, never the image
+// (and the Thai receipt is the app's legal one: the website makes none).
+const controlled = vi.fn(async () => new Uint8Array([2]));
+vi.mock("@/lib/pdf/controlledPrescription", () => ({ renderControlledPrescriptionPdf: (...a: unknown[]) => controlled(...(a as [])) }));
+vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions", () => ({
+  createMedicalDocument: vi.fn(), updateMedicalDocument: vi.fn(), correctMedicalDocument: vi.fn(),
+  documentPrintData: async () => ({
+    ok: true,
+    data: {
+      fontId: "sarabun", template: { primaryColor: "#000000", logoUrl: null }, brand: null, idKind: "cpf", locationLines: [],
+      patient: { name: "B", cpf: "12345678909", passport: null, thId: null },
+      doctor: { name: "D", registration: "CRM 1/SP", state: "SP", address: "", city: "", phone: null, clinicName: null },
+      studio: { design: design(), practice: { displayName: "D", specialty: null, registrationLine: null, clinicName: null, locations: [] }, logos: { square: null, wide: null, reversed: null }, texts: { header: null, footer: null }, signaturePath: "u1/signature.png" },
+    },
+  }),
+}));
+
+describe("legal layouts never take the image", () => {
+  it("the special control prescription, issued with the flag on and an image saved: no image read", async () => {
+    sigBytes.mockClear();
+    const { makeDocumentPdf } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MedicalDocuments");
+    const r = await makeDocumentPdf("p", { id: "d", doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [] }, body: null, created_at: "2026-10-12T12:00:00Z" } as never, { footer: "F", unsignedCopy: "U", imageCopy: "I" }, { withSignature: true });
+    expect(r.ok).toBe(true);
+    expect(controlled).toHaveBeenCalledTimes(1);
+    expect(sigBytes).not.toHaveBeenCalled();
+  }, 60_000);
+});
+
 describe("the patient's copy of a prescription", () => {
   beforeEach(() => { sigBytes.mockClear(); rendered.length = 0; });
-  const labels = { title: "Receita", patient: "P", date: "D", medications: "M", medication: "M", dosage: "D", frequency: "F", duration: "D", notes: "N", footer: "F", corrected: "C", unsignedCopy: "U" };
+  const labels = { title: "Receita", patient: "P", date: "D", medications: "M", medication: "M", dosage: "D", frequency: "F", duration: "D", notes: "N", footer: "F", corrected: "C", unsignedCopy: "U", imageCopy: "I" };
 
   it("issued now (new / correction): the image is read and embedded", async () => {
     const { shareRxSnapshot } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots");
     expect(await shareRxSnapshot({ doctorId: "u1", patientId: "p", rxId: "r", correctsId: null, locale: "pt-BR", labels, title: () => "t", issued: true })).toBe("shared");
     expect(sigBytes).toHaveBeenCalledTimes(1);
     expect(rendered[0].signatureImage).toBeInstanceOf(Uint8Array);
+    expect((rendered[0] as { doc?: { imageCopyLine?: string | null } }).doc?.imageCopyLine).toBe("I");
   }, 60_000);
 
   it("a re-share (an edit): no image, even with the flag on and an image saved", async () => {
@@ -57,6 +86,7 @@ describe("the patient's copy of a prescription", () => {
     expect(await shareRxSnapshot({ doctorId: "u1", patientId: "p", rxId: "r", correctsId: "r", locale: "pt-BR", labels, title: () => "t", issued: false })).toBe("shared");
     expect(sigBytes).not.toHaveBeenCalled();
     expect(rendered[0].signatureImage ?? null).toBeNull();
+    expect((rendered[0] as { doc?: { imageCopyLine?: string | null } }).doc?.imageCopyLine ?? null).toBeNull();
   }, 60_000);
 });
 

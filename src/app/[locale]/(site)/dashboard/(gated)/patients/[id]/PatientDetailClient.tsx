@@ -1087,7 +1087,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       labels: {
         title: tpd("title"), patient: tpd("patient"), date: tpd("date"), medications: tpd("medications"), medication: tpd("medication"),
         dosage: tpd("dosage"), frequency: tpd("frequency"), duration: tpd("duration"), notes: tpd("notes"), footer: tpd("footer"),
-        corrected: tpd("corrected"), unsignedCopy: tdocs("unsignedCopy"),
+        corrected: tpd("corrected"), unsignedCopy: tdocs("unsignedCopy"), imageCopy: tdocs("imageCopy"),
       },
       title: (iso) => `${tpd("title")} ${formatShortDate(locale, iso)}`,
     }));
