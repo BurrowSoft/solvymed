@@ -56,7 +56,7 @@ Thai title: "หัตถการและราคา"
 **pt-BR**
 1. **Configurações → Equipe**: digite o e-mail da pessoa e toque em **Convidar**.
 2. O convite chega a esse e-mail, com o botão **Aceitar convite**. O código de convite também aparece na tela uma vez, para você compartilhar se quiser (vale 7 dias, uso único, só para esse e-mail).
-3. A pessoa abre o convite e cria a conta (o e-mail já vem preenchido), ou cria a conta em "Trabalha na secretaria?" com o código.
+3. A pessoa abre o e-mail, toca em **Aceitar convite** e cria a conta: o e-mail já vem preenchido. Sem o e-mail à mão, ela pode usar o código em "Trabalha na secretaria?".
 Sua equipe pode ter até 3 pessoas, contando os convites pendentes. A equipe cuida da agenda, dos pacientes e dos pagamentos, mas não veem prontuários, receitas, exames nem arquivos. Para remover alguém: **Equipe → Remover**.
 No site, quem foi removido da última equipe vê, ao voltar ao painel, "Você não faz parte de nenhuma equipe no momento.", com **Entrar com um código de convite** e **Sair**.
 {pending:app-1.8.0} No app também: em até 2 minutos, ou ao voltar ao app, quem foi removido(a) da última equipe vê a mesma tela; quem ainda trabalha para outro médico passa para a equipe dele.
@@ -68,7 +68,7 @@ No site, quem foi removido da última equipe vê, ao voltar ao painel, "Você n�
 **en**
 1. **Settings → Team**: type the person's email and tap **Invite**.
 2. The invite is emailed to that address, with an **Accept invite** button. The invite code also shows on screen once, for you to share if you like (valid for 7 days, single use, for that email only).
-3. The person opens the invite and signs up (the email is already filled in), or signs up under "Work at the front desk?" with the code.
+3. The person opens the e-mail, taps **Accept invite** and creates the account: the e-mail is already filled in. Without the e-mail at hand, they can use the code under "Work at the front desk?".
 Your team can have up to 3 people, counting pending invites. The team manages the schedule, patients and payments, but can't see records, prescriptions, exams or files. To remove someone: **Team → Remove**.
 On the website, someone removed from their last team sees "You're not part of any team right now." when they return to the dashboard, with **Join with an invite code** and **Sign out**.
 {pending:app-1.8.0} In the app too: within 2 minutes, or on returning to the app, someone removed from their last team sees the same screen; someone still working for another doctor moves to that doctor's team.
@@ -83,7 +83,7 @@ Thai title: "เชิญเลขานุการ"
 **th**
 1. **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วแตะ **เชิญ**
 2. คำเชิญจะส่งไปที่อีเมลนั้น พร้อมปุ่ม **ยอมรับคำเชิญ** และ **รหัสเชิญ** จะแสดงบนหน้าจอหนึ่งครั้ง เผื่อคุณต้องการส่งให้อีกฝ่ายเอง (ใช้ได้ 7 วัน ครั้งเดียว และเฉพาะอีเมลนั้น)
-3. อีกฝ่ายเปิดคำเชิญแล้วสร้างบัญชี (อีเมลจะกรอกไว้ให้แล้ว) หรือสร้างบัญชีโดยเลือก **เลขานุการ / พนักงานต้อนรับ** แล้วใส่รหัสนั้น
+3. เลขานุการเปิดอีเมล กด **ยอมรับคำเชิญ** แล้วสร้างบัญชี โดยอีเมลจะกรอกไว้ให้แล้ว หากไม่มีอีเมลอยู่ใกล้มือ ใช้รหัสได้ที่ **เลขานุการ / พนักงานต้อนรับ**
 ทีมของคุณมีได้สูงสุด 3 คน รวมคำเชิญที่รออยู่ ทีมดูแลตารางนัด ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
 ในเว็บไซต์ ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็น "ขณะนี้คุณไม่ได้อยู่ในทีมใด" เมื่อกลับมาที่แดชบอร์ด พร้อม **เข้าร่วมด้วยรหัสเชิญ** และ **ออกจากระบบ**
 {pending:app-1.8.0} ในแอปก็เช่นกัน: ภายใน 2 นาที หรือเมื่อกลับมาที่แอป ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็นหน้าจอเดียวกัน ส่วนผู้ที่ยังทำงานให้แพทย์คนอื่นจะย้ายไปที่ทีมของแพทย์คนนั้น
