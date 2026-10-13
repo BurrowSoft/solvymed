@@ -1028,7 +1028,7 @@
             },
             {
               "type": "p",
-              "text": "No app, uma receita nova tem **Compartilhar com o paciente** (ligado de início): ao salvar, uma cópia em PDF vai para a pasta **Prescrições** do paciente. Uma cópia sem a sua assinatura desenhada traz \"Cópia sem assinatura, para consulta do paciente.\"; uma edição ou uma correção da receita substitui a cópia, e o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção). Depois de salvar com o compartilhamento ligado, o app mostra **Compartilhando com o paciente…** e espera: o X e o voltar ficam bloqueados até o compartilhamento terminar; se falhar, o aviso oferece **Tentar de novo**. Se o seu espaço de documentos estiver cheio, a receita é salva mas não compartilhada."
+              "text": "No app, uma receita nova tem **Compartilhar com o paciente** (ligado de início): ao salvar, uma cópia em PDF vai para a pasta **Prescrições** do paciente. Uma cópia sem a sua assinatura desenhada traz \"Cópia sem assinatura, para consulta do paciente.\"; uma correção da receita substitui a cópia, e o paciente vê **Corrigido em** (no app, uma receita não é editada: é corrigida). Depois de salvar com o compartilhamento ligado, o app mostra **Compartilhando com o paciente…** e espera: o X e o voltar ficam bloqueados até o compartilhamento terminar; se falhar, o aviso oferece **Tentar de novo**. Se o seu espaço de documentos estiver cheio, a receita é salva mas não compartilhada."
             }
           ],
           "en": [
@@ -1054,7 +1054,7 @@
             },
             {
               "type": "p",
-              "text": "In the app, a new prescription has **Share with the patient** (on by default): when you save, a PDF copy goes to the patient's **Prescriptions** folder. A copy without your drawn signature says \"Unsigned copy, for the patient's reference.\"; an edit or a correction of the prescription replaces the copy, and the patient sees **Updated on** (an edit) or **Corrected on** (a correction). After saving with sharing on, the app shows **Sharing with the patient…** and waits: X and back are blocked until the share finishes; if it fails, the alert offers **Try again**. If your document storage is full, the prescription is saved but not shared."
+              "text": "In the app, a new prescription has **Share with the patient** (on by default): when you save, a PDF copy goes to the patient's **Prescriptions** folder. A copy without your drawn signature says \"Unsigned copy, for the patient's reference.\"; a correction of the prescription replaces the copy, and the patient sees **Corrected on** (in the app a prescription isn't edited: it's corrected). After saving with sharing on, the app shows **Sharing with the patient…** and waits: X and back are blocked until the share finishes; if it fails, the alert offers **Try again**. If your document storage is full, the prescription is saved but not shared."
             }
           ]
         },
