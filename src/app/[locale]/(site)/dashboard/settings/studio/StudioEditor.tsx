@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Card } from "../SettingsClient";
 import { ReloadButton } from "@/components/ReloadButton";
+import { timeLimit } from "@/lib/netError";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
 import { saveMyDesign } from "../studio-actions";
 import {
@@ -25,6 +26,7 @@ import { countryProfile } from "@/lib/country";
 const CONTACTS_MAX = 6;
 const CONTACT_MAX = 120;
 const TEXT_MAX = 300;
+export const SAVE_LIMIT_MS = 20_000;
 
 // The preview's sample prescription (data, not labels: the labels are the
 // real ones), in the page's language; other languages show the English one.
@@ -108,7 +110,10 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
     if (state === "saving") return;
     setState("saving");
     try {
-      const r = await saveMyDesign(cleaned, version);
+      // Never "Saving…" forever (fa, #540): an answer that doesn't come in
+      // SAVE_LIMIT_MS is an error the doctor can retry (a retry with the old
+      // version is then a conflict, never an overwrite).
+      const r = await timeLimit(saveMyDesign(cleaned, version), SAVE_LIMIT_MS, { ok: false as const, code: "generic" as const });
       if (r.ok) {
         setVersion(r.version);
         setEverSaved(true);
