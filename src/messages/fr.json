@@ -2278,5 +2278,10 @@
   },
   "offline": {
     "banner": "Pas de connexion Internet. Vous pouvez consulter ce qui est ouvert, mais les modifications ne seront pas enregistrées."
+  },
+  "common": {
+    "discardTitle": "Abandonner les modifications ?",
+    "discard": "Abandonner",
+    "keepEditing": "Continuer la modification"
   }
 }

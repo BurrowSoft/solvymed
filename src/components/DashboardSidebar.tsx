@@ -9,6 +9,7 @@ import { nameInitial } from "@/lib/doctorName";
 import { OFFERED_LOCALES } from "@/lib/publicLocales";
 import { BrandLogo } from "@/components/BrandLogo";
 import { signOutHere } from "@/lib/signOut";
+import { leaveGuarded } from "@/components/DiscardGuard";
 
 interface Props {
   locale: string;
@@ -103,6 +104,12 @@ function LanguageSwitcher({ locale, languages }: { locale: string; languages: re
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [locale, languages]);
 
+  // A language picked by hand: unsaved settings ask first (the automatic
+  // correction above never does).
+  function pickLocale(newLocale: string) {
+    leaveGuarded(() => switchLocale(newLocale));
+  }
+
   function switchLocale(newLocale: string, replace = false) {
     const pathWithoutLocale = pathname.replace(LOCALE_RE, "/");
     const newPath = newLocale === "en" ? pathWithoutLocale : `/${newLocale}${pathWithoutLocale}`;
@@ -132,7 +139,7 @@ function LanguageSwitcher({ locale, languages }: { locale: string; languages: re
             {offered.map(loc => (
               <button
                 key={loc.code}
-                onClick={() => switchLocale(loc.code)}
+                onClick={() => pickLocale(loc.code)}
                 className={`flex w-full items-center gap-3 px-3 py-2 text-sm transition ${
                   loc.code === locale
                     ? "bg-teal-50 text-teal-700 font-semibold"
@@ -181,7 +188,11 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
     // read-only in Settings.
   ].filter(item => !(isSecretary && item.path === "/dashboard/clinics"));
 
-  async function signOut() {
+  // Signing out with unsaved settings asks first (ec, #530).
+  function signOut() {
+    leaveGuarded(() => { void doSignOut(); });
+  }
+  async function doSignOut() {
     setSigningOut(true);
     const supabase = createClient();
     await signOutHere(supabase.auth);

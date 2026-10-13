@@ -2278,5 +2278,10 @@
   },
   "offline": {
     "banner": "Sin conexión a internet. Puedes ver lo que está abierto, pero los cambios no se guardarán."
+  },
+  "common": {
+    "discardTitle": "¿Descartar los cambios?",
+    "discard": "Descartar",
+    "keepEditing": "Seguir editando"
   }
 }

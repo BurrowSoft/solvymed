@@ -2278,5 +2278,10 @@
   },
   "offline": {
     "banner": "Keine Internetverbindung. Sie können sehen, was geöffnet ist, aber Änderungen werden nicht gespeichert."
+  },
+  "common": {
+    "discardTitle": "Änderungen verwerfen?",
+    "discard": "Verwerfen",
+    "keepEditing": "Weiter bearbeiten"
   }
 }

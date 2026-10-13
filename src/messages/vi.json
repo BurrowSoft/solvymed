@@ -2278,5 +2278,10 @@
   },
   "offline": {
     "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
+  },
+  "common": {
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục sửa"
   }
 }

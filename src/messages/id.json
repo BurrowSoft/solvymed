@@ -2278,5 +2278,10 @@
   },
   "offline": {
     "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
+  },
+  "common": {
+    "discardTitle": "Buang perubahan?",
+    "discard": "Buang",
+    "keepEditing": "Lanjutkan mengedit"
   }
 }
