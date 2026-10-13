@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
@@ -75,9 +76,12 @@ export default async function PrescriptionPrintPage({
   const studio = await loadStudioForDocument(supabase, user.id, () => "prescription", brand, {
     fullName: prof?.full_name ?? "", registration: prof?.professional_registration ?? null,
   });
-  if (studio) {
-    return (
+  // With the design, the designed PDF; today's view is its fallback (ec:
+  // a failed render must never leave a page that can't print).
+  const designedView = studio
+    ? (fallback: ReactNode) => (
       <DesignedPrint
+        fallback={fallback}
         backHref={`${prefix}/dashboard/patients/${patient.id}`}
         fileName={`${t("title")} ${rx.date}.pdf`}
         input={{
@@ -93,10 +97,10 @@ export default async function PrescriptionPrintPage({
           },
         }}
       />
-    );
-  }
+    )
+    : null;
 
-  return (
+  const classic = (
     // A light scope: the print view stays light in the dashboard's dark
     // theme, on screen and in the PDF (Help C8).
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
@@ -123,4 +127,5 @@ export default async function PrescriptionPrintPage({
       </div>
     </div>
   );
+  return designedView ? designedView(classic) : classic;
 }

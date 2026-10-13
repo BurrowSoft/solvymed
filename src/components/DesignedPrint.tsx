@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { BrowserDesignInput } from "@/lib/pdf/browser";
@@ -9,10 +9,10 @@ import type { BrowserDesignInput } from "@/lib/pdf/browser";
 // 10-12: web Print = the designed PDF): the PDF is made on the device, its
 // pages shown, and "Imprimir / Salvar PDF" prints that PDF (phones open it
 // to print or save). Without a saved design the page keeps today's HTML
-// print view.
-export function DesignedPrint({ input, fileName, backHref, backLabel }: { input: BrowserDesignInput; fileName: string; backHref: string; backLabel?: string }) {
+// print view; if the PDF can't be made here, that view is shown instead
+// (fallback), so the document can always be printed (ec, #543).
+export function DesignedPrint({ input, fileName, backHref, backLabel, fallback }: { input: BrowserDesignInput; fileName: string; backHref: string; backLabel?: string; fallback: ReactNode }) {
   const t = useTranslations("prescriptionDoc");
-  const tDocs = useTranslations("documents");
   const box = useRef<HTMLDivElement>(null);
   const pages = useRef<HTMLDivElement>(null);
   const [bytes, setBytes] = useState<Uint8Array | null>(null);
@@ -43,6 +43,8 @@ export function DesignedPrint({ input, fileName, backHref, backLabel }: { input:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key]);
 
+  if (state === "failed") return <div data-testid="designed-fallback">{fallback}</div>;
+
   async function print() {
     if (!bytes) return;
     const { printPdf } = await import("@/lib/pdf/browser");
@@ -62,7 +64,6 @@ export function DesignedPrint({ input, fileName, backHref, backLabel }: { input:
         </div>
       </div>
       <div ref={box} data-testid="designed-pages" data-state={state} className="mx-auto max-w-[680px]">
-        {state === "failed" && <p role="alert" className="rounded-2xl bg-white p-6 text-sm text-red-600 shadow-sm">{tDocs("pdfFailed")}</p>}
         {state === "rendering" && <div className="aspect-[595/842] w-full animate-pulse rounded-sm bg-white shadow-sm ring-1 ring-slate-100" />}
         <div ref={pages} className="space-y-4" />
       </div>

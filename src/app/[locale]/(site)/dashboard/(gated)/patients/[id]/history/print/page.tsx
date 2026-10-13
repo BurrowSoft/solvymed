@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
@@ -107,9 +108,12 @@ export default async function HistoryPrintPage({
   const studio = await loadStudioForDocument(supabase, user.id, () => "history", brand, {
     fullName: prof?.full_name ?? "", registration: prof?.professional_registration ?? null, clinicName: prof?.clinic_name ?? null,
   });
-  if (studio) {
-    return (
+  // With the design, the designed PDF; today's view is its fallback (ec:
+  // a failed render must never leave a page that can't print).
+  const designedView = studio
+    ? (fallback: ReactNode) => (
       <DesignedPrint
+        fallback={fallback}
         backHref={`${prefix}/dashboard/patients/${id}`}
         fileName={`${t("historyTitle")} ${patient.full_name as string}.pdf`}
         input={{
@@ -127,10 +131,10 @@ export default async function HistoryPrintPage({
           },
         }}
       />
-    );
-  }
+    )
+    : null;
 
-  return (
+  const classic = (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${id}`} />
@@ -161,4 +165,5 @@ export default async function HistoryPrintPage({
       </div>
     </div>
   );
+  return designedView ? designedView(classic) : classic;
 }

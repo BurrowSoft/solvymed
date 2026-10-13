@@ -324,7 +324,15 @@ function drawBlock(c: Ctx, b: DocBlock) {
     case "items": drawItems(c, b.items); return;
     case "notes": drawNotes(c, b.label, b.text); return;
     case "section": drawSection(c, b.label); return;
-    case "paragraph": line(c, b.text, { size: body, color: b.muted ? c.muted : c.ink, bold: b.bold, spacing: 1.55 }); c.y -= c.p.gap * 0.4; return;
+    case "paragraph": {
+      // A paragraph that fits on a page isn't split across two (a clinical
+      // note stays whole); a longer one continues on the next page.
+      const h = wrapText(b.text, b.bold ? c.fonts.bold : c.fonts.regular, body, c.width, c.locale).length * body * 1.55;
+      if (h < A4[1] - c.p.padding[0] - c.floor) need(c, h);
+      line(c, b.text, { size: body, color: b.muted ? c.muted : c.ink, bold: b.bold, spacing: 1.55 });
+      c.y -= c.p.gap * 0.4;
+      return;
+    }
     case "bullets": for (const t of b.items) line(c, `•  ${t}`, { size: body, x: c.left + 12, width: c.width - 12 }); c.y -= c.p.gap * 0.4; return;
     case "checked": {
       const s = body * 0.75;

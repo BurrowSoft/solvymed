@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
@@ -119,9 +120,12 @@ export default async function ReceiptPrintPage({
   const studio = await loadStudioForDocument(supabase, profId, () => "receipt", brand, {
     fullName: header.fullName ?? "", specialty: header.specialty, registration: header.registration, clinicName: header.clinicName,
   });
-  if (studio) {
-    return (
+  // With the design, the designed PDF; today's view is its fallback (ec:
+  // a failed render must never leave a page that can't print).
+  const designedView = studio
+    ? (fallback: ReactNode) => (
       <DesignedPrint
+        fallback={fallback}
         backHref={back}
         backLabel={t("backToPayments")}
         fileName={`${t("receiptTitle")} ${number}.pdf`}
@@ -140,10 +144,10 @@ export default async function ReceiptPrintPage({
           },
         }}
       />
-    );
-  }
+    )
+    : null;
 
-  return (
+  const classic = (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={back} backLabel={t("backToPayments")} />
@@ -175,4 +179,5 @@ export default async function ReceiptPrintPage({
       </div>
     </div>
   );
+  return designedView ? designedView(classic) : classic;
 }
