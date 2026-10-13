@@ -2092,6 +2092,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartir con el paciente",
+    "shareChecking": "Checking whether the patient sees this copy…",
+    "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Compartido con el paciente",
     "notShared": "Solo tú puedes verlo",
     "replacedByNewer": "Reemplazado por una copia más reciente",

@@ -147,3 +147,26 @@ describe("the text follows its fields (1.9.0, c5's rule, the same in the app)", 
     expect(within(dialog).queryByTestId("text-mismatch")).toBeNull();
   });
 });
+
+describe("a new document's dates default to the PRACTICE's today (1.9.0, as the app's clinicToday)", () => {
+  it("20:00 in São Paulo is already tomorrow in Bangkok: a Bangkok practice's certificate starts tomorrow", () => {
+    vi.useFakeTimers({ now: new Date("2026-10-13T20:00:00-03:00"), shouldAdvanceTime: true });
+    try {
+      render(
+        <NextIntlClientProvider locale="pt-BR" messages={pt}>
+          <PatientTabs patient={patient} records={[]} prescriptions={[]} appointments={[]} locale="pt-BR" currentUserId="doc" timeZone="Asia/Bangkok"
+            medicalDocs={{ list: [], country: "BR", hasPatientId: true }} />
+        </NextIntlClientProvider>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: T.tabTitle.replace("{n}", "0") }));
+      fireEvent.click(screen.getByRole("button", { name: T.addDocument }));
+      const dialog = screen.getByTestId("document-dialog");
+      fireEvent.click(within(dialog).getByRole("button", { name: T.type.certificate }));
+      // The browser (the test runs in São Paulo time) says the 13th; the practice says the 14th.
+      expect((within(dialog).getByLabelText(T.body) as HTMLTextAreaElement).value).toContain("14 de outubro de 2026");
+      expect(within(dialog).getAllByDisplayValue("14/10/2026").length).toBeGreaterThan(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
