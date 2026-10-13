@@ -7,6 +7,7 @@ import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { LAYOUTS, type Design } from "@/lib/studio/design";
 import { medicalDocumentContent, prescriptionContent } from "@/lib/studio/content";
 import { dateLine } from "@/lib/pdf/medicalDocument";
+import { withLayout } from "@/lib/studio/starters";
 
 // A design changes the look, never what a prescription says (02, ec: 78
 // found Minimal dropping the strength, "· 10mg"). For every layout and
@@ -59,6 +60,8 @@ const cases: [string, Design][] = [
   ...fixtures,
   // Each known layout's own item style, from a fixture's choices.
   ...LAYOUTS.map((l) => [`layout ${l}`, { ...fixtures[0][1], layout: l }] as [string, Design]),
+  // Each layout as the editor's pick sets it (its mock-up look).
+  ...LAYOUTS.map((l) => [`starter ${l}`, withLayout(fixtures[0][1], l)] as [string, Design]),
 ];
 
 describe("Studio: every medication and legal field appears in every layout", () => {

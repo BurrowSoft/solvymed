@@ -44,11 +44,14 @@ export async function shareRxSnapshot(opts: {
       const L = opts.labels;
       const designed = await renderDesignedDocument({
         design: d.studio.design, locale: opts.locale, practice: d.studio.practice, logos: { square, wide, reversed },
-        doc: prescriptionContent({
-          title: L.title, patientLabel: L.patient, patientName: d.patientName, dateLabel: L.date, date: d.date,
-          items: d.items.map((it) => ({ name: it.name, form: it.dosage || null, instructions: [it.frequency, it.duration].filter((x) => x?.trim()).join(" · ") })),
-          notesLabel: L.notes, notes: d.notes, unsignedLine: L.unsignedCopy,
-        }),
+        doc: {
+          ...prescriptionContent({
+            title: L.title, patientLabel: L.patient, patientName: d.patientName, dateLabel: L.date, date: d.date,
+            items: d.items.map((it) => ({ name: it.name, form: it.dosage || null, instructions: [it.frequency, it.duration].filter((x) => x?.trim()).join(" · ") })),
+            notesLabel: L.notes, notes: d.notes, unsignedLine: L.unsignedCopy,
+          }),
+          headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+        },
       }, studioFonts);
       return await shareSnapshot({
         doctorId: opts.doctorId, patientId: opts.patientId, bytes: designed, source: "prescription", sourceId: opts.rxId,
