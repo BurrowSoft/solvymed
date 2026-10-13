@@ -1,4 +1,4 @@
-import { PDFDocument, rgb, type PDFFont, type PDFImage, type PDFPage, type RGB } from "pdf-lib";
+import { PDFDocument, rgb, type PDFImage, type PDFPage, type RGB } from "pdf-lib";
 import fontkit from "@pdf-lib/fontkit";
 import type { Design, PaletteRef } from "@/lib/studio/design";
 import { bandHeight, presetFor, type LayoutPreset } from "@/lib/studio/layouts";
@@ -289,14 +289,23 @@ function drawBottom(c: Ctx, input: DesignedInput) {
   const base = Math.max(c.p.padding[2], bandHeight(c.d.band.style) + 14);
   let footerH = 0;
   if (groups.length && c.d.footer.columns === 1 && c.p.footer.oneLine !== "none") {
-    // One joined line (wrapped if long), measured first so it ends above the band.
+    // One joined line, measured first so it ends above the band. A long one
+    // breaks only between items (an address part, a phone number, a handle),
+    // never inside one (02: Minimal's footer split a phone number).
     const caps = c.p.footer.oneLine === "caps";
-    const text = groups.map((g) => g.lines.join(" · ")).join(caps ? "  ·  " : "  |  ");
-    const s = caps ? text.toLocaleUpperCase(c.locale) : text;
-    const n = wrapText(s, c.fonts.regular, size, c.width, c.locale).length;
-    footerH = n * lh + 10;
+    const up = (t: string) => (caps ? t.toLocaleUpperCase(c.locale) : t);
+    const sep = caps ? "  ·  " : "  |  ";
+    const parts = groups.flatMap((g, gi) => g.lines.map((t, li) => ({ text: up(t), joiner: li === 0 ? (gi === 0 ? "" : sep) : " · " })));
+    const rows: string[] = [];
+    let cur = "";
+    for (const p of parts) {
+      const next = cur ? cur + p.joiner + p.text : p.text;
+      if (cur && textWidth(c.fonts.regular, next, size) > c.width) { rows.push(cur); cur = p.text; } else cur = next;
+    }
+    if (cur) rows.push(cur);
+    footerH = rows.length * lh + 10;
     c.y = base + footerH;
-    line(c, s, { size, color: c.muted, align: caps ? "center" : "left", spacing: 1.5 });
+    for (const r of rows) line(c, r, { size, color: c.muted, align: caps ? "center" : "left", spacing: 1.5 });
   } else if (groups.length) {
     const cols = footerColumns(groups, c.d.footer.columns);
     const rows = Math.max(...cols.map((col) => col.reduce((n, g) => n + g.lines.length, 0)));
