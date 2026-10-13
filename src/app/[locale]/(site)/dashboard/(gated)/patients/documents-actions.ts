@@ -6,8 +6,8 @@ import { serverFlag } from "@/lib/myDoctors";
 import { patientDocumentFn } from "@/lib/patientDocumentFn";
 import { BUCKET, isUuid } from "@/lib/patientFiles";
 import {
-  DOC_TITLE_MAX, docErrorKey, toDocument, toFolder,
-  type DocErrorKey, type DocFolder, type PatientDocument,
+  DOC_TITLE_MAX, copyIsShared, docErrorKey, toDocument, toFolder,
+  type CopyShareState, type DocErrorKey, type DocFolder, type PatientDocument,
 } from "@/lib/patientDocuments";
 
 // The doctor's side of 1.8.0 A (migration 190, flag 'patient_documents'):
@@ -49,6 +49,20 @@ export async function loadPatientDocuments(patientId: string): Promise<Result<{ 
       documents: ((d.data ?? []) as Record<string, unknown>[]).map(toDocument),
     },
   };
+}
+
+// Whether the patient sees the copy of this prescription / document right
+// now (the share box's default when editing or correcting it): "on" /
+// "off", or "unknown" when it can't be read (an error, no access): then the
+// doctor chooses (ec: unknown is not hidden; a correction saved with the box
+// off by mistake would leave the patient the old copy).
+export async function copySharedNow(patientId: string, source: "prescription" | "medical_document", sourceId: string): Promise<CopyShareState> {
+  if (!isUuid(patientId) || !isUuid(sourceId) || (source !== "prescription" && source !== "medical_document")) return "unknown";
+  const me = await doctor();
+  if (!me) return "unknown";
+  const d = await me.supabase.rpc("list_patient_documents", { p_patient_id: patientId });
+  if (d.error) return "unknown";
+  return copyIsShared(((d.data ?? []) as Record<string, unknown>[]).map(toDocument), source, sourceId) ? "on" : "off";
 }
 
 export async function registerDocument(patientId: string, input: { path: string; folderId: string; title: string; shared: boolean }): Promise<Result<string>> {

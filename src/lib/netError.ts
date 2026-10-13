@@ -68,3 +68,18 @@ export function timeLimit<T, F>(p: Promise<T>, ms: number, onTimeout: F): Promis
     p.then((v) => { clearTimeout(timer); resolve(v); }, (e) => { clearTimeout(timer); reject(e); });
   });
 }
+
+// A task that must not run twice at once (a share whose page gave up while
+// it was still running): calling again while a run is in flight returns that
+// same run; once it settles, the next call starts a new one.
+const WRAPPED = new WeakSet<object>();
+export function untilDone<T>(task: () => Promise<T>): () => Promise<T> {
+  if (WRAPPED.has(task)) return task;
+  let inflight: Promise<T> | null = null;
+  const once = () => {
+    if (!inflight) inflight = task().finally(() => { inflight = null; });
+    return inflight;
+  };
+  WRAPPED.add(once);
+  return once;
+}
