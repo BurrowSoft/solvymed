@@ -211,6 +211,14 @@
     "met": false,
     "what": "The offline guard (1.9.0 item 1.2, specs/offline-guard.md) is live on BOTH platforms: the website's banner + guard on www AND the app's offline banner + guard in a RELEASED build (OTA or store). Gates Help K7 and the App Map's offline rule."
   },
+  "share-intent-recording": {
+    "met": false,
+    "what": "Migration 220 is applied on production: saves record the share intent (a new document's share_intended_at, create_prescription p_share, mark_share_intent after an edit or a correction). Invisible; it starts early so that on the day not-shared-marker-live flips, shares that failed in between show the mark too (02)."
+  },
+  "not-shared-marker-live": {
+    "met": false,
+    "what": "\"Not shared yet\" (1.9.0 item 1.4) is live on BOTH platforms: migration 220 applied (share_intended_at, create_prescription p_share, mark_share_intent, list_unshared), the website's marker merged AND the app's marker shipped (c5's 1.9.0 OTA or store build; 02: flip only at parity, so the Help is true for both), and their rows 🟢. Until then the website sends no intent and shows no marker."
+  },
   "clock-skew-live": {
     "met": false,
     "what": "The wrong-clock guard (1.9.0 item 1.7) is live on BOTH platforms: the website's ClockSkewGuard on www AND the app's version in a RELEASED build. Gates Help K8 and the App Map's wrong-clock rule."
