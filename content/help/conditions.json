@@ -210,5 +210,9 @@
   "document-studio-live": {
     "met": false,
     "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. Until then the PDFs ignore any design (lib/studio/load documentStyle)."
+  },
+  "offline-guard-live": {
+    "met": false,
+    "what": "The offline guard (1.9.0 item 1.2, specs/offline-guard.md) is live on BOTH platforms: the website's banner + guard on www AND the app's offline banner + guard in a RELEASED build (OTA or store). Gates Help K7 and the App Map's offline rule."
   }
 }

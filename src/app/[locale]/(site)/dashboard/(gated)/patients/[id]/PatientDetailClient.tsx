@@ -11,7 +11,7 @@ import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPr
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
 import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
-import { localDay } from "@/lib/patientDocuments";
+import { localDay, SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
 import { DateInput } from "@/components/DateInput";
@@ -21,7 +21,7 @@ import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type
 import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
-import { loadPatientDocuments } from "../documents-actions";
+import { copySharedNow, loadPatientDocuments } from "../documents-actions";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -31,6 +31,7 @@ import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
+import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -230,7 +231,8 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   useEffect(() => {
     if (!documentsOn) return;
     let alive = true;
-    void loadPatientDocuments(patientId).then((r) => {
+    // Titles only: without an answer the refs show as before (1.9.0).
+    void safeCall(() => loadPatientDocuments(patientId), NETWORK_FAILURE).then((r) => {
       if (!alive || !r.ok) return;
       setDocTitles({ byId: new Map(r.data.documents.map((d) => [d.id, d.title])), byPath: new Map(r.data.documents.map((d) => [d.storagePath, d.title])) });
     });
@@ -243,7 +245,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
     const last = rows[rows.length - 1];
     if (!last) return;
     startTransition(async () => {
-      const next = await loadAccessLog(patientId, last.at, locale);
+      const next = await safeCall(() => loadAccessLog(patientId, last.at, locale), "failed" as const);
       if (next === "failed" || next === null) { setFailed(true); return; }
       setRows((r) => [...r, ...next.rows]);
       setHasMore(next.hasMore);
@@ -323,7 +325,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
         </div>
       )}
       {hasMore && !failed && (
-        <button
+        <button data-server
           type="button"
           onClick={loadMore}
           disabled={pending}
@@ -387,9 +389,9 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
   function handleGenerateCode() {
     setCodeError("");
     startCodeTransition(async () => {
-      const result = await generatePatientInviteCode(patient.id);
+      const result = await safeCall(() => generatePatientInviteCode(patient.id), NETWORK_ERROR);
       if (result.error) { setCodeError(errorText(result.error)); return; }
-      if (result.code) setInviteCode(result.code);
+      if ("code" in result && result.code) setInviteCode(result.code);
     });
   }
 
@@ -402,8 +404,10 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
   }
 
   function handleToggleBlock() {
+    setError("");
     startBlockTransition(async () => {
-      await toggleBookingBlock(patient.id, !patient.booking_blocked);
+      const r = await safeCall(() => toggleBookingBlock(patient.id, !patient.booking_blocked), NETWORK_ERROR);
+      if (r && "error" in r && r.error) setError(errorText(r.error));
     });
   }
 
@@ -416,7 +420,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     const { blocking } = missingRequired(rules, { ...stored, ...typed }, idKind, stored);
     if (blocking.length) { setError(tf("missing", { fields: blocking.map(fieldLabels.missing).join(", ") })); return; }
     startTransition(async () => {
-      const result = await updatePatient(patient.id, formData);
+      const result = await safeCall(() => updatePatient(patient.id, formData), NETWORK_ERROR);
       if (result?.error === "missing_fields" && "fields" in result && Array.isArray(result.fields)) {
         setError(tf("missing", { fields: (result.fields as FieldKey[]).map(fieldLabels.missing).join(", ") }));
         return;
@@ -440,7 +444,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     setError("");
     setOfferArchive(false);
     startTransition(async () => {
-      const result = await deletePatient(patient.id);
+      const result = await safeCall(() => deletePatient(patient.id), NETWORK_ERROR);
       if (result?.error) {
         // History or an appointment was added since the page loaded:
         // archive instead.
@@ -513,12 +517,12 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
               <button type="button" onClick={handleCopyCode} className="text-sm font-semibold text-slate-500 hover:text-slate-700 transition">
                 {codeCopied ? t("codeCopied") : t("copyCode")}
               </button>
-              <button type="button" onClick={handleGenerateCode} disabled={codePending} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60">
+              <button data-server type="button" onClick={handleGenerateCode} disabled={codePending} className="text-sm font-semibold text-teal-600 hover:text-teal-700 transition disabled:opacity-60">
                 {codePending ? "…" : t("regenerateCode")}
               </button>
             </div>
           ) : (
-            <button
+            <button data-server
               type="button"
               onClick={handleGenerateCode}
               disabled={codePending}
@@ -551,7 +555,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           <button onClick={() => setEditing(true)} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">
             {t("editPatient")}
           </button>
-          {!isArchived && <button
+          {!isArchived && <button data-server
             onClick={handleToggleBlock}
             disabled={blockPending}
             className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition disabled:opacity-60 ${
@@ -569,7 +573,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
           )}
           {canMerge && <MergePatientButton patientId={patient.id} patientName={patient.full_name} locale={locale} pairWith={mergeWith} />}
           {canDelete && (
-            <button onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
+            <button data-server onClick={handleDelete} disabled={pending} className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 hover:bg-red-50 transition disabled:opacity-60">
               {t("deletePatient")}
             </button>
           )}
@@ -753,7 +757,7 @@ function EntryActions({ editable, isArchived, onEdit, onDelete, onCorrect, pendi
   return editable ? (
     <div className="flex gap-2">
       <button type="button" onClick={onEdit} disabled={pending} className={`${btn} text-slate-600 hover:bg-slate-100`}>{t("editEntry")}</button>
-      <button type="button" onClick={onDelete} disabled={pending} className={`${btn} text-red-600 hover:bg-red-50`}>{t("deleteEntry")}</button>
+      <button data-server type="button" onClick={onDelete} disabled={pending} className={`${btn} text-red-600 hover:bg-red-50`}>{t("deleteEntry")}</button>
     </div>
   ) : (
     <button type="button" onClick={onCorrect} disabled={pending} className={`${btn} text-teal-700 hover:bg-teal-50`}>{t("addCorrection")}</button>
@@ -795,6 +799,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const [lastSwitch, setLastSwitch] = useState<{ fromId: string; sections: SectionsState; freeText: string } | null>(null);
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
+  const tsave = useTranslations("save");
   const [dialog, setDialog] = useState<RecordDialog | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -802,8 +807,16 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(records);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
+  // The try number for that id (a retry after the form changed: 216, c5).
+  const tries = useRef(0);
   function open(d: RecordDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
+    tries.current = 0;
     // A record written with sections is edited / corrected with the same ones.
     const own = d.mode !== "new" ? d.record.sections : null;
     setSections(own ? { templateName: d.mode !== "new" ? d.record.template_name ?? null : null, rows: own.map((x) => ({ title: x.title, text: x.text })) } : null);
@@ -845,13 +858,19 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
       formData.set("template_name", sections.templateName ?? "");
     }
     setError("");
+    formData.set("client_id", clientId.current);
+    formData.set("client_try", String(++tries.current));
     startTransition(async () => {
       const result =
-        dialog.mode === "new" ? await createRecord(patientId, formData)
-        : dialog.mode === "edit" ? await updateRecord(dialog.record.id, patientId, formData)
-        : await addRecordCorrection(dialog.record.id, patientId, formData);
+        dialog.mode === "new" ? await safeCall(() => createRecord(patientId, formData), NETWORK_ERROR)
+        : dialog.mode === "edit" ? await safeCall(() => updateRecord(dialog.record.id, patientId, formData), NETWORK_ERROR)
+        : await safeCall(() => addRecordCorrection(dialog.record.id, patientId, formData), NETWORK_ERROR);
+      // The id was someone else's: a new one for the next try.
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
       setDialog(null);
+      // Saved before the last changes: the list shows the saved version.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) setListError(tsave("alreadySavedChanged"));
     });
   }
 
@@ -859,7 +878,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
     if (!confirm(t("deleteRecordConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const result = await deleteRecord(id, patientId);
+      const result = await safeCall(() => deleteRecord(id, patientId), NETWORK_ERROR);
       if (result?.error) setListError(errorText(result.error));
     });
   }
@@ -1044,15 +1063,22 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       for (const el of others) el.removeAttribute("inert");
     };
   }, [sharing]);
+  const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
+    // One run at a time for a document: Try again waits for a run that timed
+    // out on the page but is still going (ec; the app's shareUntilDone),
+    // instead of starting a second one that could adopt its upload.
+    const run = untilDone(make);
     setShareIssue(null);
     setSharing(true);
     let outcome: string;
-    try { outcome = await make(); } catch { outcome = "failed"; } finally { setSharing(false); }
+    // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
+    // "couldn't share" + Try again, never an endless modal over the page.
+    try { outcome = await timeLimit(run(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
-      retry: outcome === "storageFull" ? null : () => { void runShare(make); },
+      retry: outcome === "storageFull" ? null : () => { void runShare(run); },
     });
   }
   function shareRx(rxId: string, correctsId: string | null) {
@@ -1107,7 +1133,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (!confirm(t("deleteRecordConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const r = await deleteMedicalDocument(id, patientId);
+      const r = await safeCall(() => deleteMedicalDocument(id, patientId), NETWORK_FAILURE);
       if (!r.ok) setListError(errorText(r.code));
     });
   }
@@ -1130,7 +1156,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
           </div>
           <div className="flex items-center gap-1">
-            <button type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
+            <button data-server type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
             {printed[doc.id] && (
               <a href={printed[doc.id]} target="_blank" rel="noopener noreferrer" data-testid="open-printed-pdf"
                 className="rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 underline hover:bg-slate-50">{td("openPdf")}</a>
@@ -1157,35 +1183,80 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   }
   const practiceCalendar = usePracticeCalendar();
   const errorText = useClinicalErrorText();
+  // The practice's time zone: the document dialog's default dates are its today.
+  const timeZone = useContext(TimeZoneContext);
+  const tsave = useTranslations("save");
   const [dialog, setDialog] = useState<RxDialog | null>(null);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [listError, setListError] = useState("");
   const [medications, setMedications] = useState<MedRow[]>([medRow()]);
-  // "Compartilhar com o paciente" (1.8.0 B2): ON by default.
+  // "Compartilhar com o paciente" (1.8.0 B2): ON for a new one; editing /
+  // correcting, as its patient copy is now (1.9.0, 02): off until known,
+  // and the doctor's own click wins.
   const [shareRxOn, setShareRxOn] = useState(true);
+  const shareRxTouched = useRef(false);
+  // Editing / correcting: the box and Save wait for the copy's state; when
+  // it can't be read the doctor chooses (ec, #528).
+  const [shareRxState, setShareRxState] = useState<"known" | "checking" | "unknown">("known");
+  const shareRxWaits = canShare && !!dialog && shareRxState !== "known";
   const formRef = useRef<HTMLFormElement>(null);
   const { originals, correctionsOf } = groupCorrections(prescriptions);
 
+  // Saved once (216): one id from opening the dialog until a confirmed
+  // save, sent with every try, so a retry after a lost answer finds the
+  // first save instead of making a second one.
+  const clientId = useRef("");
+  // The try number for that id (a retry after the form changed: 216, c5).
+  const tries = useRef(0);
   function open(d: RxDialog) {
     setError("");
+    clientId.current = crypto.randomUUID();
+    tries.current = 0;
     const items = d.mode === "new" ? [] : d.rx.prescription_items;
     setMedications(items.length > 0 ? items.map((m) => medRow(m)) : [medRow()]);
-    setShareRxOn(true);
+    shareRxTouched.current = false;
+    setShareRxOn(d.mode === "new");
+    setShareRxState(d.mode !== "new" && canShare ? "checking" : "known");
+    openRx.current = d.mode === "new" ? null : d.rx.id;
     setDialog(d);
+    if (d.mode !== "new" && canShare) {
+      const rxId = d.rx.id;
+      const done = (s: "on" | "off" | "unknown") => { if (!shareRxTouched.current) setDialogShare(rxId, s); };
+      timeLimit(copySharedNow(patientId, "prescription", rxId), SHARE_CHECK_MS, "unknown" as const).then(done, () => done("unknown"));
+    }
+  }
+  // Only while that dialog is still the one open.
+  const openRx = useRef<string | null>(null);
+  useEffect(() => { openRx.current = dialog && dialog.mode !== "new" ? dialog.rx.id : null; }, [dialog]);
+  function setDialogShare(rxId: string, s: "on" | "off" | "unknown") {
+    if (openRx.current !== rxId) return;
+    if (s === "unknown") { setShareRxState("unknown"); return; }
+    setShareRxOn(s === "on");
+    setShareRxState("known");
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!dialog) return;
+    if (!dialog || shareRxWaits) return;
     const formData = new FormData(formRef.current!);
     setError("");
+    formData.set("client_id", clientId.current);
+    formData.set("client_try", String(++tries.current));
     startTransition(async () => {
       const result =
-        dialog.mode === "new" ? await createPrescription(patientId, formData)
-        : dialog.mode === "edit" ? await updatePrescription(dialog.rx.id, patientId, formData)
-        : await addPrescriptionCorrection(dialog.rx.id, patientId, formData);
+        dialog.mode === "new" ? await safeCall(() => createPrescription(patientId, formData), NETWORK_ERROR)
+        : dialog.mode === "edit" ? await safeCall(() => updatePrescription(dialog.rx.id, patientId, formData), NETWORK_ERROR)
+        : await safeCall(() => addPrescriptionCorrection(dialog.rx.id, patientId, formData), NETWORK_ERROR);
+      if (result?.error === "id_conflict") clientId.current = crypto.randomUUID();
       if (result?.error) { setError(errorText(result.error)); return; }
+      // Saved before the last changes: the saved version stays (shown in the
+      // list), nothing is shared from this form.
+      if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) {
+        setDialog(null);
+        setListError(tsave("alreadySavedChanged"));
+        return;
+      }
       // An edit (within 24 h) keeps its id: its new copy replaces the old one (86).
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
       const sharing = canShare && shareRxOn && !!savedId;
@@ -1198,7 +1269,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     if (!confirm(t("deletePrescriptionConfirm"))) return;
     setListError("");
     startTransition(async () => {
-      const result = await deletePrescription(id, patientId);
+      const result = await safeCall(() => deletePrescription(id, patientId), NETWORK_ERROR);
       if (result?.error) setListError(errorText(result.error));
     });
   }
@@ -1281,7 +1352,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       {shareIssue && (
         <div role="alert" data-testid="share-issue" className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
           <span>{shareIssue.text}</span>
-          {shareIssue.retry && <button type="button" onClick={shareIssue.retry} className="rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">{tdocs("tryAgain")}</button>}
+          {shareIssue.retry && <button data-server type="button" onClick={shareIssue.retry} className="rounded-lg border border-amber-300 bg-white px-2.5 py-1 text-xs font-semibold text-amber-900 hover:bg-amber-100">{tdocs("tryAgain")}</button>}
         </div>
       )}
 
@@ -1320,8 +1391,10 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               hasPatientId={medicalDocs.hasPatientId}
               onClose={closeDoc}
               onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
+              onAlreadySaved={() => { discardDoc(); setListError(tsave("alreadySavedChanged")); }}
               canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}
+              timeZone={timeZone}
               reasonField={<ReasonField />}
             />
           )}
@@ -1360,15 +1433,21 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           </div>
           {dialog?.mode === "correct" && <ReasonField />}
           {canShare && dialog && (
-            <label className="flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" checked={shareRxOn} onChange={(e) => setShareRxOn(e.target.checked)} className="h-4 w-4 accent-teal-600" />
-              {tdocs("share")}
-            </label>
+            <div>
+              <label className="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" data-testid="share-rx-with-patient" checked={shareRxOn} disabled={shareRxState === "checking"}
+                  ref={(el) => { if (el) el.indeterminate = shareRxState === "unknown"; }}
+                  onChange={(e) => { shareRxTouched.current = true; setShareRxState("known"); setShareRxOn(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+                {tdocs("share")}
+              </label>
+              {shareRxState === "checking" && <p role="status" className="mt-1 text-xs text-slate-500">{tdocs("shareChecking")}</p>}
+              {shareRxState === "unknown" && <p role="alert" className="mt-1 text-xs text-amber-700">{tdocs("shareCheckFailed")}</p>}
+            </div>
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending || shareRxWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : dialog?.mode === "correct" ? t("addCorrection") : t("savePrescription")}
             </button>
           </div>
@@ -1446,7 +1525,8 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
     setError("");
     setUpcoming(null);
     setLoadingPreview(true);
-    getArchivePreview(patient.id).then((preview) => {
+    // No answer: no count, and Arquivar stays usable (it was disabled for good).
+    safeCall(() => getArchivePreview(patient.id), null).then((preview) => {
       if (cancelled) return;
       setUpcoming(preview?.upcomingAppointments ?? null);
       setLoadingPreview(false);
@@ -1457,7 +1537,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
   function handleArchive() {
     setError("");
     startTransition(async () => {
-      const result = await archivePatient(patient.id);
+      const result = await safeCall(() => archivePatient(patient.id), NETWORK_ERROR);
       if ("error" in result && result.error !== "already_archived") {
         setError(t("archiveError"));
         return;
@@ -1482,7 +1562,7 @@ function ArchiveDialog({ open, onClose, patient }: { open: boolean; onClose: () 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
       <div className="flex gap-3 pt-5">
         <button type="button" onClick={onClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-        <button type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
+        <button data-server type="button" onClick={handleArchive} disabled={pending || loadingPreview} className="flex-1 rounded-xl bg-[#1e293b] py-2.5 text-sm font-bold text-[#ffffff] hover:bg-[#0f172a] transition disabled:opacity-60">
           {pending ? t("saving") : t("archiveConfirm")}
         </button>
       </div>
@@ -1502,7 +1582,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, archived
   function handleRestore() {
     setError("");
     startTransition(async () => {
-      const result = await restorePatient(patientId);
+      const result = await safeCall(() => restorePatient(patientId), NETWORK_ERROR);
       if ("error" in result) { setError(tPatients("restoreError")); return; }
       router.refresh();
     });
@@ -1515,7 +1595,7 @@ export function ArchivedBanner({ patientId, archivedAt, archivedByName, archived
         <p className="mt-0.5 text-xs text-slate-600">{t("archivedSub")}</p>
         {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
       </div>
-      <button type="button" onClick={handleRestore} disabled={pending} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+      <button data-server type="button" onClick={handleRestore} disabled={pending} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
         {pending ? "…" : tPatients("restore")}
       </button>
     </div>

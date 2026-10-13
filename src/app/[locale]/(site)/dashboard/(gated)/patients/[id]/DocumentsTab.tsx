@@ -13,6 +13,7 @@ import {
   deleteOwnDocument, hideDocument, loadPatientDocuments, moveDocument, openDocument, registerDocument,
   renameDocument, setDocumentShared,
 } from "../documents-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // The patient's Documents (1.8.0 A; flag 'patient_documents'): replaces
 // Exams + Files while the flag is on (the app's PatientDocuments). Every
@@ -41,7 +42,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   const input = useRef<HTMLInputElement>(null);
 
   const folderName = useCallback((f: DocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}`) : ""), [t]);
-  const errText = useCallback((k: DocErrorKey) => {
+  const errText = useCallback((k: DocErrorKey | "network") => {
     switch (k) {
       case "tooLarge": case "type": case "cantShareType": case "dailyLimit": case "patientFull": case "storageFull": case "ownStorageFull": case "noAccess":
         return t(`err.${k}`);
@@ -50,7 +51,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   }, [t, tp]);
 
   const load = useCallback(async () => {
-    const r = await loadPatientDocuments(patientId);
+    const r = await safeCall(() => loadPatientDocuments(patientId), NETWORK_FAILURE);
     if (!r.ok) { setFolders([]); setError(errText(r.code)); return; }
     setFolders(r.data.folders);
     setDocs(r.data.documents);
@@ -83,7 +84,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
       // 190 checks it against the extension.
       const { error: upErr } = await supabase.storage.from(BUCKET).upload(path, upload.file.slice(0, upload.file.size, mime), { upsert: false, contentType: mime });
       if (upErr) { setError(/storage_full/.test(upErr.message ?? "") ? t("err.ownStorageFull") : tp("filesError")); return; }
-      const r = await registerDocument(patientId, { path, folderId: upload.folderId, title: upload.title, shared: upload.shared && !isInternal(upload.folderId) });
+      const r = await safeCall(() => registerDocument(patientId, { path, folderId: upload.folderId, title: upload.title, shared: upload.shared && !isInternal(upload.folderId) }), NETWORK_FAILURE);
       if (!r.ok) { setError(errText(r.code)); return; }
       setUpload(null);
       await load();
@@ -100,7 +101,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     // (FilesTab's pattern; the opener is cut by hand).
     const win = window.open("", "_blank");
     if (win) win.opener = null;
-    const r = await openDocument(d.id);
+    const r = await safeCall(() => openDocument(d.id), NETWORK_FAILURE);
     if (!r.ok) { win?.close(); setError(errText(r.code)); return; }
     if (win) win.location.href = r.data; else setError(tp("filesPopupBlocked"));
     // The first doctor open stamps doctor_opened_at (the patient can't remove it anymore).
@@ -111,7 +112,8 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   // list call can take seconds (53).
   async function act(p: Promise<{ ok: boolean; code?: DocErrorKey }>, apply?: (ds: PatientDocument[]) => PatientDocument[]) {
     setBusy(true); setError("");
-    const r = await p;
+    // No answer: the generic error, and the buttons come back (1.9.0).
+    const r = await safeCall(() => p, NETWORK_FAILURE);
     setBusy(false);
     if (!r.ok) { setError(errText((r as { code: DocErrorKey }).code)); return false; }
     if (apply) setDocs(apply);
@@ -124,7 +126,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
     if (canDeleteOwn(d)) {
       if (!window.confirm(tp("filesDeleteConfirm"))) return;
       setBusy(true);
-      const r = await deleteOwnDocument(d.storagePath, patientId);
+      const r = await safeCall(() => deleteOwnDocument(d.storagePath, patientId), NETWORK_FAILURE);
       setBusy(false);
       // The window closed in between: hide it instead.
       if (!r.ok) { setHiding(d); setReason(""); return; }
@@ -160,7 +162,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
         {!isArchived && folders && folders.length > 0 && (
           <>
             <input ref={input} type="file" accept={DOC_ACCEPT} className="hidden" aria-label={tp("filesUpload")} onChange={(e) => { const f = e.target.files?.[0]; if (f) pick(f); }} />
-            <button type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+            <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
               {busy ? tp("filesUploading") : tp("filesUpload")}
             </button>
           </>
@@ -192,7 +194,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
           )}
           <div className="flex gap-2">
             <button type="button" onClick={() => { setUpload(null); if (input.current) input.current.value = ""; }} className="flex-1 rounded-xl border border-slate-200 bg-white py-2 text-sm font-semibold text-slate-600">{tp("cancel")}</button>
-            <button type="button" disabled={busy || !upload.title.trim()} onClick={() => void saveUpload()} className="flex-1 rounded-xl bg-teal-600 py-2 text-sm font-bold text-white disabled:opacity-60">
+            <button data-server type="button" disabled={busy || !upload.title.trim()} onClick={() => void saveUpload()} className="flex-1 rounded-xl bg-teal-600 py-2 text-sm font-bold text-white disabled:opacity-60">
               {busy ? tp("filesUploading") : tp("filesUpload")}
             </button>
           </div>
@@ -215,7 +217,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
                       {renaming?.id === d.id ? (
                         <div className="flex gap-2">
                           <input aria-label={t("titleLabel")} value={renaming.title} maxLength={DOC_TITLE_MAX} onChange={(e) => setRenaming({ ...renaming, title: e.target.value })} className={inputClass} />
-                          <button type="button" disabled={busy} onClick={() => void saveRename()} className="rounded-lg bg-teal-600 px-3 text-xs font-bold text-white">{tp("saveChanges")}</button>
+                          <button data-server type="button" disabled={busy} onClick={() => void saveRename()} className="rounded-lg bg-teal-600 px-3 text-xs font-bold text-white">{tp("saveChanges")}</button>
                           <button type="button" onClick={() => setRenaming(null)} className="rounded-lg px-2 text-xs text-slate-500">{tp("cancel")}</button>
                         </div>
                       ) : (
@@ -230,24 +232,24 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
                         <p className={`text-xs ${d.replaced ? "text-slate-500" : d.shared ? "text-teal-700" : "text-slate-500"}`}>{d.replaced ? t("replacedByNewer") : d.shared ? t("shared") : t("notShared")}</p>
                       )}
                     </div>
-                    <button type="button" onClick={() => void open(d)} className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50">{t("open")}</button>
+                    <button data-server type="button" onClick={() => void open(d)} className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold text-teal-700 hover:bg-teal-50">{t("open")}</button>
                   </div>
                   {!isArchived && renaming?.id !== d.id && (
                     <div className="flex flex-wrap items-center gap-2 text-xs">
                       {f.defaultKey !== "internal" && !d.replaced && (
-                        <button type="button" disabled={busy} onClick={() => void act(setDocumentShared(d.id, !d.shared), patchDoc(d.id, { shared: !d.shared }))} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">
+                        <button data-server type="button" disabled={busy} onClick={() => void act(setDocumentShared(d.id, !d.shared), patchDoc(d.id, { shared: !d.shared }))} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">
                           {d.shared ? t("hideFromPatient") : t("share")}
                         </button>
                       )}
                       <button type="button" disabled={busy} onClick={() => setRenaming({ id: d.id, title: d.title })} className="rounded-lg px-2 py-1 font-semibold text-slate-600 hover:bg-slate-50">{t("settings.rename")}</button>
                       <label className="flex items-center gap-1 text-slate-500">
                         <span className="sr-only">{t("move")}</span>
-                        <select aria-label={t("move")} value="" disabled={busy} onChange={(e) => { const to = e.target.value; if (to) void act(moveDocument(d.id, to), patchDoc(d.id, { folderId: to, ...(isInternal(to) ? { shared: false } : {}) })); }} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs">
+                        <select data-server aria-label={t("move")} value="" disabled={busy} onChange={(e) => { const to = e.target.value; if (to) void act(moveDocument(d.id, to), patchDoc(d.id, { folderId: to, ...(isInternal(to) ? { shared: false } : {}) })); }} className="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs">
                           <option value="">{t("move")}</option>
                           {folders.filter((x) => x.id !== d.folderId).map((x) => <option key={x.id} value={x.id}>{folderName(x)}</option>)}
                         </select>
                       </label>
-                      <button type="button" disabled={busy} onClick={() => void remove(d)} className="rounded-lg px-2 py-1 font-semibold text-slate-500 hover:bg-slate-50">{tp("filesRemove")}</button>
+                      <button data-server type="button" disabled={busy} onClick={() => void remove(d)} className="rounded-lg px-2 py-1 font-semibold text-slate-500 hover:bg-slate-50">{tp("filesRemove")}</button>
                     </div>
                   )}
                 </li>
@@ -285,7 +287,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
           </label>
           <div className="mt-3 flex gap-2">
             <button type="button" onClick={() => setHiding(null)} className="flex-1 rounded-xl border border-slate-200 bg-white py-2 font-semibold text-slate-600">{tp("cancel")}</button>
-            <button type="button" disabled={busy} onClick={() => void confirmHide()} className="flex-1 rounded-xl bg-teal-600 py-2 font-bold text-white disabled:opacity-60">{tp("filesRemove")}</button>
+            <button data-server type="button" disabled={busy} onClick={() => void confirmHide()} className="flex-1 rounded-xl bg-teal-600 py-2 font-bold text-white disabled:opacity-60">{tp("filesRemove")}</button>
           </div>
         </div>
       )}

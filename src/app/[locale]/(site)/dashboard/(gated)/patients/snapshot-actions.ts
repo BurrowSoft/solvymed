@@ -102,10 +102,13 @@ export type SnapshotSource = "prescription" | "medical_document";
 // and, for an edit or a correction, the shared snapshot it replaces: the
 // RPC doesn't check where the replaced row came from, so it's picked here
 // by its source (86).
+// alreadyShared: a NEW document whose live copy is already in the patient's
+// folder (1.9.0, ec): a share that timed out on the page but finished late,
+// then Try again, made a second copy. Nothing is uploaded then.
 export async function prepareSnapshot(patientId: string, input: {
-  source: SnapshotSource; replacesSourceId: string | null; folderKey: DefaultFolderKey;
-}): Promise<Result<{ folderId: string; replacesId: string | null }>> {
-  if (!isUuid(patientId) || (input.replacesSourceId !== null && !isUuid(input.replacesSourceId))) return { ok: false, code: "generic" };
+  source: SnapshotSource; sourceId?: string; replacesSourceId: string | null; folderKey: DefaultFolderKey;
+}): Promise<Result<{ folderId: string; replacesId: string | null; alreadyShared?: boolean }>> {
+  if (!isUuid(patientId) || (input.replacesSourceId !== null && !isUuid(input.replacesSourceId)) || (input.sourceId !== undefined && !isUuid(input.sourceId))) return { ok: false, code: "generic" };
   if (input.source !== "prescription" && input.source !== "medical_document") return { ok: false, code: "generic" };
   const me = await doctor();
   if (!me) return { ok: false, code: "noAccess" };
@@ -115,13 +118,17 @@ export async function prepareSnapshot(patientId: string, input: {
   const folder = folders.find((x) => x.default_key === input.folderKey) ?? folders.find((x) => x.default_key === "start");
   if (!folder) return { ok: false, code: "generic" };
   let replacesId: string | null = null;
-  if (input.replacesSourceId) {
+  const col = input.source === "prescription" ? "prescription_id" : "medical_document_id";
+  if (input.replacesSourceId || input.sourceId) {
     const d = await me.supabase.rpc("list_patient_documents", { p_patient_id: patientId });
     if (d.error) return { ok: false, code: docErrorKey(d.error.message, true) };
-    const col = input.source === "prescription" ? "prescription_id" : "medical_document_id";
-    const old = ((d.data ?? []) as Record<string, unknown>[])
-      .find((r) => r.source === input.source && r[col] === input.replacesSourceId && r.replaced !== true);
-    replacesId = (old?.id as string | undefined) ?? null;
+    const rows = (d.data ?? []) as Record<string, unknown>[];
+    const live = (id: string) => rows.find((r) => r.source === input.source && r[col] === id && r.replaced !== true && !r.hidden_at);
+    if (input.replacesSourceId) {
+      replacesId = (live(input.replacesSourceId)?.id as string | undefined) ?? null;
+    } else if (input.sourceId && live(input.sourceId)) {
+      return { ok: true, data: { folderId: folder.id, replacesId: null, alreadyShared: true } };
+    }
   }
   return { ok: true, data: { folderId: folder.id, replacesId } };
 }

@@ -8,6 +8,7 @@ import { createSecretaryInvite, revokeSecretaryInvite, removeSecretary, sendSecr
 import { conditionMet } from "@/lib/conditions";
 import { dateLocale } from "@/lib/dateLabels";
 import { withCountryHint } from "@/lib/signupCountry";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -111,7 +112,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     setNotice("");
     setCreated(null);
     start(async () => {
-      const result = await createSecretaryInvite(targetEmail);
+      const result = await safeCall(() => createSecretaryInvite(targetEmail), NETWORK_FAILURE);
       if (!result.ok) {
         setError(t(ERROR_KEY[result.code] ?? "genericError"));
         return;
@@ -121,7 +122,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
       setEmail("");
       // The first email goes out by itself; the share buttons stay.
       if (emailLive) {
-        const sent = await sendSecretaryInviteEmail({ code: result.code });
+        const sent = await safeCall(() => sendSecretaryInviteEmail({ code: result.code }), { ok: false, code: "network", nextAt: null } as const);
         if (sent.ok) { setNotice(""); setSentTo(t("teamEmailSent", { email: to })); }
         else setError(emailError(sent));
       }
@@ -138,13 +139,13 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     setNotice("");
     setCreated(null);
     start(async () => {
-      const sent = await sendSecretaryInviteEmail({ resend_email: row.email });
+      const sent = await safeCall(() => sendSecretaryInviteEmail({ resend_email: row.email }), { ok: false, code: "network", nextAt: null } as const);
       if (!sent.ok) {
         setError(emailError(sent));
         // The email failed (not a wait): a fresh code to share right here,
         // as the message says ("…ou compartilhe o link"; e7).
         if (!sent.nextAt) {
-          const fresh = await createSecretaryInvite(row.email);
+          const fresh = await safeCall(() => createSecretaryInvite(row.email), NETWORK_FAILURE);
           if (fresh.ok) setCreated({ code: fresh.code, email: row.email });
         }
       } else {
@@ -161,7 +162,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     setError("");
     setSentTo("");
     start(async () => {
-      const result = await revokeSecretaryInvite(id);
+      const result = await safeCall(() => revokeSecretaryInvite(id), NETWORK_FAILURE);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
       else router.refresh();
     });
@@ -172,7 +173,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
     setError("");
     setSentTo("");
     start(async () => {
-      const result = await removeSecretary(row.id);
+      const result = await safeCall(() => removeSecretary(row.id), NETWORK_FAILURE);
       if (!result.ok) setError(t(ERROR_KEY[result.code] ?? "genericError"));
       else router.refresh();
     });
@@ -197,7 +198,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                 <p className="truncate text-sm font-semibold text-slate-900">{m.name ?? m.email}</p>
                 {m.name && <p className="truncate text-xs text-slate-500">{m.email}</p>}
               </div>
-              <button
+              <button data-server
                 type="button"
                 onClick={() => remove(m)}
                 disabled={pending}
@@ -229,7 +230,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                   {tooSoon && waitUntil && mounted && <p data-testid="resend-wait" className="text-xs text-slate-500">{t("teamResendAt", { time: time(waitUntil) })}</p>}
                 </div>
                 <div className="flex shrink-0 gap-3">
-                  <button
+                  <button data-server
                     type="button"
                     onClick={() => { if (emailLive) resendEmail(inv); else if (window.confirm(t("teamResendConfirm", { email: inv.email }))) invite(inv.email); }}
                     disabled={pending || tooSoon}
@@ -237,7 +238,7 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
                   >
                     {emailLive ? t("teamResendEmail") : t("teamResend")}
                   </button>
-                  <button
+                  <button data-server
                     type="button"
                     onClick={() => revoke(inv.id)}
                     disabled={pending}

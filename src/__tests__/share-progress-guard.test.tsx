@@ -41,19 +41,26 @@ describe("sharing the patient's copy holds the page until it's done", () => {
   it("a modal with the progress line and the leave-page prompt while pending; both go once shared", async () => {
     await saveRx();
     expect(screen.getByTestId("sharing-progress")).toHaveTextContent("Compartilhando com o paciente…");
-    // 4f: nothing behind the modal can take focus; the modal has it.
+    // 4f: nothing behind the modal can take focus; the modal has it. The
+    // page is made inert (and the modal focused) by an effect after the
+    // modal renders: wait for that state instead of asserting at once (it
+    // raced on a busy CI runner, ec #515 / #518).
     const overlay = screen.getByTestId("sharing-progress");
-    const page = [...document.body.children].filter((el) => el !== overlay);
-    expect(page.length).toBeGreaterThan(0);
-    expect(page.every((el) => el.hasAttribute("inert"))).toBe(true);
-    expect(document.activeElement).toBe(overlay);
+    await waitFor(() => {
+      const page = [...document.body.children].filter((el) => el !== overlay);
+      expect(page.length).toBeGreaterThan(0);
+      expect(page.every((el) => el.hasAttribute("inert"))).toBe(true);
+      expect(document.activeElement).toBe(overlay);
+    });
     const e = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(e);
     expect(e.defaultPrevented).toBe(true);
 
     await act(async () => { h.resolve!("shared"); });
-    expect(screen.queryByTestId("sharing-progress")).toBeNull();
-    expect([...document.body.children].some((el) => el.hasAttribute("inert"))).toBe(false);
+    await waitFor(() => {
+      expect(screen.queryByTestId("sharing-progress")).toBeNull();
+      expect([...document.body.children].some((el) => el.hasAttribute("inert"))).toBe(false);
+    });
     const after = new Event("beforeunload", { cancelable: true });
     window.dispatchEvent(after);
     expect(after.defaultPrevented).toBe(false);
@@ -63,8 +70,50 @@ describe("sharing the patient's copy holds the page until it's done", () => {
     h.resolve = null;
     await saveRx();
     await act(async () => { h.resolve!("failed"); });
-    expect(screen.queryByTestId("sharing-progress")).toBeNull();
-    expect(screen.getByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
+    await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+    expect(await screen.findByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
     expect(screen.getByRole("button", { name: pt.docs.tryAgain })).toBeInTheDocument();
+  });
+});
+
+describe("a stalled share (1.9.0, as the app)", () => {
+  it("after 120 s: the hold ends with the existing failure + Tentar de novo, not an endless modal", async () => {
+    h.resolve = null;
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await saveRx();
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      // Never answered.
+      await act(async () => { await vi.advanceTimersByTimeAsync(119_000); });
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      await act(async () => { await vi.advanceTimersByTimeAsync(2_000); });
+      await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+      expect(await screen.findByTestId("share-issue")).toHaveTextContent(pt.docs.snapshotFailed);
+      expect(screen.getByRole("button", { name: pt.docs.tryAgain })).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+});
+
+describe("Try again while the timed-out share is still running (ec, #523)", () => {
+  it("waits for that same run instead of starting a second share", async () => {
+    const snaps = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots");
+    h.resolve = null;
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await saveRx();
+      const before = (snaps.shareRxSnapshot as unknown as { mock: { calls: unknown[] } }).mock.calls.length;
+      await act(async () => { await vi.advanceTimersByTimeAsync(121_000); });
+      fireEvent.click(await screen.findByRole("button", { name: pt.docs.tryAgain }));
+      expect(screen.getByTestId("sharing-progress")).toBeInTheDocument();
+      // The first run finishes late: the retry was waiting on it.
+      await act(async () => { h.resolve!("shared"); });
+      await waitFor(() => expect(screen.queryByTestId("sharing-progress")).toBeNull());
+      expect(screen.queryByTestId("share-issue")).toBeNull();
+      expect((snaps.shareRxSnapshot as unknown as { mock: { calls: unknown[] } }).mock.calls.length).toBe(before);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

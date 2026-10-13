@@ -1059,8 +1059,8 @@
           ]
         },
         "web": {
-          "pt": "Abra o paciente e a aba **Documentos**. **Enviar** adiciona um arquivo: escolha o **Título**, **Enviar para a pasta** e **Compartilhar com o paciente**. Os botões de cada documento são os mesmos do app; **Remover** pede o motivo quando o documento não pode mais ser excluído. Ao salvar uma receita, ou um atestado, declaração ou solicitação de exames (aba **Receitas e documentos**), **Compartilhar com o paciente** (ligado) coloca uma cópia em PDF na pasta do paciente: receitas em **Receitas**, atestados e declarações em **Atestados e laudos**, solicitações de exames em **Exames**. A cópia diz \"Cópia sem assinatura, para consulta do paciente.\" (no idioma do documento). Uma edição (nas primeiras 24 horas) ou uma correção substitui a cópia anterior: o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção), e na aba **Documentos** a cópia anterior fica como histórico, marcada **Substituído por uma cópia mais recente**; excluir o documento (nas primeiras 24 horas) também apaga a cópia do paciente. Enquanto a cópia é compartilhada, aparece **Compartilhando com o paciente…**: espere terminar antes de sair da página. A receita de controle especial nunca é compartilhada. Se o seu espaço de documentos estiver cheio, o documento é salvo, mas não compartilhado; se o compartilhamento falhar por outro motivo, **Tentar de novo** refaz a cópia.",
-          "en": "Open the patient and the **Documents** tab. **Upload** adds a file: choose the **Title**, **Send to folder** and **Share with the patient**. Each document has the same buttons as in the app; **Remove** asks for a reason when the document can no longer be deleted. When you save a prescription, or a certificate, declaration or exam request (**Prescriptions & documents** tab), **Share with the patient** (on) puts a PDF copy in the patient's folder: prescriptions in **Prescriptions**, certificates and declarations in **Certificates and reports**, exam requests in **Exams**. The copy says \"Unsigned copy, for the patient's reference.\" (in the document's language). An edit (within 24 hours) or a correction replaces the earlier copy: the patient sees **Updated on** (an edit) or **Corrected on** (a correction), and in the **Documents** tab the earlier copy stays as history, marked **Replaced by a newer copy**; deleting the document (within 24 hours) also removes the patient's copy. While the copy is being shared, **Sharing with the patient…** shows: wait for it to finish before leaving the page. A special control prescription is never shared. If your document storage is full, the document is saved but not shared; if sharing fails for another reason, **Try again** makes the copy again."
+          "pt": "Abra o paciente e a aba **Documentos**. **Enviar** adiciona um arquivo: escolha o **Título**, **Enviar para a pasta** e **Compartilhar com o paciente**. Os botões de cada documento são os mesmos do app; **Remover** pede o motivo quando o documento não pode mais ser excluído. Ao salvar uma receita, ou um atestado, declaração ou solicitação de exames (aba **Receitas e documentos**), **Compartilhar com o paciente** (ligado) coloca uma cópia em PDF na pasta do paciente: receitas em **Prescrições**, atestados e declarações em **Atestados e laudos**, solicitações de exames em **Exames**. A cópia diz \"Cópia sem assinatura, para consulta do paciente.\" (no idioma do documento). Uma edição (nas primeiras 24 horas) ou uma correção substitui a cópia anterior: o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção), e na aba **Documentos** a cópia anterior fica como histórico, marcada **Substituído por uma cópia mais recente**; excluir o documento (nas primeiras 24 horas) também apaga a cópia do paciente. Enquanto a cópia é compartilhada, aparece **Compartilhando com o paciente…**: espere terminar antes de sair da página. A receita de controle especial nunca é compartilhada. Se o seu espaço de documentos estiver cheio, o documento é salvo, mas não compartilhado; se o compartilhamento falhar por outro motivo, **Tentar de novo** refaz a cópia. Ao editar ou corrigir uma receita ou um documento, **Compartilhar com o paciente** começa como a cópia está agora: ligado se o paciente a vê, desligado se você a ocultou ou nunca a compartilhou (ligue para compartilhar de novo).",
+          "en": "Open the patient and the **Documents** tab. **Upload** adds a file: choose the **Title**, **Send to folder** and **Share with the patient**. Each document has the same buttons as in the app; **Remove** asks for a reason when the document can no longer be deleted. When you save a prescription, or a certificate, declaration or exam request (**Prescriptions & documents** tab), **Share with the patient** (on) puts a PDF copy in the patient's folder: prescriptions in **Prescriptions**, certificates and declarations in **Certificates and reports**, exam requests in **Exams**. The copy says \"Unsigned copy, for the patient's reference.\" (in the document's language). An edit (within 24 hours) or a correction replaces the earlier copy: the patient sees **Updated on** (an edit) or **Corrected on** (a correction), and in the **Documents** tab the earlier copy stays as history, marked **Replaced by a newer copy**; deleting the document (within 24 hours) also removes the patient's copy. While the copy is being shared, **Sharing with the patient…** shows: wait for it to finish before leaving the page. A special control prescription is never shared. If your document storage is full, the document is saved but not shared; if sharing fails for another reason, **Try again** makes the copy again. When you edit or correct a prescription or a document, **Share with the patient** starts as its copy is now: on if the patient sees it, off if you hid it or never shared it (switch it on to share again)."
         },
         "webUnavailable": false,
         "open": "patients",
@@ -1572,9 +1572,9 @@
             {
               "type": "ol",
               "items": [
-                "**Configurações → Equipe → Convidar**.",
-                "Compartilhe o código de convite (vale 7 dias, uso único).",
-                "A pessoa cria a conta em \"Trabalha na secretaria?\" com esse código."
+                "**Configurações → Equipe**: digite o e-mail da pessoa e toque em **Convidar**.",
+                "O convite chega a esse e-mail, com o botão **Aceitar convite**. O código de convite também aparece na tela uma vez, para você compartilhar se quiser (vale 7 dias, uso único, só para esse e-mail).",
+                "A pessoa abre o e-mail, toca em **Aceitar convite** e cria a conta: o e-mail já vem preenchido. Sem o e-mail à mão, ela pode usar o código em \"Trabalha na secretaria?\"."
               ]
             },
             {
@@ -1591,16 +1591,16 @@
             },
             {
               "type": "p",
-              "text": "O convite também chega por e-mail ao endereço informado. **Reenviar convite** envia um convite novo (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar). Quem cria a conta pelo convite já encontra o e-mail preenchido."
+              "text": "**Reenviar convite** envia um convite novo por e-mail (no máximo um por hora, até 10 por dia; o código anterior deixa de funcionar)."
             }
           ],
           "en": [
             {
               "type": "ol",
               "items": [
-                "**Settings → Team → Invite**.",
-                "Share the invite code (valid for 7 days, single use).",
-                "The person signs up under \"Work at the front desk?\" with that code."
+                "**Settings → Team**: type the person's email and tap **Invite**.",
+                "The invite is emailed to that address, with an **Accept invite** button. The invite code also shows on screen once, for you to share if you like (valid for 7 days, single use, for that email only).",
+                "The person opens the e-mail, taps **Accept invite** and creates the account: the e-mail is already filled in. Without the e-mail at hand, they can use the code under \"Work at the front desk?\"."
               ]
             },
             {
@@ -1617,13 +1617,13 @@
             },
             {
               "type": "p",
-              "text": "The invite is also emailed to the address you entered. **Resend invite** sends a new one (at most once an hour, up to 10 a day; the previous code stops working). Whoever signs up from the invite finds the email already filled in."
+              "text": "**Resend invite** emails a new invite (at most once an hour, up to 10 a day; the previous code stops working)."
             }
           ]
         },
         "web": {
-          "pt": "**Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. Compartilhe na hora o link ou o código que aparece (só aparece uma vez, vale 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.",
-          "en": "**Settings → Team**: type the person's email and click **Invite**. Share the link or code that appears right away (it's shown only once and works for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**."
+          "pt": "**Configurações → Equipe**: digite o e-mail da pessoa e clique em **Convidar**. O convite vai por e-mail; o link e o código também aparecem na hora para compartilhar (só aparecem uma vez, valem 7 dias e só para esse e-mail). Para tirar alguém: **Remover**; para cancelar um convite pendente: **Revogar**.",
+          "en": "**Settings → Team**: type the person's email and click **Invite**. The invite is emailed; the link and code also appear right away to share (shown only once, valid for 7 days, for that email only). To remove someone: **Remove**; to cancel a pending invite: **Revoke**."
         },
         "webUnavailable": false,
         "open": "settings-team",

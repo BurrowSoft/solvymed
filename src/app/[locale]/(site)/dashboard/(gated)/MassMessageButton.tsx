@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { MASS_BODY_MAX, MASS_TITLE_MAX } from "@/lib/massMessage";
 import { sendMassMessage } from "./mass-actions";
+import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
 
 // "Enviar para Pacientes" on the doctor's Home (the app's broadcast, 1.6.0,
 // behind liveFeatures.broadcast): a title and a message to every patient
@@ -34,7 +35,7 @@ export function MassMessageButton() {
     if (titleEmpty || bodyEmpty) return;
     setResult(null);
     start(async () => {
-      const r = await sendMassMessage(title, body);
+      const r = await safeCall(() => sendMassMessage(title, body), NETWORK_FAILURE);
       if (r.ok) {
         setResult({ kind: "ok", text: r.queued > 0 ? t("sent", { n: r.queued }) : t("noTokens") });
         setTitle("");
@@ -96,7 +97,7 @@ export function MassMessageButton() {
               {result && (
                 <p role="status" className={`rounded-xl px-3 py-2 text-sm ${result.kind === "ok" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>{result.text}</p>
               )}
-              <button
+              <button data-server
                 type="button"
                 onClick={send}
                 disabled={pending || titleEmpty || bodyEmpty}

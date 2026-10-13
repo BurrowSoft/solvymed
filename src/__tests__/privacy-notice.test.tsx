@@ -41,12 +41,12 @@ describe("when the notice is due", () => {
 });
 
 describe("the card", () => {
-  const card = () => render(<NextIntlClientProvider locale="en" messages={en}><PrivacyNoticeCard locale="en" date="12 October 2026" /></NextIntlClientProvider>);
+  const card = () => render(<NextIntlClientProvider locale="en" messages={en}><PrivacyNoticeCard locale="en" /></NextIntlClientProvider>);
 
   it("cf's copy, with the date and a link to the policy", () => {
     card();
     expect(screen.getByText(en.privacyNotice.title)).toBeInTheDocument();
-    expect(screen.getByText("See what changed on 12 October 2026.")).toBeInTheDocument();
+    expect(screen.getByText("See what changed.")).toBeInTheDocument();
     expect(screen.getByText(en.privacyNotice.read).closest("a")?.getAttribute("href")).toBe("/privacy");
   });
 

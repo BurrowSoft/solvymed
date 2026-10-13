@@ -8,9 +8,11 @@ import { markInviteShared } from "@/lib/setupActions";
 import { formatCnpj, isValidCnpj } from "@/lib/cnpj";
 import { updateProfile, updateClinic, updateWorkingHours, createProcedure, toggleProcedure, deleteProcedure, updateSchedulingRules, unblockPatient, generatePublicInviteCode } from "./actions";
 import { withCountryHint } from "@/lib/signupCountry";
+import { NETWORK_ERROR, safeCall } from "@/lib/netError";
 import { dayLocationValue } from "@/lib/locations";
 import { BR_STATES, councilRegistration, parseCouncilRegistration, type CouncilFields } from "@/lib/registration";
 import { cardLinkInput } from "@/lib/cardLink";
+import { savedOk } from "@/lib/savedOk";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -75,12 +77,16 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
   const registrationExample = t(ex.registration);
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateProfile(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateProfile(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -110,6 +116,7 @@ export function ProfileForm({ fullName, specialty, registration, country }: { fu
             </div>
           )}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -178,9 +185,9 @@ export function InviteCodeCard({ code: initialCode, country = null }: { code?: s
     if (code && !window.confirm(t("regenerateConfirm"))) return;
     setError("");
     start(async () => {
-      const result = await generatePublicInviteCode();
+      const result = await safeCall(() => generatePublicInviteCode(), NETWORK_ERROR);
       if (result.error) { setError(t("regenerateError")); return; }
-      if (result.code) setCode(result.code);
+      if ("code" in result && result.code) setCode(result.code);
     });
   }
 
@@ -225,7 +232,7 @@ export function InviteCodeCard({ code: initialCode, country = null }: { code?: s
           >
             {linkCopied ? t("copied") : t("copyLink")}
           </button>
-          <button
+          <button data-server
             type="button"
             onClick={handleGenerate}
             disabled={pending}
@@ -235,7 +242,7 @@ export function InviteCodeCard({ code: initialCode, country = null }: { code?: s
           </button>
         </div>
       ) : (
-        <button
+        <button data-server
           type="button"
           onClick={handleGenerate}
           disabled={pending}
@@ -291,7 +298,7 @@ export function ClinicForm({ data, showPix = true, showPromptPay = false, showTa
     if (cnpjField && cnpj && formatCnpj(cnpj) !== loadedCnpj && !isValidCnpj(cnpj)) { setError(t("cnpjInvalid")); return; }
     if (fd.has("card_payment_url") && !cardLinkInput(fd.get("card_payment_url") as string).ok) { setError(t("cardLinkInvalid")); return; }
     start(async () => {
-      const result = await updateClinic(fd);
+      const result = await safeCall(() => updateClinic(fd), NETWORK_ERROR);
       if ("error" in result && result.error) {
         setError(result.error === "invalid_promptpay" ? t("promptPayInvalid") : result.error === "invalid_tax_id" ? t("taxIdInvalid") : result.error === "invalid_cnpj" ? t("cnpjInvalid") : result.error === "invalid_card_link" ? t("cardLinkInvalid") : t("saveFailed"));
         return;
@@ -413,12 +420,16 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
   );
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateWorkingHours(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateWorkingHours(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -478,6 +489,7 @@ export function WorkingHoursForm({ workingHours, country, locations = [] }: { wo
             );
           })}
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -489,12 +501,16 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
   const t = useTranslations("settings");
   const [pending, start] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    setError("");
     start(async () => {
-      await updateSchedulingRules(fd);
+      // "Saved" only when it saved (it showed even on an error before): a
+      // returned error or no answer keeps the form as typed (1.9.0).
+      if (!(await savedOk(() => updateSchedulingRules(fd)))) { setError(t("saveFailed")); return; }
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     });
@@ -519,6 +535,7 @@ export function SchedulingRulesForm({ maxConcurrent }: { maxConcurrent: number |
           </div>
           <p className="mt-2 text-xs text-slate-400">{t("maxHint2")}</p>
         </div>
+        {error && <p className="mt-3 text-xs text-red-600">{error}</p>}
         <SaveRow pending={pending} saved={saved} />
       </form>
     </Card>
@@ -552,8 +569,9 @@ export function ProceduresPanel({ procedures, currency = "BRL" }: { procedures: 
     if (priceText.trim() && parsedPrice === null) { setError(tPay("errorInvalidAmount")); return; }
     const fd = new FormData(e.currentTarget);
     start(async () => {
-      const res = await createProcedure(fd);
-      if (res?.error) { setError(res.error === "invalid_price" ? tPay("errorInvalidAmount") : res.error); return; }
+      const res = await safeCall(() => createProcedure(fd), NETWORK_ERROR);
+      // Never a raw code on screen (it showed res.error as is); no answer too (1.9.0).
+      if (res?.error) { setError(res.error === "invalid_price" ? tPay("errorInvalidAmount") : t("saveFailed")); return; }
       setShowForm(false);
       setError("");
       setPriceText("");
@@ -647,7 +665,8 @@ export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPa
   const prefix = locale === "en" ? "" : `/${locale}`;
 
   function handleUnblock(id: string) {
-    start(async () => { await unblockPatient(id); });
+    // It failed silently before (1.9.0).
+    start(async () => { const r = await safeCall(() => unblockPatient(id), NETWORK_ERROR); if (r && typeof r === "object" && "error" in r && r.error) alert(t("saveFailed")); });
   }
 
   return (
@@ -662,7 +681,7 @@ export function BlockedPatientsPanel({ patients, locale }: { patients: BlockedPa
                 <a href={`${prefix}/dashboard/patients/${p.id}`} className="text-sm font-semibold text-slate-900 hover:text-teal-700 transition">{p.full_name}</a>
                 {p.email && <p className="text-xs text-slate-500 mt-0.5">{p.email}</p>}
               </div>
-              <button
+              <button data-server
                 onClick={() => handleUnblock(p.id)}
                 disabled={pending}
                 className="shrink-0 rounded-lg border border-green-200 px-3 py-1.5 text-xs font-semibold text-green-700 hover:bg-green-50 transition disabled:opacity-60"
@@ -690,16 +709,16 @@ function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency 
         </p>
       </div>
       <div className="flex items-center gap-2 shrink-0">
-        <button
-          onClick={() => start(async () => { await toggleProcedure(proc.id, !proc.active); })}
+        <button data-server
+          onClick={() => start(async () => { const r = await safeCall(() => toggleProcedure(proc.id, !proc.active), NETWORK_ERROR); if (r && typeof r === "object" && "error" in r && r.error) alert(t("saveFailed")); })}
           disabled={pending}
           title={proc.active ? t("disable") : t("enable")}
           className={`rounded-lg px-3 py-1 text-xs font-semibold transition disabled:opacity-60 ${proc.active ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-teal-50 text-teal-700 hover:bg-teal-100"}`}
         >
           {pending ? "…" : proc.active ? t("disable") : t("enable")}
         </button>
-        <button
-          onClick={() => { if (confirm(t("deleteConfirm", { name: proc.name }))) start(async () => { await deleteProcedure(proc.id); }); }}
+        <button data-server
+          onClick={() => { if (confirm(t("deleteConfirm", { name: proc.name }))) start(async () => { const r = await safeCall(() => deleteProcedure(proc.id), NETWORK_ERROR); if (r && typeof r === "object" && "error" in r && r.error) alert(t("saveFailed")); }); }}
           disabled={pending}
           title="Delete"
           className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition disabled:opacity-60"

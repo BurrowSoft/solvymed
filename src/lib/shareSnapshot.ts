@@ -18,8 +18,10 @@ export async function shareSnapshot(opts: {
   doctorId: string; patientId: string; bytes: Uint8Array; source: SnapshotSource; sourceId: string;
   replacesSourceId: string | null; folderKey: DefaultFolderKey; title: string;
 }): Promise<ShareOutcome> {
-  const prep = await prepareSnapshot(opts.patientId, { source: opts.source, replacesSourceId: opts.replacesSourceId, folderKey: opts.folderKey });
+  const prep = await prepareSnapshot(opts.patientId, { source: opts.source, sourceId: opts.sourceId, replacesSourceId: opts.replacesSourceId, folderKey: opts.folderKey });
   if (!prep.ok) return "failed";
+  // Its copy is already there (a late share, then Try again): done.
+  if (prep.data.alreadyShared) return "shared";
   const supabase = createClient();
   const path = docPath(opts.doctorId, opts.patientId, crypto.randomUUID(), "application/pdf");
   const { error } = await supabase.storage.from(BUCKET)

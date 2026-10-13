@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { NETWORK_FAILURE, safeCall } from "@/lib/netError";
 import { useTranslations } from "next-intl";
 import { DoctorDot } from "@/components/DoctorTag";
 import { withBrandTitle } from "@/lib/doctorName";
@@ -24,7 +25,8 @@ export function NotifyPrefsCard({ prefs: initial, colors = {} }: { prefs: Notify
     setBusy(p.professional_id);
     setError(false);
     start(async () => {
-      const r = await setNotifyPref(p.professional_id, muted);
+      // No answer (1.9.0): the error, and the switch comes back (it stayed disabled).
+      const r = await safeCall(() => setNotifyPref(p.professional_id, muted), NETWORK_FAILURE);
       if (r.ok) setPrefs((list) => list.map((x) => (x.professional_id === p.professional_id ? { ...x, muted } : x)));
       else setError(true);
       setBusy(null);
@@ -47,7 +49,7 @@ export function NotifyPrefsCard({ prefs: initial, colors = {} }: { prefs: Notify
                 {colors[p.professional_id] && <DoctorDot color={colors[p.professional_id]} className="h-2.5 w-2.5" />}
                 <span className="truncate">{name}</span>
               </span>
-              <button
+              <button data-server
                 type="button"
                 role="switch"
                 aria-checked={on}

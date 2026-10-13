@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import type { SetupProgress } from "@/lib/setup";
 import { ackSetupCompleted, setSetupHidden } from "@/lib/setupActions";
 import { ShareInviteLinkButton } from "@/components/ShareInviteLinkButton";
+import { safeCall,  } from "@/lib/netError";
 
 // The doctor's first-run checklist on Home (first-run spec §2). The state
 // comes from get_setup_progress(); each CTA goes to the page that completes
@@ -37,10 +38,10 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
     return (
       <section ref={ref} className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-teal-100 bg-teal-50 p-5">
         <p className="font-bold text-teal-900">{t("ready")}</p>
-        <button
+        <button data-server
           type="button"
           disabled={pending}
-          onClick={() => start(async () => { await ackSetupCompleted(); })}
+          onClick={() => start(async () => { await safeCall(() => ackSetupCompleted(), null); })}
           className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-teal-700 disabled:opacity-60"
         >
           {t("gotIt")}
@@ -73,10 +74,10 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
             <polyline points="6 9 12 15 18 9" />
           </svg>
         </button>
-        <button
+        <button data-server
           type="button"
           disabled={pending}
-          onClick={() => start(async () => { await setSetupHidden(true); })}
+          onClick={() => start(async () => { await safeCall(() => setSetupHidden(true), null); })}
           className="text-xs font-semibold text-slate-400 transition hover:text-slate-600"
         >
           {t("hide")}

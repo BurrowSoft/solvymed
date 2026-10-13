@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
+import { NETWORK_ERROR, safeCall } from "@/lib/netError";
 import { useState, useTransition, useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -25,6 +26,7 @@ import { MyDoctors } from "./MyDoctors";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
+import { signOutHere } from "@/lib/signOut";
 
 const STATUS_COLOR: Record<string, string> = {
   tentative: "bg-amber-50 text-amber-600 border-amber-200",
@@ -188,9 +190,10 @@ function RescheduleDialog({
             if (!selectedSlot) return;
             setSubmitError(null);
             startTransition(async () => {
-              const result = await requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end);
+              const result = await safeCall(() => requestReschedule(appt.id, selectedDate, selectedSlot.start, selectedSlot.end), NETWORK_ERROR);
               if (!result.error) { onSuccess(); }
-              else { setSubmitError(result.error === "appointment_already_started" ? t("rescheduleStarted") : result.error); }
+              // No answer (1.9.0): the request's generic error, the chosen time kept.
+              else { setSubmitError(result.error === "appointment_already_started" ? t("rescheduleStarted") : result === NETWORK_ERROR ? tBook("errorGeneric") : result.error); }
             });
           }}
           className="w-full rounded-xl bg-teal-600 py-3 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 transition"
@@ -231,7 +234,9 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
   const cancelRequest = () => {
     setActError("");
     startCancel(async () => {
-      const r = await cancelMyRequest(appt.id);
+      const r = await safeCall(() => cancelMyRequest(appt.id), NETWORK_ERROR);
+      // No answer: say so and keep the question open (nothing was cancelled).
+      if (r === NETWORK_ERROR) { setActError(tSchedule("genericError")); return; }
       setAskCancel(false);
       if (r?.error) { setActError(t("cancelContactClinic")); onMutate(); return; }
       setCancelled(true);
@@ -242,9 +247,10 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
     setActing(kind);
     setActError("");
     startTransition(async () => {
-      const r = await (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id));
+      const r = await safeCall(() => (kind === "accept" ? acceptProposal(appt.id) : declineProposal(appt.id)), NETWORK_ERROR);
       // The server refuses a proposal whose time has passed (153).
       if (r?.error === "proposed_time_expired") setActError(t("proposalPassed"));
+      if (r === NETWORK_ERROR) { setActError(tSchedule("genericError")); setActing(null); return; }
       onMutate();
     });
   };
@@ -334,7 +340,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
 
       {isProfProposal && !lapsed && (
         <div className="flex gap-2 mt-4">
-          <button
+          <button data-server
             disabled={pending}
             aria-busy={pending && acting === "accept"}
             onClick={() => act("accept")}
@@ -343,7 +349,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
             {pending && acting === "accept" && <span className="spinner-current mr-2" aria-hidden="true" />}
             {t("accept")}
           </button>
-          <button
+          <button data-server
             disabled={pending}
             aria-busy={pending && acting === "decline"}
             onClick={() => act("decline")}
@@ -362,7 +368,7 @@ function AppointmentCard({ appt, onMutate, clinicTz = DEFAULT_CLINIC_TZ, practic
               <p className="text-sm font-semibold text-slate-800">{t("cancelRequestTitle")}</p>
               <p className="mt-1 text-xs text-slate-500">{t("cancelRequestBody")}</p>
               <div className="mt-3 flex gap-2">
-                <button type="button" disabled={cancelling} aria-busy={cancelling} onClick={cancelRequest} className="flex-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition">
+                <button data-server type="button" disabled={cancelling} aria-busy={cancelling} onClick={cancelRequest} className="flex-1 rounded-xl bg-red-600 px-3 py-2 text-sm font-bold text-white hover:bg-red-700 disabled:opacity-50 transition">
                   {cancelling && <span className="spinner-current mr-2" aria-hidden="true" />}
                   {t("cancelRequest")}
                 </button>
@@ -417,7 +423,7 @@ export function MyAppointmentsClient({
   practiceCountry = null,
   practices = {},
   connectedClinicName = null,
-  privacyNoticeDate = null,
+  privacyNotice = false,
   selfPrompts = [],
   doctors = null,
   canAddDoctor = false,
@@ -438,7 +444,7 @@ export function MyAppointmentsClient({
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
   // "We've updated our Privacy Policy" with its date (null = don't show).
-  privacyNoticeDate?: string | null;
+  privacyNotice?: boolean;
   // 1.8.0 C2: "{doctor} pediu alguns dados" cards (212).
   selfPrompts?: SelfPrompt[];
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
@@ -465,7 +471,7 @@ export function MyAppointmentsClient({
 
   async function handleSignOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    await signOutHere(supabase.auth);
     router.push(`${prefix}/auth/login`);
   }
 
@@ -513,7 +519,7 @@ export function MyAppointmentsClient({
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
-        {privacyNoticeDate && <PrivacyNoticeCard locale={locale} date={privacyNoticeDate} />}
+        {privacyNotice && <PrivacyNoticeCard locale={locale} />}
         <CompleteRegistrationCards prompts={selfPrompts} />
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />
