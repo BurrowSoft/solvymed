@@ -2,6 +2,16 @@
 
 import { useTranslations } from "next-intl";
 import { iosAppLink, playStoreUrl, type StoreMedium } from "@/lib/appStores";
+import { currentConsent, readCookie } from "@/lib/consentClient";
+import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
+
+// The landing campaign for the Play referrer: only with marketing consent
+// (the attribution cookie exists only then too); read at the click, so a
+// choice made on this page counts.
+function consentedCampaign(): string | null {
+  if (!currentConsent()?.marketing) return null;
+  return parseAttribution(readCookie(ATTRIBUTION_COOKIE))?.utm_campaign ?? null;
+}
 
 function AppleIcon() {
   return (
@@ -63,7 +73,8 @@ export function AppDownloadButtons({
 
   const play = (
     // Android: the Play listing (auto-updates), never a sideloaded build.
-    <a href={playStoreUrl(medium)} target="_blank" rel="noopener noreferrer" className={iosLive ? secondary : primary}>
+    <a href={playStoreUrl(medium)} target="_blank" rel="noopener noreferrer" className={iosLive ? secondary : primary}
+      onClick={(e) => { e.currentTarget.href = playStoreUrl(medium, consentedCampaign()); }}>
       <PlayIcon />
       {t("googlePlay")}
     </a>

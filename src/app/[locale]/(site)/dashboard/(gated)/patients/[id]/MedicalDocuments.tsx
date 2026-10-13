@@ -17,6 +17,7 @@ import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
 import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
+import { signalShareCheck } from "@/lib/shareSignal";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -212,6 +213,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
     // The share decision is taken here, at the click, from the box as it is.
     const wantShare = canShare && shareChoice.current && sharesSnapshot(type);
+    // The box shown ticked but the choice read as off: the F1 shape (ec).
+    if (canShare && share && sharesSnapshot(type) && !wantShare) signalShareCheck("choice_mismatch", state.mode, { wantShare, hasId: null }, clientId);
     setError("");
     start(async () => {
       const payload = { type, lang: effLang, fields, body, clientId, clientTry: ++tries.current };
@@ -230,6 +233,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       // A new one is saved under the form's id (216): that id even if the
       // answer didn't carry it.
       const id = state.mode === "edit" ? state.doc.id : ((r.data as string | null) ?? (state.mode === "new" ? clientId : null));
+      // A share that only the form-id fallback saved (#536): the evidence F1 lacked.
+      if (wantShare && state.mode !== "edit" && !r.data) signalShareCheck("id_fallback", state.mode, { wantShare, hasId: !!r.data }, clientId);
       if (onSaved) {
         onSaved(id && type ? {
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,

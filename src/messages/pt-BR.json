@@ -15,7 +15,9 @@
     "iosBetaHint": "Requer o app TestFlight gratuito da Apple",
     "signupCta": "Comece seu teste grátis",
     "haveAccount": "Já tem conta?",
-    "preferApp": "Prefere o app? Baixe aqui:"
+    "preferApp": "Prefere o app? Baixe aqui:",
+    "trialLine": "{days} dias grátis · sem cartão de crédito · depois {price}/mês",
+    "trialLineNoPrice": "{days} dias grátis · sem cartão de crédito"
   },
   "highlights": {
     "h1": "Agendamento inteligente",
@@ -2276,5 +2278,10 @@
   },
   "offline": {
     "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
+  },
+  "common": {
+    "discardTitle": "Descartar alterações?",
+    "discard": "Descartar",
+    "keepEditing": "Continuar editando"
   }
 }
