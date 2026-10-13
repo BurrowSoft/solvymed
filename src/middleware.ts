@@ -1,6 +1,8 @@
 import createMiddleware from "next-intl/middleware";
 import { isPublicLocale, isRetiredLocale, publicLocales } from "@/lib/publicLocales";
 import { createServerClient } from "@supabase/ssr";
+import type { User } from "@supabase/supabase-js";
+import { userWithRefresh } from "./lib/supabase/userWithRefresh";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
@@ -46,7 +48,9 @@ export async function middleware(req: NextRequest) {
       },
     },
   );
-  const { data: { user } } = await supabase.auth.getUser();
+  // Refreshes once if the token turns out to be expired (a device clock off
+  // stores a shifted expiry the server would trust; lib/supabase/userWithRefresh).
+  const user = await userWithRefresh<User>(supabase.auth);
   const withAuthCookies = (res: NextResponse) => {
     refreshedCookies.forEach(({ name, value, options }) => res.cookies.set(name, value, options));
     return res;

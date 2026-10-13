@@ -15,7 +15,9 @@
     "iosBetaHint": "需要 Apple 免費的 TestFlight App",
     "signupCta": "開始免費試用",
     "haveAccount": "已有帳戶？",
-    "preferApp": "偏好使用應用程式？在此下載："
+    "preferApp": "偏好使用應用程式？在此下載：",
+    "trialLine": "免費 {days} 天 · 無需信用卡 · 之後每月 {price}",
+    "trialLineNoPrice": "免費 {days} 天 · 無需信用卡"
   },
   "highlights": {
     "h1": "智慧排程",
@@ -2092,6 +2094,8 @@
       "internal": "內部文件"
     },
     "share": "與病患分享",
+    "notSharedYet": "尚未分享",
+    "dontShare": "不分享",
     "shareChecking": "正在檢查患者是否能看到此副本…",
     "shareCheckFailed": "無法檢查患者是否能看到此副本。請選擇是否分享。",
     "shared": "已與病患分享",
@@ -2369,5 +2373,13 @@
     "saved": "設計已儲存。從現在起您的文件會使用此設計。",
     "conflict": "此設計已在其他地方被修改。請重新載入以查看最新版本。",
     "error": "無法儲存。請再試一次。"
+  },
+  "clockSkew": {
+    "banner": "您裝置上的日期和時間似乎不正確。請開啟自動設定日期和時間，然後再試一次。"
+  },
+  "common": {
+    "discardTitle": "要捨棄變更嗎？",
+    "discard": "捨棄",
+    "keepEditing": "繼續編輯"
   }
 }

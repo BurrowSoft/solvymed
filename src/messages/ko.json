@@ -15,7 +15,9 @@
     "iosBetaHint": "Apple의 무료 TestFlight 앱이 필요합니다",
     "signupCta": "무료 체험 시작하기",
     "haveAccount": "이미 계정이 있으신가요?",
-    "preferApp": "앱이 더 편하신가요? 여기서 다운로드하세요:"
+    "preferApp": "앱이 더 편하신가요? 여기서 다운로드하세요:",
+    "trialLine": "{days}일 무료 · 신용카드 불필요 · 이후 월 {price}",
+    "trialLineNoPrice": "{days}일 무료 · 신용카드 불필요"
   },
   "highlights": {
     "h1": "스마트 일정 관리",
@@ -2092,6 +2094,8 @@
       "internal": "내부 문서"
     },
     "share": "환자와 공유",
+    "notSharedYet": "아직 공유되지 않음",
+    "dontShare": "공유하지 않음",
     "shareChecking": "환자가 이 사본을 볼 수 있는지 확인하는 중…",
     "shareCheckFailed": "환자가 이 사본을 볼 수 있는지 확인하지 못했습니다. 공유할지 선택하세요.",
     "shared": "환자와 공유됨",
@@ -2369,5 +2373,13 @@
     "saved": "디자인을 저장했습니다. 이제부터 문서에 적용됩니다.",
     "conflict": "이 디자인은 다른 곳에서 변경되었습니다. 새로고침해 최신 버전을 확인하세요.",
     "error": "저장하지 못했습니다. 다시 시도하세요."
+  },
+  "clockSkew": {
+    "banner": "기기의 날짜와 시간이 잘못된 것 같습니다. 자동 날짜 및 시간을 켠 다음 다시 시도하세요."
+  },
+  "common": {
+    "discardTitle": "변경 사항을 삭제할까요?",
+    "discard": "삭제",
+    "keepEditing": "계속 편집"
   }
 }

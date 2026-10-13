@@ -15,7 +15,9 @@
     "iosBetaHint": "Requires Apple's free TestFlight app",
     "signupCta": "Start your free trial",
     "haveAccount": "Already have an account?",
-    "preferApp": "Prefer the app? Download it:"
+    "preferApp": "Prefer the app? Download it:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Smart scheduling",
@@ -1349,7 +1351,7 @@
     "settingsText": "Working hours, procedures, your team and your payment details. You can replay this tour here any time.",
     "secHomeTitle": "The clinic's day",
     "secHomeText": "Today's appointments and the week ahead for the clinic.",
-    "secScheduleText": "Confirm patients' requests and organize appointments by day, week or month.",
+    "secScheduleText": "Confirm patients' requests and organise appointments by day, week or month.",
     "secPatientsText": "Register and update patients. Medical records stay with the professional.",
     "inMenu": "In the menu ☰, under {section}: "
   },
@@ -2122,6 +2124,8 @@
       "internal": "Internal documents"
     },
     "share": "Share with the patient",
+    "notSharedYet": "Not shared yet",
+    "dontShare": "Don't share",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Shared with the patient",
@@ -2399,5 +2403,13 @@
     "saved": "Design saved. Your documents use it from now on.",
     "conflict": "This design was changed elsewhere. Reload to see the latest version.",
     "error": "Couldn't save. Try again."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
   }
 }
