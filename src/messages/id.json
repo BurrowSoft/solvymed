@@ -2215,7 +2215,7 @@
   },
   "privacyNotice": {
     "title": "Kami telah memperbarui Kebijakan Privasi kami",
-    "body": "Lihat apa yang berubah pada {date}.",
+    "body": "Lihat apa yang berubah.",
     "read": "Baca kebijakan",
     "ok": "OK",
     "close": "Tutup",
