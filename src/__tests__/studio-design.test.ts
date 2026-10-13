@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  CURATED_FONTS, DEFAULT_DESIGN, DESIGN_MAX_BYTES, PALETTE_PRESETS, contactKindsFor, layoutFor, validateDesign, type Design,
+  CURATED_FONTS, DEFAULT_DESIGN, DESIGN_MAX_BYTES, PALETTE_PRESETS, defaultContactKind, layoutFor, studioCountry, validateDesign, type Design,
 } from "@/lib/studio/design";
 
 // Document Studio PR1: the design JSON (the contract with the app, c5) and
@@ -79,12 +79,15 @@ describe("the design", () => {
     expect(new TextEncoder().encode(s).length).toBeGreaterThan(s.length);
   });
 
-  it("the contacts offered follow the practice country (config, not if-BR)", () => {
-    expect(contactKindsFor("BR")).toContain("whatsapp");
-    expect(contactKindsFor("BR")).not.toContain("line");
-    expect(contactKindsFor("TH")).toContain("line");
-    expect(contactKindsFor("TH")).not.toContain("whatsapp");
-    expect(contactKindsFor("US")).toEqual(["phone", "instagram", "site", "email"]);
+  it("a new contact's kind and the legal note follow the practice country (config + explicit default)", () => {
+    expect(defaultContactKind("BR")).toBe("whatsapp");
+    expect(defaultContactKind("TH")).toBe("line");
+    expect(defaultContactKind("th")).toBe("line");
+    expect(defaultContactKind("US")).toBe("phone");
+    expect(defaultContactKind(null)).toBe("phone");
+    expect(studioCountry("BR").legalNote).toBe("BR");
+    expect(studioCountry("TH").legalNote).toBe("TH");
+    expect(studioCountry("ZZ").legalNote).toBeNull();
   });
 });
 

@@ -1,0 +1,1 @@
+Copies of the shared Studio golden fixtures. The source is `specs/studio-layouts/fixtures` in the mobile repo, shared with the app's renderer. The web CI can't read that folder, so the files are copied here. Update both when a fixture changes.

@@ -15,6 +15,10 @@ import { getClinicTimeZone } from "@/lib/clinicTime";
 import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { designDocType, documentStyle } from "@/lib/studio/load";
+import { loadStudioForDocument, type StudioDocData } from "@/lib/studio/forDocument";
+import type { DocType } from "@/lib/studio/design";
+import type { FontId } from "@/lib/studio/design";
 import { documentDatesLookBuddhist } from "@/lib/buddhistEra";
 import { noteShareIntent, shareIntentRecording } from "@/lib/shareIntent";
 import { DOC_LANGS, OFFERED_DOC_LANGS, docLangsForType, documentTypesFor, fixedLanguage, validateFields, type DocFields, type DocLang, type MedicalDocType } from "@/lib/medicalDocuments";
@@ -161,6 +165,12 @@ export type DocPrintData = {
   patient: { name: string; cpf: string | null; thId: string | null; passport: string | null };
   // 1.8.0 F: the footer's location lines (2+ locations, switch on).
   locationLines: string[];
+  // Document Studio: the typeface (today's, Sarabun, until a design is saved).
+  fontId: FontId;
+  // Document Studio: the saved design to draw the whole document in (layout,
+  // practice block, logos); null = today's PDF (not live / no saved design /
+  // a legal layout).
+  studio: StudioDocData | null;
 };
 
 // Everything the PDF needs, read only once the access is logged ('document',
@@ -185,7 +195,21 @@ export async function documentPrintData(patientId: string, documentId: string): 
   const base = toDocTemplate(tpl.data as Record<string, unknown> | null);
   const t = brandedDocTemplate(base, brandRow);
   const b = docBrand(base, brandRow);
+  // Document Studio: a saved design's look (its type's texts), else today's.
+  // The document's type, read once and only when a saved design needs it.
+  let docType: DocType | null | undefined;
+  const typeOf = async () => {
+    if (docType === undefined) {
+      const { data } = await me.supabase.from("medical_documents").select("doc_type").eq("id", documentId).eq("patient_id", patientId).maybeSingle();
+      docType = designDocType((data as { doc_type?: string } | null)?.doc_type);
+    }
+    return docType;
+  };
+  const s = await documentStyle(me.supabase, { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, brandColor: b?.color ?? null }, typeOf);
   const pr = prof.data as Record<string, string | null> | null;
+  const studio = await loadStudioForDocument(me.supabase, me.uid, typeOf, brandRow, {
+    fullName: pr?.full_name ?? "", registration: pr?.professional_registration ?? null, clinicName: pr?.clinic_name ?? null,
+  });
   const pa = p.data as Record<string, string | null>;
   return {
     ok: true,
@@ -194,8 +218,10 @@ export async function documentPrintData(patientId: string, documentId: string): 
       timeZone,
       locationLines: await readLocationLines(me.supabase, me.uid),
       idKind: countryProfile(lookup.country).patientId,
-      template: { primaryColor: t.primaryColor, accentColor: t.accentColor, headerText: t.headerText, footerText: t.footerText, logoUrl: t.logoUrl },
-      brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
+      template: { primaryColor: s.primaryColor, accentColor: s.accentColor, headerText: s.headerText, footerText: s.footerText, logoUrl: t.logoUrl },
+      brand: b ? { logoUrl: b.logoUrl, initials: b.initials, color: s.brandColor ?? b.color, name: b.name, specialty: b.specialty, registration: b.registration } : null,
+      fontId: s.fontId,
+      studio,
       doctor: {
         name: pr?.full_name ?? "", registration: pr?.professional_registration?.trim() || null, clinicName: pr?.clinic_name ?? null,
         address: pr?.clinic_address ?? null, city: pr?.clinic_city ?? null, state: pr?.clinic_state ?? null, phone: pr?.clinic_phone ?? null,

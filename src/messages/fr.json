@@ -2281,6 +2281,99 @@
   "offline": {
     "banner": "Pas de connexion Internet. Vous pouvez consulter ce qui est ouvert, mais les modifications ne seront pas enregistrées."
   },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Give your documents your practice's look. Every document follows it.",
+    "legalNote": {
+      "BR": "The special control prescription keeps its legal layout.",
+      "TH": "The receipt keeps its legal layout."
+    },
+    "layout": "Layout",
+    "layouts": {
+      "classic": "Classic",
+      "elegant": "Elegant",
+      "modern": "Modern",
+      "minimal": "Minimal"
+    },
+    "moreLayouts": "More layouts are added regularly.",
+    "unknownLayout": "This design uses a layout from a newer version. It shows as Classic here until you choose another.",
+    "colours": "Colours",
+    "presets": {
+      "solvymed": "SolvyMed blue",
+      "sageSand": "Sage & sand",
+      "forestCream": "Forest & cream",
+      "navyGold": "Navy & gold",
+      "custom": "Custom"
+    },
+    "palette": {
+      "primary": "Main colour",
+      "accent": "Accent",
+      "light": "Background"
+    },
+    "typeface": "Typeface",
+    "nameStyle": "Name",
+    "nameStyles": {
+      "regular": "Regular",
+      "spaced": "Spaced capitals",
+      "large": "Large"
+    },
+    "logo": "Logo in the header",
+    "logos": {
+      "wide": "Wide logo",
+      "square": "Square logo",
+      "reversed": "Reversed logo",
+      "none": "No logo"
+    },
+    "watermark": "Show the logo faintly behind the text",
+    "sizes": {
+      "s": "Small",
+      "m": "Medium",
+      "l": "Large"
+    },
+    "sectionBars": "Section bars",
+    "sectionFills": {
+      "none": "None",
+      "primary": "Main colour",
+      "accent": "Accent"
+    },
+    "fields": "Patient and date fields",
+    "fieldStyles": {
+      "plain": "Plain",
+      "underline": "Underlined",
+      "box": "Boxed"
+    },
+    "footer": "Footer",
+    "columns": "Columns",
+    "showLocations": "Show the practice locations",
+    "contacts": "Contacts",
+    "addContact": "Add contact",
+    "contactKinds": {
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Website",
+      "email": "E-mail"
+    },
+    "band": "Bottom band",
+    "bandStyles": {
+      "none": "None",
+      "flat": "Flat",
+      "twoTone": "Two-tone",
+      "rounded": "Rounded",
+      "angled": "Angled"
+    },
+    "texts": "Header and footer texts",
+    "headerText": "Header text",
+    "footerText": "Footer text",
+    "preview": "Preview",
+    "previewNote": "Sample data. Your real documents use your patients' details.",
+    "previewFailed": "Couldn't show the preview. Your design can still be saved.",
+    "save": "Save design",
+    "saved": "Design saved. Your documents use it from now on.",
+    "conflict": "This design was changed elsewhere. Reload to see the latest version.",
+    "error": "Couldn't save. Try again."
+  },
   "clockSkew": {
     "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
   },

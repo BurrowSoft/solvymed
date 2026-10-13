@@ -207,6 +207,10 @@
     "met": true,
     "what": "Record templates are live on the website (1.8.0 D): migration 189 applied on production and the server flag 'record_templates' on. Gates Help C13 and the App Map's record-template rule. The app's half (1.8.0) is gated separately by its released build."
   },
+  "document-studio-live": {
+    "met": false,
+    "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
+  },
   "app-share-default-live": {
     "met": false,
     "what": "The app's \"Share with the patient\" default when editing or correcting (c5's #484: starts as the copy is now, with the checking/unknown lines) is in a RELEASED app build. Gates the app line in Help P15 and the App Map's app sentence (the website's half is live since #528)."

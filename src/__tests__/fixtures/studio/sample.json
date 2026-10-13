@@ -1,0 +1,27 @@
+{
+  "_note": "Shared golden input for both Studio renderers (77 web, c5 app). Fictional data, as in the approved mock-ups. Render each designs/*.json with this practice + document.",
+  "practice": {
+    "displayName": "Dra. Helena Duarte",
+    "nameForSignature": "Helena Duarte",
+    "specialty": "Clínica Geral",
+    "registrationLine": "CRM-SP 000000",
+    "clinicName": "Clínica Vida Plena",
+    "logo": { "square": "HD-circle", "wide": null, "reversed": "HD-circle-light" },
+    "locations": [
+      { "name": "Unidade Jardins", "lines": ["Rua das Acácias, 120", "São Paulo · SP"] },
+      { "name": "Unidade Centro", "lines": ["Av. Central, 400, sala 12", "São Paulo · SP"] }
+    ]
+  },
+  "document": {
+    "type": "prescription",
+    "lang": "pt-BR",
+    "title": "Receituário",
+    "patientName": "Beatriz Almeida",
+    "date": "2026-10-12",
+    "items": [
+      { "name": "Amoxicilina 500 mg", "form": "cápsula", "instructions": "Tomar 1 cápsula de 8 em 8 horas, por 7 dias." },
+      { "name": "Paracetamol 750 mg", "form": "comprimido", "instructions": "Tomar 1 comprimido de 6 em 6 horas, se dor ou febre." }
+    ],
+    "notes": "Beber bastante água e retornar em 15 dias."
+  }
+}
