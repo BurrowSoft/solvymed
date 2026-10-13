@@ -285,7 +285,7 @@ function drawItems(c: Ctx, items: { name: string; form?: string | null; instruct
       line(c, head, { size: c.p.size.body * 1.2 });
       line(c, it.instructions, { size: c.p.size.body });
     } else {
-      line(c, it.name, { size: c.p.size.body, bold: true });
+      line(c, head, { size: c.p.size.body, bold: true });
       line(c, it.instructions, { size: c.p.size.body });
     }
     c.y -= c.p.gap * 0.55;
