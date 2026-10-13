@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Card } from "../SettingsClient";
@@ -8,6 +8,9 @@ import { ReloadButton } from "@/components/ReloadButton";
 import { timeLimit } from "@/lib/netError";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
 import { StudioPosters, type PosterDay } from "./StudioPosters";
+import { StudioSignature } from "./StudioSignature";
+import { removeSignature } from "@/lib/studio/signature";
+import { createClient } from "@/lib/supabase/client";
 import { saveMyDesign } from "../studio-actions";
 import {
   CONTACT_KINDS, CURATED_FONTS, LAYOUTS, PALETTE_PRESETS, defaultContactKind, studioCountry,
@@ -72,9 +75,13 @@ type Props = {
   // Posters (PR5): the week's hours and the booking poster's invite link.
   posterHours: PosterDay[] | null;
   inviteUrl: string | null;
+  // The signature image (studio_signature_image): the card only while it's
+  // on; while it's off a design is always saved with image:false (225).
+  uid: string;
+  signatureOn: boolean;
 };
 
-export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref, posterHours, inviteUrl }: Props) {
+export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref, posterHours, inviteUrl, uid, signatureOn }: Props) {
   const t = useTranslations("studio");
   const tRx = useTranslations("prescriptionDoc");
   const tDocType = useTranslations("documents.type");
@@ -111,17 +118,26 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
     if (state !== "saving") setState("idle");
   };
 
+  // A removed signature image: its file is deleted after the design that
+  // drops it is saved (c5: design first, then the file).
+  const removeSignatureFile = useRef(false);
+
   async function save() {
     if (state === "saving") return;
     setState("saving");
+    const toSave: Design = signatureOn ? cleaned : { ...cleaned, signature: { ...cleaned.signature, image: false } };
     try {
       // Never "Saving…" forever (fa, #540): an answer that doesn't come in
       // SAVE_LIMIT_MS is an error the doctor can retry (a retry with the old
       // version is then a conflict, never an overwrite).
-      const r = await timeLimit(saveMyDesign(cleaned, version), SAVE_LIMIT_MS, { ok: false as const, code: "generic" as const });
+      const r = await timeLimit(saveMyDesign(toSave, version), SAVE_LIMIT_MS, { ok: false as const, code: "generic" as const });
       if (r.ok) {
         setVersion(r.version);
         setEverSaved(true);
+        if (removeSignatureFile.current) {
+          removeSignatureFile.current = false;
+          void removeSignature(createClient()).catch(() => undefined);
+        }
         setBaseline(JSON.stringify(cleaned));
         setDesign(cleaned);
         setState("saved");
@@ -316,6 +332,11 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
               ))}
             </div>
           </Card>
+
+          {signatureOn && (
+            <StudioSignature uid={uid} signature={design.signature}
+              onChange={(signature, removeFile) => { if (removeFile) removeSignatureFile.current = true; change((d) => ({ ...d, signature })); }} />
+          )}
 
           <Card title={t("letterhead")} description={t("letterheadHint")}>
             <div className="grid gap-4" data-testid="studio-letterhead">

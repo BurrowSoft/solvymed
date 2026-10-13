@@ -2406,6 +2406,13 @@
       "noInviteCode": "Áp phích đặt lịch cần mã mời bệnh nhân của bạn (Cài đặt → Liên kết mời bệnh nhân).",
       "newCodeNote": "Nếu bạn tạo mã mời mới, hãy tải lại áp phích; mã QR cũ sẽ không còn hoạt động.",
       "noHours": "Hãy đặt giờ làm việc trong Cài đặt trước."
-    }
+    },
+    "signature": "Chữ ký",
+    "signatureHint": "Tên, chuyên khoa và số chứng chỉ hành nghề của bạn luôn được in dưới dòng chữ ký. Bạn cũng có thể thêm hình chữ ký tay của mình.",
+    "signatureImage": "Thêm hình chữ ký của tôi",
+    "signatureNotDigital": "Hình chữ ký không phải là chữ ký số.",
+    "signaturePrivate": "Hình này được giữ riêng tư và chỉ đặt trên tài liệu do bạn phát hành: không bao giờ trên áp phích, giấy tiêu đề hay tài liệu do nhóm của bạn phát hành.",
+    "signatureLater": "Thay đổi hoặc xóa chỉ ảnh hưởng đến tài liệu phát hành sau đó.",
+    "signatureWhere": "Hình chữ ký của bạn xuất hiện trên bản sao chia sẻ với bệnh nhân. Tài liệu in hiển thị con dấu đánh máy của bạn để ký tay."
   }
 }

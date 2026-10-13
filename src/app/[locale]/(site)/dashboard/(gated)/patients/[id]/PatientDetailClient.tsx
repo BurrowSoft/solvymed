@@ -1081,9 +1081,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       retry: outcome === "storageFull" ? null : () => { void runShare(run); },
     });
   }
-  function shareRx(rxId: string, correctsId: string | null) {
+  function shareRx(rxId: string, correctsId: string | null, issued: boolean) {
     void runShare(() => shareRxSnapshot({
-      doctorId: currentUserId, patientId, rxId, correctsId, locale,
+      doctorId: currentUserId, patientId, rxId, correctsId, locale, issued,
       labels: {
         title: tpd("title"), patient: tpd("patient"), date: tpd("date"), medications: tpd("medications"), medication: tpd("medication"),
         dosage: tpd("dosage"), frequency: tpd("frequency"), duration: tpd("duration"), notes: tpd("notes"), footer: tpd("footer"),
@@ -1092,8 +1092,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       title: (iso) => `${tpd("title")} ${formatShortDate(locale, iso)}`,
     }));
   }
-  function shareDoc(doc: MedDoc, correctsId: string | null) {
-    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer") }));
+  function shareDoc(doc: MedDoc, correctsId: string | null, issued: boolean) {
+    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), issued }));
   }
   // Unsaved changes in the document dialog: closing asks first (ad).
   const docDirty = useRef(false);
@@ -1261,7 +1261,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
       const sharing = canShare && shareRxOn && !!savedId;
       setDialog(null);
-      if (sharing) shareRx(savedId!, dialog.mode === "new" ? null : dialog.rx.id);
+      if (sharing) shareRx(savedId!, dialog.mode === "new" ? null : dialog.rx.id, dialog.mode !== "edit");
     });
   }
 
@@ -1390,7 +1390,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               country={medicalDocs.country}
               hasPatientId={medicalDocs.hasPatientId}
               onClose={closeDoc}
-              onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
+              onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId, saved.issued); }}
               onAlreadySaved={() => { discardDoc(); setListError(tsave("alreadySavedChanged")); }}
               canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}

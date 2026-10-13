@@ -2406,6 +2406,13 @@
       "noInviteCode": "O cartaz de agendamento precisa do seu código de convite (Configurações → Link de convite para pacientes).",
       "newCodeNote": "Se você gerar um novo código de convite, baixe seus cartazes de novo; o QR antigo deixará de funcionar.",
       "noHours": "Defina primeiro o seu horário de atendimento em Configurações."
-    }
+    },
+    "signature": "Assinatura",
+    "signatureHint": "Seu nome, especialidade e registro sempre saem sob a linha de assinatura. Você também pode adicionar uma imagem da sua assinatura de próprio punho.",
+    "signatureImage": "Adicionar a imagem da minha assinatura",
+    "signatureNotDigital": "A imagem da sua assinatura não é uma assinatura digital.",
+    "signaturePrivate": "Ela fica privada e só é colocada nos documentos que você emite: nunca em cartazes, papéis timbrados ou documentos emitidos pela sua equipe.",
+    "signatureLater": "Trocar ou remover a imagem afeta só os documentos emitidos depois.",
+    "signatureWhere": "A imagem da sua assinatura aparece na cópia compartilhada com o paciente. Os documentos impressos mostram o seu carimbo digitado, para assinar à mão."
   }
 }

@@ -25,6 +25,11 @@ export type DesignedInput = {
     locations: { name: string; lines: string[] }[];
   };
   logos: { square: Uint8Array | null; wide: Uint8Array | null; reversed: Uint8Array | null };
+  // The doctor's signature image (PNG), drawn above the signature line when
+  // the design turns it on. Only the patient's copy made when a document is
+  // issued passes it (02, 10-13: every on-demand render shows the typed
+  // stamp only); posters and letterheads never do.
+  signatureImage?: Uint8Array | null;
   // What the document says, as blocks (lib/studio/content builds them per
   // document type, in the order today's PDFs use).
   // headerText / footerText: the design's texts for this document type
@@ -388,7 +393,8 @@ function footerColumns(groups: FooterGroup[], columns: number): FooterGroup[][] 
 // page. The footer (and the sidebar contacts) go on every page; the
 // signature on the last one, above the footer.
 type Bottom = { base: number; top: number; drawFooter: () => void; sigTop: number | null; drawSignature: () => void };
-function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
+const SIGNATURE_IMAGE_H = 42;
+function layoutBottom(c: Ctx, input: DesignedInput, sigImage: PDFImage | null): Bottom {
   const size = c.p.size.small;
   const lh = size * 1.5;
   const groups = footerGroups(c, input);
@@ -457,15 +463,24 @@ function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
   // Signature above the footer (none on a letterhead without a body: 02).
   const signed = input.doc.signature !== "none";
   const sigTop = signed ? base + footerH + 24 + c.p.size.body * 1.4 + c.p.size.small * 1.4 + 6 : null;
+  // The signature image sits on the line: its height is room the content
+  // must leave on the last page.
+  const sigImgH = signed && sigImage ? SIGNATURE_IMAGE_H : 0;
   return {
     base,
     top: base + footerH,
-    sigTop,
+    sigTop: sigTop === null ? null : sigTop + sigImgH,
     drawFooter: () => { for (const op of ops) op(); },
     drawSignature: () => {
       if (sigTop === null) return;
       const sig = c.p.signature;
       const sx = sig.align === "center" ? c.left + (c.width - sig.width) / 2 : c.left + c.width - sig.width;
+      if (sigImage) {
+        const sc = Math.min(SIGNATURE_IMAGE_H / sigImage.height, sig.width / sigImage.width);
+        const w = sigImage.width * sc;
+        const x = sig.align === "center" ? sx + (sig.width - w) / 2 : sx + sig.width - w;
+        c.page.drawImage(sigImage, { x, y: sigTop + 1, width: w, height: sigImage.height * sc });
+      }
       c.y = sigTop;
       c.page.drawRectangle({ x: sx, y: c.y - 0.75, width: sig.width, height: 0.75, color: c.ink });
       c.y -= 4;
@@ -515,7 +530,10 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
       }
     },
   };
-  const bottom = layoutBottom(c, input);
+  // The signature image only when the design turns it on and the caller
+  // passed it (an issue-time patient copy).
+  const sigImage = d.signature.image && input.signatureImage ? await embedImage(pdf, input.signatureImage) : null;
+  const bottom = layoutBottom(c, input, sigImage);
   drawPage(c, wm);
   drawHeader(c, input, headerLogo(c, logos));
   // From here on, content stops above the footer and continues on a new page.

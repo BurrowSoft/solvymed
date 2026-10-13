@@ -28,7 +28,7 @@ function show() {
       <StudioEditor
         initial={structuredClone(DEFAULT_DESIGN)} saved={false} version={3} country="BR"
         practice={{ displayName: "Dr. Test", specialty: null, registrationLine: null, clinicName: null, locations: [] }}
-        logos={{ square: null, wide: null, reversed: null }} textTypes={["prescription"]} backHref="/dashboard/settings" posterHours={null} inviteUrl={null}
+        logos={{ square: null, wide: null, reversed: null }} textTypes={["prescription"]} backHref="/dashboard/settings" posterHours={null} inviteUrl={null} uid="u1" signatureOn={false}
       />
     </NextIntlClientProvider>,
   );
@@ -60,6 +60,23 @@ describe("Studio editor: saving", () => {
     await waitFor(() => expect(screen.getByRole("alert").textContent).toBe(en.studio.error));
     expect(screen.getByTestId("studio-save").textContent).toBe(en.studio.save);
     await act(async () => { late({ ok: false, code: "conflict" }); });
+  });
+
+  it("with studio_signature_image off, a design is always saved with image:false (225 refuses it)", async () => {
+    save.mockResolvedValue({ ok: true, version: 4 });
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <StudioEditor
+          initial={{ ...structuredClone(DEFAULT_DESIGN), font: "sarabun", signature: { stamp: true, image: true, imagePath: "u1/signature.png" } }} saved={true} version={3} country="BR"
+          practice={{ displayName: "Dr. Test", specialty: null, registrationLine: null, clinicName: null, locations: [] }}
+          logos={{ square: null, wide: null, reversed: null }} textTypes={["prescription"]} backHref="/dashboard/settings" posterHours={null} inviteUrl={null} uid="u1" signatureOn={false}
+        />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.queryByTestId("studio-signature")).toBeNull();
+    fireEvent.click(screen.getAllByRole("radio", { name: en.studio.layouts.elegant })[0]);
+    await act(async () => { fireEvent.click(screen.getByTestId("studio-save")); });
+    expect(save.mock.calls[0][0].signature.image).toBe(false);
   });
 
   it("a save that works shows the saved line", async () => {

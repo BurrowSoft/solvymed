@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { studioEnabled } from "./live";
+import { signatureEnabled } from "./signature";
 import { assetUrl, type Brand } from "@/lib/brand";
 import { withBrandTitle } from "@/lib/doctorName";
 import { sortLocations, type PracticeLocation } from "@/lib/locations";
@@ -23,6 +24,10 @@ export type StudioDocData = {
   logos: { square: string | null; wide: string | null; reversed: string | null };
   // The design's texts for this document type (header / footer), or null.
   texts: { header: string | null; footer: string | null };
+  // The signature image's path (private; the doctor's own signed URL reads
+  // it): only when the design turns it on and studio_signature_image is on.
+  // Used for the patient's copy made at issue time only (02).
+  signaturePath: string | null;
 };
 
 export type DesignRow = { design?: unknown; saved?: unknown; assets?: { logoSquare?: string | null; logoWide?: string | null; logoReversed?: string | null } | null };
@@ -63,6 +68,7 @@ export async function loadStudioForDocument(
       practice: studioPractice(brand, profile, await readStudioLocations(supabase, professionalId)),
       logos: studioLogos(supabase, row.assets, brand),
       texts: { header: tx?.header?.trim() || null, footer: tx?.footer?.trim() || null },
+      signaturePath: design.signature.image && design.signature.imagePath && (await signatureEnabled(supabase)) ? design.signature.imagePath : null,
     };
   } catch {
     return null;
