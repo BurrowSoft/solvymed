@@ -1029,6 +1029,10 @@
             {
               "type": "p",
               "text": "No app, uma receita nova tem **Compartilhar com o paciente** (ligado de início): ao salvar, uma cópia em PDF vai para a pasta **Prescrições** do paciente. Uma cópia sem a sua assinatura desenhada traz \"Cópia sem assinatura, para consulta do paciente.\"; uma edição ou uma correção da receita substitui a cópia, e o paciente vê **Atualizado em** (edição) ou **Corrigido em** (correção). Depois de salvar com o compartilhamento ligado, o app mostra **Compartilhando com o paciente…** e espera: o X e o voltar ficam bloqueados até o compartilhamento terminar; se falhar, o aviso oferece **Tentar de novo**. Se o seu espaço de documentos estiver cheio, a receita é salva mas não compartilhada."
+            },
+            {
+              "type": "p",
+              "text": "Se você salvou uma receita ou um documento com **Compartilhar com o paciente** ligado e a cópia não chegou ao paciente (por exemplo, a conexão caiu), ele aparece marcado **Ainda não compartilhado** na lista **Receitas e documentos**. Use **Compartilhar com o paciente** ao lado da marca para enviar de novo (a marca some quando o compartilhamento dá certo), ou **Não compartilhar** se ele deve ficar só com você. Ela nunca aparece quando você escolheu não compartilhar, nem para pacientes sem conta no app."
             }
           ],
           "en": [
@@ -1055,6 +1059,10 @@
             {
               "type": "p",
               "text": "In the app, a new prescription has **Share with the patient** (on by default): when you save, a PDF copy goes to the patient's **Prescriptions** folder. A copy without your drawn signature says \"Unsigned copy, for the patient's reference.\"; an edit or a correction of the prescription replaces the copy, and the patient sees **Updated on** (an edit) or **Corrected on** (a correction). After saving with sharing on, the app shows **Sharing with the patient…** and waits: X and back are blocked until the share finishes; if it fails, the alert offers **Try again**. If your document storage is full, the prescription is saved but not shared."
+            },
+            {
+              "type": "p",
+              "text": "If you saved a prescription or a document with **Share with the patient** on and the copy didn't reach the patient (for example, the connection dropped), it shows **Not shared yet** in the **Prescriptions & documents** list. Use **Share with the patient** next to the mark to send it again (the mark goes away once it's shared), or **Don't share** if it should stay with you. It never shows when you chose not to share, or for patients without an app account."
             }
           ]
         },
