@@ -22,7 +22,7 @@ export async function createClient(opts: { acting?: boolean } = {}) {
   // The "All" schedule's row (166) overrides the switcher, for that action only.
   const chosen = opts.acting === false ? undefined : rowPracticeOverride() ?? cookieStore.get(ACTING_COOKIE)?.value;
   const headers = opts.acting === false ? {} : actingHeaders(chosen === ALL_PRACTICES ? await allModeFallback() : chosen);
-  return createServerClient(
+  const client = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -39,4 +39,19 @@ export async function createClient(opts: { acting?: boolean } = {}) {
       },
     },
   );
+  // Every server getUser refreshes once if the token turns out to be expired
+  // (1.9.0, ec on #521): a device clock that's off stores a token expiry
+  // shifted to its own clock, which this client would otherwise trust and
+  // the doctor would look signed out (lib/supabase/userWithRefresh, as the
+  // middleware does).
+  if (typeof client.auth?.getUser !== 'function') return client;
+  const plainGetUser = client.auth.getUser.bind(client.auth);
+  client.auth.getUser = (async (jwt?: string) => {
+    if (jwt) return plainGetUser(jwt);
+    const first = await plainGetUser();
+    if (first.data.user || !first.error || first.error.name === 'AuthSessionMissingError') return first;
+    const refreshed = await client.auth.refreshSession();
+    return refreshed.error ? first : plainGetUser();
+  }) as typeof client.auth.getUser;
+  return client;
 }

@@ -15,7 +15,9 @@
     "iosBetaHint": "Requires Apple's free TestFlight app",
     "signupCta": "Start your free trial",
     "haveAccount": "Already have an account?",
-    "preferApp": "Prefer the app? Download it:"
+    "preferApp": "Prefer the app? Download it:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Smart scheduling",
@@ -2247,7 +2249,7 @@
   },
   "privacyNotice": {
     "title": "We've updated our Privacy Policy",
-    "body": "See what changed on {date}.",
+    "body": "See what changed.",
     "read": "Read the policy",
     "ok": "OK",
     "close": "Close",
@@ -2308,5 +2310,13 @@
   },
   "offline": {
     "banner": "No internet connection. You can view what's open, but changes won't be saved."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Discard changes?",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
   }
 }

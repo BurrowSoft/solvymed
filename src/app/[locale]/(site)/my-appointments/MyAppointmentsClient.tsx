@@ -423,7 +423,7 @@ export function MyAppointmentsClient({
   practiceCountry = null,
   practices = {},
   connectedClinicName = null,
-  privacyNoticeDate = null,
+  privacyNotice = false,
   selfPrompts = [],
   doctors = null,
   canAddDoctor = false,
@@ -444,7 +444,7 @@ export function MyAppointmentsClient({
   // First-run: the one-time "You're connected to {clinic}" card (null = don't show).
   connectedClinicName?: string | null;
   // "We've updated our Privacy Policy" with its date (null = don't show).
-  privacyNoticeDate?: string | null;
+  privacyNotice?: boolean;
   // 1.8.0 C2: "{doctor} pediu alguns dados" cards (212).
   selfPrompts?: SelfPrompt[];
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
@@ -519,7 +519,7 @@ export function MyAppointmentsClient({
       </header>
 
       <main className="mx-auto max-w-2xl px-4 py-8 space-y-8">
-        {privacyNoticeDate && <PrivacyNoticeCard locale={locale} date={privacyNoticeDate} />}
+        {privacyNotice && <PrivacyNoticeCard locale={locale} />}
         <CompleteRegistrationCards prompts={selfPrompts} />
         {connectedClinicName && (
           <OnboardingCard kind="patient_connected" clinicName={connectedClinicName} bookHref={bookHref ?? undefined} bookLabel={bookLabel} />

@@ -15,7 +15,9 @@
     "iosBetaHint": "Richiede l'app gratuita TestFlight di Apple",
     "signupCta": "Inizia la prova gratuita",
     "haveAccount": "Hai già un account?",
-    "preferApp": "Preferisci l'app? Scaricala:"
+    "preferApp": "Preferisci l'app? Scaricala:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda intelligente",
@@ -2217,7 +2219,7 @@
   },
   "privacyNotice": {
     "title": "Abbiamo aggiornato la nostra Informativa sulla privacy",
-    "body": "Scopri cosa è cambiato il {date}.",
+    "body": "Scopri cosa è cambiato.",
     "read": "Leggi l'informativa",
     "ok": "OK",
     "close": "Chiudi",
@@ -2278,5 +2280,13 @@
   },
   "offline": {
     "banner": "Nessuna connessione a Internet. Puoi vedere ciò che è aperto, ma le modifiche non verranno salvate."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "Scartare le modifiche?",
+    "discard": "Scarta",
+    "keepEditing": "Continua a modificare"
   }
 }

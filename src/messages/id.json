@@ -15,7 +15,9 @@
     "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple",
     "signupCta": "Mulai uji coba gratis",
     "haveAccount": "Sudah punya akun?",
-    "preferApp": "Lebih suka aplikasinya? Unduh di sini:"
+    "preferApp": "Lebih suka aplikasinya? Unduh di sini:",
+    "trialLine": "Gratis {days} hari · tanpa kartu kredit · lalu {price}/bulan",
+    "trialLineNoPrice": "Gratis {days} hari · tanpa kartu kredit"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -2217,7 +2219,7 @@
   },
   "privacyNotice": {
     "title": "Kami telah memperbarui Kebijakan Privasi kami",
-    "body": "Lihat apa yang berubah pada {date}.",
+    "body": "Lihat apa yang berubah.",
     "read": "Baca kebijakan",
     "ok": "OK",
     "close": "Tutup",
@@ -2278,5 +2280,13 @@
   },
   "offline": {
     "banner": "Tidak ada koneksi internet. Anda dapat melihat yang sedang terbuka, tetapi perubahan tidak akan disimpan."
+  },
+  "clockSkew": {
+    "banner": "Tanggal dan waktu di perangkat Anda tampaknya salah. Aktifkan tanggal dan waktu otomatis, lalu coba lagi."
+  },
+  "common": {
+    "discardTitle": "Buang perubahan?",
+    "discard": "Buang",
+    "keepEditing": "Lanjutkan mengedit"
   }
 }

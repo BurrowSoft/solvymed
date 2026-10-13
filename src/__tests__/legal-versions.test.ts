@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { consentMetadata, legalDateLabel, PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legalVersions";
+import { consentMetadata, legalDateLabel, PRIVACY_PUBLISHED, PRIVACY_VERSION, TERMS_PUBLISHED, TERMS_VERSION } from "@/lib/legalVersions";
 
 describe("legal versions (TH-3 consent)", () => {
   it("are YYYY-MM-DD dates (the format migration 111 accepts)", () => {
@@ -11,9 +11,22 @@ describe("legal versions (TH-3 consent)", () => {
     expect(consentMetadata()).toEqual({ privacy_version: PRIVACY_VERSION, terms_version: TERMS_VERSION, privacy_consent_platform: "web" });
   });
 
-  it("the pages' date label matches the version", () => {
+  it("the pages' date label", () => {
     expect(legalDateLabel("en", "2026-09-28")).toBe("28 September 2026");
     expect(legalDateLabel("pt-BR", "2026-09-28")).toBe("28 de setembro de 2026");
+  });
+
+  // The IDs are often chosen ahead; the pages print the day the text went
+  // live instead, and that can never be a day that hasn't come yet (02:
+  // "Last updated: 17 October" was shown from 9 October).
+  it("the published dates are real days, never in the future", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    for (const d of [PRIVACY_PUBLISHED, TERMS_PUBLISHED]) {
+      expect(d).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(d <= today).toBe(true);
+    }
+    expect(legalDateLabel("en", PRIVACY_PUBLISHED)).toBe("9 October 2026");
+    expect(legalDateLabel("pt-BR", TERMS_PUBLISHED)).toBe("30 de setembro de 2026");
   });
 });
 

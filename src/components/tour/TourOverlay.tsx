@@ -6,6 +6,7 @@ import { portalRoot } from "./portalRoot";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { TourFallback, TourStep } from "@/lib/tour";
+import { leaveGuarded } from "@/components/DiscardGuard";
 
 // The tour's overlay (specs/walkthrough.md §3): the screen dimmed, the
 // current element in a rounded cut-out with a teal glow, and a card next to
@@ -147,7 +148,8 @@ export function TourOverlay({
     targetRef.current = null;
     const wanted = `${prefix}${step.path}`;
     if (pathname !== wanted) {
-      router.push(wanted);
+      // Unsaved settings ask first; Keep editing ends the tour there.
+      leaveGuarded(() => router.push(wanted), () => onClose("skipped", index));
       return; // runs again when the pathname changes
     }
     let cancelled = false;

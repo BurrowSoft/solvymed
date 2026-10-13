@@ -7,6 +7,7 @@ import { countryProfile } from "@/lib/country";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
 import { OfflineGuard } from "@/components/OfflineGuard";
+import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 
 export default async function BookPage({
   params,
@@ -92,6 +93,7 @@ export default async function BookPage({
   return (
     <>
     <OfflineGuard />
+    <ClockSkewGuard />
     <BookingClient
       brand={brand}
       professionalId={professionalId}

@@ -109,6 +109,9 @@ describe("OfflineGuard", () => {
     act(() => setOnline(false));
     expect(screen.getByTestId("offline-banner").textContent).toContain("No internet connection. You can view what's open, but changes won't be saved.");
     expect(document.documentElement.dataset.offline).toBe("1");
+    // A notice, not a control: clicks pass through to the header under it.
+    expect(screen.getByTestId("offline-banner").className).toContain("pointer-events-none");
+    expect(screen.getByTestId("offline-banner").querySelector("p")?.className).toContain("pointer-events-none");
 
     const input = screen.getByLabelText("name") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "Maria" } });
