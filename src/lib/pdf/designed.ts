@@ -192,6 +192,10 @@ function drawTitle(c: Ctx, title: string) {
     c.page.drawRectangle({ x: c.left + tw + 9, y: c.y + c.p.size.title * 0.6, width: c.width - tw - 9, height: 1.5, color: c.color("accent") });
   } else if (c.p.header !== "nameOnly") {
     line(c, title, { size: c.p.size.title, bold: true, upper: sb.upper });
+  } else {
+    // Minimal: a small muted title, still there (02: a document always
+    // states what it is).
+    line(c, title, { size: c.p.size.small, color: c.muted, upper: true });
   }
 }
 
@@ -204,6 +208,8 @@ function drawFields(c: Ctx, cells: [string, string][]) {
     c.y = top;
     const x = c.left + i * (half + 18);
     if (c.p.header === "nameOnly") {
+      // Minimal: small muted labels over the values (02: never ambiguous).
+      if (label) line(c, label, { size: c.p.size.small * 0.9, x, width: half, align: i ? "right" : "left", color: c.muted });
       line(c, value, { size: c.p.size.body * 0.93, x, width: half, align: i ? "right" : "left", color: i ? c.muted : c.ink });
     } else if (f.style === "box") {
       const h = c.p.size.body * 3.1;
