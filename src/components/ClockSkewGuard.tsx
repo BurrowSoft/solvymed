@@ -48,8 +48,10 @@ export function ClockSkewGuard() {
 
   if (!skewed) return null;
   return (
-    <div role="alert" data-testid="clock-skew-banner" className="fixed inset-x-0 top-12 z-[60] flex justify-center px-4 print:hidden">
-      <p className="max-w-xl rounded-xl bg-[#7c2d12] px-4 py-2 text-center text-sm font-medium text-[#ffffff] shadow-lg">{t("banner")}</p>
+    // A notice, not a control: clicks pass through to the page header under
+    // it (7e: the full-width strip blocked "Novo Paciente").
+    <div role="alert" data-testid="clock-skew-banner" className="pointer-events-none fixed inset-x-0 top-12 z-[60] flex justify-center px-4 print:hidden">
+      <p className="pointer-events-none max-w-xl rounded-xl bg-[#7c2d12] px-4 py-2 text-center text-sm font-medium text-[#ffffff] shadow-lg">{t("banner")}</p>
     </div>
   );
 }

@@ -58,6 +58,15 @@ describe("ClockSkewGuard", () => {
     expect(screen.getByTestId("clock-skew-banner").textContent).toBe(en.clockSkew.banner);
   });
 
+  it("the banner never takes clicks: the page header under it stays usable (7e, #521)", async () => {
+    vi.stubGlobal("fetch", serverSays(2 * 3_600_000));
+    show();
+    await settle();
+    const banner = screen.getByTestId("clock-skew-banner");
+    expect(banner.className).toContain("pointer-events-none");
+    expect(banner.querySelector("p")?.className).toContain("pointer-events-none");
+  });
+
   it("the check itself fails: treated as right (refresh on, no banner)", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("Failed to fetch"); }));
     show();
