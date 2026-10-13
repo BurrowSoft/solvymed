@@ -121,7 +121,7 @@ export default async function HistoryPrintPage({
               records: records.map((r) => ({ date: docDate(country, r.date), time: docTime(r.time), content: r.content, corrected: correctedRecords.has(r.id) })),
               prescriptionsLabel: t("prescriptions"), noPrescriptions: t("noPrescriptions"),
               prescriptions: rxs.map((rx) => ({ date: docDate(country, rx.date), corrected: correctedRx.has(rx.id), notes: rx.notes?.trim() ? rx.notes : null, items: rx.prescription_items ?? [] })),
-              corrected: t("corrected"), exportedBy,
+              corrected: t("corrected"), exportedBy, date: today,
             }),
             headerText: studio.texts.header, footerText: studio.texts.footer,
           },

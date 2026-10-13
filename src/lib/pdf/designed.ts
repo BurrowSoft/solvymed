@@ -32,7 +32,9 @@ export type DesignedInput = {
   // the title, a small line above the footer.
   // signature: "none" = no signature block (a letterhead without a body,
   // 02); default: the typed stamp.
-  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none" };
+  // runningHead: on a continuation page, a small line at the top (the
+  // patient and the date, 02: a loose page 2 is never another patient's).
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none"; runningHead?: string | null };
 };
 
 export type DocBlock =
@@ -75,6 +77,19 @@ function need(c: Ctx, h: number) {
 }
 
 const WHITE = rgb(1, 1, 1);
+
+// "Page X of Y" on every page of a document longer than one (02), in the
+// document's language (documents follow their own language); English for
+// any other.
+const PAGE_OF: Record<string, string> = {
+  en: "Page {n} of {total}", "pt-BR": "Página {n} de {total}", th: "หน้า {n} จาก {total}",
+  es: "Página {n} de {total}", de: "Seite {n} von {total}", fr: "Page {n} sur {total}", it: "Pagina {n} di {total}",
+  ar: "صفحة {n} من {total}", id: "Halaman {n} dari {total}", ja: "{n} / {total} ページ", ko: "{total}페이지 중 {n}페이지",
+  ru: "Страница {n} из {total}", vi: "Trang {n}/{total}", zh: "第 {n} 页，共 {total} 页", "zh-TW": "第 {n} 頁，共 {total} 頁",
+};
+export function pageOf(locale: string, n: number, total: number): string {
+  return (PAGE_OF[locale] ?? PAGE_OF[locale.split("-")[0]] ?? PAGE_OF.en).replace("{n}", String(n)).replace("{total}", String(total));
+}
 
 function line(c: Ctx, text: string, o: { size: number; bold?: boolean; color?: RGB; x?: number; align?: "left" | "center" | "right"; width?: number; spacing?: number; upper?: boolean }) {
   const font = o.bold ? c.fonts.bold : c.fonts.regular;
@@ -358,7 +373,7 @@ function footerColumns(groups: FooterGroup[], columns: number): FooterGroup[][] 
 // content is drawn, so content that would run into it continues on a new
 // page. The footer (and the sidebar contacts) go on every page; the
 // signature on the last one, above the footer.
-type Bottom = { top: number; drawFooter: () => void; sigTop: number | null; drawSignature: () => void };
+type Bottom = { base: number; top: number; drawFooter: () => void; sigTop: number | null; drawSignature: () => void };
 function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
   const size = c.p.size.small;
   const lh = size * 1.5;
@@ -429,6 +444,7 @@ function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
   const signed = input.doc.signature !== "none";
   const sigTop = signed ? base + footerH + 24 + c.p.size.body * 1.4 + c.p.size.small * 1.4 + 6 : null;
   return {
+    base,
     top: base + footerH,
     sigTop,
     drawFooter: () => { for (const op of ops) op(); },
@@ -478,6 +494,11 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
       c.page = next;
       drawPage(c, wm);
       c.y = H - p.padding[0];
+      const head = input.doc.runningHead?.trim();
+      if (head) {
+        line(c, head, { size: p.size.small, color: muted });
+        c.y -= p.gap * 0.6;
+      }
     },
   };
   const bottom = layoutBottom(c, input);
@@ -498,10 +519,15 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
   // The signature needs its own room above the footer on the last page.
   if (bottom.sigTop !== null && c.y < bottom.sigTop + 12) c.newPage();
   c.floor = -Infinity;
-  for (const pg of pages) {
+  pages.forEach((pg, i) => {
     c.page = pg;
     bottom.drawFooter();
-  }
+    // The page count, right under the footer (above the band).
+    if (pages.length > 1) {
+      c.y = bottom.base;
+      line(c, pageOf(input.locale, i + 1, pages.length), { size: p.size.small * 0.9, color: muted, align: "right" });
+    }
+  });
   bottom.drawSignature();
   return pdf.save();
 }

@@ -17,13 +17,13 @@ export function prescriptionContent(o: {
   items: { name: string; form?: string | null; instructions: string }[];
   notesLabel: string; notes: string | null;
   unsignedLine?: string | null;
-}): { title: string; blocks: DocBlock[]; unsignedLine: string | null } {
+}): { title: string; blocks: DocBlock[]; unsignedLine: string | null; runningHead: string } {
   const blocks: DocBlock[] = [
     { kind: "fields", cells: [[o.patientLabel, o.patientName], [o.dateLabel, o.date]] },
     { kind: "items", items: o.items },
   ];
   if (o.notes?.trim()) blocks.push({ kind: "notes", label: o.notesLabel, text: o.notes.trim() });
-  return { title: o.title, blocks, unsignedLine: o.unsignedLine ?? null };
+  return { title: o.title, blocks, unsignedLine: o.unsignedLine ?? null, runningHead: `${o.patientName} · ${o.date}` };
 }
 
 const TITLE_KEY: Record<Exclude<MedicalDocType, "controlled_prescription">, keyof typeof PRINT.en.title> = {
@@ -43,8 +43,9 @@ export function medicalDocumentContent(o: {
   signerName: string;
   licenceNo?: string | null;
   unsignedLine: string | null;
-}): { title: string; blocks: DocBlock[]; unsignedLine: string | null } {
+}): { title: string; blocks: DocBlock[]; unsignedLine: string | null; runningHead: string } {
   const w = PRINT[o.lang];
+  const runningHead = `${o.patientName} · ${longDate(o.lang, o.issued)}`;
   const title = w.title[TITLE_KEY[o.type]];
   const blocks: DocBlock[] = [];
   if (o.type === "th_certificate") {
@@ -57,7 +58,7 @@ export function medicalDocumentContent(o: {
     blocks.push({ kind: "section", label: `${tw.findings}:` });
     blocks.push({ kind: "paragraph", text: o.body.trim() });
     if (t.rest) blocks.push({ kind: "checked", text: fill(tw.rest, { days: t.rest.days, start: longDate(o.lang, t.rest.start), end: longDate(o.lang, t.rest.end) }) });
-    return { title, blocks, unsignedLine: o.unsignedLine };
+    return { title, blocks, unsignedLine: o.unsignedLine, runningHead };
   }
   const cells: [string, string][] = [[w.patient, o.patientName]];
   if (o.patientId) cells.push([o.patientId.label, o.patientId.value]);
@@ -75,7 +76,7 @@ export function medicalDocumentContent(o: {
     if (o.type === "certificate" && c.includeCid && c.cid?.trim()) blocks.push({ kind: "paragraph", text: `${w.cid}: ${c.cid.trim()}` });
   }
   blocks.push({ kind: "dateLine", text: dateLine(o.lang, o.city, o.issued) });
-  return { title, blocks, unsignedLine: o.unsignedLine };
+  return { title, blocks, unsignedLine: o.unsignedLine, runningHead };
 }
 
 // The patient's history (the print view's content, Help P8): the patient
@@ -90,7 +91,9 @@ export function historyContent(o: {
   prescriptions: { date: string; corrected: boolean; notes: string | null; items: { name: string; dosage: string; frequency: string; duration: string }[] }[];
   corrected: string;
   exportedBy: string;
-}): { title: string; blocks: DocBlock[] } {
+  // Today, in the practice's format (the running head on later pages).
+  date: string;
+}): { title: string; blocks: DocBlock[]; runningHead: string } {
   const blocks: DocBlock[] = [{ kind: "paragraph", text: o.patientName, bold: true }];
   if (o.detailLines.length) blocks.push({ kind: "paragraph", text: o.detailLines.join(" · "), muted: true });
   const stamp = (date: string, time: string, corrected: boolean) => [date, time].filter(Boolean).join(" ") + (corrected ? ` ${o.corrected}` : "");
@@ -111,7 +114,7 @@ export function historyContent(o: {
     if (rx.notes?.trim()) blocks.push({ kind: "paragraph", text: rx.notes.trim(), muted: true });
   }
   blocks.push({ kind: "paragraph", text: o.exportedBy, muted: true });
-  return { title: o.title, blocks };
+  return { title: o.title, blocks, runningHead: `${o.patientName} · ${o.date}` };
 }
 
 // The recibo (Brazil's simple receipt, Help G5; a Thai receipt is the legal
@@ -129,7 +132,7 @@ export function receiptContent(o: {
   totalLabel: string; total: string;
   paymentLabel: string; payment: string;
   note: string | null;
-}): { title: string; blocks: DocBlock[] } {
+}): { title: string; blocks: DocBlock[]; runningHead: string } {
   const blocks: DocBlock[] = [{ kind: "fields", cells: [[o.patientLabel, o.patientName], [o.title, `#${o.number} · ${o.date}`]] }];
   if (o.idLines.length) blocks.push({ kind: "paragraph", text: o.idLines.join(" · "), muted: true });
   const who = [o.provider, o.clinic, o.address].filter((x) => x.trim());
@@ -145,7 +148,7 @@ export function receiptContent(o: {
   });
   blocks.push({ kind: "paragraph", text: `${o.paymentLabel}: ${o.payment}` });
   if (o.note?.trim()) blocks.push({ kind: "paragraph", text: o.note.trim(), muted: true });
-  return { title: o.title, blocks };
+  return { title: o.title, blocks, runningHead: `${o.patientName} · #${o.number}` };
 }
 
 // The letterhead (02, 10-13): the design's page with an optional typed title
