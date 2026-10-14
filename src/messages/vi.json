@@ -15,7 +15,9 @@
     "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
     "signupCta": "Bắt đầu dùng thử miễn phí",
     "haveAccount": "Đã có tài khoản?",
-    "preferApp": "Thích dùng ứng dụng? Tải về:"
+    "preferApp": "Thích dùng ứng dụng? Tải về:",
+    "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
+    "trialLineNoPrice": "Miễn phí {days} ngày · không cần thẻ tín dụng"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -2092,6 +2094,8 @@
       "internal": "Tài liệu nội bộ"
     },
     "share": "Chia sẻ với bệnh nhân",
+    "notSharedYet": "Chưa chia sẻ",
+    "dontShare": "Không chia sẻ",
     "shareChecking": "Đang kiểm tra xem bệnh nhân có thấy bản sao này không…",
     "shareCheckFailed": "Không thể kiểm tra xem bệnh nhân có thấy bản sao này không. Hãy chọn có chia sẻ hay không.",
     "shared": "Đã chia sẻ với bệnh nhân",
@@ -2407,5 +2411,13 @@
       "newCodeNote": "Nếu bạn tạo mã mời mới, hãy tải lại áp phích; mã QR cũ sẽ không còn hoạt động.",
       "noHours": "Hãy đặt giờ làm việc trong Cài đặt trước."
     }
+  },
+  "clockSkew": {
+    "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."
+  },
+  "common": {
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục sửa"
   }
 }

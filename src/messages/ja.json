@@ -15,7 +15,9 @@
     "iosBetaHint": "Apple の無料アプリ TestFlight が必要です",
     "signupCta": "無料トライアルを始める",
     "haveAccount": "アカウントをお持ちの方",
-    "preferApp": "アプリ派の方はこちらからダウンロード："
+    "preferApp": "アプリ派の方はこちらからダウンロード：",
+    "trialLine": "{days}日間無料 · クレジットカード不要 · その後 {price}/月",
+    "trialLineNoPrice": "{days}日間無料 · クレジットカード不要"
   },
   "highlights": {
     "h1": "スマート予約管理",
@@ -2092,6 +2094,8 @@
       "internal": "内部書類"
     },
     "share": "患者と共有",
+    "notSharedYet": "まだ共有されていません",
+    "dontShare": "共有しない",
     "shareChecking": "患者がこのコピーを閲覧できるか確認しています…",
     "shareCheckFailed": "患者がこのコピーを閲覧できるか確認できませんでした。共有するかどうかを選んでください。",
     "shared": "患者と共有済み",
@@ -2407,5 +2411,13 @@
       "newCodeNote": "新しい招待コードを作成したら、ポスターを再度ダウンロードしてください。古いQRは使えなくなります。",
       "noHours": "先に設定で診療時間を設定してください。"
     }
+  },
+  "clockSkew": {
+    "banner": "端末の日付と時刻が正しくないようです。日付と時刻の自動設定をオンにしてから、もう一度お試しください。"
+  },
+  "common": {
+    "discardTitle": "変更を破棄しますか？",
+    "discard": "破棄",
+    "keepEditing": "編集を続ける"
   }
 }

@@ -6,10 +6,14 @@ export type StoreMedium = "landing" | "invite";
 // Play listing link with install attribution: Play passes `referrer` to the
 // app's Install Referrer API, so installs can be traced to the page that
 // sent them (e.g. "landing", "invite").
-export function playStoreUrl(medium: StoreMedium): string {
+// campaign: the visitor's own landing campaign (e.g. a YouTube episode),
+// passed only with marketing consent (02; privacy §3/§4), as utm_content, so
+// Play Console shows installs per episode. Campaign-level only.
+export function playStoreUrl(medium: StoreMedium, campaign: string | null = null): string {
   // Play Console groups installs by utm_source and utm_campaign, so the page
   // goes in utm_campaign.
-  const referrer = `utm_source=solvymed_web&utm_medium=web&utm_campaign=${medium}`;
+  const safe = (campaign ?? "").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 100);
+  const referrer = `utm_source=solvymed_web&utm_medium=web&utm_campaign=${medium}${safe ? `&utm_content=${safe}` : ""}`;
   return `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}`;
 }
 

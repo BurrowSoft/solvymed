@@ -11,6 +11,7 @@ import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotA
 import { countryProfile } from "@/lib/country";
 import { withBrandTitle } from "@/lib/doctorName";
 import { BrandCropDialog } from "./BrandCropDialog";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
@@ -58,13 +59,20 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   // preview from whatever is already in the fields; Save reads the fields.
   const fields = useRef<HTMLDivElement>(null);
   const read = (id: string) => (fields.current?.querySelector<HTMLInputElement>(`#${id}`)?.value ?? "");
+  // The texts and colour as loaded (or last saved): unsaved edits ask before
+  // the page is left (1.9.0, 02). The images upload at once.
+  const base = useRef<string | null>(null);
+  const loadedAccent = useRef<string | null>(values?.accent_color ?? null);
   useEffect(() => {
     setTitle(read("brand-title"));
     setDisplayName(read("brand-name"));
     setSpecialty(read("brand-specialty"));
     setRegistrationLine(read("brand-registration"));
+    base.current = JSON.stringify([read("brand-title"), read("brand-name"), read("brand-specialty"), read("brand-registration"), loadedAccent.current]);
   }, []);
   const [accent, setAccent] = useState<string | null>(values?.accent_color ?? null);
+  const current = JSON.stringify([title, displayName, specialty, registrationLine, accent]);
+  useLeaveGuard(base.current !== null && current !== base.current);
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [busy, setBusy] = useState<null | BrandImageKind>(null);
   const [imageError, setImageError] = useState("");
@@ -80,7 +88,7 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
       registrationLine: read("brand-registration"), accentColor: accent,
     });
     setState(res.ok ? "saved" : "error");
-    if (res.ok) router.refresh();
+    if (res.ok) { base.current = current; router.refresh(); }
   }
 
   // 1.8.0 G: a picked image is cropped first ("Ajustar imagem"); its

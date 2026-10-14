@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition, useRef } from "react";
+import { useDiscardAsk, useFormDirty, useLeaveGuard } from "@/components/DiscardGuard";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
@@ -53,7 +54,11 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const formRef = useRef<HTMLFormElement>(null);
+  // Unsaved edits (1.9.0, 02): the add form, a location being edited and
+  // a moved pin ask before closing by any path but their own Cancel.
+  const addGuard = useFormDirty(showForm);
+  const formRef = addGuard.ref;
+  const addAsk = useDiscardAsk();
 
   // onSubmit, not <form action>: React 19 resets a form after its action
   // returns, which cleared the typed fields even when the save failed
@@ -90,6 +95,13 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   // the doctor has placed the pin. A clinic with a pin can confirm it as is.
   const [pinPlaced, setPinPlaced] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
+  // Where the pin was when the dialog opened.
+  const pinOpened = useRef("");
+  const pinDirty = !!pinClinic && JSON.stringify([pinPos.lat, pinPos.lng]) !== pinOpened.current;
+  useLeaveGuard(pinDirty);
+  const pinAsk = useDiscardAsk();
+  const closePin = useRef(() => {});
+  closePin.current = () => pinAsk.ask(pinDirty, () => setPinClinic(null));
 
   // Opening a clinic without a pin first looks up its city, so the map
   // starts there (zoom 12) rather than on all of Brazil; Save still waits
@@ -99,14 +111,17 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
     const hasPin = clinic.lat != null && clinic.lng != null;
     setPinError("");
     setPinPlaced(hasPin);
+    let pos: { lat: number; lng: number; zoom: number };
     if (hasPin) {
-      setPinPos({ lat: clinic.lat!, lng: clinic.lng!, zoom: 17 });
+      pos = { lat: clinic.lat!, lng: clinic.lng!, zoom: 17 };
     } else {
       setLocatingId(clinic.id);
       const city = await locateClinicCity(clinic.id).catch(() => null);
       setLocatingId(null);
-      setPinPos(city ? { lat: city.lat, lng: city.lng, zoom: 12 } : NO_PIN_CENTER);
+      pos = city ? { lat: city.lat, lng: city.lng, zoom: 12 } : NO_PIN_CENTER;
     }
+    pinOpened.current = JSON.stringify([pos.lat, pos.lng]);
+    setPinPos(pos);
     setPinClinic(clinic);
   }
 
@@ -114,7 +129,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   useEffect(() => {
     if (!pinClinic) return;
     dialogRef.current?.focus();
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setPinClinic(null); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") closePin.current(); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [pinClinic]);
@@ -138,6 +153,8 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
   // 1.8.0 F: editing a location's details, and the default location.
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editError, setEditError] = useState("");
+  const editGuard = useFormDirty(editingId !== null, editingId);
+  const editAsk = useDiscardAsk();
   const several = locationsOn && clinics.length >= 2;
 
   function handleEdit(id: string, e: React.FormEvent<HTMLFormElement>) {
@@ -205,7 +222,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
           <p className="text-sm text-slate-500 mt-0.5">{t("subtitle")}</p>
         </div>
         <button
-          onClick={() => { setShowForm((v) => !v); setError(""); }}
+          onClick={() => addAsk.ask(showForm && addGuard.dirty, () => { setShowForm((v) => !v); setError(""); })}
           className="flex items-center gap-2 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm shadow-teal-600/20 hover:bg-teal-700 transition active:scale-95"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
@@ -219,12 +236,13 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
       {showForm && (
         <div className="rounded-2xl border border-teal-100 bg-teal-50/40 p-5">
           <h2 className="text-base font-bold text-slate-900 mb-4">{t("newClinic")}</h2>
+          {addAsk.dialog}
           {error && (
             <div className="mb-4 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
               {error}
             </div>
           )}
-          <form ref={formRef} onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form {...addGuard.formProps} onSubmit={handleAdd} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-sm font-semibold text-slate-700 mb-1">{t("nameLabel")} <span className="text-red-400">*</span></label>
               <input name="name" required placeholder={t("namePlaceholder")} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20" />
@@ -335,7 +353,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                     {t("adjustPin")}
                   </button>
                   {locationsOn && (
-                    <button type="button" onClick={() => { setEditingId(clinic.id); setEditError(""); }} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800">
+                    <button type="button" onClick={() => editAsk.ask(editGuard.dirty && editingId !== clinic.id, () => { setEditingId(clinic.id); setEditError(""); })} className="text-xs font-semibold text-teal-700 underline underline-offset-2 hover:text-teal-800">
                       {tl("edit")}
                     </button>
                   )}
@@ -346,7 +364,8 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
                   )}
                 </div>
                 {editingId === clinic.id && (
-                  <form onSubmit={(e) => handleEdit(clinic.id, e)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <form {...editGuard.formProps} onSubmit={(e) => handleEdit(clinic.id, e)} aria-label={tl("editTitle")} className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {editAsk.dialog && <div className="sm:col-span-2">{editAsk.dialog}</div>}
                     {editError && <div role="alert" data-testid="location-edit-error" className="sm:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-600">{editError}</div>}
                     <div className="sm:col-span-2">
                       <label className="mb-1 block text-sm font-semibold text-slate-700">{t("nameLabel")} <span className="text-red-400">*</span></label>
@@ -410,7 +429,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
 
       {/* Pin dialog: the map (and its tiles) exists only while it's open. */}
       {pinClinic && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => setPinClinic(null)}>
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => closePin.current()}>
           <div
             ref={dialogRef}
             tabIndex={-1}
@@ -421,6 +440,7 @@ export function ClinicsClient({ clinics: initial, phoneExample = null, locations
             onClick={(e) => e.stopPropagation()}
           >
             <h2 id="pin-dialog-title" className="text-base font-bold text-slate-900">{t("adjustPinTitle", { name: pinClinic.name })}</h2>
+            {pinAsk.dialog && <div className="mt-3">{pinAsk.dialog}</div>}
             <p className="mt-1 mb-3 text-sm text-slate-500">{pinPlaced ? t("adjustPinHint") : t("placePinFirst")}</p>
             <ClinicPinMap
               lat={pinPos.lat}

@@ -15,7 +15,9 @@
     "iosBetaHint": "Memerlukan aplikasi TestFlight gratis dari Apple",
     "signupCta": "Mulai uji coba gratis",
     "haveAccount": "Sudah punya akun?",
-    "preferApp": "Lebih suka aplikasinya? Unduh di sini:"
+    "preferApp": "Lebih suka aplikasinya? Unduh di sini:",
+    "trialLine": "Gratis {days} hari · tanpa kartu kredit · lalu {price}/bulan",
+    "trialLineNoPrice": "Gratis {days} hari · tanpa kartu kredit"
   },
   "highlights": {
     "h1": "Penjadwalan cerdas",
@@ -2092,6 +2094,8 @@
       "internal": "Dokumen internal"
     },
     "share": "Bagikan ke pasien",
+    "notSharedYet": "Belum dibagikan",
+    "dontShare": "Jangan bagikan",
     "shareChecking": "Memeriksa apakah pasien melihat salinan ini…",
     "shareCheckFailed": "Kami tidak dapat memeriksa apakah pasien melihat salinan ini. Pilih apakah akan membagikannya.",
     "shared": "Dibagikan ke pasien",
@@ -2407,5 +2411,13 @@
       "newCodeNote": "Jika Anda membuat kode undangan baru, unduh lagi poster Anda; QR lama tidak akan berfungsi.",
       "noHours": "Atur jam praktik Anda di Pengaturan terlebih dahulu."
     }
+  },
+  "clockSkew": {
+    "banner": "Tanggal dan waktu di perangkat Anda tampaknya salah. Aktifkan tanggal dan waktu otomatis, lalu coba lagi."
+  },
+  "common": {
+    "discardTitle": "Buang perubahan?",
+    "discard": "Buang",
+    "keepEditing": "Lanjutkan mengedit"
   }
 }
