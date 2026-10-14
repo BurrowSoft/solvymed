@@ -105,3 +105,50 @@ export function printPdf(bytes: Uint8Array, fileName: string): void {
   frame.src = url;
   document.body.appendChild(frame);
 }
+
+// Posters (PR5): the same fonts and logos, the poster renderer.
+export async function fontsFor(id: FontId): Promise<{ regular: Uint8Array; bold: Uint8Array }> {
+  const { loadDesignFontBytes } = await import("@/lib/pdf/fonts");
+  let fonts = fontCache.get(id);
+  if (!fonts) {
+    fonts = loadDesignFontBytes(id);
+    fontCache.set(id, fonts);
+    fonts.catch(() => fontCache.delete(id));
+  }
+  return fonts;
+}
+
+// The first page as a PNG exactly `widthPx` wide (the Instagram sizes:
+// 1080 px, whatever the screen's density).
+export async function pngOf(bytes: Uint8Array, widthPx: number): Promise<Blob> {
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+    pdfjs.GlobalWorkerOptions.workerSrc = new URL("pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url).toString();
+  }
+  const doc = await pdfjs.getDocument({ data: bytes.slice(), isEvalSupported: false }).promise;
+  try {
+    const page = await doc.getPage(1);
+    const base = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: widthPx / base.width });
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(viewport.width);
+    canvas.height = Math.round(viewport.height);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("no canvas");
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    return await new Promise<Blob>((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("png"))), "image/png"));
+  } finally {
+    await doc.destroy();
+  }
+}
+
+// Save a file made on the device (nothing is uploaded).
+export function downloadFile(data: Uint8Array | Blob, fileName: string, type = "application/pdf"): void {
+  const blob = data instanceof Blob ? data : new Blob([data.slice()], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}

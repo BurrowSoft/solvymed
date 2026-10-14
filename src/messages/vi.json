@@ -2151,7 +2151,8 @@
     "removeUploadHint": "Bạn có thể gỡ cho đến khi bác sĩ mở (trong vòng 24 giờ).",
     "removeUploadConfirm": "Gỡ tài liệu này? Tài liệu sẽ bị xóa.",
     "titleLabel": "Tiêu đề",
-    "move": "Chuyển vào thư mục"
+    "move": "Chuyển vào thư mục",
+    "imageCopy": "Bản sao để bệnh nhân tham khảo. Không có chữ ký số."
   },
   "documents": {
     "tabTitle": "Đơn thuốc và tài liệu ({n})",
@@ -2378,7 +2379,46 @@
     "letterheadTitle": "Tiêu đề (không bắt buộc)",
     "letterheadBody": "Nội dung (không bắt buộc)",
     "letterheadNotSaved": "Nội dung bạn nhập ở đây không được lưu.",
-    "printLetterhead": "In giấy tiêu đề"
+    "printLetterhead": "In giấy tiêu đề",
+    "posters": "Áp phích",
+    "postersHint": "Áp phích và hình ảnh mạng xã hội theo thiết kế của bạn. Không có dữ liệu bệnh nhân.",
+    "poster": {
+      "template": "Mẫu",
+      "templates": {
+        "hours": "Giờ làm việc",
+        "service": "Một dịch vụ",
+        "announcement": "Thông báo",
+        "booking": "Đặt lịch trực tuyến"
+      },
+      "format": "Định dạng",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Bài đăng Instagram (PNG)",
+        "story": "Story Instagram (PNG)"
+      },
+      "headline": "Tiêu đề",
+      "text": "Nội dung",
+      "note": "Ghi chú (không bắt buộc)",
+      "serviceName": "Dịch vụ",
+      "serviceDescription": "Mô tả ngắn",
+      "price": "Giá (không bắt buộc)",
+      "download": "Tải xuống",
+      "defaultHours": "Giờ làm việc",
+      "defaultBooking": "Đặt lịch khám",
+      "scanToBook": "Quét để đặt lịch",
+      "closed": "Nghỉ",
+      "noInviteCode": "Áp phích đặt lịch cần mã mời bệnh nhân của bạn (Cài đặt → Liên kết mời bệnh nhân).",
+      "newCodeNote": "Nếu bạn tạo mã mời mới, hãy tải lại áp phích; mã QR cũ sẽ không còn hoạt động.",
+      "noHours": "Hãy đặt giờ làm việc trong Cài đặt trước."
+    },
+    "signature": "Chữ ký",
+    "signatureHint": "Tên, chuyên khoa và số chứng chỉ hành nghề của bạn luôn được in dưới dòng chữ ký. Bạn cũng có thể thêm hình chữ ký tay của mình.",
+    "signatureImage": "Thêm hình chữ ký của tôi",
+    "signatureNotDigital": "Hình chữ ký không phải là chữ ký số.",
+    "signaturePrivate": "Hình này được giữ riêng tư và chỉ đặt trên tài liệu do bạn phát hành: không bao giờ trên áp phích, giấy tiêu đề hay tài liệu do nhóm của bạn phát hành.",
+    "signatureLater": "Thay đổi hoặc xóa chỉ ảnh hưởng đến tài liệu phát hành sau đó.",
+    "signatureWhere": "Hình chữ ký của bạn xuất hiện trên bản sao chia sẻ với bệnh nhân. Tài liệu in hiển thị con dấu đánh máy của bạn để ký tay."
   },
   "clockSkew": {
     "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."

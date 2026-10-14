@@ -2151,7 +2151,8 @@
     "removeUploadHint": "Anda dapat menghapusnya sampai dokter membukanya (dalam 24 jam).",
     "removeUploadConfirm": "Hapus dokumen ini? Dokumen akan dihapus.",
     "titleLabel": "Judul",
-    "move": "Pindahkan ke folder"
+    "move": "Pindahkan ke folder",
+    "imageCopy": "Salinan untuk referensi pasien. Tidak ditandatangani secara digital."
   },
   "documents": {
     "tabTitle": "Resep dan dokumen ({n})",
@@ -2378,7 +2379,46 @@
     "letterheadTitle": "Judul (opsional)",
     "letterheadBody": "Teks (opsional)",
     "letterheadNotSaved": "Yang Anda ketik di sini tidak disimpan.",
-    "printLetterhead": "Cetak kop surat"
+    "printLetterhead": "Cetak kop surat",
+    "posters": "Poster",
+    "postersHint": "Poster dan gambar media sosial dengan desain Anda. Tanpa data pasien.",
+    "poster": {
+      "template": "Template",
+      "templates": {
+        "hours": "Jam praktik",
+        "service": "Layanan",
+        "announcement": "Pengumuman",
+        "booking": "Buat janji online"
+      },
+      "format": "Format",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Postingan Instagram (PNG)",
+        "story": "Story Instagram (PNG)"
+      },
+      "headline": "Judul",
+      "text": "Teks",
+      "note": "Catatan (opsional)",
+      "serviceName": "Layanan",
+      "serviceDescription": "Deskripsi singkat",
+      "price": "Harga (opsional)",
+      "download": "Unduh",
+      "defaultHours": "Jam praktik",
+      "defaultBooking": "Buat janji konsultasi",
+      "scanToBook": "Pindai untuk membuat janji",
+      "closed": "Tutup",
+      "noInviteCode": "Poster janji temu memerlukan kode undangan pasien Anda (Pengaturan → Tautan undangan pasien).",
+      "newCodeNote": "Jika Anda membuat kode undangan baru, unduh lagi poster Anda; QR lama tidak akan berfungsi.",
+      "noHours": "Atur jam praktik Anda di Pengaturan terlebih dahulu."
+    },
+    "signature": "Tanda tangan",
+    "signatureHint": "Nama, spesialisasi, dan nomor registrasi Anda selalu tercetak di bawah garis tanda tangan. Anda juga dapat menambahkan gambar tanda tangan tulisan tangan Anda.",
+    "signatureImage": "Tambahkan gambar tanda tangan saya",
+    "signatureNotDigital": "Gambar tanda tangan Anda bukan tanda tangan digital.",
+    "signaturePrivate": "Gambar ini bersifat pribadi dan hanya dipasang pada dokumen yang Anda terbitkan: tidak pada poster, kop surat, atau dokumen yang diterbitkan tim Anda.",
+    "signatureLater": "Mengganti atau menghapusnya hanya memengaruhi dokumen yang diterbitkan sesudahnya.",
+    "signatureWhere": "Gambar tanda tangan Anda muncul pada salinan yang dibagikan kepada pasien. Dokumen cetak menampilkan cap ketikan Anda, untuk ditandatangani dengan tangan."
   },
   "clockSkew": {
     "banner": "Tanggal dan waktu di perangkat Anda tampaknya salah. Aktifkan tanggal dan waktu otomatis, lalu coba lagi."

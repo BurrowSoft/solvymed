@@ -2151,7 +2151,8 @@
     "removeUploadHint": "담당 의사가 열기 전까지(24시간 이내) 삭제할 수 있습니다.",
     "removeUploadConfirm": "이 문서를 삭제할까요? 영구 삭제됩니다.",
     "titleLabel": "제목",
-    "move": "폴더로 이동"
+    "move": "폴더로 이동",
+    "imageCopy": "환자 참고용 사본입니다. 디지털 서명되지 않았습니다."
   },
   "documents": {
     "tabTitle": "처방전 및 문서 ({n})",
@@ -2378,7 +2379,46 @@
     "letterheadTitle": "제목(선택)",
     "letterheadBody": "내용(선택)",
     "letterheadNotSaved": "여기에 입력한 내용은 저장되지 않습니다.",
-    "printLetterhead": "레터헤드 인쇄"
+    "printLetterhead": "레터헤드 인쇄",
+    "posters": "포스터",
+    "postersHint": "디자인을 적용한 포스터와 SNS 이미지. 환자 정보는 포함되지 않습니다.",
+    "poster": {
+      "template": "템플릿",
+      "templates": {
+        "hours": "진료 시간",
+        "service": "서비스",
+        "announcement": "공지",
+        "booking": "온라인 예약"
+      },
+      "format": "형식",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Instagram 게시물 (PNG)",
+        "story": "Instagram 스토리 (PNG)"
+      },
+      "headline": "제목",
+      "text": "내용",
+      "note": "메모(선택)",
+      "serviceName": "서비스",
+      "serviceDescription": "짧은 설명",
+      "price": "가격(선택)",
+      "download": "다운로드",
+      "defaultHours": "진료 시간",
+      "defaultBooking": "진료를 예약하세요",
+      "scanToBook": "스캔하여 예약",
+      "closed": "휴무",
+      "noInviteCode": "예약 포스터에는 환자 초대 코드가 필요합니다(설정 → 환자 초대 링크).",
+      "newCodeNote": "새 초대 코드를 만들면 포스터를 다시 다운로드하세요. 이전 QR은 작동하지 않습니다.",
+      "noHours": "먼저 설정에서 진료 시간을 지정하세요."
+    },
+    "signature": "서명",
+    "signatureHint": "이름, 전문 분야, 면허 번호는 항상 서명란 아래에 인쇄됩니다. 손글씨 서명 이미지를 추가할 수도 있습니다.",
+    "signatureImage": "내 서명 이미지 추가",
+    "signatureNotDigital": "서명 이미지는 디지털 서명이 아닙니다.",
+    "signaturePrivate": "이미지는 비공개로 유지되며 직접 발행하는 문서에만 들어갑니다. 포스터, 레터헤드, 팀이 발행하는 문서에는 들어가지 않습니다.",
+    "signatureLater": "변경하거나 삭제하면 이후에 발행하는 문서에만 적용됩니다.",
+    "signatureWhere": "서명 이미지는 환자와 공유하는 사본에 표시됩니다. 인쇄 문서에는 입력된 이름과 면허 번호가 표시되니 직접 서명하세요."
   },
   "clockSkew": {
     "banner": "기기의 날짜와 시간이 잘못된 것 같습니다. 자동 날짜 및 시간을 켠 다음 다시 시도하세요."

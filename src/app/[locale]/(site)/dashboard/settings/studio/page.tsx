@@ -11,6 +11,11 @@ import { readStudioLocations, studioLogos, studioPractice, type DesignRow } from
 import { documentTypesFor } from "@/lib/medicalDocuments";
 import { designDocType } from "@/lib/studio/load";
 import { StudioEditor } from "./StudioEditor";
+import type { PosterDay } from "./StudioPosters";
+import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
+import { withCountryHint } from "@/lib/signupCountry";
+import { SITE } from "@/lib/colleagues";
+import { signatureEnabled } from "@/lib/studio/signature";
 
 // Document Studio (PR3): the doctor's editor for their practice's design,
 // with a live preview. Its own page (02, 10-13), opened from My brand;
@@ -30,7 +35,7 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
 
   const [{ data, error }, prof, brand, locations, country] = await Promise.all([
     supabase.rpc("get_practice_design"),
-    supabase.from("professionals").select("full_name, specialty, professional_registration, clinic_name").eq("id", user.id).maybeSingle(),
+    supabase.from("professionals").select("full_name, specialty, professional_registration, clinic_name, working_hours, public_invite_code").eq("id", user.id).maybeSingle(),
     loadPracticeBrand(supabase, user.id),
     readStudioLocations(supabase, user.id),
     getPracticeCountry(supabase, user.id, user.id),
@@ -48,7 +53,26 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
       </div>
     );
   }
-  const p = prof.data as { full_name?: string | null; specialty?: string | null; professional_registration?: string | null; clinic_name?: string | null } | null;
+  const p = prof.data as { full_name?: string | null; specialty?: string | null; professional_registration?: string | null; clinic_name?: string | null; working_hours?: unknown; public_invite_code?: string | null } | null;
+
+  // Posters (PR5): the week's hours (each day's location named when there
+  // are 2+), and the public invite link for the booking poster's QR: none
+  // without a code or while the practice is locked (02).
+  const { data: clinicRows } = await supabase.from("clinics").select("id, name, is_primary").eq("professional_id", user.id);
+  const clinics = (clinicRows ?? []) as { id: string; name: string; is_primary: boolean }[];
+  const wh = (p?.working_hours ?? null) as Record<PosterDay["day"], { enabled?: boolean; start?: string; end?: string; location_id?: string | null }> | null;
+  const posterHours: PosterDay[] | null = wh
+    ? (["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map((day) => {
+        const h = wh[day];
+        const loc = clinics.length > 1 ? (clinics.find((c) => c.id === h?.location_id) ?? clinics.find((c) => c.is_primary))?.name ?? null : null;
+        return { day, open: !!h?.enabled && !!h.start && !!h.end, start: h?.start ?? "", end: h?.end ?? "", location: loc };
+      })
+    : null;
+  const { data: subRows, error: subError } = await supabase.rpc("get_effective_subscription", { p_user_id: user.id });
+  const sub = subError ? null : ((subRows as EffectiveSub[] | null)?.[0] ?? null);
+  const locked = !!sub && !isAccessAllowed(sub);
+  const code = p?.public_invite_code?.trim();
+  const inviteUrl = code && !locked ? withCountryHint(`${SITE}/join/${encodeURIComponent(code)}`, country) : null;
 
   // The texts the editor offers: the prescription, this country's
   // designable documents (country config) and the letterhead; other types'
@@ -65,6 +89,10 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
       logos={studioLogos(supabase, row?.assets, brand)}
       textTypes={[...new Set(textTypes)]}
       backHref={`${prefix}/dashboard/settings`}
+      posterHours={posterHours}
+      inviteUrl={inviteUrl}
+      uid={user.id}
+      signatureOn={await signatureEnabled(supabase)}
     />
   );
 }
