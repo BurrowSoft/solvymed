@@ -61,6 +61,21 @@ describe("conditions: held text is left out of the build", () => {
     expect(JSON.stringify(after)).not.toContain("{pending");
   });
 
+  it("a body paragraph swaps too ({unless:x} before, {pending:x} after), without the marker (1a/ad, #552)", () => {
+    const para = "{unless:x} Antes\n{pending:x} Depois";
+    const before = parseBatch("05-conta", md("", para), c(false)).articles[0];
+    const after = parseBatch("05-conta", md("", para), c(true)).articles[0];
+    expect(JSON.stringify(before.body.pt)).toContain("Antes");
+    expect(JSON.stringify(before)).not.toContain("Depois");
+    expect(JSON.stringify(after.body.pt)).toContain("Depois");
+    expect(JSON.stringify(after)).not.toContain("Antes");
+    expect(() => parseBatch("05-conta", md("", "{unless:typo} T"), c(true))).toThrow(/unknown condition "typo"/);
+  });
+
+  it("no condition marker survives in the built JSON (every page, search, the app, SolvyAI)", () => {
+    expect(JSON.stringify(json)).not.toMatch(/\{(pending|unless):|`requires:/);
+  });
+
   it("an unknown condition id fails the build (a typo can't hide or show text)", () => {
     expect(() => parseBatch("05-conta", md("`requires:typo`"), c(true))).toThrow(/unknown condition "typo"/);
     expect(() => parseBatch("05-conta", md("", "{pending:typo} T"), c(true))).toThrow(/unknown condition "typo"/);

@@ -17,6 +17,19 @@ export function playStoreUrl(medium: StoreMedium, campaign: string | null = null
   return `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}`;
 }
 
+// solvymed.com/app (Vitor: the link in video descriptions and posters): a
+// 302 to the Play listing with a FIXED referrer. Nothing of the visitor's
+// (no utm, no cookie) is passed on, so no consent question. 302, not 308:
+// the target can change (an iPhone page once the App Store exists).
+export const APP_SHORTLINK_TARGET = `${PLAY_STORE_URL}&referrer=${encodeURIComponent("utm_source=solvymed&utm_medium=shortlink")}`;
+
+// /app, with or without a locale prefix (any case, a trailing slash).
+export function isAppShortlink(pathname: string, locales: readonly string[]): boolean {
+  const m = pathname.match(/^(?:\/([^/]+))?\/app\/?$/i);
+  if (!m) return false;
+  return !m[1] || locales.some((l) => l.toLowerCase() === m[1].toLowerCase()) || /^pt$/i.test(m[1]);
+}
+
 export type IosLink =
   | { mode: "soon" }
   | { mode: "beta"; url: string } // TestFlight public link

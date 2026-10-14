@@ -15,6 +15,7 @@ import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabel
 import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
+import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -74,7 +75,8 @@ function Select({ children, ...props }: React.SelectHTMLAttributes<HTMLSelectEle
 }
 
 // rules: 1.8.0 C1, the practice's registration rules (null = today's form).
-function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false, rules = null }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean; rules?: PatientFieldRules | null }) {
+// guard: useFormDirty's form props (its ref is the form's).
+function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false, rules = null, guard }: { onSubmit: (fd: FormData) => void; pending: boolean; error: string; id?: string; idKind: PatientIdKind; addressLive?: boolean; rules?: PatientFieldRules | null; guard?: ReturnType<typeof useFormDirty>["formProps"] }) {
   const t = useTranslations("patients");
   const tf = useTranslations("patientFields");
   const labels = usePatientFieldLabels(idKind);
@@ -91,7 +93,8 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
   // The phone example follows the practice country too (idKind is its
   // kind: BR / TH / OTHER); Other gets a neutral text (UX).
   const phoneExample = profileOfKind(idKind).examples.mobile?.intl ?? tEx("phone");
-  const formRef = useRef<HTMLFormElement>(null);
+  const ownRef = useRef<HTMLFormElement>(null);
+  const formRef = guard?.ref ?? ownRef;
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const fd = new FormData(formRef.current!);
@@ -104,7 +107,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
     onSubmit(fd);
   }
   return (
-    <form ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
+    <form {...guard} ref={formRef} id={id} onSubmit={handleSubmit} className="space-y-4">
       {/* Which ID fields this form shows; the action refuses a mismatch. */}
       <input type="hidden" name="id_kind" value={idKind} />
       <div className="grid grid-cols-2 gap-3">
@@ -245,6 +248,9 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
   // "Create anyway" resubmit included).
   const saveOnce = useRef({ id: "", tries: 0 });
   const prefix = locale === "en" ? "" : `/${locale}`;
+  // Closing it with anything typed asks first (02).
+  const guard = useFormDirty(open);
+  const discard = useDialogDiscard(open, guard.dirty, close);
 
   function submit(formData: FormData) {
     setError("");
@@ -352,14 +358,15 @@ export function NewPatientButton({ locale, autoOpen = false, idKind = "BR", addr
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-4 w-4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         {t("newPatient")}
       </button>
-      <Dialog open={open} onClose={close} title={t("newPatient")}>
+      <Dialog open={open} onClose={discard.requestClose} title={t("newPatient")}>
+        {discard.dialog}
         {matchPanel}
         {existing && (
           <Link href={`${prefix}/dashboard/patients/${existing.id}`} className="mb-3 inline-block text-sm font-semibold text-teal-700 hover:underline">
             {t("openPatient")}
           </Link>
         )}
-        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} addressLive={addressLive} rules={fieldRules} />
+        <PatientForm id={NEW_PATIENT_FORM_ID} onSubmit={submit} pending={pending} error={error} idKind={idKind} addressLive={addressLive} rules={fieldRules} guard={guard.formProps} />
       </Dialog>
     </>
   );

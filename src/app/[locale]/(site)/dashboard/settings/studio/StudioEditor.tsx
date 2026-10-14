@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Card } from "../SettingsClient";
 import { ReloadButton } from "@/components/ReloadButton";
 import { timeLimit } from "@/lib/netError";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
+import { StudioPosters, type PosterDay } from "./StudioPosters";
+import { StudioSignature } from "./StudioSignature";
+import { removeSignature } from "@/lib/studio/signature";
+import { createClient } from "@/lib/supabase/client";
 import { saveMyDesign } from "../studio-actions";
 import {
   CONTACT_KINDS, CURATED_FONTS, LAYOUTS, PALETTE_PRESETS, defaultContactKind, studioCountry,
@@ -68,15 +73,23 @@ type Props = {
   logos: StudioDocData["logos"];
   textTypes: DocType[];
   backHref: string;
+  // Posters (PR5): the week's hours and the booking poster's invite link.
+  posterHours: PosterDay[] | null;
+  inviteUrl: string | null;
+  // The signature image (studio_signature_image): the card only while it's
+  // on; while it's off a design is always saved with image:false (225).
+  uid: string;
+  signatureOn: boolean;
 };
 
-export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref }: Props) {
+export function StudioEditor({ initial, saved: initialSaved, version: initialVersion, country, practice, logos, textTypes, backHref, posterHours, inviteUrl, uid, signatureOn }: Props) {
   const t = useTranslations("studio");
   const tRx = useTranslations("prescriptionDoc");
   const tDocType = useTranslations("documents.type");
   const tSettings = useTranslations("settings");
   const tBrand = useTranslations("brand");
   const tReload = useTranslations("versionGate");
+  const tDocsPdf = useTranslations("documents");
   const locale = useLocale();
 
   const start = useMemo(() => forEditing(initial), [initial]);
@@ -92,31 +105,36 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
   const knownLayout = (LAYOUTS as readonly string[]).includes(design.layout);
   const legalNote = studioCountry(country).legalNote;
 
-  // Leaving with unsaved changes: the browser's own prompt (reload, close,
-  // typed address).
-  useEffect(() => {
-    if (!dirty) return;
-    const onBeforeUnload = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [dirty]);
+  // Leaving with unsaved changes asks "Discard changes?" (#530's guard, 02):
+  // the sidebar and every dashboard link, plus the browser's own prompt on
+  // reload / closing the tab.
+  useLeaveGuard(dirty);
 
   const change = (next: Design | ((d: Design) => Design)) => {
     setDesign((d) => (typeof next === "function" ? next(d) : next));
     if (state !== "saving") setState("idle");
   };
 
+  // A removed signature image: its file is deleted after the design that
+  // drops it is saved (c5: design first, then the file).
+  const removeSignatureFile = useRef(false);
+
   async function save() {
     if (state === "saving") return;
     setState("saving");
+    const toSave: Design = signatureOn ? cleaned : { ...cleaned, signature: { ...cleaned.signature, image: false } };
     try {
       // Never "Saving…" forever (fa, #540): an answer that doesn't come in
       // SAVE_LIMIT_MS is an error the doctor can retry (a retry with the old
       // version is then a conflict, never an overwrite).
-      const r = await timeLimit(saveMyDesign(cleaned, version), SAVE_LIMIT_MS, { ok: false as const, code: "generic" as const });
+      const r = await timeLimit(saveMyDesign(toSave, version), SAVE_LIMIT_MS, { ok: false as const, code: "generic" as const });
       if (r.ok) {
         setVersion(r.version);
         setEverSaved(true);
+        if (removeSignatureFile.current) {
+          removeSignatureFile.current = false;
+          void removeSignature(createClient()).catch(() => undefined);
+        }
         setBaseline(JSON.stringify(cleaned));
         setDesign(cleaned);
         setState("saved");
@@ -147,7 +165,29 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
     footerText: previewTexts?.footer ?? null,
   };
 
-  const typeLabel = (k: DocType) => (k === "prescription" ? tRx("title") : tDocType(k as "certificate"));
+  const typeLabel = (k: DocType) => (k === "prescription" ? tRx("title") : k === "letterhead" ? t("letterhead") : tDocType(k as "certificate"));
+
+  // The letterhead (PR4; 02, 10-13): the design as it stands on this page,
+  // with an optional typed title and body, printed and never stored. The
+  // typed stamp only under a body; never a signature image.
+  const [lhTitle, setLhTitle] = useState("");
+  const [lhBody, setLhBody] = useState("");
+  const [lhState, setLhState] = useState<"idle" | "busy" | "failed">("idle");
+  async function printLetterhead() {
+    setLhState("busy");
+    try {
+      const [{ renderInBrowser, printPdf }, { letterheadContent }] = await Promise.all([import("@/lib/pdf/browser"), import("@/lib/studio/content")]);
+      const lt = cleaned.texts.letterhead;
+      const bytes = await renderInBrowser({
+        design: cleaned, locale, practice, logoUrls: logos,
+        doc: { ...letterheadContent({ title: lhTitle, body: lhBody }), headerText: lt?.header ?? null, footerText: lt?.footer ?? null },
+      });
+      printPdf(bytes, `${t("letterhead")}.pdf`);
+      setLhState("idle");
+    } catch {
+      setLhState("failed");
+    }
+  }
   const presetId = design.palette.preset;
   const contacts = design.footer.contacts;
   const texts = design.texts[textType] ?? { header: null, footer: null };
@@ -289,6 +329,34 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
               ))}
             </div>
           </Card>
+
+          {signatureOn && (
+            <StudioSignature uid={uid} signature={design.signature}
+              onChange={(signature, removeFile) => { if (removeFile) removeSignatureFile.current = true; change((d) => ({ ...d, signature })); }} />
+          )}
+
+          <Card title={t("letterhead")} description={t("letterheadHint")}>
+            <div className="grid gap-4" data-testid="studio-letterhead">
+              <div>
+                <label htmlFor="studio-lh-title" className="field-label">{t("letterheadTitle")}</label>
+                <input id="studio-lh-title" type="text" maxLength={120} value={lhTitle} onChange={(e) => setLhTitle(e.target.value)} className="text-input" />
+              </div>
+              <div>
+                <label htmlFor="studio-lh-body" className="field-label">{t("letterheadBody")}</label>
+                <textarea id="studio-lh-body" rows={6} maxLength={5000} value={lhBody} onChange={(e) => setLhBody(e.target.value)} className="text-input" />
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                <button type="button" data-testid="studio-print-letterhead" onClick={() => void printLetterhead()} disabled={lhState === "busy"}
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-slate-50 disabled:opacity-60">
+                  {t("printLetterhead")}
+                </button>
+                <p className="text-xs text-slate-500">{t("letterheadNotSaved")}</p>
+              </div>
+              {lhState === "failed" && <p role="alert" className="text-sm text-red-600">{tDocsPdf("pdfFailed")}</p>}
+            </div>
+          </Card>
+
+          <StudioPosters design={cleaned} country={country} practice={practice} logos={logos} hours={posterHours} inviteUrl={inviteUrl} />
         </div>
 
         <div className="min-w-0">

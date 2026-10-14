@@ -207,6 +207,10 @@
     "met": true,
     "what": "Record templates are live on the website (1.8.0 D): migration 189 applied on production and the server flag 'record_templates' on. Gates Help C13 and the App Map's record-template rule. The app's half (1.8.0) is gated separately by its released build."
   },
+  "studio-signature-live": {
+    "met": false,
+    "what": "The signature image is on for everyone: the server flag studio_signature_image (migration 225) enabled for all practices, with the §6f signature-image bullet live and the account-close cleanup (#538). Gates the C17 signature line and the App Map's signature rule; flip it with the flag."
+  },
   "document-studio-live": {
     "met": false,
     "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
@@ -238,5 +242,13 @@
   "save-once-live": {
     "met": true,
     "what": "Saved once is live on BOTH platforms: the website's PR3 (#524) and its follow-up (#526) are merged, and the app's update (PR A, idempotent saves, migration 216; 01a13204) passed 78's row (02, 2026-10-13). A retry after a lost answer never makes a second record; a retry with changes shows \"already saved\" and the stored version (Help K9)."
+  },
+  "app-video-tutorials-live": {
+    "met": false,
+    "what": "The app's \"Video tutorials\" row (8d's #502: Settings → Support, doctors and secretaries, the practice country's playlist) is in a RELEASED store build (1.9.0). Gates Help K10's app line and the App Map's app sentence; the website's half is live with its own PR."
+  },
+  "app-signature-device-only-live": {
+    "met": false,
+    "what": "The app's drawn signature is device-only in a RELEASED store build: BOTH 8d's #496 (Android backups/transfers and iCloud backup exclude it) AND #497 (stored in the iOS Keychain this-device-only / Android Keystore; an iPhone keeps it across a reinstall, Android doesn't) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
   }
 }

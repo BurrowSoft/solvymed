@@ -2151,7 +2151,8 @@
     "removeUploadHint": "在医生打开之前(24 小时内)可以移除。",
     "removeUploadConfirm": "移除此文件?文件将被删除。",
     "titleLabel": "标题",
-    "move": "移到文件夹"
+    "move": "移到文件夹",
+    "imageCopy": "供患者参考的副本。未经数字签名。"
   },
   "documents": {
     "tabTitle": "处方和文件 ({n})",
@@ -2372,7 +2373,52 @@
     "save": "保存设计",
     "saved": "设计已保存。从现在起您的文件将使用此设计。",
     "conflict": "此设计已在其他地方被修改。请重新加载以查看最新版本。",
-    "error": "无法保存。请重试。"
+    "error": "无法保存。请重试。",
+    "letterhead": "信笺",
+    "letterheadHint": "按您的设计打印一页，用于信函和患者须知。不填文字则打印空白页，供手写。",
+    "letterheadTitle": "标题（可选）",
+    "letterheadBody": "正文（可选）",
+    "letterheadNotSaved": "此处输入的内容不会保存。",
+    "printLetterhead": "打印信笺",
+    "posters": "海报",
+    "postersHint": "按您的设计制作海报和社交媒体图片。不含任何患者数据。",
+    "poster": {
+      "template": "模板",
+      "templates": {
+        "hours": "门诊时间",
+        "service": "服务",
+        "announcement": "公告",
+        "booking": "在线预约"
+      },
+      "format": "格式",
+      "formats": {
+        "a4": "A4（PDF）",
+        "a3": "A3（PDF）",
+        "post": "Instagram 帖子（PNG）",
+        "story": "Instagram 快拍（PNG）"
+      },
+      "headline": "标题",
+      "text": "正文",
+      "note": "备注（可选）",
+      "serviceName": "服务",
+      "serviceDescription": "简短说明",
+      "price": "价格（可选）",
+      "download": "下载",
+      "defaultHours": "门诊时间",
+      "defaultBooking": "预约就诊",
+      "scanToBook": "扫码预约",
+      "closed": "休息",
+      "noInviteCode": "预约海报需要您的患者邀请码（设置 → 患者邀请链接）。",
+      "newCodeNote": "如果您生成了新的邀请码，请重新下载海报；旧的二维码将失效。",
+      "noHours": "请先在设置中填写门诊时间。"
+    },
+    "signature": "签名",
+    "signatureHint": "您的姓名、专科和执业编号始终印在签名线下方。您也可以添加手写签名的图片。",
+    "signatureImage": "添加我的签名图片",
+    "signatureNotDigital": "签名图片不是电子签名。",
+    "signaturePrivate": "签名图片保持私密，只会放在您本人开具的文件上：绝不会出现在海报、信笺或您团队开具的文件上。",
+    "signatureLater": "更换或删除只影响之后开具的文件。",
+    "signatureWhere": "您的签名图片会出现在与患者共享的副本上。打印的文件显示您输入的签章信息，供您亲笔签名。"
   },
   "clockSkew": {
     "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"
@@ -2381,5 +2427,9 @@
     "discardTitle": "放弃更改？",
     "discard": "放弃",
     "keepEditing": "继续编辑"
+  },
+  "videoTutorials": {
+    "title": "视频教程",
+    "subtitle": "介绍 SolvyMed 各项功能的短视频"
   }
 }

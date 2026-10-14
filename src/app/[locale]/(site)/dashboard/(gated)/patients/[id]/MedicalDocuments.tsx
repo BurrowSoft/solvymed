@@ -18,6 +18,8 @@ import { crmIssuer } from "@/lib/registration";
 import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { renderDesignedDocument } from "@/lib/pdf/designed";
+import { createClient } from "@/lib/supabase/client";
+import { signatureBytes } from "@/lib/studio/signature";
 import { medicalDocumentContent } from "@/lib/studio/content";
 import { signalShareCheck } from "@/lib/shareSignal";
 
@@ -88,7 +90,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   onClose: () => void;
   // After a save (nothing to discard).
   // After a save; with the new / corrected document to share (1.8.0 B2).
-  onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean }) => void;
+  onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean; issued: boolean }) => void;
   // Saved before the doctor's last changes (216, a retry): the host closes
   // the dialog and shows the stored version with a message.
   onAlreadySaved?: () => void;
@@ -243,6 +245,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
           correctsId: state.mode === "new" ? null : state.doc.id,
           share: wantShare,
+          // A new document or a correction is issued now; an edit isn't.
+          issued: state.mode !== "edit",
         } : undefined);
       } else onClose();
     });
@@ -459,7 +463,9 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 // The document's PDF, made in the browser once the access is logged
 // (documentPrintData fails closed). Returns the bytes and the issue day it
 // printed (YYYY-MM-DD), or an error code.
-export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null }):
+// withSignature: only the patient's copy made when the document is issued
+// (02, 10-13); downloads and prints show the typed stamp only.
+export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
   Promise<{ ok: true; bytes: Uint8Array; issued: string } | { ok: false; code: string }> {
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
@@ -497,11 +503,12 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
   // (behind the document_studio flag; the server sends studio only then; the
   // controlled prescription returned above: a legal layout, never designed).
   if (d.studio) {
-    const [studioFonts, square, wide, reversed] = await Promise.all([
+    const [studioFonts, square, wide, reversed, signatureImage] = await Promise.all([
       loadDesignFontBytes(d.studio.design.font), fetchBytes(d.studio.logos.square), fetchBytes(d.studio.logos.wide), fetchBytes(d.studio.logos.reversed),
+      opts.withSignature ? signatureBytes(createClient(), d.studio.signaturePath) : Promise.resolve(null),
     ]);
     const designed = await renderDesignedDocument({
-      design: d.studio.design, locale: doc.language, practice: d.studio.practice, logos: { square, wide, reversed },
+      design: d.studio.design, locale: doc.language, practice: d.studio.practice, logos: { square, wide, reversed }, signatureImage,
       doc: {
         ...medicalDocumentContent({
           type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
@@ -510,6 +517,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
           signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
         }),
         headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+        imageCopyLine: signatureImage ? words.imageCopy ?? null : null,
       },
     }, studioFonts);
     return { ok: true, bytes: designed, issued: issuedIso };

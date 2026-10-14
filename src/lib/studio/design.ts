@@ -184,13 +184,19 @@ export function paletteColor(d: Pick<Design, "palette">, ref: PaletteRef): strin
 // everywhere; only the kind a new contact starts with follows the country
 // (02, 10-13). legalNote: the strings key naming the country's legal layout
 // (strings.json legalNote.<key>); null = no note.
-export type StudioCountry = { contact: ContactKind; legalNote: "BR" | "TH" | null };
+// Posters (02, 10-13; ad rules, on the lawyer list): posterSpecialty =
+// whether a poster may name the specialty (Brazil: only with an RQE, which
+// the profile doesn't hold yet, so no); posterPrice = whether a service
+// poster may show a price (Brazil: no). The name and registration line are
+// always printed.
+export type StudioCountry = { contact: ContactKind; legalNote: "BR" | "TH" | null; posterSpecialty: boolean; posterPrice: boolean };
 const STUDIO_COUNTRIES: Readonly<Record<string, StudioCountry>> = {
-  BR: { contact: "whatsapp", legalNote: "BR" },
-  TH: { contact: "line", legalNote: "TH" },
+  BR: { contact: "whatsapp", legalNote: "BR", posterSpecialty: false, posterPrice: false },
+  TH: { contact: "line", legalNote: "TH", posterSpecialty: true, posterPrice: true },
 };
-// The explicit default: any other country (or an unknown one).
-const STUDIO_COUNTRY_DEFAULT: StudioCountry = { contact: "phone", legalNote: null };
+// The explicit default: any other country (or an unknown one); the
+// cautious choice on posters.
+const STUDIO_COUNTRY_DEFAULT: StudioCountry = { contact: "phone", legalNote: null, posterSpecialty: false, posterPrice: false };
 
 export function studioCountry(country: string | null | undefined): StudioCountry {
   return STUDIO_COUNTRIES[(country ?? "").toUpperCase()] ?? STUDIO_COUNTRY_DEFAULT;

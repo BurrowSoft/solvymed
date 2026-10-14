@@ -2151,7 +2151,8 @@
     "removeUploadHint": "在醫師開啟之前(24 小時內)可以移除。",
     "removeUploadConfirm": "移除此文件?文件將被刪除。",
     "titleLabel": "標題",
-    "move": "移到資料夾"
+    "move": "移到資料夾",
+    "imageCopy": "供病患參考的副本。未經數位簽章。"
   },
   "documents": {
     "tabTitle": "處方與文件 ({n})",
@@ -2372,7 +2373,52 @@
     "save": "儲存設計",
     "saved": "設計已儲存。從現在起您的文件會使用此設計。",
     "conflict": "此設計已在其他地方被修改。請重新載入以查看最新版本。",
-    "error": "無法儲存。請再試一次。"
+    "error": "無法儲存。請再試一次。",
+    "letterhead": "信箋",
+    "letterheadHint": "依您的設計列印一頁，用於信函和病患須知。不填文字則列印空白頁，供手寫。",
+    "letterheadTitle": "標題（選填）",
+    "letterheadBody": "內文（選填）",
+    "letterheadNotSaved": "此處輸入的內容不會儲存。",
+    "printLetterhead": "列印信箋",
+    "posters": "海報",
+    "postersHint": "依您的設計製作海報和社群圖片。不含任何病患資料。",
+    "poster": {
+      "template": "範本",
+      "templates": {
+        "hours": "門診時間",
+        "service": "服務",
+        "announcement": "公告",
+        "booking": "線上預約"
+      },
+      "format": "格式",
+      "formats": {
+        "a4": "A4（PDF）",
+        "a3": "A3（PDF）",
+        "post": "Instagram 貼文（PNG）",
+        "story": "Instagram 限時動態（PNG）"
+      },
+      "headline": "標題",
+      "text": "內文",
+      "note": "備註（選填）",
+      "serviceName": "服務",
+      "serviceDescription": "簡短說明",
+      "price": "價格（選填）",
+      "download": "下載",
+      "defaultHours": "門診時間",
+      "defaultBooking": "預約看診",
+      "scanToBook": "掃描預約",
+      "closed": "休診",
+      "noInviteCode": "預約海報需要您的病患邀請碼（設定 → 病患邀請連結）。",
+      "newCodeNote": "如果您產生新的邀請碼，請重新下載海報；舊的 QR 碼將失效。",
+      "noHours": "請先在設定中填寫門診時間。"
+    },
+    "signature": "簽名",
+    "signatureHint": "您的姓名、專科和執業編號一律印在簽名線下方。您也可以加入手寫簽名的圖片。",
+    "signatureImage": "加入我的簽名圖片",
+    "signatureNotDigital": "簽名圖片不是電子簽章。",
+    "signaturePrivate": "簽名圖片保持私密，只會放在您本人開立的文件上：絕不會出現在海報、信箋或您團隊開立的文件上。",
+    "signatureLater": "更換或刪除只會影響之後開立的文件。",
+    "signatureWhere": "您的簽名圖片會出現在與病患分享的副本上。列印的文件顯示您輸入的簽章資訊，供您親筆簽名。"
   },
   "clockSkew": {
     "banner": "您裝置上的日期和時間似乎不正確。請開啟自動設定日期和時間，然後再試一次。"
@@ -2381,5 +2427,9 @@
     "discardTitle": "要捨棄變更嗎？",
     "discard": "捨棄",
     "keepEditing": "繼續編輯"
+  },
+  "videoTutorials": {
+    "title": "影片教學",
+    "subtitle": "介紹 SolvyMed 各項功能的短片"
   }
 }
