@@ -57,7 +57,13 @@
 // (clinical-documents-live), and §3.2's patients completing their own details
 // (c2-patient-step-live; "OK privacy C2"). One version for all three, merged
 // with their flips. Mobile's accepting migration (215) applied FIRST.
-export const PRIVACY_VERSION = "2026-10-17";
+// 2026-10-19: §3.8 the app's drawn signature on documents (kept on the phone,
+// in issued documents and their shared copies; Vitor's "OK privacy
+// signature", 10-13, with c5's corrections: the document list and the phone's
+// own backup). The §5 Sentry row stays "app and website": no edge function
+// reports to Sentry yet (c5, 10-13); naming them waits for c5's edge scrub
+// PR and its own wording step. Mobile 219 (accepting 2026-10-19) applied FIRST.
+export const PRIVACY_VERSION = "2026-10-19";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -68,7 +74,8 @@ export const TERMS_VERSION = "2026-10-01";
 // on the day if the merge slips), and so does any condition / flag flip that
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
-export const PRIVACY_PUBLISHED = "2026-10-09"; // 2026-10-17 went live with #500, 07:28 UTC
+// SET TO THE MERGE DAY (UTC) when this PR merges.
+export const PRIVACY_PUBLISHED = "2026-10-14"; // 2026-10-19 went live (#533 merged) 2026-10-14 UTC; re-set it if the merge slips past that day
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only
