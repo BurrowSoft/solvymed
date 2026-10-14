@@ -97,8 +97,11 @@ describe("privacy 2026-10-21: §6f My brand and Document Studio (the Studio laun
     expect(pt).toContain("Cartazes, imagens para redes sociais e papéis timbrados são gerados no próprio aparelho do profissional");
     expect(en).toContain("The brand, the document design and their images are deleted");
     expect(pt).toContain("A marca, o design dos documentos e suas imagens são apagados");
-    // Not live yet: the uploaded signature image and the reversed logo.
-    for (const w of ["handwritten signature", "reversed logo"]) expect(en.toLowerCase()).not.toContain(w);
-    for (const w of ["assinatura de próprio punho", "logo invertido"]) expect(pt.toLowerCase()).not.toContain(w);
+    // Not live yet, so not in §6f: the uploaded signature image and the
+    // reversed logo (§3.8's drawn-signature bullets are the app's, #533).
+    const sixF = (s: string) => s.slice(s.indexOf('title="6f.'), s.indexOf("<Section", s.indexOf('title="6f.')));
+    expect(sixF(en).length).toBeGreaterThan(100);
+    for (const w of ["signature image", "handwritten", "reversed logo"]) expect(sixF(en).toLowerCase()).not.toContain(w);
+    for (const w of ["imagem da sua assinatura", "próprio punho", "logo invertido"]) expect(sixF(pt).toLowerCase()).not.toContain(w);
   });
 });
