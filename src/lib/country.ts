@@ -93,6 +93,10 @@ export type CountryProfile = {
   zoneCities: Readonly<Record<string, string>>;
   // The order of a printed/one-line address (lib/patientAddress addressLine).
   addressFormat: "br" | "th" | "intl";
+  // The country's YouTube playlist of SolvyMed tutorials (specs/video-
+  // tutorials.md; the app's countryRules has the same): linked out, never
+  // embedded. null = no "Video tutorials" entry.
+  videoTutorialsUrl: string | null;
   // Settings → Profile's registration: Brazil's council fields (CRM + state,
   // else another council; lib/registration, the app's Registrations form) or
   // one free-text field.
@@ -122,6 +126,7 @@ const BR: CountryProfile = {
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: "cns", importPresets: ["iclinic", "prontuario_verde"], addressFormat: "br", registrationForm: "brCouncil", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
+  videoTutorialsUrl: "https://www.youtube.com/playlist?list=PLGStjTQLFN3M",
   zoneCities: {
     "America/Sao_Paulo": "São Paulo", "America/Belem": "Belém", "America/Araguaina": "Araguaína", "America/Maceio": "Maceió",
     "America/Cuiaba": "Cuiabá", "America/Santarem": "Santarém", "America/Eirunepe": "Eirunepé",
@@ -142,6 +147,7 @@ const TH: CountryProfile = {
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
   healthCard: null, importPresets: [], addressFormat: "th", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  videoTutorialsUrl: "https://www.youtube.com/playlist?list=PLI6329of7MSY",
   examples: {
     titles: { th: THAI_TITLES.join(", "), other: "Dr." },
     registration: "registrationPlaceholderTH", clinicName: "clinicNamePlaceholderTH", address: "addressPlaceholderTH",
@@ -156,6 +162,8 @@ const OTHER: CountryProfile = {
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
   healthCard: null, importPresets: [], addressFormat: "intl", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  // No English playlist yet: no entry.
+  videoTutorialsUrl: null,
   examples: {
     titles: null,
     registration: "registrationPlaceholderOther", clinicName: "clinicNamePlaceholderOther", address: "addressPlaceholderOther",

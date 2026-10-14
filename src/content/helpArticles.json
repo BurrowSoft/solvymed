@@ -2395,6 +2395,36 @@
         "open": null,
         "appOnly": null,
         "appTitle": null
+      },
+      {
+        "id": "K10",
+        "category": "conta",
+        "title": {
+          "pt": "Vídeos tutoriais",
+          "en": "Video tutorials"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Vídeos curtos mostrando cada parte do SolvyMed, no YouTube, na playlist do país da sua clínica (Brasil em português, Tailândia em tailandês). Eles abrem numa nova aba."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Short videos showing each part of SolvyMed, on YouTube, in the playlist for your clinic's country (Brazil in Portuguese, Thailand in Thai). They open in a new tab."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Vídeos tutoriais** fica no fim do menu lateral (médicos e secretárias), no rodapé do site e no topo da Central de Ajuda.",
+          "en": "**Video tutorials** is at the end of the side menu (doctors and secretaries), in the site footer and at the top of the Help Center."
+        },
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   }

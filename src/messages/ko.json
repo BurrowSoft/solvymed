@@ -2427,5 +2427,9 @@
     "discardTitle": "변경 사항을 삭제할까요?",
     "discard": "삭제",
     "keepEditing": "계속 편집"
+  },
+  "videoTutorials": {
+    "title": "동영상 튜토리얼",
+    "subtitle": "SolvyMed의 각 기능을 보여 주는 짧은 동영상"
   }
 }
