@@ -19,6 +19,7 @@
 //   <lines>
 //   **ในเว็บไซต์:** <web note th>        (optional, with a **th** block)
 //   {pending:<id>,<id>} <text>  a paragraph only when all are met
+//   {unless:<id>,<id>} <text>   a paragraph only when not all are met
 //   **No site:** {pending:<id>} <note> / **No site:** {unless:<id>} <note>
 //     a web note (pt and en alike) only when the conditions are all met /
 //     not all met: the note for before and after a feature reaches the
@@ -118,9 +119,12 @@ export function parseBatch(file, text, conditions = {}) {
       }
       if (!lang) throw new Error(`${id}: text outside a language block: "${line.slice(0, 50)}"`);
       const into = lang === "th" ? th.body : a.body[lang];
-      if ((m = line.match(/^\{pending:([\w#.,-]+)\}\s+(.+)$/))) {
-        // Every id checked (an unknown one fails the build), then all must be met.
-        if (m[1].split(",").map(isMet).every(Boolean)) into.push(m[2]);
+      if ((m = line.match(/^\{(pending|unless):([\w#.,-]+)\}\s+(.+)$/))) {
+        // Every id checked (an unknown one fails the build); {pending:} only
+        // when all are met, {unless:} only when not all are (its text for
+        // before the flip; 1a/ad on #552).
+        const all = m[2].split(",").map(isMet).every(Boolean);
+        if (all === (m[1] === "pending")) into.push(m[3]);
         continue;
       }
       into.push(line);
