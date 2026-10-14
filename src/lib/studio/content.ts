@@ -1,7 +1,7 @@
 import type { DocBlock } from "@/lib/pdf/designed";
 import { dateLine } from "@/lib/pdf/medicalDocument";
 import {
-  PRINT, fill, longDate, thCertWords,
+  PRINT, fill, longDate, placeText, thCertWords,
   type CertificateFields, type DocLang, type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
 } from "@/lib/medicalDocuments";
 
@@ -50,7 +50,8 @@ export function medicalDocumentContent(o: {
   if (o.type === "th_certificate") {
     const t = o.fields as ThCertificateFields;
     const tw = thCertWords(o.lang);
-    blocks.push({ kind: "fields", cells: [[tw.place, o.place], ["", dateLine(o.lang, "", o.issued)]] });
+    // No clinic name or address: a line to fill in (as the standard PDF).
+    blocks.push({ kind: "fields", cells: [[tw.place, placeText(o.place)], ["", dateLine(o.lang, "", o.issued)]] });
     blocks.push({ kind: "paragraph", text: `${tw.iDoctor} ${o.signerName}${o.licenceNo?.trim() ? ` ${tw.licence} ${o.licenceNo.trim()}` : ""}` });
     blocks.push({ kind: "paragraph", text: `${tw.examined} ${o.patientName}${o.patientId ? ` ${o.patientId.label} ${o.patientId.value}` : ""}` });
     blocks.push({ kind: "paragraph", text: `${tw.on} ${longDate(o.lang, t.examDate)}` });

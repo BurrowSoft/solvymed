@@ -512,7 +512,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
         headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
       },
     }, studioFonts);
-    return { ok: true, bytes: designed };
+    return { ok: true, bytes: designed, issued: issuedIso };
   }
   const bytes = await renderMedicalDocumentPdf({
     locationLines: d.locationLines,

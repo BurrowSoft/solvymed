@@ -11,7 +11,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 // says 14 Oct, as its own exam date. And with no clinic name or address, the
 // Thai certificate's place is a line to fill in, not a bare label.
 
-const h = vi.hoisted(() => ({ printData: vi.fn(), medical: vi.fn(), controlled: vi.fn() }));
+const h = vi.hoisted(() => ({ printData: vi.fn(), medical: vi.fn(), controlled: vi.fn(), designed: vi.fn() }));
+vi.mock("@/lib/pdf/fonts", async (orig) => ({ ...(await orig<typeof import("@/lib/pdf/fonts")>()), loadDesignFontBytes: async () => ({ regular: new Uint8Array(), bold: new Uint8Array() }) }));
+vi.mock("@/lib/pdf/designed", async (orig) => ({ ...(await orig<typeof import("@/lib/pdf/designed")>()), renderDesignedDocument: h.designed }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions", () => ({
   documentPrintData: h.printData, correctMedicalDocument: vi.fn(), createMedicalDocument: vi.fn(), updateMedicalDocument: vi.fn(),
 }));
@@ -39,7 +41,7 @@ const doc = (over: Partial<MedDoc> = {}): MedDoc => ({
   fields: { examDate: "2026-10-14" }, body: "มีไข้", created_at: CREATED, ...over,
 });
 
-afterEach(() => { h.printData.mockReset(); h.medical.mockReset(); h.controlled.mockReset(); });
+afterEach(() => { h.printData.mockReset(); h.medical.mockReset(); h.controlled.mockReset(); h.designed.mockReset(); });
 
 describe("the issue date", () => {
   it("the reader's zone really is a day behind here (the bug's condition)", () => {
@@ -61,6 +63,17 @@ describe("the issue date", () => {
     expect(r).toMatchObject({ ok: true, issued: "2026-10-13" });
   });
 
+  it("in the practice's Studio design too: the same day, and the place's fill-in line", async () => {
+    const studio = { design: { font: "sarabun" }, logos: { square: null, wide: null, reversed: null }, practice: {}, texts: { header: null, footer: null } };
+    h.printData.mockResolvedValue({ ...data("Asia/Bangkok"), data: { ...data("Asia/Bangkok").data, studio } });
+    h.designed.mockResolvedValue(new Uint8Array([1]));
+    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc(), { footer: "", unsignedCopy: null });
+    expect(r).toMatchObject({ ok: true, issued: "2026-10-14" });
+    const blocks = h.designed.mock.calls[0][0].doc.blocks as { kind: string; cells?: [string, string][] }[];
+    expect(blocks[0].cells).toEqual([["สถานที่ตรวจ", PLACE_BLANK], ["", "วันที่ 14 ตุลาคม 2569"]]);
+    expect(h.medical).not.toHaveBeenCalled();
+  });
+
   it("the controlled prescription's date too", async () => {
     h.printData.mockResolvedValue({ ...data("Asia/Bangkok"), data: { ...data("Asia/Bangkok").data, country: "BR", idKind: "cpf" } });
     h.controlled.mockResolvedValue(new Uint8Array([1]));
@@ -77,6 +90,17 @@ describe("the Thai certificate's place", () => {
     expect(placeText("   ")).toBe(PLACE_BLANK);
     expect(placeText(null)).toBe(PLACE_BLANK);
     expect(placeText(" Clinic X ")).toBe("Clinic X");
+  });
+
+  it("the designed renderer's place cell too (Document Studio); BR documents have no place", async () => {
+    const { medicalDocumentContent } = await import("@/lib/studio/content");
+    const base = { body: "x", issued: "2026-10-14", city: "", patientName: "Ana", patientId: null, signerName: "Dr. A", unsignedLine: null };
+    const th = (place: string) => medicalDocumentContent({ ...base, type: "th_certificate", lang: "th", fields: { examDate: "2026-10-14" }, place });
+    const cell = (c: ReturnType<typeof th>) => (c.blocks[0] as { kind: "fields"; cells: [string, string][] }).cells[0];
+    expect(cell(th(""))).toEqual(["สถานที่ตรวจ", PLACE_BLANK]);
+    expect(cell(th("Clinic X"))).toEqual(["สถานที่ตรวจ", "Clinic X"]);
+    const br = medicalDocumentContent({ ...base, type: "certificate", lang: "pt-BR", fields: { variant: "attendance", date: "2026-10-14", from: "09:00", to: "10:00", includeCid: false }, place: "" });
+    expect(JSON.stringify(br.blocks)).not.toContain(PLACE_BLANK);
   });
 
   it("the PDF draws the fill-in line after the label", async () => {
