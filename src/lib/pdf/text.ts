@@ -76,7 +76,9 @@ function remember(font: PDFFont, f: FontkitFont, glyphs: Glyphs["glyphs"]) {
     // arrive carrying "า" from an earlier word.)
     if (cps.at(-1) === 0x0e33 && glyphs[i + 1]?.id === saraAa) cps = [...cps.slice(0, -1), 0x0e4d];
     if (g.id === saraAa) cps = [0x0e32];
-    if (!map.has(g.id)) map.set(g.id, cps);
+    // The first meaning stays; a glyph first seen standing for nothing takes
+    // a later real one (ad).
+    if (!map.get(g.id)?.length) map.set(g.id, cps);
   });
 }
 
