@@ -75,7 +75,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-13"; // 2026-10-19 (#533's merge day; re-set it if the merge slips)
+export const PRIVACY_PUBLISHED = "2026-10-14"; // 2026-10-19 went live (#533 merged) 2026-10-14 UTC; re-set it if the merge slips past that day
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only
