@@ -2372,7 +2372,13 @@
     "save": "保存设计",
     "saved": "设计已保存。从现在起您的文件将使用此设计。",
     "conflict": "此设计已在其他地方被修改。请重新加载以查看最新版本。",
-    "error": "无法保存。请重试。"
+    "error": "无法保存。请重试。",
+    "letterhead": "信笺",
+    "letterheadHint": "按您的设计打印一页，用于信函和患者须知。不填文字则打印空白页，供手写。",
+    "letterheadTitle": "标题（可选）",
+    "letterheadBody": "正文（可选）",
+    "letterheadNotSaved": "此处输入的内容不会保存。",
+    "printLetterhead": "打印信笺"
   },
   "clockSkew": {
     "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"

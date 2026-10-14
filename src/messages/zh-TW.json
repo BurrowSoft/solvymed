@@ -2372,7 +2372,13 @@
     "save": "儲存設計",
     "saved": "設計已儲存。從現在起您的文件會使用此設計。",
     "conflict": "此設計已在其他地方被修改。請重新載入以查看最新版本。",
-    "error": "無法儲存。請再試一次。"
+    "error": "無法儲存。請再試一次。",
+    "letterhead": "信箋",
+    "letterheadHint": "依您的設計列印一頁，用於信函和病患須知。不填文字則列印空白頁，供手寫。",
+    "letterheadTitle": "標題（選填）",
+    "letterheadBody": "內文（選填）",
+    "letterheadNotSaved": "此處輸入的內容不會儲存。",
+    "printLetterhead": "列印信箋"
   },
   "clockSkew": {
     "banner": "您裝置上的日期和時間似乎不正確。請開啟自動設定日期和時間，然後再試一次。"

@@ -2402,7 +2402,13 @@
     "save": "Save design",
     "saved": "Design saved. Your documents use it from now on.",
     "conflict": "This design was changed elsewhere. Reload to see the latest version.",
-    "error": "Couldn't save. Try again."
+    "error": "Couldn't save. Try again.",
+    "letterhead": "Letterhead",
+    "letterheadHint": "Print a page in your design for letters and patient handouts. Without text it prints blank, to write on by hand.",
+    "letterheadTitle": "Title (optional)",
+    "letterheadBody": "Text (optional)",
+    "letterheadNotSaved": "What you type here isn't saved.",
+    "printLetterhead": "Print letterhead"
   },
   "clockSkew": {
     "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."

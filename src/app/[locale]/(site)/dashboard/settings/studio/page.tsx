@@ -50,10 +50,10 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
   }
   const p = prof.data as { full_name?: string | null; specialty?: string | null; professional_registration?: string | null; clinic_name?: string | null } | null;
 
-  // The texts the editor offers: the prescription and this country's
-  // designable documents (country config); other types' stored texts are
-  // kept as they are.
-  const textTypes = ["prescription" as const, ...documentTypesFor(country).map(designDocType).filter((x) => x !== null)];
+  // The texts the editor offers: the prescription, this country's
+  // designable documents (country config) and the letterhead; other types'
+  // stored texts are kept as they are.
+  const textTypes = ["prescription" as const, ...documentTypesFor(country).map(designDocType).filter((x) => x !== null), "letterhead" as const];
 
   return (
     <StudioEditor

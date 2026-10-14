@@ -2372,7 +2372,13 @@
     "save": "Lưu thiết kế",
     "saved": "Đã lưu thiết kế. Từ giờ tài liệu của bạn sẽ dùng thiết kế này.",
     "conflict": "Thiết kế này đã được thay đổi ở nơi khác. Tải lại để xem phiên bản mới nhất.",
-    "error": "Không lưu được. Hãy thử lại."
+    "error": "Không lưu được. Hãy thử lại.",
+    "letterhead": "Giấy tiêu đề",
+    "letterheadHint": "In một trang theo thiết kế của bạn cho thư và tài liệu hướng dẫn bệnh nhân. Không có nội dung thì trang in trống để viết tay.",
+    "letterheadTitle": "Tiêu đề (không bắt buộc)",
+    "letterheadBody": "Nội dung (không bắt buộc)",
+    "letterheadNotSaved": "Nội dung bạn nhập ở đây không được lưu.",
+    "printLetterhead": "In giấy tiêu đề"
   },
   "clockSkew": {
     "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."
