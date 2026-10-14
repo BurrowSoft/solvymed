@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useTransition, useRef, useEffect } from "react";
+import { createContext, useCallback, useContext, useState, useTransition, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFieldRules } from "@/lib/patientFields";
 import { usePatientFieldLabels } from "@/components/patient/usePatientFieldLabels";
@@ -22,6 +22,8 @@ import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
 import { deleteMedicalDocument } from "../medical-documents-actions";
 import { copySharedNow, loadPatientDocuments } from "../documents-actions";
+import { clearShareIntent, listUnshared, markShareIntent } from "../share-intent-actions";
+import { shareIntentLive, unsharedKey, type ShareSource } from "@/lib/shareIntent";
 import { AddressFields } from "@/components/patient/AddressFields";
 import { addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { profileOfKind } from "@/lib/country";
@@ -1063,6 +1065,40 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       for (const el of others) el.removeAttribute("inert");
     };
   }, [sharing]);
+  // "Not shared yet" (1.4, 220): meant to be shared, the patient's copy
+  // never arrived. Read on open and after every share (the mark goes once
+  // it's shared); "Share with the patient" records the intent and shares.
+  const markerOn = canShare && shareIntentLive();
+  const [unshared, setUnshared] = useState<Set<string>>(() => new Set());
+  const refreshUnshared = useCallback(() => {
+    if (!markerOn) return;
+    void safeCall(() => listUnshared(patientId), [] as string[]).then((keys) => setUnshared(new Set(keys)));
+  }, [markerOn, patientId]);
+  useEffect(() => { refreshUnshared(); }, [refreshUnshared, prescriptions, medicalDocs?.list]);
+  // And when the tab comes back into view (a share made in the app meanwhile; ec).
+  useEffect(() => {
+    if (!markerOn) return;
+    const onVisible = () => { if (document.visibilityState === "visible") refreshUnshared(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, [markerOn, refreshUnshared]);
+  function shareAgain(source: ShareSource, id: string, share: () => void) {
+    void safeCall(() => markShareIntent(source, id), { ok: false }).then(() => share());
+  }
+  function dontShare(source: ShareSource, id: string) {
+    setUnshared((cur) => { const next = new Set(cur); next.delete(unsharedKey(source, id)); return next; });
+    void safeCall(() => clearShareIntent(source, id), { ok: false }).then(() => refreshUnshared());
+  }
+  function NotShared({ source, id, share }: { source: ShareSource; id: string; share: () => void }) {
+    if (!markerOn || isArchived || !unshared.has(unsharedKey(source, id))) return null;
+    return (
+      <span className="flex items-center gap-1.5">
+        <span data-testid="not-shared" className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{tdocs("notSharedYet")}</span>
+        <button data-server type="button" disabled={sharing} onClick={() => shareAgain(source, id, share)} className="rounded-lg px-2 py-0.5 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{tdocs("share")}</button>
+        <button data-server type="button" disabled={sharing} onClick={() => dontShare(source, id)} className="rounded-lg px-2 py-0.5 text-xs font-semibold text-slate-500 hover:bg-slate-100 disabled:opacity-60">{tdocs("dontShare")}</button>
+      </span>
+    );
+  }
   const SHARE_LIMIT_MS = 120_000;
   async function runShare(make: () => Promise<string>) {
     // One run at a time for a document: Try again waits for a run that timed
@@ -1074,26 +1110,26 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     let outcome: string;
     // At most 120 s (1.9.0, as the app: a real share took 70 s): a stalled share ends in the existing
     // "couldn't share" + Try again, never an endless modal over the page.
-    try { outcome = await timeLimit(run(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); }
+    try { outcome = await timeLimit(run(), SHARE_LIMIT_MS, "failed"); } catch { outcome = "failed"; } finally { setSharing(false); refreshUnshared(); }
     if (outcome === "shared" || outcome === "notShared") return;
     setShareIssue({
       text: outcome === "storageFull" ? tdocs("snapshotNotShared") : outcome === "accessLog" ? t("filesAccessLogFailed") : tdocs("snapshotFailed"),
       retry: outcome === "storageFull" ? null : () => { void runShare(run); },
     });
   }
-  function shareRx(rxId: string, correctsId: string | null) {
+  function shareRx(rxId: string, correctsId: string | null, issued: boolean) {
     void runShare(() => shareRxSnapshot({
-      doctorId: currentUserId, patientId, rxId, correctsId, locale,
+      doctorId: currentUserId, patientId, rxId, correctsId, locale, issued,
       labels: {
         title: tpd("title"), patient: tpd("patient"), date: tpd("date"), medications: tpd("medications"), medication: tpd("medication"),
         dosage: tpd("dosage"), frequency: tpd("frequency"), duration: tpd("duration"), notes: tpd("notes"), footer: tpd("footer"),
-        corrected: tpd("corrected"), unsignedCopy: tdocs("unsignedCopy"),
+        corrected: tpd("corrected"), unsignedCopy: tdocs("unsignedCopy"), imageCopy: tdocs("imageCopy"),
       },
       title: (iso) => `${tpd("title")} ${formatShortDate(locale, iso)}`,
     }));
   }
-  function shareDoc(doc: MedDoc, correctsId: string | null) {
-    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer") }));
+  function shareDoc(doc: MedDoc, correctsId: string | null, issued: boolean) {
+    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), issued }));
   }
   // Unsaved changes in the document dialog: closing asks first (ad).
   const docDirty = useRef(false);
@@ -1154,6 +1190,9 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-700">{td(`type.${doc.doc_type}`)}</span>
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, localDay(doc.created_at))}</span>
+            {/* A late first share is an on-demand copy: the typed stamp only,
+                never the signature image (02, rule A: issued = false). */}
+            <NotShared source="medical_document" id={doc.id} share={() => shareDoc(doc, doc.corrects_id ?? null, false)} />
           </div>
           <div className="flex items-center gap-1">
             <button data-server type="button" disabled={pdfBusy === doc.id} onClick={() => void downloadDoc(doc)} className="rounded-lg px-2.5 py-1 text-xs font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-60">{doc.doc_type === "controlled_prescription" ? td("print") : td("download")}</button>
@@ -1240,6 +1279,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     e.preventDefault();
     if (!dialog || shareRxWaits) return;
     const formData = new FormData(formRef.current!);
+    // The intent, recorded with the save (1.4, 220).
+    if (canShare && shareRxOn) formData.set("share", "1");
     setError("");
     formData.set("client_id", clientId.current);
     formData.set("client_try", String(++tries.current));
@@ -1261,7 +1302,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
       const savedId = dialog.mode === "edit" ? dialog.rx.id : (result as { id?: string | null }).id ?? null;
       const sharing = canShare && shareRxOn && !!savedId;
       setDialog(null);
-      if (sharing) shareRx(savedId!, dialog.mode === "new" ? null : dialog.rx.id);
+      if (sharing) shareRx(savedId!, dialog.mode === "new" ? null : dialog.rx.id, dialog.mode !== "edit");
     });
   }
 
@@ -1283,6 +1324,8 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
           <div className="flex items-center gap-2">
             {depth > 0 && <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-800">{t("correctionLabel")}</span>}
             <span className="text-xs font-semibold text-slate-500">{formatShortDate(locale, rx.date, practiceCalendar)}</span>
+            {/* A late first share: the typed stamp only (02, issued = false). */}
+            <NotShared source="prescription" id={rx.id} share={() => shareRx(rx.id, rx.corrects_id ?? null, false)} />
           </div>
           <div className="flex items-center gap-1">
             {/* The print view (Help P6): "Imprimir / Salvar PDF" there. */}
@@ -1390,7 +1433,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
               country={medicalDocs.country}
               hasPatientId={medicalDocs.hasPatientId}
               onClose={closeDoc}
-              onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId); }}
+              onSaved={(saved) => { discardDoc(); if (saved?.share) shareDoc(saved.doc, saved.correctsId, saved.issued); }}
               onAlreadySaved={() => { discardDoc(); setListError(tsave("alreadySavedChanged")); }}
               canShare={canShare}
               onDirtyChange={(d) => { docDirty.current = d; }}

@@ -1,0 +1,53 @@
+{
+  "v": 1,
+  "palette": {
+    "primary": "#7B917E",
+    "accent": "#BAA689",
+    "light": "#F5F5F0",
+    "preset": "sageSand"
+  },
+  "signature": {
+    "stamp": true,
+    "image": false,
+    "imagePath": null
+  },
+  "texts": {},
+  "layout": "classic",
+  "font": "sarabun",
+  "nameBlock": {
+    "style": "regular"
+  },
+  "logoUse": {
+    "header": "square"
+  },
+  "watermark": {
+    "on": false,
+    "logo": "square",
+    "size": "m",
+    "opacity": 0.06
+  },
+  "sectionBar": {
+    "fill": "none",
+    "text": "ink",
+    "upper": true,
+    "spaced": true
+  },
+  "field": {
+    "style": "plain",
+    "line": "muted"
+  },
+  "footer": {
+    "columns": 2,
+    "locations": true,
+    "contacts": [
+      {
+        "kind": "phone",
+        "value": "(11) 0000-0000"
+      }
+    ]
+  },
+  "band": {
+    "style": "none",
+    "colors": []
+  }
+}

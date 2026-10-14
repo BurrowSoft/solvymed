@@ -2094,6 +2094,8 @@
       "internal": "內部文件"
     },
     "share": "與病患分享",
+    "notSharedYet": "尚未分享",
+    "dontShare": "不分享",
     "shareChecking": "正在檢查患者是否能看到此副本…",
     "shareCheckFailed": "無法檢查患者是否能看到此副本。請選擇是否分享。",
     "shared": "已與病患分享",
@@ -2149,7 +2151,8 @@
     "removeUploadHint": "在醫師開啟之前(24 小時內)可以移除。",
     "removeUploadConfirm": "移除此文件?文件將被刪除。",
     "titleLabel": "標題",
-    "move": "移到資料夾"
+    "move": "移到資料夾",
+    "imageCopy": "供病患參考的副本。未經數位簽章。"
   },
   "documents": {
     "tabTitle": "處方與文件 ({n})",
@@ -2278,6 +2281,147 @@
   },
   "offline": {
     "banner": "沒有網路連線。您可以查看已開啟的內容，但變更不會被儲存。"
+  },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "讓您的文件呈現診所的風格。所有文件都採用同一風格。",
+    "legalNote": {
+      "BR": "特殊管制處方保留法定版面。",
+      "TH": "收據保留法定版面。"
+    },
+    "layout": "版面",
+    "layouts": {
+      "classic": "經典",
+      "elegant": "雅緻",
+      "modern": "現代",
+      "minimal": "極簡"
+    },
+    "moreLayouts": "我們會定期新增版面。",
+    "unknownLayout": "此設計使用了較新版本的版面。在您選擇其他版面之前，這裡會顯示為經典版面。",
+    "colours": "顏色",
+    "presets": {
+      "solvymed": "SolvyMed 藍",
+      "sageSand": "鼠尾草綠與沙色",
+      "forestCream": "森林綠與奶油色",
+      "navyGold": "藏青與金色",
+      "custom": "自訂"
+    },
+    "palette": {
+      "primary": "主色",
+      "accent": "強調色",
+      "light": "背景"
+    },
+    "typeface": "字體",
+    "nameStyle": "姓名",
+    "nameStyles": {
+      "regular": "一般",
+      "spaced": "寬間距大寫",
+      "large": "大"
+    },
+    "logo": "頁首中的標誌",
+    "logos": {
+      "wide": "橫式標誌",
+      "square": "方形標誌",
+      "reversed": "反白標誌",
+      "none": "無標誌"
+    },
+    "watermark": "在文字後方淡淡顯示標誌",
+    "sizes": {
+      "s": "小",
+      "m": "中",
+      "l": "大"
+    },
+    "sectionBars": "區段色條",
+    "sectionFills": {
+      "none": "無",
+      "primary": "主色",
+      "accent": "強調色"
+    },
+    "fields": "病患與日期欄位",
+    "fieldStyles": {
+      "plain": "簡潔",
+      "underline": "底線",
+      "box": "方框"
+    },
+    "footer": "頁尾",
+    "columns": "欄數",
+    "showLocations": "顯示診所地點",
+    "contacts": "聯絡方式",
+    "addContact": "新增聯絡方式",
+    "contactKinds": {
+      "phone": "電話",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "網站",
+      "email": "電子郵件"
+    },
+    "band": "底部色帶",
+    "bandStyles": {
+      "none": "無",
+      "flat": "平直",
+      "twoTone": "雙色",
+      "rounded": "圓弧",
+      "angled": "斜角"
+    },
+    "texts": "頁首與頁尾文字",
+    "headerText": "頁首文字",
+    "footerText": "頁尾文字",
+    "preview": "預覽",
+    "previewNote": "範例資料。您的實際文件會使用病患的資料。",
+    "previewFailed": "無法顯示預覽。您仍可儲存設計。",
+    "save": "儲存設計",
+    "saved": "設計已儲存。從現在起您的文件會使用此設計。",
+    "conflict": "此設計已在其他地方被修改。請重新載入以查看最新版本。",
+    "error": "無法儲存。請再試一次。",
+    "letterhead": "信箋",
+    "letterheadHint": "依您的設計列印一頁，用於信函和病患須知。不填文字則列印空白頁，供手寫。",
+    "letterheadTitle": "標題（選填）",
+    "letterheadBody": "內文（選填）",
+    "letterheadNotSaved": "此處輸入的內容不會儲存。",
+    "printLetterhead": "列印信箋",
+    "posters": "海報",
+    "postersHint": "依您的設計製作海報和社群圖片。不含任何病患資料。",
+    "poster": {
+      "template": "範本",
+      "templates": {
+        "hours": "門診時間",
+        "service": "服務",
+        "announcement": "公告",
+        "booking": "線上預約"
+      },
+      "format": "格式",
+      "formats": {
+        "a4": "A4（PDF）",
+        "a3": "A3（PDF）",
+        "post": "Instagram 貼文（PNG）",
+        "story": "Instagram 限時動態（PNG）"
+      },
+      "headline": "標題",
+      "text": "內文",
+      "note": "備註（選填）",
+      "serviceName": "服務",
+      "serviceDescription": "簡短說明",
+      "price": "價格（選填）",
+      "download": "下載",
+      "defaultHours": "門診時間",
+      "defaultBooking": "預約看診",
+      "scanToBook": "掃描預約",
+      "closed": "休診",
+      "noInviteCode": "預約海報需要您的病患邀請碼（設定 → 病患邀請連結）。",
+      "newCodeNote": "如果您產生新的邀請碼，請重新下載海報；舊的 QR 碼將失效。",
+      "noHours": "請先在設定中填寫門診時間。"
+    },
+    "signature": "簽名",
+    "signatureHint": "您的姓名、專科和執業編號一律印在簽名線下方。您也可以加入手寫簽名的圖片。",
+    "signatureImage": "加入我的簽名圖片",
+    "signatureNotDigital": "簽名圖片不是電子簽章。",
+    "signaturePrivate": "簽名圖片保持私密，只會放在您本人開立的文件上：絕不會出現在海報、信箋或您團隊開立的文件上。",
+    "signatureLater": "更換或刪除只會影響之後開立的文件。",
+    "signatureWhere": "您的簽名圖片會出現在與病患分享的副本上。列印的文件顯示您輸入的簽章資訊，供您親筆簽名。"
+  },
+  "clockSkew": {
+    "banner": "您裝置上的日期和時間似乎不正確。請開啟自動設定日期和時間，然後再試一次。"
   },
   "common": {
     "discardTitle": "要捨棄變更嗎？",

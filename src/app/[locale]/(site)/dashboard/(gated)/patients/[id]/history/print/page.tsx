@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
@@ -12,6 +13,9 @@ import { getClinicTimeZone } from "@/lib/clinicTime";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { HistoryDocument } from "./HistoryDocument";
 import { AccessLogFailed, logAccesses } from "@/components/printAccess";
+import { loadStudioForDocument } from "@/lib/studio/forDocument";
+import { historyContent } from "@/lib/studio/content";
+import { DesignedPrint } from "@/components/DesignedPrint";
 
 // The patient's history print view (Help P8 on the website): the app's
 // "export history" PDF as a print view; "Imprimir / Salvar PDF" opens the
@@ -97,8 +101,40 @@ export default async function HistoryPrintPage({
   // header block, as the app's PDF; the signature stays the legal identity.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
   const baseTemplate = toDocTemplate(templateResult.data as Row | null);
+  const exportedBy = t("exportedBy", { name: [prof?.full_name, prof?.clinic_name].filter(Boolean).join(" · "), date: today });
 
-  return (
+  // Document Studio (PR4): with a saved design (and the document_studio
+  // flag), Print prints the designed PDF (pages as needed).
+  const studio = await loadStudioForDocument(supabase, user.id, () => "history", brand, {
+    fullName: prof?.full_name ?? "", registration: prof?.professional_registration ?? null, clinicName: prof?.clinic_name ?? null,
+  });
+  // With the design, the designed PDF; today's view is its fallback (ec:
+  // a failed render must never leave a page that can't print).
+  const designedView = studio
+    ? (fallback: ReactNode) => (
+      <DesignedPrint
+        fallback={fallback}
+        backHref={`${prefix}/dashboard/patients/${id}`}
+        fileName={`${t("historyTitle")} ${patient.full_name as string}.pdf`}
+        input={{
+          design: studio.design, locale, practice: studio.practice, logoUrls: studio.logos,
+          doc: {
+            ...historyContent({
+              title: t("historyTitle"), patientName: patient.full_name as string, detailLines: lines,
+              recordsLabel: t("medicalRecords"), noRecords: t("noRecords"),
+              records: records.map((r) => ({ date: docDate(country, r.date), time: docTime(r.time), content: r.content, corrected: correctedRecords.has(r.id) })),
+              prescriptionsLabel: t("prescriptions"), noPrescriptions: t("noPrescriptions"),
+              prescriptions: rxs.map((rx) => ({ date: docDate(country, rx.date), corrected: correctedRx.has(rx.id), notes: rx.notes?.trim() ? rx.notes : null, items: rx.prescription_items ?? [] })),
+              corrected: t("corrected"), exportedBy, date: today,
+            }),
+            headerText: studio.texts.header, footerText: studio.texts.footer,
+          },
+        }}
+      />
+    )
+    : null;
+
+  const classic = (
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
       <PrintToolbar backHref={`${prefix}/dashboard/patients/${id}`} />
@@ -111,7 +147,7 @@ export default async function HistoryPrintPage({
             noRecords: t("noRecords"), noPrescriptions: t("noPrescriptions"),
             medication: t("medication"), dosage: t("dosage"), frequency: t("frequency"), duration: t("duration"),
             corrected: t("corrected"), footer: t("footer"),
-            exportedBy: t("exportedBy", { name: [prof?.full_name, prof?.clinic_name].filter(Boolean).join(" · "), date: today }),
+            exportedBy,
           }}
           patientName={patient.full_name as string}
           detailLines={lines}
@@ -129,4 +165,5 @@ export default async function HistoryPrintPage({
       </div>
     </div>
   );
+  return designedView ? designedView(classic) : classic;
 }

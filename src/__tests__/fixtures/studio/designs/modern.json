@@ -1,0 +1,63 @@
+{
+  "v": 1,
+  "palette": {
+    "primary": "#7B917E",
+    "accent": "#BAA689",
+    "light": "#F5F5F0",
+    "preset": "sageSand"
+  },
+  "signature": {
+    "stamp": true,
+    "image": false,
+    "imagePath": null
+  },
+  "texts": {},
+  "layout": "modern",
+  "font": "prompt",
+  "nameBlock": {
+    "style": "large"
+  },
+  "logoUse": {
+    "header": "reversed"
+  },
+  "watermark": {
+    "on": false,
+    "logo": "square",
+    "size": "m",
+    "opacity": 0.06
+  },
+  "sectionBar": {
+    "fill": "none",
+    "text": "primary",
+    "upper": true,
+    "spaced": true
+  },
+  "field": {
+    "style": "box",
+    "line": "light"
+  },
+  "footer": {
+    "columns": 1,
+    "locations": true,
+    "contacts": [
+      {
+        "kind": "phone",
+        "value": "(11) 0000-0000"
+      },
+      {
+        "kind": "whatsapp",
+        "value": "(11) 90000-0000"
+      },
+      {
+        "kind": "instagram",
+        "value": "@clinicavidaplena"
+      }
+    ]
+  },
+  "band": {
+    "style": "angled",
+    "colors": [
+      "accent"
+    ]
+  }
+}

@@ -21,6 +21,7 @@ import { conditionMet } from "@/lib/conditions";
 import { inviteErrorCode, type InviteActionCode } from "@/lib/invitedPatients";
 import { addressError, readAddress } from "@/lib/patientAddress";
 import { inputsOf, fieldsFor, missingRequired, readPatientFieldRules, type FieldKey } from "@/lib/patientFields";
+import { noteShareIntent, shareIntentRecording } from "@/lib/shareIntent";
 import { MERGE_ADDRESS_KEYS, MERGE_ERRORS, MERGE_FIELD_KEYS, mergeColumns, type MergeErrorCode, type MergePreviewSide, type MergeRow } from "@/lib/patientMerge";
 
 const UUIDISH_MERGE = /^[0-9a-f-]{8,64}$/i;
@@ -491,7 +492,10 @@ export async function createPrescription(patientId: string, formData: FormData) 
   // under the form's id (a retry returns the same prescription), the date
   // stamped by the server in the practice's time zone.
   const id = clientIdFrom(formData.get("client_id")) ?? crypto.randomUUID();
-  const { data, error } = await supabase.rpc("create_prescription", { p_id: id, p_patient_id: patientId, p_notes: notes, p_items: items });
+  // 220: saved with "Share with the patient" on records the intent (named,
+  // so the call resolves before and after 220).
+  const share = formData.get("share") === "1" && shareIntentRecording();
+  const { data, error } = await supabase.rpc("create_prescription", { p_id: id, p_patient_id: patientId, p_notes: notes, p_items: items, ...(share ? { p_share: true } : {}) });
   if (error) return { error: error.message?.includes("content_required") ? "medication_required" : actionError(error.message) };
 
   revalidatePath(`/dashboard/patients/${patientId}`);
@@ -599,6 +603,7 @@ export async function updatePrescription(id: string, patientId: string, formData
     const { error: dError } = await supabase.from("prescription_items").delete().in("id", oldIds);
     if (dError) return { error: actionError(dError.message) };
   }
+  if (formData.get("share") === "1") await noteShareIntent(supabase, "prescription", id);
   revalidatePath(`/dashboard/patients/${patientId}`);
   return { success: true };
 }
@@ -625,6 +630,7 @@ export async function addPrescriptionCorrection(prescriptionId: string, patientI
     p_id: clientIdFrom(formData.get("client_id")),
   });
   if (error) return { error: actionError(error.message) };
+  if (formData.get("share") === "1") await noteShareIntent(supabase, "prescription", correctionId as string | null);
   revalidatePath(`/dashboard/patients/${patientId}`);
   if (isRetry(formData.get("client_try")) && typeof correctionId === "string") {
     const { data: stored } = await supabase.from("prescriptions").select("notes, correction_reason, prescription_items(name, dosage, frequency, duration)").eq("id", correctionId).maybeSingle();

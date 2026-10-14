@@ -2094,6 +2094,8 @@
       "internal": "Interne Dokumente"
     },
     "share": "Mit dem Patienten teilen",
+    "notSharedYet": "Noch nicht geteilt",
+    "dontShare": "Nicht teilen",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Mit dem Patienten geteilt",
@@ -2149,7 +2151,8 @@
     "removeUploadHint": "Sie können es entfernen, bis Ihr Arzt es öffnet (innerhalb von 24 h).",
     "removeUploadConfirm": "Dieses Dokument entfernen? Es wird gelöscht.",
     "titleLabel": "Titel",
-    "move": "In Ordner verschieben"
+    "move": "In Ordner verschieben",
+    "imageCopy": "Kopie zur Information des Patienten. Nicht digital signiert."
   },
   "documents": {
     "tabTitle": "Rezepte und Dokumente ({n})",
@@ -2278,6 +2281,147 @@
   },
   "offline": {
     "banner": "Keine Internetverbindung. Sie können sehen, was geöffnet ist, aber Änderungen werden nicht gespeichert."
+  },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Give your documents your practice's look. Every document follows it.",
+    "legalNote": {
+      "BR": "The special control prescription keeps its legal layout.",
+      "TH": "The receipt keeps its legal layout."
+    },
+    "layout": "Layout",
+    "layouts": {
+      "classic": "Classic",
+      "elegant": "Elegant",
+      "modern": "Modern",
+      "minimal": "Minimal"
+    },
+    "moreLayouts": "More layouts are added regularly.",
+    "unknownLayout": "This design uses a layout from a newer version. It shows as Classic here until you choose another.",
+    "colours": "Colours",
+    "presets": {
+      "solvymed": "SolvyMed blue",
+      "sageSand": "Sage & sand",
+      "forestCream": "Forest & cream",
+      "navyGold": "Navy & gold",
+      "custom": "Custom"
+    },
+    "palette": {
+      "primary": "Main colour",
+      "accent": "Accent",
+      "light": "Background"
+    },
+    "typeface": "Typeface",
+    "nameStyle": "Name",
+    "nameStyles": {
+      "regular": "Regular",
+      "spaced": "Spaced capitals",
+      "large": "Large"
+    },
+    "logo": "Logo in the header",
+    "logos": {
+      "wide": "Wide logo",
+      "square": "Square logo",
+      "reversed": "Reversed logo",
+      "none": "No logo"
+    },
+    "watermark": "Show the logo faintly behind the text",
+    "sizes": {
+      "s": "Small",
+      "m": "Medium",
+      "l": "Large"
+    },
+    "sectionBars": "Section bars",
+    "sectionFills": {
+      "none": "None",
+      "primary": "Main colour",
+      "accent": "Accent"
+    },
+    "fields": "Patient and date fields",
+    "fieldStyles": {
+      "plain": "Plain",
+      "underline": "Underlined",
+      "box": "Boxed"
+    },
+    "footer": "Footer",
+    "columns": "Columns",
+    "showLocations": "Show the practice locations",
+    "contacts": "Contacts",
+    "addContact": "Add contact",
+    "contactKinds": {
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Website",
+      "email": "E-mail"
+    },
+    "band": "Bottom band",
+    "bandStyles": {
+      "none": "None",
+      "flat": "Flat",
+      "twoTone": "Two-tone",
+      "rounded": "Rounded",
+      "angled": "Angled"
+    },
+    "texts": "Header and footer texts",
+    "headerText": "Header text",
+    "footerText": "Footer text",
+    "preview": "Preview",
+    "previewNote": "Sample data. Your real documents use your patients' details.",
+    "previewFailed": "Couldn't show the preview. Your design can still be saved.",
+    "save": "Save design",
+    "saved": "Design saved. Your documents use it from now on.",
+    "conflict": "This design was changed elsewhere. Reload to see the latest version.",
+    "error": "Couldn't save. Try again.",
+    "letterhead": "Letterhead",
+    "letterheadHint": "Print a page in your design for letters and patient handouts. Without text it prints blank, to write on by hand.",
+    "letterheadTitle": "Title (optional)",
+    "letterheadBody": "Text (optional)",
+    "letterheadNotSaved": "What you type here isn't saved.",
+    "printLetterhead": "Print letterhead",
+    "posters": "Posters",
+    "postersHint": "Posters and social images in your design. Never with patient data.",
+    "poster": {
+      "template": "Template",
+      "templates": {
+        "hours": "Opening hours",
+        "service": "A service",
+        "announcement": "Announcement",
+        "booking": "Book online"
+      },
+      "format": "Format",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Instagram post (PNG)",
+        "story": "Instagram story (PNG)"
+      },
+      "headline": "Headline",
+      "text": "Text",
+      "note": "Note (optional)",
+      "serviceName": "Service",
+      "serviceDescription": "Short description",
+      "price": "Price (optional)",
+      "download": "Download",
+      "defaultHours": "Opening hours",
+      "defaultBooking": "Book your appointment",
+      "scanToBook": "Scan to book",
+      "closed": "Closed",
+      "noInviteCode": "The booking poster needs your patient invite code (Settings → Patient invite link).",
+      "newCodeNote": "If you generate a new invite code, download your posters again; the old QR will stop working.",
+      "noHours": "Set your working hours in Settings first."
+    },
+    "signature": "Signature",
+    "signatureHint": "Your name, specialty and registration always print under the signature line. You can also add an image of your handwritten signature.",
+    "signatureImage": "Add my signature image",
+    "signatureNotDigital": "An image of your signature is not a digital signature.",
+    "signaturePrivate": "It stays private and is placed only on the documents you issue: never on posters, letterheads or documents your team issues.",
+    "signatureLater": "Changing or removing it affects only documents issued afterwards.",
+    "signatureWhere": "Your signature image appears on the copy shared with the patient. Printed documents show your typed stamp, to sign by hand."
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
   },
   "common": {
     "discardTitle": "Änderungen verwerfen?",
