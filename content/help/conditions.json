@@ -238,5 +238,9 @@
   "save-once-live": {
     "met": true,
     "what": "Saved once is live on BOTH platforms: the website's PR3 (#524) and its follow-up (#526) are merged, and the app's update (PR A, idempotent saves, migration 216; 01a13204) passed 78's row (02, 2026-10-13). A retry after a lost answer never makes a second record; a retry with changes shows \"already saved\" and the stored version (Help K9)."
+  },
+  "app-signature-device-only-live": {
+    "met": false,
+    "what": "The app's drawn signature is device-only in a RELEASED store build (8d's #496: Android backups/transfers and iCloud backup exclude it) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
   }
 }

@@ -108,13 +108,15 @@ Thai title: "แก้ไขเวชระเบียนหรือใบส�
 1. Abra o paciente e a aba **Receitas**.
 2. Toque em **+**, adicione os medicamentos e toque em **Salvar**.
 3. Toque em **PDF** para gerar a receita com sua assinatura e compartilhar.
-Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**.
+{unless:app-signature-device-only-live} Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**.
+{pending:app-signature-device-only-live} Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e desenhe sua assinatura em **Configurações → Assinatura desenhada**. Sua assinatura desenhada fica guardada somente neste celular. Em um celular novo ou depois de reinstalar o app, entre na conta e desenhe de novo.
 {pending:app-1.7.0} O PDF sai em papel A4.
 **en**
 1. Open the patient and the **Prescriptions** tab.
 2. Tap **+**, add the medications and tap **Save**.
 3. Tap **PDF** to create the prescription with your signature and share it.
-For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**.
+{unless:app-signature-device-only-live} For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**.
+{pending:app-signature-device-only-live} For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and draw your signature in **Settings → Drawn signature**. Your drawn signature is kept on this phone only. On a new phone or after reinstalling, sign in and draw it again.
 {pending:app-1.7.0} The PDF is on A4 paper.
 **No site:** Abra o paciente, a aba **Receitas** e clique em **Nova Receita**; use **+ Adicionar medicamento** e clique em **Salvar Receita**. Para imprimir ou salvar em PDF, clique em **PDF** na receita e depois em **Imprimir / Salvar PDF**; para o arquivo, escolha **Salvar como PDF** na janela de impressão. No site a receita sai com uma linha em branco para assinar à mão, com seu nome e registro embaixo. A impressão sai em papel A4.
 **On the website:** Open the patient, the **Prescriptions** tab, and click **New Prescription**; use **+ Add medication** and click **Save Prescription**. To print it or save it as a PDF, click **PDF** on the prescription and then **Print / Save as PDF**; for the file, choose **Save as PDF** in the print window. On the website the prescription has a blank line to sign by hand, with your name and registration under it. It prints on A4 paper.
@@ -123,7 +125,8 @@ Thai title: "เขียนใบสั่งยา"
 1. เปิดผู้ป่วย แล้วเปิดแท็บ **ใบสั่งยา**
 2. แตะ **+** เพิ่มรายการยา แล้วแตะ **บันทึก**
 3. แตะ PDF เพื่อสร้างใบสั่งยาพร้อมลายเซ็นของคุณและแชร์
-เพื่อให้ใบสั่งยาแสดงข้อมูลของคุณ ให้กรอกเลขที่ใบอนุญาตประกอบวิชาชีพ (เช่น ว.12345) ใน **การตั้งค่า → เลขทะเบียน** และลายเซ็นใน **การตั้งค่า**
+{unless:app-signature-device-only-live} เพื่อให้ใบสั่งยาแสดงข้อมูลของคุณ ให้กรอกเลขที่ใบอนุญาตประกอบวิชาชีพ (เช่น ว.12345) ใน **การตั้งค่า → เลขทะเบียน** และลายเซ็นใน **การตั้งค่า**
+{pending:app-signature-device-only-live} เพื่อให้ใบสั่งยาแสดงข้อมูลของคุณ ให้กรอกเลขที่ใบอนุญาตประกอบวิชาชีพ (เช่น ว.12345) ใน **การตั้งค่า → เลขทะเบียน** และวาดลายมือชื่อใน **การตั้งค่า → ลายมือชื่อที่วาด** ลายมือชื่อที่คุณวาดจะเก็บไว้ในโทรศัพท์เครื่องนี้เท่านั้น หากเปลี่ยนโทรศัพท์หรือติดตั้งแอปใหม่ ให้เข้าสู่ระบบแล้ววาดอีกครั้ง
 {pending:app-1.7.0} PDF เป็นกระดาษขนาด A4
 **ในเว็บไซต์:** เปิดผู้ป่วย แท็บ **ใบสั่งยา** แล้วคลิก **ใบสั่งยาใหม่** ใช้ **+ เพิ่มยา** แล้วคลิก **บันทึกใบสั่งยา** หากต้องการพิมพ์หรือบันทึกเป็น PDF ให้คลิก PDF ที่ใบสั่งยา แล้วคลิก **พิมพ์ / บันทึกเป็น PDF** หากต้องการไฟล์ ให้เลือก "บันทึกเป็น PDF" ในหน้าต่างการพิมพ์ ในเว็บไซต์ ใบสั่งยามีเส้นว่างสำหรับเซ็นด้วยมือ โดยมีชื่อและเลขทะเบียนของคุณอยู่ด้านล่าง พิมพ์บนกระดาษขนาด A4
 `open:patients`
