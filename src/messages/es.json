@@ -15,7 +15,9 @@
     "iosBetaHint": "Requiere la app gratuita TestFlight de Apple",
     "signupCta": "Empieza tu prueba gratis",
     "haveAccount": "¿Ya tienes cuenta?",
-    "preferApp": "¿Prefieres la app? Descárgala:"
+    "preferApp": "¿Prefieres la app? Descárgala:",
+    "trialLine": "{days} days free · no credit card · then {price}/month",
+    "trialLineNoPrice": "{days} days free · no credit card"
   },
   "highlights": {
     "h1": "Agenda inteligente",
@@ -2092,6 +2094,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartir con el paciente",
+    "notSharedYet": "Aún no compartido",
+    "dontShare": "No compartir",
     "shareChecking": "Checking whether the patient sees this copy…",
     "shareCheckFailed": "We couldn't check whether the patient sees this copy. Choose whether to share it.",
     "shared": "Compartido con el paciente",
@@ -2375,5 +2379,13 @@
     "letterheadBody": "Text (optional)",
     "letterheadNotSaved": "What you type here isn't saved.",
     "printLetterhead": "Print letterhead"
+  },
+  "clockSkew": {
+    "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."
+  },
+  "common": {
+    "discardTitle": "¿Descartar los cambios?",
+    "discard": "Descartar",
+    "keepEditing": "Seguir editando"
   }
 }

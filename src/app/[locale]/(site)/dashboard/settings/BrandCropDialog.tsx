@@ -6,6 +6,7 @@ import {
   BRAND_IMAGE_SHAPES, ZOOM_MAX, ZOOM_MIN, clampView, cropRect, cropToFile, initialView, isSmall, zoomTo, type CropView,
 } from "@/lib/brandCrop";
 import type { BrandImageKind } from "@/lib/brandImage";
+import { useDiscardAsk, useLeaveGuard } from "@/components/DiscardGuard";
 
 // 1.8.0 G: "Ajustar imagem" before a brand image is uploaded (the app's
 // shapes and copy). Drag to move; the slider, the buttons or the mouse wheel
@@ -49,11 +50,17 @@ export function BrandCropDialog({ kind, src, fileName, onUse, onCancel }: {
   useEffect(() => {
     setTouch(typeof window !== "undefined" && window.matchMedia?.("(pointer: coarse)").matches);
     const i = new Image();
-    i.onload = () => { img.current = i; setView(initialView(frameW, frameH, i.naturalWidth, i.naturalHeight)); };
+    i.onload = () => { img.current = i; const v = initialView(frameW, frameH, i.naturalWidth, i.naturalHeight); start.current = JSON.stringify(v); setView(v); };
     i.onerror = () => setFailed(true);
     i.src = src;
   }, [src, frameW, frameH]);
 
+  // Moved or zoomed since it opened: closing by the backdrop asks (Cancel
+  // doesn't: an explicit discard).
+  const start = useRef<string | null>(null);
+  const dirty = !!view && start.current !== null && JSON.stringify(view) !== start.current;
+  useLeaveGuard(dirty);
+  const { ask, dialog } = useDiscardAsk();
   const rect = view ? cropRect(view) : null;
   const small = rect ? isSmall(rect, shape) : false;
   const scale = view ? (Math.max(view.frameW / view.imgW, view.frameH / view.imgH) * view.zoom) : 1;
@@ -64,10 +71,11 @@ export function BrandCropDialog({ kind, src, fileName, onUse, onCancel }: {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={onCancel}>
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-900/40 p-4 sm:items-center" onClick={() => ask(dirty, onCancel)}>
       <div role="dialog" aria-modal="true" aria-labelledby="crop-title" data-testid="brand-crop"
         className="w-full max-w-md rounded-2xl bg-white p-5 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <h2 id="crop-title" className="text-base font-bold text-slate-900">{t("title")}</h2>
+        {dialog}
         <p className="mt-1 text-xs text-slate-500">{touch ? t("hintTouch") : t("hint")}</p>
         <div className="mt-3 flex justify-center">
           <div

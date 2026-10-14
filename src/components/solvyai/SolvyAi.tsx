@@ -14,6 +14,7 @@ import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./Solv
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
+import { leaveGuarded } from "@/components/DiscardGuard";
 
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
@@ -214,7 +215,7 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
     setMinimized(true);
     // In a transition (#364): Desfazer waits until the move to the screen has
     // settled, so a click is never lost to the pending navigation.
-    if (path && isInternalHref(path)) startNav(() => router.push(path));
+    if (path && isInternalHref(path)) leaveGuarded(() => startNav(() => router.push(path)));
     setCardDone((d) => ({ ...d, [card.id]: "saved" }));
     setToast({ card, id, demo, left: 10, phase: "saved", noUndo, path: path && isInternalHref(path) ? path : undefined });
     track("solvyai_confirmed", { kind: card.action.kind });
@@ -292,7 +293,7 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
     void backend.usage().then(setUsage);
   };
 
-  const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); router.push(href); };
+  const openScreen = (href: string) => { if (!isInternalHref(href)) return; setMinimized(true); leaveGuarded(() => router.push(href)); };
 
   // The payments / settings "b" chips name the payment QR: the PRACTICE
   // country's (Pix in Brazil, PromptPay in Thailand), none elsewhere (UX).
@@ -414,7 +415,7 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
                 </button>
               )}
               {(toast.noUndo || toast.phase === "failed") && toast.path && (
-                <button type="button" onClick={() => { setToast(null); router.push(toast.path!); }} className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10">
+                <button type="button" onClick={() => { const p = toast.path!; setToast(null); leaveGuarded(() => router.push(p)); }} className="shrink-0 whitespace-nowrap rounded-lg px-2 py-0.5 font-semibold text-[#5eead4] hover:bg-white/10">
                   {t("openItem")}
                 </button>
               )}

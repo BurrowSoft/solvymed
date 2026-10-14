@@ -84,9 +84,11 @@ export function OfflineGuard() {
   return (
     <>
       <style>{CSS}</style>
+      {/* A notice, not a control: clicks pass through to the page header
+          under it (7e, #521's clock banner had the same strip). */}
       {!online && (
-        <div role="status" aria-live="polite" data-testid="offline-banner" className="fixed inset-x-0 top-0 z-[60] flex justify-center px-4 pt-2 print:hidden">
-          <p className={`max-w-xl rounded-xl bg-[#0f172a] px-4 py-2 text-center text-sm font-medium text-[#ffffff] shadow-lg ${nudge ? "ring-2 ring-amber-400" : ""}`}>
+        <div role="status" aria-live="polite" data-testid="offline-banner" className="pointer-events-none fixed inset-x-0 top-0 z-[60] flex justify-center px-4 pt-2 print:hidden">
+          <p className={`pointer-events-none max-w-xl rounded-xl bg-[#0f172a] px-4 py-2 text-center text-sm font-medium text-[#ffffff] shadow-lg ${nudge ? "ring-2 ring-amber-400" : ""}`}>
             {t("banner")}
           </p>
           {/* A blocked tap: the same text, announced again (the banner itself
