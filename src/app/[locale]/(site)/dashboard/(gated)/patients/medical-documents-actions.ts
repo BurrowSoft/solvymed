@@ -11,6 +11,7 @@ import { actionError } from "@/lib/dbErrors";
 import { isUuid } from "@/lib/patientFiles";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
+import { getClinicTimeZone } from "@/lib/clinicTime";
 import { toDocTemplate } from "@/lib/prescriptionDoc";
 import { brandedDocTemplate, docBrand, loadPracticeBrand } from "@/lib/brand";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -154,6 +155,9 @@ export async function deleteMedicalDocument(id: string, patientId: string): Prom
 
 export type DocPrintData = {
   country: string;
+  // The practice's time zone: the issue date is created_at's day there, not
+  // the reader's (02; the practice-calendar rule).
+  timeZone: string;
   idKind: "cpf" | "thai_id" | "passport";
   template: { primaryColor: string; accentColor: string; headerText: string | null; footerText: string | null; logoUrl: string | null };
   brand: { logoUrl: string | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
@@ -180,10 +184,11 @@ export async function documentPrintData(patientId: string, documentId: string): 
   const { error: logError } = await me.supabase.rpc("log_record_access", { p_patient_id: patientId, p_kind: "document", p_object_ref: documentId });
   // A network failure is the generic failure; only a refusal is "access_log_failed".
   if (logError) return { ok: false, code: isAccessLogRefusal(logError) ? "access_log_failed" : "generic" };
-  const [p, prof, tpl] = await Promise.all([
+  const [p, prof, tpl, timeZone] = await Promise.all([
     me.supabase.from("patients").select("full_name, cpf, th_national_id, passport_number").eq("id", patientId).eq("professional_id", me.uid).maybeSingle(),
     me.supabase.from("professionals").select("full_name, professional_registration, clinic_name, clinic_address, clinic_city, clinic_state, clinic_phone").eq("id", me.uid).maybeSingle(),
     me.supabase.from("document_templates").select("primary_color, accent_color, logo_url, header_text, footer_text").eq("professional_id", me.uid).eq("document_type", "prescription").maybeSingle(),
+    getClinicTimeZone(me.supabase, { professionalId: me.uid, isSecretary: false }),
   ]);
   if (!p.data) return { ok: false, code: "generic" };
   const brandRow = liveFeatures.myBrand ? await loadPracticeBrand(me.supabase, me.uid) : null;
@@ -210,6 +215,7 @@ export async function documentPrintData(patientId: string, documentId: string): 
     ok: true,
     data: {
       country: lookup.country,
+      timeZone,
       locationLines: await readLocationLines(me.supabase, me.uid),
       idKind: countryProfile(lookup.country).patientId,
       template: { primaryColor: s.primaryColor, accentColor: s.accentColor, headerText: s.headerText, footerText: s.footerText, logoUrl: t.logoUrl },
