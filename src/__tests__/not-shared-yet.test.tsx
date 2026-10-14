@@ -15,6 +15,7 @@ const h = vi.hoisted(() => ({
   inserts: [] as Record<string, unknown>[],
   unshared: [] as string[],
   shared: [] as string[],
+  issued: [] as unknown[],
 }));
 vi.mock("@/lib/conditions", async (orig) => {
   const real = await orig<typeof import("@/lib/conditions")>();
@@ -36,7 +37,7 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/share-intent-actions",
   markShareIntent: vi.fn(async (source: string, id: string) => { h.shared.push(`mark ${source}:${id}`); return { ok: true }; }),
 }));
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots", () => ({
-  shareRxSnapshot: vi.fn(async (o: { rxId: string }) => { h.shared.push(`share rx ${o.rxId}`); h.unshared = []; return "shared"; }),
+  shareRxSnapshot: vi.fn(async (o: { rxId: string; issued?: boolean }) => { h.shared.push(`share rx ${o.rxId}`); h.issued.push(o.issued); h.unshared = []; return "shared"; }),
   shareDocumentSnapshot: vi.fn(async () => "shared"),
 }));
 
@@ -56,7 +57,7 @@ const tab = (documentsOn = true) => {
 };
 
 describe("the mark on the patient page", () => {
-  beforeEach(() => { h.live = true; h.unshared = []; h.shared = []; });
+  beforeEach(() => { h.live = true; h.unshared = []; h.shared = []; h.issued = []; });
 
   it("meant to be shared, no copy: \"Ainda não compartilhado\"; Share records the intent, shares, and the mark goes", async () => {
     h.unshared = [`prescription:${rx.id}`];
@@ -65,6 +66,9 @@ describe("the mark on the patient page", () => {
     fireEvent.click(screen.getByRole("button", { name: pt.docs.share }));
     await waitFor(() => expect(h.shared).toEqual([`mark prescription:${rx.id}`, `share rx ${rx.id}`]));
     await waitFor(() => expect(screen.queryByTestId("not-shared")).toBeNull());
+    // A late first share is an on-demand copy: never the signature image
+    // (02, rule A: issued = false).
+    expect(h.issued).toEqual([false]);
   });
 
   it("Don't share (02): the intent is cleared and the mark goes at once, with no share", async () => {

@@ -15,6 +15,7 @@ import type { PosterDay } from "./StudioPosters";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 import { withCountryHint } from "@/lib/signupCountry";
 import { SITE } from "@/lib/colleagues";
+import { signatureEnabled } from "@/lib/studio/signature";
 
 // Document Studio (PR3): the doctor's editor for their practice's design,
 // with a live preview. Its own page (02, 10-13), opened from My brand;
@@ -90,6 +91,8 @@ export default async function StudioPage({ params }: { params: Promise<{ locale:
       backHref={`${prefix}/dashboard/settings`}
       posterHours={posterHours}
       inviteUrl={inviteUrl}
+      uid={user.id}
+      signatureOn={await signatureEnabled(supabase)}
     />
   );
 }

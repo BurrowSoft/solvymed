@@ -9,6 +9,8 @@ import { FAINT, INK, LINE, MARGIN, MUTED, Writer, hexColor, tint, type FontBytes
 import type { FontId } from "@/lib/studio/design";
 
 export type RxPdfLabels = {
+  // Under a signature image on the patient's copy (Document Studio; 02).
+  imageCopy?: string;
   title: string; patient: string; date: string; medications: string; medication: string;
   dosage: string; frequency: string; duration: string; notes: string; footer: string; corrected: string;
   unsignedCopy: string;
