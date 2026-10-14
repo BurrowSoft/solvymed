@@ -101,7 +101,9 @@ describe("privacy 2026-10-21: §6f My brand and Document Studio (the Studio laun
     // reversed logo (§3.8's drawn-signature bullets are the app's, #533).
     const sixF = (s: string) => s.slice(s.indexOf('title="6f.'), s.indexOf("<Section", s.indexOf('title="6f.')));
     expect(sixF(en).length).toBeGreaterThan(100);
-    for (const w of ["signature image", "handwritten", "reversed logo"]) expect(sixF(en).toLowerCase()).not.toContain(w);
-    for (const w of ["imagem da sua assinatura", "próprio punho", "logo invertido"]) expect(sixF(pt).toLowerCase()).not.toContain(w);
+    // Nor a poster image upload (brand-asset's poster_image, public once enabled;
+    // off behind STUDIO_ASSET_KINDS, like logo_reversed; ad F1).
+    for (const w of ["signature image", "handwritten", "reversed logo", "poster image", "image for the poster"]) expect(sixF(en).toLowerCase()).not.toContain(w);
+    for (const w of ["imagem da sua assinatura", "próprio punho", "logo invertido", "imagem do cartaz", "imagem para o cartaz"]) expect(sixF(pt).toLowerCase()).not.toContain(w);
   });
 });
