@@ -8,6 +8,7 @@ import { LAYOUTS, type Design } from "@/lib/studio/design";
 import { historyContent, letterheadContent, medicalDocumentContent, prescriptionContent, receiptContent } from "@/lib/studio/content";
 import { PDFDocument } from "pdf-lib";
 import { dateLine } from "@/lib/pdf/medicalDocument";
+import { longDate } from "@/lib/medicalDocuments";
 import { withLayout } from "@/lib/studio/starters";
 
 // A design changes the look, never what a prescription says (02, ec: 78
@@ -86,13 +87,17 @@ describe("Studio: every medication and legal field appears in every layout", () 
 // medical certificate) in every layout: the title, the patient and their
 // ID, what the document says, the date line, and the doctor's identity.
 type Med = Parameters<typeof medicalDocumentContent>[0];
-const MED: { type: Med["type"]; lang: Med["lang"]; fields: Med["fields"]; body: string; texts: string[] }[] = [
+// issued: the document's issue day, when it must differ from every other
+// date it prints (ad: so the date check can't pass on another date).
+const MED: { type: Med["type"]; lang: Med["lang"]; fields: Med["fields"]; body: string; texts: string[]; issued?: string }[] = [
   { type: "certificate", lang: "pt-BR", fields: { variant: "absence", date: "2026-10-12", days: 3, start: "2026-10-12", includeCid: true, cid: "J06.9" }, body: "Atesto que a paciente esteve sob meus cuidados e necessita de 3 dias de afastamento.", texts: ["J06.9"] },
   { type: "declaration", lang: "pt-BR", fields: {}, body: "Declaro que a paciente compareceu a esta clínica das 14h às 15h.", texts: [] },
   { type: "exam_request", lang: "pt-BR", fields: { exams: ["Hemograma completo", "TSH ultrassensível"], indication: "Investigação de fadiga", cid: "R53" }, body: "", texts: ["Hemograma completo", "TSH ultrassensível", "Investigação de fadiga", "R53"] },
   // Thai text comes out of the PDF as shaped glyphs: the English variant
   // of the same document checks the same fields.
-  { type: "th_certificate", lang: "en", fields: { examDate: "2026-10-12", rest: { days: 2, start: "2026-10-12", end: "2026-10-13" } }, body: "Acute upper respiratory infection, no complications.", texts: [] },
+  // Issued on the 14th, examined on the 12th, resting the 12th–13th: the
+  // issue date can only come from the issue-date cell.
+  { type: "th_certificate", lang: "en", fields: { examDate: "2026-10-12", rest: { days: 2, start: "2026-10-12", end: "2026-10-13" } }, body: "Acute upper respiratory infection, no complications.", texts: [], issued: "2026-10-14" },
 ];
 
 describe("Studio: every medical document's title and legal fields appear in every layout", () => {
@@ -101,7 +106,7 @@ describe("Studio: every medical document's title and legal fields appear in ever
       it(`${m.type} · ${name}`, async () => {
         const pr = sample.practice;
         const content = medicalDocumentContent({
-          type: m.type, lang: m.lang, fields: m.fields, body: m.body, issued: "2026-10-12", city: "São Paulo", place: "Clínica Vida Plena",
+          type: m.type, lang: m.lang, fields: m.fields, body: m.body, issued: m.issued ?? "2026-10-12", city: "São Paulo", place: "Clínica Vida Plena",
           patientName: "Beatriz Almeida", patientId: { label: "CPF", value: "123.456.789-09" },
           signerName: pr.displayName, licenceNo: pr.registrationLine, unsignedLine: null,
         });
@@ -118,9 +123,11 @@ describe("Studio: every medical document's title and legal fields appear in ever
         // The Thai certificate's date cell has no label: the date alone,
         // never ": 13 October 2026" (78/c5, ec).
         if (m.type === "th_certificate") {
-          const date = dateLine(m.lang, "", "2026-10-12");
-          expect(text, `${name}: the date`).toContain(norm(date));
+          const date = dateLine(m.lang, "", m.issued!);
+          expect(text, `${name}: the issue date`).toContain(norm(date));
           expect(text, `${name}: no leading colon`).not.toContain(norm(`: ${date}`));
+          // The exam date prints too, as its own line.
+          expect(text, `${name}: the exam date`).toContain(norm(`on ${longDate(m.lang, "2026-10-12")}`));
         }
       }, 60_000);
     }
