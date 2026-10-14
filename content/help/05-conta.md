@@ -109,6 +109,21 @@ Thai title: "ไม่มีอินเทอร์เน็ต"
 
 ---
 
+## K8. Data e hora erradas / Wrong date and time
+**pt-BR**
+Se a data e a hora do seu dispositivo estiverem erradas (mais de 5 minutos), o SolvyMed mostra **A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo.**
+Ative a data e hora automáticas nas configurações do dispositivo. Você continua conectado e o que digitou não se perde; quando o relógio estiver certo, o aviso some sozinho.
+**en**
+If your device's date and time are wrong (by more than 5 minutes), SolvyMed shows **Your device's date and time look wrong. Turn on automatic date and time, then try again.**
+Turn on automatic date and time in your device's settings. You stay signed in and nothing you typed is lost; once the clock is right, the message goes away by itself.
+Thai title: "วันที่และเวลาไม่ถูกต้อง"
+**th**
+หากวันที่และเวลาในอุปกรณ์ของคุณไม่ถูกต้อง (คลาดเคลื่อนเกิน 5 นาที) SolvyMed จะแสดง **วันที่และเวลาในอุปกรณ์ของคุณดูเหมือนไม่ถูกต้อง เปิดการตั้งวันที่และเวลาอัตโนมัติ แล้วลองอีกครั้ง**
+เปิดการตั้งวันที่และเวลาอัตโนมัติในการตั้งค่าของอุปกรณ์ คุณยังคงลงชื่อเข้าใช้อยู่ และข้อมูลที่พิมพ์ไว้จะไม่หายไป เมื่อเวลาถูกต้องแล้ว ข้อความจะหายไปเอง
+`open:none`
+`requires:clock-skew-live`
+
+---
 ## K9. Já salvo antes das suas alterações / Already saved before your changes
 **pt-BR**
 Se a conexão cair logo depois de você salvar, o SolvyMed pode não saber se salvou. Ao tentar de novo, ele nunca cria um segundo registro: se o primeiro já tinha sido salvo, é esse que fica.
@@ -128,3 +143,20 @@ Thai title: "บันทึกไว้แล้วก่อนการแก�
 หากคุณแก้ไขบางอย่างก่อนลองอีกครั้ง จะเห็น **รายการนี้บันทึกไว้แล้วก่อนการแก้ไขล่าสุดของคุณ การแก้ไขภายหลังยังไม่ถูกบันทึก โปรดตรวจสอบฉบับที่บันทึกไว้** และแบบฟอร์มจะปิดพร้อมแสดงฉบับที่บันทึกไว้
 ตรวจสอบฉบับที่บันทึกไว้ และหากจำเป็นให้แก้ไขตามปกติ: **แก้ไข** (ภายใน 24 ชั่วโมง) หรือ **เพิ่มรายการแก้ไข** ในเวชระเบียน ใบสั่งยา หรือเอกสาร และ **เลื่อนนัด** สำหรับนัดหมาย
 ใช้กับเวชระเบียน ใบสั่งยา เอกสาร ผู้ป่วยใหม่ นัดหมาย (รวมถึงนัดซ้ำ) และการปิดช่วงเวลา ทั้งในแอปและในเว็บไซต์
+
+---
+## K10. Vídeos tutoriais / Video tutorials
+**pt-BR**
+Vídeos curtos mostrando cada parte do SolvyMed, no YouTube, na playlist do país da sua clínica (Brasil em português, Tailândia em tailandês). Eles abrem numa nova aba.
+{pending:app-video-tutorials-live} No app: **Configurações → Suporte → Vídeos tutoriais** (médicos e secretárias).
+**en**
+Short videos showing each part of SolvyMed, on YouTube, in the playlist for your clinic's country (Brazil in Portuguese, Thailand in Thai). They open in a new tab.
+{pending:app-video-tutorials-live} In the app: **Settings → Support → Video tutorials** (doctors and secretaries).
+**No site:** **Vídeos tutoriais** fica no fim do menu lateral (médicos e secretárias), no rodapé do site e no topo da Central de Ajuda.
+**On the website:** **Video tutorials** is at the end of the side menu (doctors and secretaries), in the site footer and at the top of the Help Center.
+`open:none`
+Thai title: "วิดีโอสอนการใช้งาน"
+**th**
+วิดีโอสั้นแนะนำการใช้งานแต่ละส่วนของ SolvyMed บน YouTube ในเพลย์ลิสต์ของประเทศที่คลินิกของคุณตั้งอยู่ (บราซิลเป็นภาษาโปรตุเกส ไทยเป็นภาษาไทย) วิดีโอจะเปิดในแท็บใหม่
+{pending:app-video-tutorials-live} ในแอป: **การตั้งค่า → ช่วยเหลือ → วิดีโอสอนการใช้งาน** (แพทย์และเลขานุการ)
+**ในเว็บไซต์:** **วิดีโอสอนการใช้งาน** อยู่ท้ายเมนูด้านข้าง (แพทย์และเลขานุการ) ในส่วนท้ายของเว็บไซต์ และด้านบนของศูนย์ช่วยเหลือ

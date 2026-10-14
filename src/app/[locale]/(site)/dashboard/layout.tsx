@@ -29,6 +29,7 @@ import { PracticeCalendarProvider } from "@/components/PracticeCalendar";
 import { TeamAccessWatch } from "@/components/TeamAccessWatch";
 import { LocaleRedirect } from "@/components/LocaleRedirect";
 import { OfflineGuard } from "@/components/OfflineGuard";
+import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { NavigationGuard } from "@/components/DiscardGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
 
@@ -220,6 +221,7 @@ export default async function DashboardLayout({
   return (
     <div data-theme={theme} data-theme-root className="contents">
     <OfflineGuard />
+    <ClockSkewGuard />
     {/* Leaving a page with unsaved settings asks first (1.9.0, 02). */}
     <NavigationGuard />
     <TourProvider
@@ -240,6 +242,7 @@ export default async function DashboardLayout({
           photoUrl={professional?.photo_url}
           isSecretary={isSecretary}
           languages={practice.languages}
+          videoTutorialsUrl={practice.videoTutorialsUrl}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>

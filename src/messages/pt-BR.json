@@ -2094,6 +2094,8 @@
       "internal": "Documentos internos"
     },
     "share": "Compartilhar com o paciente",
+    "notSharedYet": "Ainda não compartilhado",
+    "dontShare": "Não compartilhar",
     "shareChecking": "Verificando se o paciente vê esta cópia…",
     "shareCheckFailed": "Não foi possível verificar se o paciente vê esta cópia. Escolha se quer compartilhá-la.",
     "shared": "Compartilhado com o paciente",
@@ -2149,7 +2151,8 @@
     "removeUploadHint": "Você pode remover até o seu médico abrir o documento (em até 24 h).",
     "removeUploadConfirm": "Remover este documento? Ele será excluído.",
     "titleLabel": "Título",
-    "move": "Mover para pasta"
+    "move": "Mover para pasta",
+    "imageCopy": "Cópia para consulta do paciente. Sem assinatura digital."
   },
   "documents": {
     "tabTitle": "Receitas e documentos ({n})",
@@ -2279,9 +2282,154 @@
   "offline": {
     "banner": "Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas."
   },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Dê aos seus documentos a identidade visual do seu consultório. Todos os documentos seguem o mesmo visual.",
+    "legalNote": {
+      "BR": "A receita de controle especial mantém o layout legal.",
+      "TH": "O recibo mantém o layout legal."
+    },
+    "layout": "Modelo",
+    "layouts": {
+      "classic": "Clássico",
+      "elegant": "Elegante",
+      "modern": "Moderno",
+      "minimal": "Minimalista"
+    },
+    "moreLayouts": "Novos modelos são adicionados regularmente.",
+    "unknownLayout": "Este design usa um modelo de uma versão mais nova. Aqui ele aparece como Clássico até você escolher outro.",
+    "colours": "Cores",
+    "presets": {
+      "solvymed": "Azul SolvyMed",
+      "sageSand": "Sálvia e areia",
+      "forestCream": "Floresta e creme",
+      "navyGold": "Marinho e dourado",
+      "custom": "Personalizada"
+    },
+    "palette": {
+      "primary": "Cor principal",
+      "accent": "Destaque",
+      "light": "Fundo"
+    },
+    "typeface": "Fonte",
+    "nameStyle": "Nome",
+    "nameStyles": {
+      "regular": "Normal",
+      "spaced": "Maiúsculas espaçadas",
+      "large": "Grande"
+    },
+    "logo": "Logo no cabeçalho",
+    "logos": {
+      "wide": "Logo horizontal",
+      "square": "Logo quadrado",
+      "reversed": "Logo invertido",
+      "none": "Sem logo"
+    },
+    "watermark": "Mostrar o logo suave atrás do texto",
+    "sizes": {
+      "s": "Pequeno",
+      "m": "Médio",
+      "l": "Grande"
+    },
+    "sectionBars": "Faixas de seção",
+    "sectionFills": {
+      "none": "Nenhuma",
+      "primary": "Cor principal",
+      "accent": "Destaque"
+    },
+    "fields": "Campos de paciente e data",
+    "fieldStyles": {
+      "plain": "Simples",
+      "underline": "Sublinhado",
+      "box": "Em caixa"
+    },
+    "footer": "Rodapé",
+    "columns": "Colunas",
+    "showLocations": "Mostrar os locais de atendimento",
+    "contacts": "Contatos",
+    "addContact": "Adicionar contato",
+    "contactKinds": {
+      "phone": "Telefone",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Site",
+      "email": "E-mail"
+    },
+    "band": "Faixa inferior",
+    "bandStyles": {
+      "none": "Nenhuma",
+      "flat": "Lisa",
+      "twoTone": "Duas cores",
+      "rounded": "Arredondada",
+      "angled": "Inclinada"
+    },
+    "texts": "Textos de cabeçalho e rodapé",
+    "headerText": "Texto do cabeçalho",
+    "footerText": "Texto do rodapé",
+    "preview": "Prévia",
+    "previewNote": "Dados de exemplo. Seus documentos reais usam os dados dos seus pacientes.",
+    "previewFailed": "Não foi possível mostrar a prévia. Seu design ainda pode ser salvo.",
+    "save": "Salvar design",
+    "saved": "Design salvo. Seus documentos passam a usar este visual.",
+    "conflict": "Este design foi alterado em outro lugar. Recarregue para ver a versão mais recente.",
+    "error": "Não foi possível salvar. Tente de novo.",
+    "letterhead": "Papel timbrado",
+    "letterheadHint": "Imprima uma página com o seu visual para cartas e orientações aos pacientes. Sem texto, ela sai em branco, para escrever à mão.",
+    "letterheadTitle": "Título (opcional)",
+    "letterheadBody": "Texto (opcional)",
+    "letterheadNotSaved": "O que você digitar aqui não é salvo.",
+    "printLetterhead": "Imprimir papel timbrado",
+    "posters": "Cartazes",
+    "postersHint": "Cartazes e imagens para redes sociais com o seu visual. Nunca com dados de pacientes.",
+    "poster": {
+      "template": "Modelo de cartaz",
+      "templates": {
+        "hours": "Horário de atendimento",
+        "service": "Um serviço",
+        "announcement": "Aviso",
+        "booking": "Agende online"
+      },
+      "format": "Formato",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Post do Instagram (PNG)",
+        "story": "Story do Instagram (PNG)"
+      },
+      "headline": "Título",
+      "text": "Texto",
+      "note": "Observação (opcional)",
+      "serviceName": "Serviço",
+      "serviceDescription": "Descrição curta",
+      "price": "Preço (opcional)",
+      "download": "Baixar",
+      "defaultHours": "Horário de atendimento",
+      "defaultBooking": "Agende sua consulta",
+      "scanToBook": "Escaneie para agendar",
+      "closed": "Fechado",
+      "noInviteCode": "O cartaz de agendamento precisa do seu código de convite (Configurações → Link de convite para pacientes).",
+      "newCodeNote": "Se você gerar um novo código de convite, baixe seus cartazes de novo; o QR antigo deixará de funcionar.",
+      "noHours": "Defina primeiro o seu horário de atendimento em Configurações."
+    },
+    "signature": "Assinatura",
+    "signatureHint": "Seu nome, especialidade e registro sempre saem sob a linha de assinatura. Você também pode adicionar uma imagem da sua assinatura de próprio punho.",
+    "signatureImage": "Adicionar a imagem da minha assinatura",
+    "signatureNotDigital": "A imagem da sua assinatura não é uma assinatura digital.",
+    "signaturePrivate": "Ela fica privada e só é colocada nos documentos que você emite: nunca em cartazes, papéis timbrados ou documentos emitidos pela sua equipe.",
+    "signatureLater": "Trocar ou remover a imagem afeta só os documentos emitidos depois.",
+    "signatureWhere": "A imagem da sua assinatura aparece na cópia compartilhada com o paciente. Os documentos impressos mostram o seu carimbo digitado, para assinar à mão."
+  },
+  "clockSkew": {
+    "banner": "A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo."
+  },
   "common": {
     "discardTitle": "Descartar alterações?",
     "discard": "Descartar",
     "keepEditing": "Continuar editando"
+  },
+  "videoTutorials": {
+    "title": "Vídeos tutoriais",
+    "subtitle": "Vídeos curtos mostrando cada parte do SolvyMed"
   }
 }

@@ -1,6 +1,8 @@
 import createMiddleware from "next-intl/middleware";
 import { isPublicLocale, isRetiredLocale, publicLocales } from "@/lib/publicLocales";
 import { createServerClient } from "@supabase/ssr";
+import type { User } from "@supabase/supabase-js";
+import { userWithRefresh } from "./lib/supabase/userWithRefresh";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
@@ -8,6 +10,7 @@ import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/l
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
 import { BROWSER_LANGUAGES_HEADER } from "./lib/signupCountry";
+import { APP_SHORTLINK_TARGET, isAppShortlink } from "./lib/appStores";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -18,6 +21,12 @@ const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
+
+  // solvymed.com/app → the Play listing (lib/appStores): first, before the
+  // locale and auth handling, which must never see it. No cookies set.
+  if (isAppShortlink(pathname, routing.locales)) {
+    return NextResponse.redirect(APP_SHORTLINK_TARGET, { status: 302 });
+  }
 
   // /pt/… and odd casing (/pt-br/…, /zh-tw/…) → the real locale prefix.
   const canonical = canonicalLocalePath(pathname, routing.locales);
@@ -46,7 +55,9 @@ export async function middleware(req: NextRequest) {
       },
     },
   );
-  const { data: { user } } = await supabase.auth.getUser();
+  // Refreshes once if the token turns out to be expired (a device clock off
+  // stores a shifted expiry the server would trust; lib/supabase/userWithRefresh).
+  const user = await userWithRefresh<User>(supabase.auth);
   const withAuthCookies = (res: NextResponse) => {
     refreshedCookies.forEach(({ name, value, options }) => res.cookies.set(name, value, options));
     return res;

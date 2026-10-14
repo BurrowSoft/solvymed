@@ -179,9 +179,28 @@ export function paletteColor(d: Pick<Design, "palette">, ref: PaletteRef): strin
   return d.palette[ref];
 }
 
-// The contacts a practice country offers (country config, never if-BR):
-// WhatsApp in Brazil, LINE in Thailand, the rest everywhere.
-export function contactKindsFor(country: string | null | undefined): ContactKind[] {
-  const extra: Record<string, ContactKind[]> = { BR: ["whatsapp"], TH: ["line"] };
-  return ["phone", ...(extra[country ?? ""] ?? []), "instagram", "site", "email"];
+// What the editor does per practice country (country config, never if-BR;
+// a new country = one entry here). Every contact kind is offered
+// everywhere; only the kind a new contact starts with follows the country
+// (02, 10-13). legalNote: the strings key naming the country's legal layout
+// (strings.json legalNote.<key>); null = no note.
+// Posters (02, 10-13; ad rules, on the lawyer list): posterSpecialty =
+// whether a poster may name the specialty (Brazil: only with an RQE, which
+// the profile doesn't hold yet, so no); posterPrice = whether a service
+// poster may show a price (Brazil: no). The name and registration line are
+// always printed.
+export type StudioCountry = { contact: ContactKind; legalNote: "BR" | "TH" | null; posterSpecialty: boolean; posterPrice: boolean };
+const STUDIO_COUNTRIES: Readonly<Record<string, StudioCountry>> = {
+  BR: { contact: "whatsapp", legalNote: "BR", posterSpecialty: false, posterPrice: false },
+  TH: { contact: "line", legalNote: "TH", posterSpecialty: true, posterPrice: true },
+};
+// The explicit default: any other country (or an unknown one); the
+// cautious choice on posters.
+const STUDIO_COUNTRY_DEFAULT: StudioCountry = { contact: "phone", legalNote: null, posterSpecialty: false, posterPrice: false };
+
+export function studioCountry(country: string | null | undefined): StudioCountry {
+  return STUDIO_COUNTRIES[(country ?? "").toUpperCase()] ?? STUDIO_COUNTRY_DEFAULT;
+}
+export function defaultContactKind(country: string | null | undefined): ContactKind {
+  return studioCountry(country).contact;
 }

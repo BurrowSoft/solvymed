@@ -76,6 +76,8 @@ export const HELP_UI: Record<HelpView, Record<string, string>> = {
     openOnWebsite: "Abrir no site",
     back: "← Central de Ajuda",
     support: "Ainda precisa de ajuda? Escreva para",
+    videos: "Vídeos tutoriais",
+    videosSubtitle: "Vídeos curtos mostrando cada parte do SolvyMed",
   },
   en: {
     title: "Help Center",
@@ -87,6 +89,8 @@ export const HELP_UI: Record<HelpView, Record<string, string>> = {
     openOnWebsite: "Open on the website",
     back: "← Help Center",
     support: "Still need help? Email",
+    videos: "Video tutorials",
+    videosSubtitle: "Short videos showing each part of SolvyMed",
   },
   // Thai (help-th-live; first-passed by Vitor with the articles).
   th: {
@@ -99,6 +103,8 @@ export const HELP_UI: Record<HelpView, Record<string, string>> = {
     openOnWebsite: "เปิดในเว็บไซต์",
     back: "← ศูนย์ช่วยเหลือ",
     support: "ยังต้องการความช่วยเหลือ? เขียนถึง",
+    videos: "วิดีโอสอนการใช้งาน",
+    videosSubtitle: "วิดีโอสั้นแนะนำการใช้งานแต่ละส่วนของ SolvyMed",
   },
 };
 
@@ -190,6 +196,8 @@ const WEB_SCREENS: Record<string, string> = {
   "settings-team": "/dashboard/settings#team",
   "settings-financial": "/dashboard/settings#clinic",
   "settings-patient-fields": "/dashboard/settings#patient-fields",
+  // Document Studio (C17): its own page on the web, opened from My brand.
+  "settings-studio": "/dashboard/settings/studio",
   // The practice's clinics and locations (C15): their own page on the web;
   // the app opens Settings → My Clinic ({ section: "clinic" }, 42).
   "settings-clinic": "/dashboard/clinics",

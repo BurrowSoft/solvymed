@@ -66,7 +66,30 @@ export function useFormDirty(enabled = true, key: unknown = null) {
     setDirty(false);
   }, []);
   useLeaveGuard(enabled && dirty);
-  return { ref, dirty: enabled && dirty, markClean, formProps: { ref, onChange: check, onInput: check } };
+  // onClick too: pickers made of buttons (a calendar day, a time chip, a
+  // location chip) change hidden inputs without an input event.
+  return { ref, dirty: enabled && dirty, markClean, formProps: { ref, onChange: check, onInput: check, onClick: check } };
+}
+
+// A dialog closing with its form unsaved: ✕, a click outside, Escape and the
+// dialog's own Cancel all ask "Discard changes?" while `dirty`; a clean one
+// closes at once (02: the clinical dialogs, New patient and appointments).
+// `paused`: another question is over this dialog (Escape is its, not ours).
+// Escape on the question itself is Keep editing (ec).
+export function useDialogDiscard(open: boolean, dirty: boolean, close: () => void, paused = false) {
+  const { ask, dialog, asking, keep } = useDiscardAsk();
+  const tryClose = useRef(() => {});
+  tryClose.current = () => ask(dirty, close);
+  const onEscape = useRef(() => {});
+  onEscape.current = asking ? keep : tryClose.current;
+  useEffect(() => {
+    if (!open || paused) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !e.defaultPrevented) onEscape.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, paused]);
+  const requestClose = useCallback(() => tryClose.current(), []);
+  return { requestClose, dialog, asking };
 }
 
 // "Discard changes?" [Discard] [Keep editing], inline where it's asked.
@@ -93,7 +116,8 @@ export function useDiscardAsk() {
   const dialog = pending ? (
     <DiscardConfirm className="mb-3" onDiscard={() => { const p = pending; setPending(null); p(); }} onKeep={() => setPending(null)} />
   ) : null;
-  return { ask, dialog, asking: pending !== null };
+  const keep = useCallback(() => setPending(null), []);
+  return { ask, dialog, asking: pending !== null, keep };
 }
 
 // Navigation done in code (SolvyAI, the language switch, the tour, signing
