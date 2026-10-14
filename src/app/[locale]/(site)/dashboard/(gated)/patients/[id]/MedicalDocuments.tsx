@@ -461,11 +461,12 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 }
 
 // The document's PDF, made in the browser once the access is logged
-// (documentPrintData fails closed). Returns the bytes, or an error code.
+// (documentPrintData fails closed). Returns the bytes and the issue day it
+// printed (YYYY-MM-DD), or an error code.
 // withSignature: only the patient's copy made when the document is issued
 // (02, 10-13); downloads and prints show the typed stamp only.
 export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
-  Promise<{ ok: true; bytes: Uint8Array } | { ok: false; code: string }> {
+  Promise<{ ok: true; bytes: Uint8Array; issued: string } | { ok: false; code: string }> {
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
   const d = r.data;
@@ -475,8 +476,10 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
   const brand = d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null;
   const idValue = d.idKind === "cpf" ? (d.patient.cpf ? formatCpfDigits(d.patient.cpf) : null) : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
   const idKind = d.idKind === "thai_id" && !d.patient.thId && d.patient.passport ? "passport" : d.idKind;
-  const created = new Date(doc.created_at);
-  const issuedIso = `${created.getFullYear()}-${String(created.getMonth() + 1).padStart(2, "0")}-${String(created.getDate()).padStart(2, "0")}`;
+  // The day it was issued in the PRACTICE's time zone, wherever it's read
+  // (fa's row: created 03:05 in Bangkok, read in São Paulo, printed the day
+  // before its own exam date).
+  const issuedIso = clinicDate(new Date(doc.created_at), d.timeZone);
   if (doc.doc_type === "controlled_prescription") {
     const f = doc.fields as ControlledFields;
     const [y, m, dd] = issuedIso.split("-");
@@ -494,7 +497,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
       template: { primaryColor: d.template.primaryColor, logoBytes },
       brand,
     }, fonts);
-    return { ok: true, bytes };
+    return { ok: true, bytes, issued: issuedIso };
   }
   // Document Studio: the whole document in the practice's saved design
   // (behind the document_studio flag; the server sends studio only then; the
@@ -517,7 +520,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
         imageCopyLine: signatureImage ? words.imageCopy ?? null : null,
       },
     }, studioFonts);
-    return { ok: true, bytes: designed };
+    return { ok: true, bytes: designed, issued: issuedIso };
   }
   const bytes = await renderMedicalDocumentPdf({
     locationLines: d.locationLines,
@@ -534,7 +537,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
     fontId,
   }, fonts);
-  return { ok: true, bytes };
+  return { ok: true, bytes, issued: issuedIso };
 }
 
 export function downloadPdf(bytes: Uint8Array, name: string) {

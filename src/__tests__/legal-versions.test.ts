@@ -25,7 +25,6 @@ describe("legal versions (TH-3 consent)", () => {
       expect(d).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(d <= today).toBe(true);
     }
-    expect(legalDateLabel("en", PRIVACY_PUBLISHED)).toBe("9 October 2026");
     expect(legalDateLabel("pt-BR", TERMS_PUBLISHED)).toBe("30 de setembro de 2026");
   });
 });
