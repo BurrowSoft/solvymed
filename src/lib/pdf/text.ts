@@ -10,8 +10,75 @@ import {
   setTextMatrix, showText, type Color, type PDFFont, type PDFPage,
 } from "pdf-lib";
 
-type Glyphs = { glyphs: { id: number }[]; positions: { xAdvance: number; xOffset: number; yOffset: number }[] };
-type FontkitFont = { unitsPerEm: number; layout(text: string): Glyphs };
+type Glyphs = { glyphs: { id: number; codePoints?: number[] }[]; positions: { xAdvance: number; xOffset: number; yOffset: number }[] };
+type FontkitFont = { unitsPerEm: number; layout(text: string): Glyphs; glyphForCodePoint?(cp: number): { id: number } | null };
+
+// The text layer (copy, search, screen readers): each glyph drawn maps to the
+// characters it stands for, as the shaped run says. pdf-lib builds that map
+// from the font's own cmap instead, which is wrong for the forms a layout
+// substitutes: Thai's .narrow / .small tone marks and vowels are also mapped
+// there from spacing modifier letters, so a whole-embedded font (Trirong,
+// Prompt) read "ป่" as "ปˡ" (ca, 10-15). A glyph standing for no character
+// (the tail of the น้ำ ligature) gets no entry, never a stray U+0003.
+const drawnChars = new WeakMap<PDFFont, Map<number, number[]>>();
+
+type Embedder = {
+  glyphId(glyph: { id: number }): number;
+  embedUnicodeCmap(context: { flateStream(s: string): unknown; register(o: unknown): unknown }): unknown;
+};
+
+const hex4 = (n: number) => n.toString(16).padStart(4, "0").toUpperCase();
+function utf16Hex(cp: number): string {
+  if (cp <= 0xffff) return hex4(cp);
+  const v = cp - 0x10000;
+  return hex4(0xd800 + (v >> 10)) + hex4(0xdc00 + (v & 0x3ff));
+}
+
+// The ToUnicode CMap for the glyphs in `chars` (glyph id → characters).
+export function toUnicodeCmap(entries: [cid: number, chars: number[]][]): string {
+  const lines = entries.filter(([, cps]) => cps.length).map(([cid, cps]) => `<${hex4(cid)}> <${cps.map(utf16Hex).join("")}>`);
+  // A bfchar block holds at most 100 entries.
+  const blocks: string[] = [];
+  for (let i = 0; i < lines.length; i += 100) {
+    const part = lines.slice(i, i + 100);
+    blocks.push(`${part.length} beginbfchar\n${part.join("\n")}\nendbfchar`);
+  }
+  return `/CIDInit /ProcSet findresource begin\n12 dict begin\nbegincmap\n/CIDSystemInfo <<\n  /Registry (Adobe)\n  /Ordering (UCS)\n  /Supplement 0\n>> def\n/CMapName /Adobe-Identity-UCS def\n/CMapType 2 def\n1 begincodespacerange\n<0000><ffff>\nendcodespacerange\n${blocks.join("\n")}\nendcmap\nCMapName currentdict /CMap defineresource pop\nend\nend`;
+}
+
+// Records the run's glyphs, and on the font's first use replaces pdf-lib's
+// ToUnicode with one built from what was drawn (subset or whole: the
+// embedder's glyphId gives the id the content stream uses).
+function remember(font: PDFFont, f: FontkitFont, glyphs: Glyphs["glyphs"]) {
+  const saraAa = f.glyphForCodePoint?.(0x0e32)?.id;
+  let map = drawnChars.get(font);
+  if (!map) {
+    map = new Map();
+    drawnChars.set(font, map);
+    const embedder = (font as unknown as { embedder?: Embedder }).embedder;
+    if (embedder) {
+      const chars = map;
+      embedder.embedUnicodeCmap = function (this: Embedder, context) {
+        const entries = [...chars].map(([id, cps]) => [this.glyphId({ id }), cps] as [number, number[]]);
+        return context.register(context.flateStream(toUnicodeCmap(entries)));
+      };
+    }
+  }
+  glyphs.forEach((g, i) => {
+    let cps = g.codePoints ?? [];
+    // Sara am (ำ = nikhahit + sara aa): fonts draw it as a ligature (nikhahit,
+    // with any tone mark) plus the ordinary sara aa glyph, which the layout
+    // leaves with no characters. One glyph id has one meaning in the text
+    // layer, and that glyph is "า" in every other word, so the cluster is
+    // written decomposed: the ligature as its tone + nikhahit, the tail as า
+    // (น้ำ reads "น้ํา", the same text after NFKD; never "น้ำา").
+    // (By glyph id: fontkit reuses one glyph object per id, so the tail can
+    // arrive carrying "า" from an earlier word.)
+    if (cps.at(-1) === 0x0e33 && glyphs[i + 1]?.id === saraAa) cps = [...cps.slice(0, -1), 0x0e4d];
+    if (g.id === saraAa) cps = [0x0e32];
+    if (!map.has(g.id)) map.set(g.id, cps);
+  });
+}
 
 // The fontkit font behind an embedded custom font (pdf-lib keeps it on its embedder).
 function fontkitOf(font: PDFFont): FontkitFont {
@@ -35,7 +102,8 @@ export function drawShaped(page: PDFPage, text: string, opts: { x: number; y: nu
   if (!text) return 0;
   const { x, y, font, size, color } = opts;
   const f = fontkitOf(font);
-  const { positions } = f.layout(text);
+  const { glyphs, positions } = f.layout(text);
+  remember(font, f, glyphs);
   const hex = font.encodeText(text).asString().replace(/[<>]/g, "");
   if (hex.length !== positions.length * 4) throw new Error("pdf: glyph count mismatch");
   const scale = size / f.unitsPerEm;
