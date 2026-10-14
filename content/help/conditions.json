@@ -241,6 +241,6 @@
   },
   "app-signature-device-only-live": {
     "met": false,
-    "what": "The app's drawn signature is device-only in a RELEASED store build (8d's #496: Android backups/transfers and iCloud backup exclude it) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
+    "what": "The app's drawn signature is device-only in a RELEASED store build: BOTH 8d's #496 (Android backups/transfers and iCloud backup exclude it) AND #497 (stored in the iOS Keychain this-device-only / Android Keystore; an iPhone keeps it across a reinstall, Android doesn't) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
   }
 }
