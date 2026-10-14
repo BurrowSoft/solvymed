@@ -634,7 +634,7 @@
             },
             {
               "type": "p",
-              "text": "{unless:app-signature-device-only-live} Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**."
+              "text": "Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**."
             },
             {
               "type": "p",
@@ -652,7 +652,7 @@
             },
             {
               "type": "p",
-              "text": "{unless:app-signature-device-only-live} For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**."
+              "text": "For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**."
             },
             {
               "type": "p",
