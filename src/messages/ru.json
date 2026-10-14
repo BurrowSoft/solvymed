@@ -2427,5 +2427,9 @@
     "discardTitle": "Отменить изменения?",
     "discard": "Отменить",
     "keepEditing": "Продолжить редактирование"
+  },
+  "videoTutorials": {
+    "title": "Видеоуроки",
+    "subtitle": "Короткие видео о каждой части SolvyMed"
   }
 }

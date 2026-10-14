@@ -2427,5 +2427,9 @@
     "discardTitle": "Abandonner les modifications ?",
     "discard": "Abandonner",
     "keepEditing": "Continuer la modification"
+  },
+  "videoTutorials": {
+    "title": "Video tutorials",
+    "subtitle": "Short videos showing each part of SolvyMed"
   }
 }

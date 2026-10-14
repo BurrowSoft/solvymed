@@ -2427,5 +2427,9 @@
     "discardTitle": "Änderungen verwerfen?",
     "discard": "Verwerfen",
     "keepEditing": "Weiter bearbeiten"
+  },
+  "videoTutorials": {
+    "title": "Video tutorials",
+    "subtitle": "Short videos showing each part of SolvyMed"
   }
 }

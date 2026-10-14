@@ -2427,5 +2427,9 @@
     "discardTitle": "要捨棄變更嗎？",
     "discard": "捨棄",
     "keepEditing": "繼續編輯"
+  },
+  "videoTutorials": {
+    "title": "影片教學",
+    "subtitle": "介紹 SolvyMed 各項功能的短片"
   }
 }
