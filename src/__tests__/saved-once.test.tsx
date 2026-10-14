@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
@@ -59,16 +59,28 @@ vi.mock("@/lib/supabase/server", () => ({
 
 const fd = (o: Record<string, string>) => { const f = new FormData(); for (const [k, v] of Object.entries(o)) f.set(k, v); return f; };
 
+// The actions modules, imported once before the tests: the first import is
+// slow when the whole suite loads the machine (it passed 30 s three times on
+// 10-14 inside the first test); a test's own time is then just its work.
+type Actions = typeof import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
+type DocActions = typeof import("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions");
+let actions: Actions;
+let docActions: DocActions;
+beforeAll(async () => {
+  [actions, docActions] = await Promise.all([
+    import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions"),
+    import("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-actions"),
+  ]);
+}, 180_000);
+
 describe("records and documents: a direct insert under the form's id", () => {
   beforeEach(() => { db.insertError = null; db.readBack = null; db.inserts.length = 0; db.rpcs.length = 0; });
 
   it("the record is inserted with the form's id", async () => {
-    const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
+    const { createRecord } = actions;
     expect(await createRecord("p1", fd({ content: "Retorno", client_id: ID }))).toEqual({ success: true });
     expect(db.inserts[0].row.id).toBe(ID);
-    // The first import of the actions module is slow on a busy runner (it
-    // timed out once at the default 5 s); the later tests reuse it.
-  }, 30_000);
+  });
 
   it("a repeat (23505) that reads back as this doctor's own row is a success; otherwise an error", async () => {
     const { createRecord } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/actions");
