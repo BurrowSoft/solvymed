@@ -143,3 +143,20 @@ Thai title: "บันทึกไว้แล้วก่อนการแก�
 หากคุณแก้ไขบางอย่างก่อนลองอีกครั้ง จะเห็น **รายการนี้บันทึกไว้แล้วก่อนการแก้ไขล่าสุดของคุณ การแก้ไขภายหลังยังไม่ถูกบันทึก โปรดตรวจสอบฉบับที่บันทึกไว้** และแบบฟอร์มจะปิดพร้อมแสดงฉบับที่บันทึกไว้
 ตรวจสอบฉบับที่บันทึกไว้ และหากจำเป็นให้แก้ไขตามปกติ: **แก้ไข** (ภายใน 24 ชั่วโมง) หรือ **เพิ่มรายการแก้ไข** ในเวชระเบียน ใบสั่งยา หรือเอกสาร และ **เลื่อนนัด** สำหรับนัดหมาย
 ใช้กับเวชระเบียน ใบสั่งยา เอกสาร ผู้ป่วยใหม่ นัดหมาย (รวมถึงนัดซ้ำ) และการปิดช่วงเวลา ทั้งในแอปและในเว็บไซต์
+
+---
+## K10. Vídeos tutoriais / Video tutorials
+**pt-BR**
+Vídeos curtos mostrando cada parte do SolvyMed, no YouTube, na playlist do país da sua clínica (Brasil em português, Tailândia em tailandês). Eles abrem numa nova aba.
+{pending:app-video-tutorials-live} No app: **Configurações → Suporte → Vídeos tutoriais** (médicos e secretárias).
+**en**
+Short videos showing each part of SolvyMed, on YouTube, in the playlist for your clinic's country (Brazil in Portuguese, Thailand in Thai). They open in a new tab.
+{pending:app-video-tutorials-live} In the app: **Settings → Support → Video tutorials** (doctors and secretaries).
+**No site:** **Vídeos tutoriais** fica no fim do menu lateral (médicos e secretárias), no rodapé do site e no topo da Central de Ajuda.
+**On the website:** **Video tutorials** is at the end of the side menu (doctors and secretaries), in the site footer and at the top of the Help Center.
+`open:none`
+Thai title: "วิดีโอสอนการใช้งาน"
+**th**
+วิดีโอสั้นแนะนำการใช้งานแต่ละส่วนของ SolvyMed บน YouTube ในเพลย์ลิสต์ของประเทศที่คลินิกของคุณตั้งอยู่ (บราซิลเป็นภาษาโปรตุเกส ไทยเป็นภาษาไทย) วิดีโอจะเปิดในแท็บใหม่
+{pending:app-video-tutorials-live} ในแอป: **การตั้งค่า → ช่วยเหลือ → วิดีโอสอนการใช้งาน** (แพทย์และเลขานุการ)
+**ในเว็บไซต์:** **วิดีโอสอนการใช้งาน** อยู่ท้ายเมนูด้านข้าง (แพทย์และเลขานุการ) ในส่วนท้ายของเว็บไซต์ และด้านบนของศูนย์ช่วยเหลือ

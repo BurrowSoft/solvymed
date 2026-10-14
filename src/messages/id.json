@@ -2427,5 +2427,9 @@
     "discardTitle": "Buang perubahan?",
     "discard": "Buang",
     "keepEditing": "Lanjutkan mengedit"
+  },
+  "videoTutorials": {
+    "title": "Tutorial video",
+    "subtitle": "Video singkat yang menunjukkan setiap bagian SolvyMed"
   }
 }

@@ -2427,5 +2427,9 @@
     "discardTitle": "تجاهل التغييرات؟",
     "discard": "تجاهل",
     "keepEditing": "متابعة التعديل"
+  },
+  "videoTutorials": {
+    "title": "دروس الفيديو",
+    "subtitle": "مقاطع فيديو قصيرة تعرض كل جزء من SolvyMed"
   }
 }

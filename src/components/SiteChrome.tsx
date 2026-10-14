@@ -1,4 +1,5 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { videoTutorialsUrl } from "@/lib/videoTutorials";
 import { LanguageSelector } from "@burrowsoft/shared";
 import { LegalLinks } from "@/components/LegalLinks";
 import { SignupCta } from "@/components/SignupCta";
@@ -50,6 +51,8 @@ export async function SiteHeader() {
 
 export async function SiteFooter() {
   const t = await getTranslations();
+  // The site language's country playlist; none in English yet (d6).
+  const videos = videoTutorialsUrl({ locale: await getLocale() });
   return (
     <footer className="border-t border-slate-100 bg-white py-10">
       <div className="mx-auto max-w-7xl px-4">
@@ -61,6 +64,11 @@ export async function SiteFooter() {
           <Link href="/pricing" className="text-sm text-slate-400 transition hover:text-teal-600">
             {t("pricing.navLabel")}
           </Link>
+          {videos && (
+            <a href={videos} target="_blank" rel="noopener noreferrer" data-testid="footer-video-tutorials" className="text-sm text-slate-400 transition hover:text-teal-600">
+              {t("videoTutorials.title")}
+            </a>
+          )}
           {/* The Founders Program (off until its launch). */}
           {liveFeatures.founders && (
             <Link href="/founders" className="text-sm text-slate-400 transition hover:text-teal-600">

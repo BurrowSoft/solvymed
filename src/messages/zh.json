@@ -2427,5 +2427,9 @@
     "discardTitle": "放弃更改？",
     "discard": "放弃",
     "keepEditing": "继续编辑"
+  },
+  "videoTutorials": {
+    "title": "视频教程",
+    "subtitle": "介绍 SolvyMed 各项功能的短视频"
   }
 }

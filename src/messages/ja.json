@@ -2427,5 +2427,9 @@
     "discardTitle": "変更を破棄しますか？",
     "discard": "破棄",
     "keepEditing": "編集を続ける"
+  },
+  "videoTutorials": {
+    "title": "動画チュートリアル",
+    "subtitle": "SolvyMed の各機能を紹介する短い動画"
   }
 }

@@ -2427,5 +2427,9 @@
     "discardTitle": "Bỏ các thay đổi?",
     "discard": "Bỏ",
     "keepEditing": "Tiếp tục sửa"
+  },
+  "videoTutorials": {
+    "title": "Video hướng dẫn",
+    "subtitle": "Video ngắn giới thiệu từng phần của SolvyMed"
   }
 }
