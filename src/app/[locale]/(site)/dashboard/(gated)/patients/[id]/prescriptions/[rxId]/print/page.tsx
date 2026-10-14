@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { readLocationLines } from "@/lib/locationLines";
 import { getTranslations } from "next-intl/server";
@@ -13,6 +14,9 @@ import { PrintToolbar } from "@/components/PrintToolbar";
 import { conditionMet } from "@/lib/conditions";
 import { ADDRESS_FIELDS, addressLine, type AddressColumns } from "@/lib/patientAddress";
 import { patientIdKind } from "@/lib/patientIds";
+import { loadStudioForDocument } from "@/lib/studio/forDocument";
+import { prescriptionContent } from "@/lib/studio/content";
+import { DesignedPrint } from "@/components/DesignedPrint";
 
 // The prescription's print view (Help P6 on the website): the same layout
 // as the app's PDF; "Imprimir / Salvar PDF" opens the print window, where
@@ -65,8 +69,38 @@ export default async function PrescriptionPrintPage({
   // header block, as the app's PDF; the signature stays the legal identity.
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
   const baseTemplate = toDocTemplate(templateResult.data as Record<string, unknown> | null);
+  const corrected = (correctionResult.data ?? []).length > 0;
 
-  return (
+  // Document Studio (PR4): with a saved design (and the document_studio
+  // flag), Print prints the designed PDF, the same one a shared copy is.
+  const studio = await loadStudioForDocument(supabase, user.id, () => "prescription", brand, {
+    fullName: prof?.full_name ?? "", registration: prof?.professional_registration ?? null,
+  });
+  // With the design, the designed PDF; today's view is its fallback (ec:
+  // a failed render must never leave a page that can't print).
+  const designedView = studio
+    ? (fallback: ReactNode) => (
+      <DesignedPrint
+        fallback={fallback}
+        backHref={`${prefix}/dashboard/patients/${patient.id}`}
+        fileName={`${t("title")} ${rx.date}.pdf`}
+        input={{
+          design: studio.design, locale, practice: studio.practice, logoUrls: studio.logos,
+          doc: {
+            ...prescriptionContent({
+              title: corrected ? `${t("title")} ${t("corrected")}` : t("title"),
+              patientLabel: t("patient"), patientName: patient.full_name, dateLabel: t("date"), date: docDate(country, rx.date),
+              items: (rx.prescription_items ?? []).map((it) => ({ name: it.name, form: it.dosage || null, instructions: [it.frequency, it.duration].filter((x) => x?.trim()).join(" · ") })),
+              notesLabel: t("notes"), notes: rx.notes?.trim() ? rx.notes : null,
+            }),
+            headerText: studio.texts.header, footerText: studio.texts.footer,
+          },
+        }}
+      />
+    )
+    : null;
+
+  const classic = (
     // A light scope: the print view stays light in the dashboard's dark
     // theme, on screen and in the PDF (Help C8).
     <div data-theme="light" className="min-h-screen bg-slate-50 px-4 py-8">
@@ -84,7 +118,7 @@ export default async function PrescriptionPrintPage({
           patientName={patient.full_name}
           patientAddress={addressLine(patient, patientIdKind(country))}
           date={docDate(country, rx.date)}
-          corrected={(correctionResult.data ?? []).length > 0}
+          corrected={corrected}
           items={rx.prescription_items ?? []}
           notes={rx.notes?.trim() ? rx.notes : null}
           signerName={prof?.full_name ?? ""}
@@ -93,4 +127,5 @@ export default async function PrescriptionPrintPage({
       </div>
     </div>
   );
+  return designedView ? designedView(classic) : classic;
 }

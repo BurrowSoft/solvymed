@@ -9,14 +9,19 @@ import {
 } from "@/lib/medicalDocuments";
 import { clinicDate } from "@/lib/clinicTime";
 import { correctMedicalDocument, createMedicalDocument, documentPrintData, updateMedicalDocument } from "../medical-documents-actions";
+import { loadDesignFontBytes } from "@/lib/pdf/fonts";
 import { copySharedNow } from "../documents-actions";
-import { loadFontBytes } from "@/lib/pdf/document";
 import { renderMedicalDocumentPdf } from "@/lib/pdf/medicalDocument";
 import { renderControlledPrescriptionPdf } from "@/lib/pdf/controlledPrescription";
 import { DateInput } from "@/components/DateInput";
 import { crmIssuer } from "@/lib/registration";
 import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
+import { renderDesignedDocument } from "@/lib/pdf/designed";
+import { createClient } from "@/lib/supabase/client";
+import { signatureBytes } from "@/lib/studio/signature";
+import { medicalDocumentContent } from "@/lib/studio/content";
+import { signalShareCheck } from "@/lib/shareSignal";
 
 // 1.8.0 B: the document dialog (flag 'clinical_documents'; cf's placement:
 // "+ Documento" in the patient's "Receitas e documentos"). The type first
@@ -85,7 +90,7 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
   onClose: () => void;
   // After a save (nothing to discard).
   // After a save; with the new / corrected document to share (1.8.0 B2).
-  onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean }) => void;
+  onSaved?: (saved?: { doc: MedDoc; correctsId: string | null; share: boolean; issued: boolean }) => void;
   // Saved before the doctor's last changes (216, a retry): the host closes
   // the dialog and shows the stored version with a message.
   onAlreadySaved?: () => void;
@@ -212,6 +217,8 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
     const reason = (new FormData(e.currentTarget as HTMLFormElement).get("reason") as string | null) ?? "";
     // The share decision is taken here, at the click, from the box as it is.
     const wantShare = canShare && shareChoice.current && sharesSnapshot(type);
+    // The box shown ticked but the choice read as off: the F1 shape (ec).
+    if (canShare && share && sharesSnapshot(type) && !wantShare) signalShareCheck("choice_mismatch", state.mode, { wantShare, hasId: null }, clientId);
     setError("");
     start(async () => {
       // share: the intent, recorded with the save (1.4, 220).
@@ -231,11 +238,15 @@ export function DocumentDialog({ state, patientId, patientName, country, hasPati
       // A new one is saved under the form's id (216): that id even if the
       // answer didn't carry it.
       const id = state.mode === "edit" ? state.doc.id : ((r.data as string | null) ?? (state.mode === "new" ? clientId : null));
+      // A share that only the form-id fallback saved (#536): the evidence F1 lacked.
+      if (wantShare && state.mode !== "edit" && !r.data) signalShareCheck("id_fallback", state.mode, { wantShare, hasId: !!r.data }, clientId);
       if (onSaved) {
         onSaved(id && type ? {
           doc: { id, doc_type: type, language: effLang, fields: fields as Record<string, unknown>, body: body.trim() || null, created_at: new Date().toISOString() } as MedDoc,
           correctsId: state.mode === "new" ? null : state.doc.id,
           share: wantShare,
+          // A new document or a correction is issued now; an edit isn't.
+          issued: state.mode !== "edit",
         } : undefined);
       } else onClose();
     });
@@ -451,12 +462,16 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 
 // The document's PDF, made in the browser once the access is logged
 // (documentPrintData fails closed). Returns the bytes, or an error code.
-export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null }):
+// withSignature: only the patient's copy made when the document is issued
+// (02, 10-13); downloads and prints show the typed stamp only.
+export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
   Promise<{ ok: true; bytes: Uint8Array } | { ok: false; code: string }> {
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
   const d = r.data;
-  const [fonts, logoBytes, brandLogo] = await Promise.all([loadFontBytes(), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
+  // The controlled prescription is a legal layout: always today's typeface.
+  const fontId = doc.doc_type === "controlled_prescription" ? "sarabun" : d.fontId;
+  const [fonts, logoBytes, brandLogo] = await Promise.all([loadDesignFontBytes(fontId), fetchBytes(d.template.logoUrl), fetchBytes(d.brand?.logoUrl ?? null)]);
   const brand = d.brand ? { logoBytes: brandLogo, initials: d.brand.initials, color: d.brand.color, name: d.brand.name, specialty: d.brand.specialty, registration: d.brand.registration } : null;
   const idValue = d.idKind === "cpf" ? (d.patient.cpf ? formatCpfDigits(d.patient.cpf) : null) : d.idKind === "thai_id" ? d.patient.thId ?? d.patient.passport : d.patient.passport;
   const idKind = d.idKind === "thai_id" && !d.patient.thId && d.patient.passport ? "passport" : d.idKind;
@@ -481,6 +496,29 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     }, fonts);
     return { ok: true, bytes };
   }
+  // Document Studio: the whole document in the practice's saved design
+  // (behind the document_studio flag; the server sends studio only then; the
+  // controlled prescription returned above: a legal layout, never designed).
+  if (d.studio) {
+    const [studioFonts, square, wide, reversed, signatureImage] = await Promise.all([
+      loadDesignFontBytes(d.studio.design.font), fetchBytes(d.studio.logos.square), fetchBytes(d.studio.logos.wide), fetchBytes(d.studio.logos.reversed),
+      opts.withSignature ? signatureBytes(createClient(), d.studio.signaturePath) : Promise.resolve(null),
+    ]);
+    const designed = await renderDesignedDocument({
+      design: d.studio.design, locale: doc.language, practice: d.studio.practice, logos: { square, wide, reversed }, signatureImage,
+      doc: {
+        ...medicalDocumentContent({
+          type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
+          issued: issuedIso, city: d.doctor.city ?? "", place: [d.doctor.clinicName, d.doctor.address].filter(Boolean).join(" "),
+          patientName: d.patient.name, patientId: idValue ? { label: idLabel(doc.language, idKind), value: idValue } : null,
+          signerName: d.doctor.name, licenceNo: d.doctor.registration, unsignedLine: words.unsignedCopy,
+        }),
+        headerText: d.studio.texts.header, footerText: d.studio.texts.footer,
+        imageCopyLine: signatureImage ? words.imageCopy ?? null : null,
+      },
+    }, studioFonts);
+    return { ok: true, bytes: designed };
+  }
   const bytes = await renderMedicalDocumentPdf({
     locationLines: d.locationLines,
     type: doc.doc_type, lang: doc.language, fields: doc.fields as DocFields, body: doc.body ?? "",
@@ -494,6 +532,7 @@ export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { f
     signerRegistration: registrationLine(d.country, doc.language, d.doctor.registration, d.doctor.state),
     licenceNo: d.doctor.registration,
     footer: PRINT[doc.language].footer, unsignedLine: words.unsignedCopy,
+    fontId,
   }, fonts);
   return { ok: true, bytes };
 }

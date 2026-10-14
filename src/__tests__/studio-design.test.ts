@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  CURATED_FONTS, DEFAULT_DESIGN, DESIGN_MAX_BYTES, PALETTE_PRESETS, contactKindsFor, validateDesign, type Design,
+  CURATED_FONTS, DEFAULT_DESIGN, DESIGN_MAX_BYTES, PALETTE_PRESETS, defaultContactKind, layoutFor, studioCountry, validateDesign, type Design,
 } from "@/lib/studio/design";
 
 // Document Studio PR1: the design JSON (the contract with the app, c5) and
@@ -41,7 +41,9 @@ describe("the design", () => {
     ["an unknown top-level key", (d: Record<string, unknown>) => { d.freeCanvas = true; }],
     ["a missing slot", (d: Record<string, unknown>) => { delete d.band; }],
     ["another version", (d: Record<string, unknown>) => { d.v = 2; }],
-    ["a layout outside the presets", (d: Record<string, unknown>) => { d.layout = "fancy"; }],
+    ["a malformed layout id", (d: Record<string, unknown>) => { d.layout = "Fancy Layout!"; }],
+    ["a layout id that isn't text", (d: Record<string, unknown>) => { d.layout = 3; }],
+    ["a layout id over 32 characters", (d: Record<string, unknown>) => { d.layout = "a" + "b".repeat(32); }],
     ["an uploaded font", (d: Record<string, unknown>) => { d.font = "comic-sans"; }],
     ["a non-hex colour", (d: Record<string, unknown>) => { (d.palette as Record<string, unknown>).primary = "red"; }],
     ["a prototype key as the preset", (d: Record<string, unknown>) => { (d.palette as Record<string, unknown>).preset = "constructor"; }],
@@ -77,11 +79,28 @@ describe("the design", () => {
     expect(new TextEncoder().encode(s).length).toBeGreaterThan(s.length);
   });
 
-  it("the contacts offered follow the practice country (config, not if-BR)", () => {
-    expect(contactKindsFor("BR")).toContain("whatsapp");
-    expect(contactKindsFor("BR")).not.toContain("line");
-    expect(contactKindsFor("TH")).toContain("line");
-    expect(contactKindsFor("TH")).not.toContain("whatsapp");
-    expect(contactKindsFor("US")).toEqual(["phone", "instagram", "site", "email"]);
+  it("a new contact's kind and the legal note follow the practice country (config + explicit default)", () => {
+    expect(defaultContactKind("BR")).toBe("whatsapp");
+    expect(defaultContactKind("TH")).toBe("line");
+    expect(defaultContactKind("th")).toBe("line");
+    expect(defaultContactKind("US")).toBe("phone");
+    expect(defaultContactKind(null)).toBe("phone");
+    expect(studioCountry("BR").legalNote).toBe("BR");
+    expect(studioCountry("TH").legalNote).toBe("TH");
+    expect(studioCountry("ZZ").legalNote).toBeNull();
+  });
+});
+
+// Layouts are data (Vitor 10-14): a design saved with a layout a newer
+// client added stays valid everywhere; this client draws it as Classic.
+describe("layout ids", () => {
+  it("any well-formed id is valid (a newer layout), the known ones too", () => {
+    for (const id of ["classic", "elegant", "watercolor", "clinic-2027", "aa"]) {
+      expect(validateDesign(withPatch((d) => { d.layout = id; })).ok).toBe(true);
+    }
+  });
+  it("layoutFor: a known id as is; an unknown one draws Classic", () => {
+    expect(layoutFor("modern")).toBe("modern");
+    expect(layoutFor("watercolor")).toBe("classic");
   });
 });

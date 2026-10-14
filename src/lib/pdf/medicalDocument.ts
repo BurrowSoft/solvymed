@@ -5,6 +5,7 @@
 // B.5's own lines. The same layouts as the app's. The controlled
 // prescription has its own Anvisa layout (controlledPrescription.ts).
 import { MUTED, Writer, hexColor, type FontBytes } from "./document";
+import type { FontId } from "@/lib/studio/design";
 import {
   PRINT, fill, longDate, thCertWords,
   type CertificateFields, type DocLang, type ExamRequestFields, type MedicalDocType, type ThCertificateFields,
@@ -23,6 +24,8 @@ export type MedicalDocPdfInput = {
   patientName: string;
   patientId: { label: string; value: string } | null;
   template: { primaryColor: string; footerText: string | null; logoBytes: Uint8Array | null };
+  // The design's typeface (Document Studio); Sarabun when absent.
+  fontId?: FontId;
   brand: { logoBytes: Uint8Array | null; initials: string; color: string; name: string; specialty: string; registration: string } | null;
   signerName: string;
   // Under the signer's name: the formatted line (registrationLine).
@@ -67,7 +70,7 @@ export async function renderMedicalDocumentPdf(input: MedicalDocPdfInput, fonts:
     signerRegistration: input.signerRegistration,
     unsignedLine: input.unsignedLine,
     locale: input.lang,
-  }, fonts);
+  }, fonts, input.fontId);
 
   if (input.type === "th_certificate") {
     // B.5: place + date, "I {doctor}, licence no. …", "examined {patient}, ID …",

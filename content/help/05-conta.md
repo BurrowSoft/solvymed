@@ -106,3 +106,40 @@ Thai title: "ไม่มีอินเทอร์เน็ต"
 ข้อมูลที่คุณพิมพ์ไว้จะยังอยู่ในแบบฟอร์ม เมื่อกลับมาเชื่อมต่อได้ ข้อความจะหายไปและคุณบันทึกได้
 `open:none`
 `requires:offline-guard-live`
+
+---
+
+## K8. Data e hora erradas / Wrong date and time
+**pt-BR**
+Se a data e a hora do seu dispositivo estiverem erradas (mais de 5 minutos), o SolvyMed mostra **A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo.**
+Ative a data e hora automáticas nas configurações do dispositivo. Você continua conectado e o que digitou não se perde; quando o relógio estiver certo, o aviso some sozinho.
+**en**
+If your device's date and time are wrong (by more than 5 minutes), SolvyMed shows **Your device's date and time look wrong. Turn on automatic date and time, then try again.**
+Turn on automatic date and time in your device's settings. You stay signed in and nothing you typed is lost; once the clock is right, the message goes away by itself.
+Thai title: "วันที่และเวลาไม่ถูกต้อง"
+**th**
+หากวันที่และเวลาในอุปกรณ์ของคุณไม่ถูกต้อง (คลาดเคลื่อนเกิน 5 นาที) SolvyMed จะแสดง **วันที่และเวลาในอุปกรณ์ของคุณดูเหมือนไม่ถูกต้อง เปิดการตั้งวันที่และเวลาอัตโนมัติ แล้วลองอีกครั้ง**
+เปิดการตั้งวันที่และเวลาอัตโนมัติในการตั้งค่าของอุปกรณ์ คุณยังคงลงชื่อเข้าใช้อยู่ และข้อมูลที่พิมพ์ไว้จะไม่หายไป เมื่อเวลาถูกต้องแล้ว ข้อความจะหายไปเอง
+`open:none`
+`requires:clock-skew-live`
+
+---
+## K9. Já salvo antes das suas alterações / Already saved before your changes
+**pt-BR**
+Se a conexão cair logo depois de você salvar, o SolvyMed pode não saber se salvou. Ao tentar de novo, ele nunca cria um segundo registro: se o primeiro já tinha sido salvo, é esse que fica.
+Se você mudou algo antes de tentar de novo, aparece **Isto já tinha sido salvo antes das suas últimas alterações. As alterações posteriores não foram aplicadas; confira a versão salva.** e o formulário fecha mostrando a versão salva.
+Confira a versão salva e, se precisar, altere-a como de costume: **Editar** (nas primeiras 24 horas) ou **Adicionar correção** num prontuário, receita ou documento; **Remarcar** numa consulta.
+Vale para prontuários, receitas, documentos, pacientes novos, consultas (também as recorrentes) e bloqueios de horário, no app e no site.
+**en**
+If the connection drops right after you save, SolvyMed may not know whether it saved. When you try again, it never makes a second record: if the first one was already saved, that one stays.
+If you changed something before trying again, you see **This was already saved before your last changes. Your later changes weren't applied; check the saved version.** and the form closes, showing the saved version.
+Check the saved version and, if needed, change it as usual: **Edit** (within 24 hours) or **Add correction** on a record, prescription or document; **Reschedule** on an appointment.
+This applies to records, prescriptions, documents, new patients, appointments (recurring ones too) and blocked time, in the app and on the website.
+`open:none`
+`requires:save-once-live`
+Thai title: "บันทึกไว้แล้วก่อนการแก้ไขของคุณ"
+**th**
+หากการเชื่อมต่อขาดหายทันทีหลังจากที่คุณบันทึก SolvyMed อาจไม่รู้ว่าบันทึกสำเร็จหรือไม่ เมื่อคุณลองอีกครั้ง ระบบจะไม่สร้างรายการซ้ำ หากรายการแรกบันทึกไว้แล้ว ก็จะใช้รายการนั้น
+หากคุณแก้ไขบางอย่างก่อนลองอีกครั้ง จะเห็น **รายการนี้บันทึกไว้แล้วก่อนการแก้ไขล่าสุดของคุณ การแก้ไขภายหลังยังไม่ถูกบันทึก โปรดตรวจสอบฉบับที่บันทึกไว้** และแบบฟอร์มจะปิดพร้อมแสดงฉบับที่บันทึกไว้
+ตรวจสอบฉบับที่บันทึกไว้ และหากจำเป็นให้แก้ไขตามปกติ: **แก้ไข** (ภายใน 24 ชั่วโมง) หรือ **เพิ่มรายการแก้ไข** ในเวชระเบียน ใบสั่งยา หรือเอกสาร และ **เลื่อนนัด** สำหรับนัดหมาย
+ใช้กับเวชระเบียน ใบสั่งยา เอกสาร ผู้ป่วยใหม่ นัดหมาย (รวมถึงนัดซ้ำ) และการปิดช่วงเวลา ทั้งในแอปและในเว็บไซต์

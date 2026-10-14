@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
@@ -10,6 +11,7 @@ import { BRAND_INPUT_MAX_BYTES, BRAND_INPUT_TYPES, BrandImageTooLarge, BrandNotA
 import { countryProfile } from "@/lib/country";
 import { withBrandTitle } from "@/lib/doctorName";
 import { BrandCropDialog } from "./BrandCropDialog";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
@@ -26,7 +28,7 @@ export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country }: {
+export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country, studioHref = null }: {
   uid: string;
   // Images, URLs and the preview (get_practice_brand).
   brand: Brand | null;
@@ -39,9 +41,12 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   fallback: { fullName: string; specialty: string; registration: string };
   // The PRACTICE country: the registration example follows it (registry).
   country?: string | null;
+  // Document Studio's page (PR3), only once Studio is live; null = no button.
+  studioHref?: string | null;
 }) {
   const t = useTranslations("brand");
   const tSettings = useTranslations("settings");
+  const tStudio = useTranslations("studio");
   const registrationExample = tSettings(countryProfile(country).examples.registration);
   const router = useRouter();
   const [displayName, setDisplayName] = useState(values?.display_name ?? "");
@@ -54,13 +59,20 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
   // preview from whatever is already in the fields; Save reads the fields.
   const fields = useRef<HTMLDivElement>(null);
   const read = (id: string) => (fields.current?.querySelector<HTMLInputElement>(`#${id}`)?.value ?? "");
+  // The texts and colour as loaded (or last saved): unsaved edits ask before
+  // the page is left (1.9.0, 02). The images upload at once.
+  const base = useRef<string | null>(null);
+  const loadedAccent = useRef<string | null>(values?.accent_color ?? null);
   useEffect(() => {
     setTitle(read("brand-title"));
     setDisplayName(read("brand-name"));
     setSpecialty(read("brand-specialty"));
     setRegistrationLine(read("brand-registration"));
+    base.current = JSON.stringify([read("brand-title"), read("brand-name"), read("brand-specialty"), read("brand-registration"), loadedAccent.current]);
   }, []);
   const [accent, setAccent] = useState<string | null>(values?.accent_color ?? null);
+  const current = JSON.stringify([title, displayName, specialty, registrationLine, accent]);
+  useLeaveGuard(base.current !== null && current !== base.current);
   const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [busy, setBusy] = useState<null | BrandImageKind>(null);
   const [imageError, setImageError] = useState("");
@@ -76,7 +88,7 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
       registrationLine: read("brand-registration"), accentColor: accent,
     });
     setState(res.ok ? "saved" : "error");
-    if (res.ok) router.refresh();
+    if (res.ok) { base.current = current; router.refresh(); }
   }
 
   // 1.8.0 G: a picked image is cropped first ("Ajustar imagem"); its
@@ -220,6 +232,15 @@ export function BrandCard({ uid, brand, values = null, valuesFailed = false, fal
           {state === "saved" && <span role="status" className="text-sm font-medium text-teal-700">{t("saved")}</span>}
           {state === "error" && <span role="alert" className="text-sm text-red-600">{t("saveError")}</span>}
         </div>
+
+        {studioHref && (
+          <div data-testid="brand-studio" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200 p-4">
+            <p className="min-w-0 flex-1 text-sm text-slate-600">{tStudio("intro")}</p>
+            <Link href={studioHref} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-teal-700 hover:bg-slate-50">
+              {tStudio("open")}
+            </Link>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -15,7 +15,9 @@
     "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
     "signupCta": "Bắt đầu dùng thử miễn phí",
     "haveAccount": "Đã có tài khoản?",
-    "preferApp": "Thích dùng ứng dụng? Tải về:"
+    "preferApp": "Thích dùng ứng dụng? Tải về:",
+    "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
+    "trialLineNoPrice": "Miễn phí {days} ngày · không cần thẻ tín dụng"
   },
   "highlights": {
     "h1": "Lịch hẹn thông minh",
@@ -2149,7 +2151,8 @@
     "removeUploadHint": "Bạn có thể gỡ cho đến khi bác sĩ mở (trong vòng 24 giờ).",
     "removeUploadConfirm": "Gỡ tài liệu này? Tài liệu sẽ bị xóa.",
     "titleLabel": "Tiêu đề",
-    "move": "Chuyển vào thư mục"
+    "move": "Chuyển vào thư mục",
+    "imageCopy": "Bản sao để bệnh nhân tham khảo. Không có chữ ký số."
   },
   "documents": {
     "tabTitle": "Đơn thuốc và tài liệu ({n})",
@@ -2217,7 +2220,7 @@
   },
   "privacyNotice": {
     "title": "Chúng tôi đã cập nhật Chính sách quyền riêng tư",
-    "body": "Xem những gì đã thay đổi vào {date}.",
+    "body": "Xem những gì đã thay đổi.",
     "read": "Đọc chính sách",
     "ok": "OK",
     "close": "Đóng",
@@ -2278,5 +2281,151 @@
   },
   "offline": {
     "banner": "Không có kết nối internet. Bạn có thể xem nội dung đang mở, nhưng các thay đổi sẽ không được lưu."
+  },
+  "studio": {
+    "open": "Document Studio",
+    "intro": "Cho tài liệu của bạn mang phong cách phòng khám của bạn. Mọi tài liệu đều theo cùng một phong cách.",
+    "legalNote": {
+      "BR": "Đơn thuốc kiểm soát đặc biệt giữ nguyên mẫu theo quy định.",
+      "TH": "Biên lai giữ nguyên mẫu theo quy định."
+    },
+    "layout": "Bố cục",
+    "layouts": {
+      "classic": "Cổ điển",
+      "elegant": "Thanh lịch",
+      "modern": "Hiện đại",
+      "minimal": "Tối giản"
+    },
+    "moreLayouts": "Bố cục mới được bổ sung thường xuyên.",
+    "unknownLayout": "Thiết kế này dùng bố cục từ phiên bản mới hơn. Ở đây nó hiển thị là Cổ điển cho đến khi bạn chọn bố cục khác.",
+    "colours": "Màu sắc",
+    "presets": {
+      "solvymed": "Xanh SolvyMed",
+      "sageSand": "Xanh xô thơm & cát",
+      "forestCream": "Xanh rừng & kem",
+      "navyGold": "Xanh navy & vàng",
+      "custom": "Tùy chỉnh"
+    },
+    "palette": {
+      "primary": "Màu chính",
+      "accent": "Màu nhấn",
+      "light": "Nền"
+    },
+    "typeface": "Kiểu chữ",
+    "nameStyle": "Tên",
+    "nameStyles": {
+      "regular": "Thường",
+      "spaced": "Chữ hoa giãn cách",
+      "large": "Lớn"
+    },
+    "logo": "Logo ở đầu trang",
+    "logos": {
+      "wide": "Logo ngang",
+      "square": "Logo vuông",
+      "reversed": "Logo đảo màu",
+      "none": "Không có logo"
+    },
+    "watermark": "Hiện logo mờ phía sau chữ",
+    "sizes": {
+      "s": "Nhỏ",
+      "m": "Vừa",
+      "l": "Lớn"
+    },
+    "sectionBars": "Thanh tiêu đề mục",
+    "sectionFills": {
+      "none": "Không",
+      "primary": "Màu chính",
+      "accent": "Màu nhấn"
+    },
+    "fields": "Ô bệnh nhân và ngày",
+    "fieldStyles": {
+      "plain": "Đơn giản",
+      "underline": "Gạch chân",
+      "box": "Có khung"
+    },
+    "footer": "Chân trang",
+    "columns": "Cột",
+    "showLocations": "Hiện địa điểm khám",
+    "contacts": "Liên hệ",
+    "addContact": "Thêm liên hệ",
+    "contactKinds": {
+      "phone": "Điện thoại",
+      "whatsapp": "WhatsApp",
+      "line": "LINE",
+      "instagram": "Instagram",
+      "site": "Trang web",
+      "email": "Email"
+    },
+    "band": "Dải dưới cùng",
+    "bandStyles": {
+      "none": "Không",
+      "flat": "Phẳng",
+      "twoTone": "Hai màu",
+      "rounded": "Bo tròn",
+      "angled": "Xiên"
+    },
+    "texts": "Văn bản đầu trang và chân trang",
+    "headerText": "Văn bản đầu trang",
+    "footerText": "Văn bản chân trang",
+    "preview": "Xem trước",
+    "previewNote": "Dữ liệu mẫu. Tài liệu thật của bạn dùng thông tin bệnh nhân của bạn.",
+    "previewFailed": "Không thể hiển thị bản xem trước. Bạn vẫn có thể lưu thiết kế.",
+    "save": "Lưu thiết kế",
+    "saved": "Đã lưu thiết kế. Từ giờ tài liệu của bạn sẽ dùng thiết kế này.",
+    "conflict": "Thiết kế này đã được thay đổi ở nơi khác. Tải lại để xem phiên bản mới nhất.",
+    "error": "Không lưu được. Hãy thử lại.",
+    "letterhead": "Giấy tiêu đề",
+    "letterheadHint": "In một trang theo thiết kế của bạn cho thư và tài liệu hướng dẫn bệnh nhân. Không có nội dung thì trang in trống để viết tay.",
+    "letterheadTitle": "Tiêu đề (không bắt buộc)",
+    "letterheadBody": "Nội dung (không bắt buộc)",
+    "letterheadNotSaved": "Nội dung bạn nhập ở đây không được lưu.",
+    "printLetterhead": "In giấy tiêu đề",
+    "posters": "Áp phích",
+    "postersHint": "Áp phích và hình ảnh mạng xã hội theo thiết kế của bạn. Không có dữ liệu bệnh nhân.",
+    "poster": {
+      "template": "Mẫu",
+      "templates": {
+        "hours": "Giờ làm việc",
+        "service": "Một dịch vụ",
+        "announcement": "Thông báo",
+        "booking": "Đặt lịch trực tuyến"
+      },
+      "format": "Định dạng",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Bài đăng Instagram (PNG)",
+        "story": "Story Instagram (PNG)"
+      },
+      "headline": "Tiêu đề",
+      "text": "Nội dung",
+      "note": "Ghi chú (không bắt buộc)",
+      "serviceName": "Dịch vụ",
+      "serviceDescription": "Mô tả ngắn",
+      "price": "Giá (không bắt buộc)",
+      "download": "Tải xuống",
+      "defaultHours": "Giờ làm việc",
+      "defaultBooking": "Đặt lịch khám",
+      "scanToBook": "Quét để đặt lịch",
+      "closed": "Nghỉ",
+      "noInviteCode": "Áp phích đặt lịch cần mã mời bệnh nhân của bạn (Cài đặt → Liên kết mời bệnh nhân).",
+      "newCodeNote": "Nếu bạn tạo mã mời mới, hãy tải lại áp phích; mã QR cũ sẽ không còn hoạt động.",
+      "noHours": "Hãy đặt giờ làm việc trong Cài đặt trước."
+    },
+    "signature": "Chữ ký",
+    "signatureHint": "Tên, chuyên khoa và số chứng chỉ hành nghề của bạn luôn được in dưới dòng chữ ký. Bạn cũng có thể thêm hình chữ ký tay của mình.",
+    "signatureImage": "Thêm hình chữ ký của tôi",
+    "signatureNotDigital": "Hình chữ ký không phải là chữ ký số.",
+    "signaturePrivate": "Hình này được giữ riêng tư và chỉ đặt trên tài liệu do bạn phát hành: không bao giờ trên áp phích, giấy tiêu đề hay tài liệu do nhóm của bạn phát hành.",
+    "signatureLater": "Thay đổi hoặc xóa chỉ ảnh hưởng đến tài liệu phát hành sau đó.",
+    "signatureWhere": "Hình chữ ký của bạn xuất hiện trên bản sao chia sẻ với bệnh nhân. Tài liệu in hiển thị con dấu đánh máy của bạn để ký tay."
+  },
+  "clockSkew": {
+    "banner": "Ngày và giờ trên thiết bị của bạn có vẻ không đúng. Hãy bật ngày và giờ tự động rồi thử lại."
+  },
+  "common": {
+    "discardTitle": "Bỏ các thay đổi?",
+    "discard": "Bỏ",
+    "keepEditing": "Tiếp tục sửa"
   }
 }
