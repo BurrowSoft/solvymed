@@ -49,13 +49,18 @@ describe("the PDFs' text layer matches the text, in every typeface", () => {
   for (const id of ["sarabun", "trirong", "prompt"] as const) {
     it(`${id}: every Thai mark and vowel, short and tall consonants, words`, async () => {
       const got = await roundTrip(id, CASES);
-      // NFKD: sara am is written decomposed (ำ = ํ + า, the same text).
-      const wrong = CASES.map((s, i) => [s, got[i]] as const).filter(([s, g]) => g.normalize("NFKD") !== s.normalize("NFKD"));
+      // NFKC: sara am is written decomposed (ำ = ํ + า), the same text after
+      // normalisation (d6, 10-15: accepted; don't "fix" it back).
+      const wrong = CASES.map((s, i) => [s, got[i]] as const).filter(([s, g]) => g.normalize("NFKC") !== s.normalize("NFKC"));
       expect(wrong, `${id}: ${wrong.map(([s, g]) => `${s} → ${g}`).join(", ")}`).toEqual([]);
       // No control characters (the old stray U+0003 after น้ำ), and sara aa
       // still reads as itself in the same document after a sara am.
       expect(got.join("")).not.toMatch(/[\u0000-\u001f]/);
       expect(got[CASES.indexOf("ป่า")]).toBe("ป่า");
+      // Sara am, on purpose: the decomposed form, one glyph per meaning. One
+      // glyph id has one meaning in the text layer, and the tail glyph is "า"
+      // in every other word: the composed ำ would need it to mean nothing here.
+      expect(got[CASES.indexOf("น้ำ")]).toBe("น้ํา");
     }, 60_000);
   }
 });
