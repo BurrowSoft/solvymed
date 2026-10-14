@@ -2378,7 +2378,39 @@
     "letterheadTitle": "제목(선택)",
     "letterheadBody": "내용(선택)",
     "letterheadNotSaved": "여기에 입력한 내용은 저장되지 않습니다.",
-    "printLetterhead": "레터헤드 인쇄"
+    "printLetterhead": "레터헤드 인쇄",
+    "posters": "포스터",
+    "postersHint": "디자인을 적용한 포스터와 SNS 이미지. 환자 정보는 포함되지 않습니다.",
+    "poster": {
+      "template": "템플릿",
+      "templates": {
+        "hours": "진료 시간",
+        "service": "서비스",
+        "announcement": "공지",
+        "booking": "온라인 예약"
+      },
+      "format": "형식",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Instagram 게시물 (PNG)",
+        "story": "Instagram 스토리 (PNG)"
+      },
+      "headline": "제목",
+      "text": "내용",
+      "note": "메모(선택)",
+      "serviceName": "서비스",
+      "serviceDescription": "짧은 설명",
+      "price": "가격(선택)",
+      "download": "다운로드",
+      "defaultHours": "진료 시간",
+      "defaultBooking": "진료를 예약하세요",
+      "scanToBook": "스캔하여 예약",
+      "closed": "휴무",
+      "noInviteCode": "예약 포스터에는 환자 초대 코드가 필요합니다(설정 → 환자 초대 링크).",
+      "newCodeNote": "새 초대 코드를 만들면 포스터를 다시 다운로드하세요. 이전 QR은 작동하지 않습니다.",
+      "noHours": "먼저 설정에서 진료 시간을 지정하세요."
+    }
   },
   "clockSkew": {
     "banner": "기기의 날짜와 시간이 잘못된 것 같습니다. 자동 날짜 및 시간을 켠 다음 다시 시도하세요."

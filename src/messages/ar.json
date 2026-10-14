@@ -2378,7 +2378,39 @@
     "letterheadTitle": "العنوان (اختياري)",
     "letterheadBody": "النص (اختياري)",
     "letterheadNotSaved": "ما تكتبه هنا لا يُحفظ.",
-    "printLetterhead": "طباعة الورق الرسمي"
+    "printLetterhead": "طباعة الورق الرسمي",
+    "posters": "الملصقات",
+    "postersHint": "ملصقات وصور لوسائل التواصل بتصميمك. دون أي بيانات للمرضى.",
+    "poster": {
+      "template": "القالب",
+      "templates": {
+        "hours": "ساعات العمل",
+        "service": "خدمة",
+        "announcement": "إعلان",
+        "booking": "احجز عبر الإنترنت"
+      },
+      "format": "الصيغة",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "منشور Instagram (PNG)",
+        "story": "قصة Instagram (PNG)"
+      },
+      "headline": "العنوان",
+      "text": "النص",
+      "note": "ملاحظة (اختياري)",
+      "serviceName": "الخدمة",
+      "serviceDescription": "وصف قصير",
+      "price": "السعر (اختياري)",
+      "download": "تنزيل",
+      "defaultHours": "ساعات العمل",
+      "defaultBooking": "احجز موعدك",
+      "scanToBook": "امسح للحجز",
+      "closed": "مغلق",
+      "noInviteCode": "يحتاج ملصق الحجز إلى رمز دعوة المرضى (الإعدادات ← رابط دعوة المرضى).",
+      "newCodeNote": "إذا أنشأت رمز دعوة جديدًا، فنزّل ملصقاتك مرة أخرى؛ سيتوقف رمز QR القديم عن العمل.",
+      "noHours": "حدّد ساعات عملك في الإعدادات أولًا."
+    }
   },
   "clockSkew": {
     "banner": "يبدو أن تاريخ ووقت جهازك غير صحيحين. فعّل التاريخ والوقت التلقائيين، ثم حاول مرة أخرى."

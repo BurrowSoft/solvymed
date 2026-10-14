@@ -2378,7 +2378,39 @@
     "letterheadTitle": "標題（選填）",
     "letterheadBody": "內文（選填）",
     "letterheadNotSaved": "此處輸入的內容不會儲存。",
-    "printLetterhead": "列印信箋"
+    "printLetterhead": "列印信箋",
+    "posters": "海報",
+    "postersHint": "依您的設計製作海報和社群圖片。不含任何病患資料。",
+    "poster": {
+      "template": "範本",
+      "templates": {
+        "hours": "門診時間",
+        "service": "服務",
+        "announcement": "公告",
+        "booking": "線上預約"
+      },
+      "format": "格式",
+      "formats": {
+        "a4": "A4（PDF）",
+        "a3": "A3（PDF）",
+        "post": "Instagram 貼文（PNG）",
+        "story": "Instagram 限時動態（PNG）"
+      },
+      "headline": "標題",
+      "text": "內文",
+      "note": "備註（選填）",
+      "serviceName": "服務",
+      "serviceDescription": "簡短說明",
+      "price": "價格（選填）",
+      "download": "下載",
+      "defaultHours": "門診時間",
+      "defaultBooking": "預約看診",
+      "scanToBook": "掃描預約",
+      "closed": "休診",
+      "noInviteCode": "預約海報需要您的病患邀請碼（設定 → 病患邀請連結）。",
+      "newCodeNote": "如果您產生新的邀請碼，請重新下載海報；舊的 QR 碼將失效。",
+      "noHours": "請先在設定中填寫門診時間。"
+    }
   },
   "clockSkew": {
     "banner": "您裝置上的日期和時間似乎不正確。請開啟自動設定日期和時間，然後再試一次。"

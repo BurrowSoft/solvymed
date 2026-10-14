@@ -2378,7 +2378,39 @@
     "letterheadTitle": "Título (opcional)",
     "letterheadBody": "Texto (opcional)",
     "letterheadNotSaved": "O que você digitar aqui não é salvo.",
-    "printLetterhead": "Imprimir papel timbrado"
+    "printLetterhead": "Imprimir papel timbrado",
+    "posters": "Cartazes",
+    "postersHint": "Cartazes e imagens para redes sociais com o seu visual. Nunca com dados de pacientes.",
+    "poster": {
+      "template": "Modelo de cartaz",
+      "templates": {
+        "hours": "Horário de atendimento",
+        "service": "Um serviço",
+        "announcement": "Aviso",
+        "booking": "Agende online"
+      },
+      "format": "Formato",
+      "formats": {
+        "a4": "A4 (PDF)",
+        "a3": "A3 (PDF)",
+        "post": "Post do Instagram (PNG)",
+        "story": "Story do Instagram (PNG)"
+      },
+      "headline": "Título",
+      "text": "Texto",
+      "note": "Observação (opcional)",
+      "serviceName": "Serviço",
+      "serviceDescription": "Descrição curta",
+      "price": "Preço (opcional)",
+      "download": "Baixar",
+      "defaultHours": "Horário de atendimento",
+      "defaultBooking": "Agende sua consulta",
+      "scanToBook": "Escaneie para agendar",
+      "closed": "Fechado",
+      "noInviteCode": "O cartaz de agendamento precisa do seu código de convite (Configurações → Link de convite para pacientes).",
+      "newCodeNote": "Se você gerar um novo código de convite, baixe seus cartazes de novo; o QR antigo deixará de funcionar.",
+      "noHours": "Defina primeiro o seu horário de atendimento em Configurações."
+    }
   },
   "clockSkew": {
     "banner": "A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo."
