@@ -25,6 +25,11 @@ export type DesignedInput = {
     locations: { name: string; lines: string[] }[];
   };
   logos: { square: Uint8Array | null; wide: Uint8Array | null; reversed: Uint8Array | null };
+  // The doctor's signature image (PNG), drawn above the signature line when
+  // the design turns it on. Only the patient's copy made when a document is
+  // issued passes it (02, 10-13: every on-demand render shows the typed
+  // stamp only); posters and letterheads never do.
+  signatureImage?: Uint8Array | null;
   // What the document says, as blocks (lib/studio/content builds them per
   // document type, in the order today's PDFs use).
   // headerText / footerText: the design's texts for this document type
@@ -34,7 +39,10 @@ export type DesignedInput = {
   // 02); default: the typed stamp.
   // runningHead: on a continuation page, a small line at the top (the
   // patient and the date, 02: a loose page 2 is never another patient's).
-  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none"; runningHead?: string | null };
+  doc: { title: string; blocks: DocBlock[]; unsignedLine?: string | null; headerText?: string | null; footerText?: string | null; signature?: "stamp" | "none"; runningHead?: string | null;
+  // The line printed under a signature image instead of unsignedLine
+  // ("… Not digitally signed."). Without it the image is never drawn (02).
+  imageCopyLine?: string | null };
 };
 
 export type DocBlock =
@@ -390,7 +398,8 @@ function footerColumns(groups: FooterGroup[], columns: number): FooterGroup[][] 
 // page. The footer (and the sidebar contacts) go on every page; the
 // signature on the last one, above the footer.
 type Bottom = { base: number; top: number; drawFooter: () => void; sigTop: number | null; drawSignature: () => void };
-function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
+const SIGNATURE_IMAGE_H = 42;
+function layoutBottom(c: Ctx, input: DesignedInput, sigImage: PDFImage | null): Bottom {
   const size = c.p.size.small;
   const lh = size * 1.5;
   const groups = footerGroups(c, input);
@@ -459,23 +468,34 @@ function layoutBottom(c: Ctx, input: DesignedInput): Bottom {
   // Signature above the footer (none on a letterhead without a body: 02).
   const signed = input.doc.signature !== "none";
   const sigTop = signed ? base + footerH + 24 + c.p.size.body * 1.4 + c.p.size.small * 1.4 + 6 : null;
+  // The signature image sits on the line: its height is room the content
+  // must leave on the last page.
+  const sigImgH = signed && sigImage ? SIGNATURE_IMAGE_H : 0;
   return {
     base,
     top: base + footerH,
-    sigTop,
+    sigTop: sigTop === null ? null : sigTop + sigImgH,
     drawFooter: () => { for (const op of ops) op(); },
     drawSignature: () => {
       if (sigTop === null) return;
       const sig = c.p.signature;
       const sx = sig.align === "center" ? c.left + (c.width - sig.width) / 2 : c.left + c.width - sig.width;
+      if (sigImage) {
+        const sc = Math.min(SIGNATURE_IMAGE_H / sigImage.height, sig.width / sigImage.width);
+        const w = sigImage.width * sc;
+        const x = sig.align === "center" ? sx + (sig.width - w) / 2 : sx + sig.width - w;
+        c.page.drawImage(sigImage, { x, y: sigTop + 1, width: w, height: sigImage.height * sc });
+      }
       c.y = sigTop;
       c.page.drawRectangle({ x: sx, y: c.y - 0.75, width: sig.width, height: 0.75, color: c.ink });
       c.y -= 4;
       line(c, input.practice.displayName, { size: c.p.size.body, bold: true, x: sx, width: sig.width, align: sig.align });
       const cred = [input.practice.specialty, input.practice.registrationLine].filter(Boolean).join(" · ");
       if (cred) line(c, cred, { size: c.p.size.small, x: sx, width: sig.width, align: sig.align, color: c.muted });
-      // A patient's copy (unsigned): its line under the signature block.
-      if (input.doc.unsignedLine) line(c, input.doc.unsignedLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
+      // A patient's copy: its line under the signature block ("unsigned
+      // copy", or with the image, "… not digitally signed").
+      const copyLine = sigImage ? input.doc.imageCopyLine : input.doc.unsignedLine;
+      if (copyLine) line(c, copyLine, { size: c.p.size.small * 0.9, x: sx, width: sig.width, align: sig.align, color: c.muted });
     },
   };
 }
@@ -517,7 +537,10 @@ export async function renderDesignedDocument(input: DesignedInput, fontBytes: Fo
       }
     },
   };
-  const bottom = layoutBottom(c, input);
+  // The signature image only when the design turns it on and the caller
+  // passed it (an issue-time patient copy).
+  const sigImage = d.signature.image && input.signatureImage && input.doc.imageCopyLine?.trim() ? await embedImage(pdf, input.signatureImage) : null;
+  const bottom = layoutBottom(c, input, sigImage);
   drawPage(c, wm);
   drawHeader(c, input, headerLogo(c, logos));
   // From here on, content stops above the footer and continues on a new page.

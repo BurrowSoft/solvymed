@@ -2151,7 +2151,8 @@
     "removeUploadHint": "Sie können es entfernen, bis Ihr Arzt es öffnet (innerhalb von 24 h).",
     "removeUploadConfirm": "Dieses Dokument entfernen? Es wird gelöscht.",
     "titleLabel": "Titel",
-    "move": "In Ordner verschieben"
+    "move": "In Ordner verschieben",
+    "imageCopy": "Kopie zur Information des Patienten. Nicht digital signiert."
   },
   "documents": {
     "tabTitle": "Rezepte und Dokumente ({n})",
@@ -2410,7 +2411,14 @@
       "noInviteCode": "The booking poster needs your patient invite code (Settings → Patient invite link).",
       "newCodeNote": "If you generate a new invite code, download your posters again; the old QR will stop working.",
       "noHours": "Set your working hours in Settings first."
-    }
+    },
+    "signature": "Signature",
+    "signatureHint": "Your name, specialty and registration always print under the signature line. You can also add an image of your handwritten signature.",
+    "signatureImage": "Add my signature image",
+    "signatureNotDigital": "An image of your signature is not a digital signature.",
+    "signaturePrivate": "It stays private and is placed only on the documents you issue: never on posters, letterheads or documents your team issues.",
+    "signatureLater": "Changing or removing it affects only documents issued afterwards.",
+    "signatureWhere": "Your signature image appears on the copy shared with the patient. Printed documents show your typed stamp, to sign by hand."
   },
   "clockSkew": {
     "banner": "Your device's date and time look wrong. Turn on automatic date and time, then try again."

@@ -319,6 +319,22 @@ const SNAPSHOT_WORDS: Record<DocLang, { unsignedCopy: string; title: Record<Shar
   it: { unsignedCopy: "Copia non firmata, per consultazione del paziente.",
     title: { certificate: "Certificato medico", declaration: "Dichiarazione medica", exam_request: "Richiesta di esami", th_certificate: "Certificato medico" } },
 };
+// Under a signature image (02, 10-13): the copy says it's for reference and
+// not digitally signed (the "unsigned copy" line stays for every copy
+// without the image). en / pt-BR / th: 02; es / fr / de / it: drafts.
+const IMAGE_COPY: Record<DocLang, string> = {
+  en: "Copy for the patient's reference. Not digitally signed.",
+  "pt-BR": "Cópia para consulta do paciente. Sem assinatura digital.",
+  th: "สำเนาสำหรับผู้ป่วยใช้อ้างอิง ไม่ได้ลงลายมือชื่อดิจิทัล",
+  es: "Copia para consulta del paciente. Sin firma digital.",
+  fr: "Copie pour information du patient. Sans signature numérique.",
+  de: "Kopie zur Information des Patienten. Nicht digital signiert.",
+  it: "Copia per consultazione del paziente. Senza firma digitale.",
+};
+export function snapshotImageCopyLine(lang: DocLang): string {
+  return IMAGE_COPY[lang];
+}
+
 export function snapshotUnsignedLine(lang: DocLang): string {
   return SNAPSHOT_WORDS[lang].unsignedCopy;
 }

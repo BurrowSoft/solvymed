@@ -2151,7 +2151,8 @@
     "removeUploadHint": "在医生打开之前(24 小时内)可以移除。",
     "removeUploadConfirm": "移除此文件?文件将被删除。",
     "titleLabel": "标题",
-    "move": "移到文件夹"
+    "move": "移到文件夹",
+    "imageCopy": "供患者参考的副本。未经数字签名。"
   },
   "documents": {
     "tabTitle": "处方和文件 ({n})",
@@ -2410,7 +2411,14 @@
       "noInviteCode": "预约海报需要您的患者邀请码（设置 → 患者邀请链接）。",
       "newCodeNote": "如果您生成了新的邀请码，请重新下载海报；旧的二维码将失效。",
       "noHours": "请先在设置中填写门诊时间。"
-    }
+    },
+    "signature": "签名",
+    "signatureHint": "您的姓名、专科和执业编号始终印在签名线下方。您也可以添加手写签名的图片。",
+    "signatureImage": "添加我的签名图片",
+    "signatureNotDigital": "签名图片不是电子签名。",
+    "signaturePrivate": "签名图片保持私密，只会放在您本人开具的文件上：绝不会出现在海报、信笺或您团队开具的文件上。",
+    "signatureLater": "更换或删除只影响之后开具的文件。",
+    "signatureWhere": "您的签名图片会出现在与患者共享的副本上。打印的文件显示您输入的签章信息，供您亲笔签名。"
   },
   "clockSkew": {
     "banner": "您设备上的日期和时间似乎不正确。请开启自动设置日期和时间，然后重试。"
