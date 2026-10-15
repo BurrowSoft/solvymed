@@ -12,9 +12,9 @@ import th from "@/messages/th.json";
 describe("which cut and promo each landing locale gets", () => {
   it.each([
     ["pt-BR", "br", "https://youtu.be/TdN3jxEczoQ"],
-    ["en", "br", "https://youtu.be/TdN3jxEczoQ"],
+    ["en", "br", null], // the BR clip, but no Portuguese-voiced tour (01)
     ["th", "th", "https://youtu.be/9zi10rrXTYY"],
-    ["ja", "br", "https://youtu.be/TdN3jxEczoQ"], // the explicit default
+    ["ja", "br", null], // the explicit default
   ])("%s → %s", (locale, cut, tour) => {
     expect(heroCut(locale)).toBe(cut);
     const m = heroMedia(locale);
