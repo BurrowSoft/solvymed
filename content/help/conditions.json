@@ -104,8 +104,8 @@
     "what": "Migration 147 is applied on production: connect_with_code(p_code) links with a personal or public code in one call (one counted attempt), and remove_invited_patient enqueues the patient's cancellation notices. The website's /auth/invite-required switches to it when met (before: link_patient_by_invite_code then link_by_professional_public_code)."
   },
   "invite-joined-push-live": {
-    "met": false,
-    "what": "The invite-joined push (\"Novo paciente\") is DELIVERED: the doctor and the secretaries get it when a patient joins with the practice's code (app or website signup). Migration 148 sends it from SQL (pg_net) without an Expo access token; since Expo's enhanced push security it gets a 403 and is never delivered (13, from 69's #513 row, 10-16), so this is false again (text = enforcement). Flips when 13's fix (outbox → clinic-notify) is live with a tester row. Gates its Help C5 / App Map lines."
+    "met": true,
+    "what": "The invite-joined push (\"Novo paciente\") is DELIVERED: the doctor and the secretaries get it when a patient joins with the practice's code (app or website signup). Migration 148 sent it from SQL without an Expo access token (403, never delivered; hidden 10-16 by #565); since migration 228 (#514) it goes through the outbox → clinic-notify. 69's #514 row 10-16: \"Um novo paciente entrou com seu código de convite\" arrived 18:07:01Z, no name, outbox row sent on the first attempt. Gates its Help C5 / App Map lines."
   },
   "status-reason-live": {
     "met": true,
@@ -256,7 +256,7 @@
     "what": "The app's appointment reminders carry NO patient name (01's plan change 10-15: Android doesn't honour an app's lock-screen setting on its channels, so hidden content can't be promised; replaces app-lockscreen-privacy-live) in a RELEASED store build (1.9.0; 13's ping). Gates Help C7's reminder line and the App Map's reminder rule."
   },
   "clinic-push-no-name-live": {
-    "met": false,
-    "what": "The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, false until the invite push is delivered), C5's no-name invite text, C7's invite sentence and their App Map rule."
+    "met": true,
+    "what": "Live 10-16 (#513: migration 227 + the clinic-notify deploy; 69's row: a booking request arrived with no name, 17:05Z, same code path for all 6 kinds). The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, delivered through clinic-notify since #514), C5's no-name invite text, C7's invite sentence and their App Map rule."
   }
 }

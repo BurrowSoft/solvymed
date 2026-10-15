@@ -1649,6 +1649,10 @@
             },
             {
               "type": "p",
+              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **Um novo paciente entrou com seu código de convite**."
+            },
+            {
+              "type": "p",
               "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele."
             }
           ],
@@ -1660,6 +1664,10 @@
             {
               "type": "p",
               "text": "Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge. On **Home**, tap **Keep** to keep the patient, or **Remove** to disconnect the account (the record is archived). If the email was already on another record, you see **Same email as {name}: merge?**."
+            },
+            {
+              "type": "p",
+              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **A new patient joined with your invite code**."
             },
             {
               "type": "p",
@@ -1718,12 +1726,28 @@
             {
               "type": "p",
               "text": "**Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário."
+            },
+            {
+              "type": "p",
+              "text": "As notificações da clínica (novos pedidos de consulta, cancelamentos, horários propostos aceitos ou recusados, pedidos de remarcação e documentos enviados pelo paciente) não mostram o nome do paciente."
+            },
+            {
+              "type": "p",
+              "text": "O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary."
+            },
+            {
+              "type": "p",
+              "text": "Clinic notifications (new booking requests, cancellations, accepted or declined time proposals, reschedule requests and documents a patient sends) don't show patient names."
+            },
+            {
+              "type": "p",
+              "text": "The notice that a new patient joined with your invite code doesn't show the name either."
             }
           ]
         },
