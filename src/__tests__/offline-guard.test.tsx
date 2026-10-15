@@ -136,6 +136,52 @@ describe("OfflineGuard", () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
+  // Screen readers (01, 10-15): aria-disabled on the blocked controls while
+  // offline, and one announcement from a live region that is always there.
+  it("offline: the blocked controls say aria-disabled, a control's own is kept; back online: restored", async () => {
+    render(
+      <NextIntlClientProvider locale="en" messages={en}>
+        <OfflineGuard />
+        <button type="submit">Save</button>
+        <button data-server>Share</button>
+        <button type="button">Close</button>
+        <button data-server aria-disabled="false">Own</button>
+        <div data-offline-ok><button type="submit">Search</button></div>
+      </NextIntlClientProvider>,
+    );
+    const btn = (name: string) => screen.getByText(name);
+    const announcer = screen.getByTestId("offline-announcer");
+    // Always on the page, a polite live region, empty while online.
+    expect(announcer.getAttribute("aria-live")).toBe("polite");
+    expect(announcer.textContent).toBe("");
+    expect(btn("Save").hasAttribute("aria-disabled")).toBe(false);
+
+    act(() => setOnline(false));
+    expect(announcer.textContent).toContain("No internet connection");
+    expect(btn("Save").getAttribute("aria-disabled")).toBe("true");
+    expect(btn("Share").getAttribute("aria-disabled")).toBe("true");
+    expect(btn("Close").hasAttribute("aria-disabled")).toBe(false);
+    expect(btn("Search").hasAttribute("aria-disabled")).toBe(false);
+    expect(btn("Own").getAttribute("aria-disabled")).toBe("false");
+    // The visible banner isn't a second live region.
+    expect(screen.getByTestId("offline-banner").hasAttribute("aria-live")).toBe(false);
+
+    // A control that appears while offline is marked too.
+    const late = document.createElement("button");
+    late.setAttribute("data-server", "");
+    late.textContent = "Late";
+    act(() => { document.body.appendChild(late); });
+    await act(async () => { await Promise.resolve(); });
+    expect(late.getAttribute("aria-disabled")).toBe("true");
+
+    act(() => setOnline(true));
+    expect(announcer.textContent).toBe("");
+    for (const n of ["Save", "Share"]) expect(btn(n).hasAttribute("aria-disabled")).toBe(false);
+    expect(late.hasAttribute("aria-disabled")).toBe(false);
+    expect(btn("Own").getAttribute("aria-disabled")).toBe("false");
+    late.remove();
+  });
+
   it("has the banner text in every language", async () => {
     const { readdirSync, readFileSync } = await import("node:fs");
     for (const f of readdirSync("src/messages")) {
