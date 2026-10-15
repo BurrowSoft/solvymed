@@ -79,6 +79,19 @@ describe('nameInitial()', () => {
     expect(nameInitial('Dra.')).toBe('D');
     expect(nameInitial('  ')).toBe('');
   });
+  it("skips a Thai title too", () => {
+    expect(nameInitial('นพ. ธีรวัฒน์ สุขใจ')).toBe('ธ');
+    expect(nameInitial('ทพญ.สุดา')).toBe('ส');
+    expect(nameInitial('นพดล ใจดี')).toBe('น');
+  });
+});
+
+describe("doctorDisplayName() with a Thai title (01: against the name)", () => {
+  it("full name and first only", () => {
+    expect(doctorDisplayName('นพ. ธีรวัฒน์ สุขใจ')).toBe('นพ.ธีรวัฒน์ สุขใจ');
+    expect(doctorDisplayName('พญ.สุดา ใจดี', true)).toBe('พญ.สุดา');
+    expect(doctorDisplayName('ดร. ดรุณี ใจดี', true)).toBe('ดร.ดรุณี');
+  });
 });
 
 // Web only: internal double spaces collapse (the app keeps them).
