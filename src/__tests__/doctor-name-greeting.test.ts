@@ -15,6 +15,8 @@ describe("greetingFirstName", () => {
     expect(greetingFirstName(`${title} ธีรวัฒน์ สุขใจ`, "x@y.com")).toBe(`${title}ธีรวัฒน์`);
     expect(greetingFirstName(`${title}ธีรวัฒน์ สุขใจ`, "x@y.com")).toBe(`${title}ธีรวัฒน์`);
     expect(greetingFirstName(`  ${title}   ธีรวัฒน์   สุขใจ `, "x@y.com")).toBe(`${title}ธีรวัฒน์`);
+    // Typed without the dot (then a space): the dot is added (b9; the app's #517).
+    expect(greetingFirstName(`${title.slice(0, -1)} ธีรวัฒน์ สุขใจ`, "x@y.com")).toBe(`${title}ธีรวัฒน์`);
   });
   it("ทพญ. is one title, not ทพ. + ญ.", () => {
     expect(greetingFirstName("ทพญ. สุดา ใจดี", "x@y.com")).toBe("ทพญ.สุดา");

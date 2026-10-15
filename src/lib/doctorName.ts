@@ -14,18 +14,19 @@ const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/
 const MAX_TITLES = 3;
 
 // Every supported country's titles (the Latin ones above; the Thai ones,
-// THAI_TITLE below, the same list greetingName uses). A Thai title is
-// written against the name, the usual Thai form (01, both platforms):
-// "นพ. ธีรวัฒน์" → "นพ.ธีรวัฒน์".
+// THAI_TITLE_LOOSE below: the same list greetingName uses, with or without
+// the dot). A Thai title is written with its dot, against the name, the
+// usual Thai form (01, both platforms; the app's #517): "นพ. ธีรวัฒน์" and
+// "นพ ธีรวัฒน์" → "นพ.ธีรวัฒน์".
 type Title = { text: string; attached: boolean };
 
 function splitTitles(name: string | null | undefined): { titles: Title[]; rest: string } {
   let rest = (name ?? "").trim().replace(/\s+/g, " ");
   const titles: Title[] = [];
   while (titles.length < MAX_TITLES) {
-    const thai = rest.match(THAI_TITLE);
+    const thai = rest.match(THAI_TITLE_LOOSE);
     const m = thai ? null : rest.match(TITLE);
-    if (thai) titles.push({ text: thai[1], attached: true });
+    if (thai) titles.push({ text: `${thai[1]}.`, attached: true });
     else if (m) titles.push({ text: `${m[1].charAt(0).toUpperCase()}${m[1].slice(1).toLowerCase()}${m[2] ?? ""}`, attached: false });
     else break;
     rest = rest.slice((thai ?? m)![0].length);
@@ -57,7 +58,7 @@ const THAI_TITLE = new RegExp(
 // A Thai title at the start of a name, with its dot or, without one,
 // followed by a space ("นพ.สมชาย", "นพ สมชาย"; never "ดร" inside "ดรุณี").
 const THAI_TITLE_LOOSE = new RegExp(
-  `^(?:${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
+  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
 );
 
 // The brand's name with its chosen title (1.5.0 My brand; e7, both
