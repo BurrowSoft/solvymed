@@ -104,8 +104,8 @@
     "what": "Migration 147 is applied on production: connect_with_code(p_code) links with a personal or public code in one call (one counted attempt), and remove_invited_patient enqueues the patient's cancellation notices. The website's /auth/invite-required switches to it when met (before: link_patient_by_invite_code then link_by_professional_public_code)."
   },
   "invite-joined-push-live": {
-    "met": true,
-    "what": "Migration 148 is live (server-side, pg_net): the doctor and the secretaries get the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
+    "met": false,
+    "what": "The invite-joined push (\"Novo paciente\") is DELIVERED: the doctor and the secretaries get it when a patient joins with the practice's code (app or website signup). Migration 148 sends it from SQL (pg_net) without an Expo access token; since Expo's enhanced push security it gets a 403 and is never delivered (13, from 69's #513 row, 10-16), so this is false again (text = enforcement). Flips when 13's fix (outbox → clinic-notify) is live with a tester row. Gates its Help C5 / App Map lines."
   },
   "status-reason-live": {
     "met": true,
