@@ -2,7 +2,9 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { TRIAL_DAYS } from "@/lib/subscription";
 import { landingPrice } from "@/lib/pricingCountry";
+import { heroMedia } from "@/lib/heroMedia";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
+import { HeroClip } from "@/components/HeroClip";
 import { SignupCta } from "@/components/SignupCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ThaiLandingSection } from "@/components/ThaiLandingSection";
@@ -67,6 +69,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   setRequestLocale(locale);
 
   const t = await getTranslations();
+  const hero = heroMedia(locale);
 
   const features = FEATURE_KEYS.map((key) => ({
     key,
@@ -102,37 +105,61 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <rect width="100%" height="100%" fill="url(#grid)" />
             </svg>
           </div>
-          <div className="relative mx-auto max-w-4xl px-4 text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-4 py-1.5 text-sm font-medium text-teal-300">
-              <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-teal-400" />
-              {t("hero.badge")}
+          {/* Copy + CTA, then the clip, then the app buttons (mobile, one
+              column); from md on: the clip to the right of both. */}
+          <div className="relative mx-auto max-w-6xl px-4 text-center md:grid md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-x-16 md:text-left">
+            <div className="md:col-start-1 md:row-start-1">
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-teal-400/30 bg-teal-400/10 px-4 py-1.5 text-sm font-medium text-teal-300">
+                <span className="inline-block h-2 w-2 animate-pulse rounded-full bg-teal-400" />
+                {t("hero.badge")}
+              </div>
+              <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
+                {t("hero.line1")}{" "}
+                <span className="text-teal-400">{t("hero.line2")}</span>
+              </h1>
+              <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:mx-0 md:text-xl">
+                {t("hero.subtitle")}
+              </p>
+
+              <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center md:justify-start">
+                <SignupCta
+                  label={t("hero.signupCta")}
+                  className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+                />
+                {hero.tourUrl && (
+                  <a
+                    href={hero.tourUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-testid="hero-tour"
+                    className="inline-flex items-center gap-2 rounded-xl border border-teal-300/40 px-6 py-4 text-lg font-semibold text-teal-100 transition hover:border-teal-200 hover:bg-white/5 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+                  >
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-5 w-5 shrink-0">
+                      <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z" />
+                    </svg>
+                    {t("hero.watchTour")}
+                  </a>
+                )}
+              </div>
+              <p data-testid="hero-trial" className="mt-3 text-sm font-medium text-teal-100">
+                {(() => {
+                  const price = landingPrice(locale);
+                  return price ? t("hero.trialLine", { days: TRIAL_DAYS, price }) : t("hero.trialLineNoPrice", { days: TRIAL_DAYS });
+                })()}
+              </p>
+              <p className="mt-4 text-sm text-slate-300 sm:hidden">
+                {t("hero.haveAccount")}{" "}
+                <Link href="/auth/login" className="font-semibold text-teal-300 underline hover:text-teal-200">
+                  {t("auth.logIn")}
+                </Link>
+              </p>
             </div>
-            <h1 className="mb-6 text-4xl font-extrabold leading-tight tracking-tight md:text-6xl">
-              {t("hero.line1")}{" "}
-              <span className="text-teal-400">{t("hero.line2")}</span>
-            </h1>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-slate-300 md:text-xl">
-              {t("hero.subtitle")}
-            </p>
 
-            <SignupCta
-              label={t("hero.signupCta")}
-              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
-            />
-            <p data-testid="hero-trial" className="mt-3 text-sm font-medium text-teal-100">
-              {(() => {
-                const price = landingPrice(locale);
-                return price ? t("hero.trialLine", { days: TRIAL_DAYS, price }) : t("hero.trialLineNoPrice", { days: TRIAL_DAYS });
-              })()}
-            </p>
-            <p className="mt-4 text-sm text-slate-300 sm:hidden">
-              {t("hero.haveAccount")}{" "}
-              <Link href="/auth/login" className="font-semibold text-teal-300 underline hover:text-teal-200">
-                {t("auth.logIn")}
-              </Link>
-            </p>
+            <div className="mt-12 flex justify-center md:col-start-2 md:row-span-2 md:row-start-1 md:mt-0">
+              <HeroClip poster={hero.poster} mp4={hero.mp4} webm={hero.webm} />
+            </div>
 
-            <div id="download" className="mt-12">
+            <div id="download" className="mt-12 md:col-start-1 md:row-start-2 md:[&>div]:justify-start">
               <p className="mb-4 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
               <AppDownloadButtons />
             </div>

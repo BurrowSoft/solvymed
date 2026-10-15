@@ -14,6 +14,7 @@
     "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
     "iosBetaHint": "需要 Apple 免费的 TestFlight 应用",
     "signupCta": "开始免费试用",
+    "watchTour": "观看 2 分钟导览",
     "haveAccount": "已有账户？",
     "preferApp": "更喜欢用应用？在此下载：",
     "trialLine": "免费 {days} 天 · 无需信用卡 · 之后每月 {price}",

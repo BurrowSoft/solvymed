@@ -14,6 +14,7 @@
     "iosBeta": "Бета для iPhone – установка через TestFlight",
     "iosBetaHint": "Нужно бесплатное приложение TestFlight от Apple",
     "signupCta": "Начать бесплатный период",
+    "watchTour": "Смотреть 2-минутный обзор",
     "haveAccount": "Уже есть аккаунт?",
     "preferApp": "Удобнее в приложении? Скачайте:",
     "trialLine": "{days} дней бесплатно · без кредитной карты · затем {price}/мес.",
