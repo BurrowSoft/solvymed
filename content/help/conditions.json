@@ -251,12 +251,12 @@
     "met": false,
     "what": "The app's drawn signature is device-only in a RELEASED store build: BOTH 8d's #496 (Android backups/transfers and iCloud backup exclude it) AND #497 (stored in the iOS Keychain this-device-only / Android Keystore; an iPhone keeps it across a reinstall, Android doesn't) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
   },
-  "app-lockscreen-privacy-live": {
+  "app-reminder-no-name-live": {
     "met": false,
-    "what": "Mobile #510 (1.9.0 privacy item, 01) is in a RELEASED store build: on Android, the in-app appointment REMINDERS go through the new private channel \"Notificações da clínica\" / \"Clinic notifications\" / \"การแจ้งเตือนของคลินิก\" (a locked screen shows only that SolvyMed has a notification; the text after unlocking). Patient pushes stay on the public \"SolvyMed\" channel; iOS unchanged. Gates Help C7's first lock-screen line and the App Map's stage-1 rule."
+    "what": "The app's appointment reminders carry NO patient name (01's plan change 10-15: Android doesn't honour an app's lock-screen setting on its channels, so hidden content can't be promised; replaces app-lockscreen-privacy-live) in a RELEASED store build (1.9.0; 13's ping). Gates Help C7's reminder line and the App Map's reminder rule."
   },
-  "clinic-push-privacy-live": {
+  "clinic-push-no-name-live": {
     "met": false,
-    "what": "The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; all name the patient) go through the private \"Clinic notifications\" channel too: mobile #503's Edge Function deploy (13 pings after it). Until then they stay on the public \"SolvyMed\" channel. Gates Help C7's second lock-screen line and the App Map's stage-2 rule (both also need app-lockscreen-privacy-live)."
+    "what": "The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document) carry NO patient name: 13's clinic-notify text change deployed (independent of the app release; 13 pings after the deploy; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule."
   }
 }

@@ -143,19 +143,19 @@ Thai title: "ล็อกแอป"
 ## C7. Lembretes e notificações / Reminders and notifications
 **pt-BR**
 **Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário.
-{pending:app-lockscreen-privacy-live} No Android, com o celular bloqueado por PIN, padrão ou digital, os lembretes de consulta escondem os dados do paciente na tela bloqueada; desbloqueie o celular para vê-los.
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} As notificações da clínica que citam um paciente (novos pedidos de consulta, cancelamentos, remarcações e documentos enviados pelo paciente) fazem o mesmo.
+{pending:app-reminder-no-name-live} Os lembretes de consulta não mostram o nome do paciente; abra o app para ver com quem é a consulta.
+{pending:clinic-push-no-name-live} As notificações da clínica (novos pedidos de consulta, cancelamentos, remarcações e documentos enviados pelo paciente) não mostram o nome do paciente.
 **en**
 **Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
-{pending:app-lockscreen-privacy-live} On Android, when the phone is locked with a PIN, pattern or fingerprint, appointment reminders hide patient details on the lock screen; unlock the phone to see them.
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} Clinic notifications that name a patient (new booking requests, cancellations, reschedules and documents a patient sends) do the same.
+{pending:app-reminder-no-name-live} Appointment reminders don't show the patient's name; open the app to see who the visit is with.
+{pending:clinic-push-no-name-live} Clinic notifications (new booking requests, cancellations, reschedules and documents a patient sends) don't show patient names.
 **No site:** Os lembretes e notificações são do app; o site não envia notificações.
 **On the website:** Reminders and notifications are app features; the website doesn't send notifications.
 Thai title: "การเตือนและการแจ้งเตือน"
 **th**
 ใน **การตั้งค่า** ส่วนการแจ้งเตือน เปิดการเตือนนัดหมาย เลือกว่าจะเตือนล่วงหน้าเท่าใด (15 นาที 1 ชั่วโมง 2 ชั่วโมง หรือ 24 ชั่วโมง) และสรุปประจำวัน
-{pending:app-lockscreen-privacy-live} บน Android เมื่อล็อกโทรศัพท์ด้วย PIN รูปแบบ หรือลายนิ้วมือ การเตือนนัดหมายจะซ่อนข้อมูลผู้ป่วยบนหน้าจอล็อก ปลดล็อกโทรศัพท์เพื่อดูข้อมูล
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} การแจ้งเตือนของคลินิกที่ระบุชื่อผู้ป่วย (คำขอนัดหมายใหม่ การยกเลิก การเลื่อนนัด และเอกสารที่ผู้ป่วยส่ง) ก็ทำแบบเดียวกัน
+{pending:app-reminder-no-name-live} การเตือนนัดหมายจะไม่แสดงชื่อผู้ป่วย เปิดแอปเพื่อดูว่านัดกับใคร
+{pending:clinic-push-no-name-live} การแจ้งเตือนของคลินิก (คำขอนัดหมายใหม่ การยกเลิก การเลื่อนนัด และเอกสารที่ผู้ป่วยส่ง) จะไม่แสดงชื่อผู้ป่วย
 **ในเว็บไซต์:** การเตือนและการแจ้งเตือนเป็นฟีเจอร์ของแอป เว็บไซต์ไม่ส่งการแจ้งเตือน
 `open:settings-notifications`
 
