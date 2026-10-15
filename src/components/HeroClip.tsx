@@ -3,10 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 
 // The landing hero's silent product clip in a phone frame. Decorative
-// (aria-hidden, no controls). The poster renders with the page; the video's
-// sources are added only once the page is idle AND the frame is in view, so
-// the clip never competes with the page's first paint. Paused while off
-// screen. Reduced motion or Save-Data: the poster only, the video never loads.
+// (aria-hidden, no controls). The poster is a lazy <img> under the video
+// (not the video's poster attribute, which loads eagerly): on a phone the
+// frame is below the fold and the poster would compete with the hero text
+// for the first paint (Lighthouse mobile LCP). The video's sources are added
+// only once the page is idle AND the frame is in view; it then covers the
+// poster. Paused while off screen. Reduced motion or Save-Data: the poster
+// only, the video never loads.
 export function HeroClip({ poster, mp4, webm }: { poster: string; mp4: string; webm: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [load, setLoad] = useState(false);
@@ -74,14 +77,15 @@ export function HeroClip({ poster, mp4, webm }: { poster: string; mp4: string; w
     <div
       aria-hidden="true"
       data-testid="hero-clip"
-      className="w-52 shrink-0 overflow-hidden rounded-[2.25rem] border-[6px] border-slate-800 bg-slate-900 shadow-2xl ring-1 ring-white/10 md:w-64"
+      className="relative w-52 shrink-0 overflow-hidden rounded-[2.25rem] border-[6px] border-slate-800 bg-slate-900 shadow-2xl ring-1 ring-white/10 md:w-64"
     >
+      {/* eslint-disable-next-line @next/next/no-img-element -- a static poster; next/image would add a wrapper and srcset for one size */}
+      <img src={poster} alt="" width={540} height={960} loading="lazy" decoding="async" className="block aspect-[9/16] h-auto w-full object-cover" />
       <video
         ref={ref}
-        className="block aspect-[9/16] h-auto w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover"
         width={540}
         height={960}
-        poster={poster}
         autoPlay={load}
         muted
         loop

@@ -78,7 +78,12 @@ describe("HeroClip", () => {
   it("renders the poster only, decorative, with no sources before idle + in view", () => {
     render(<HeroClip {...props} />);
     expect(screen.getByTestId("hero-clip").getAttribute("aria-hidden")).toBe("true");
-    expect(video().getAttribute("poster")).toBe(props.poster);
+    // A lazy <img>, not the eager poster attribute (mobile LCP).
+    const img = screen.getByTestId("hero-clip").querySelector("img")!;
+    expect(img.getAttribute("src")).toBe(props.poster);
+    expect(img.getAttribute("loading")).toBe("lazy");
+    expect(img.getAttribute("alt")).toBe("");
+    expect(video().hasAttribute("poster")).toBe(false);
     expect(video().getAttribute("preload")).toBe("none");
     expect(video().hasAttribute("controls")).toBe(false);
     expect(video().muted).toBe(true);
