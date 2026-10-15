@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { greetingFirstName, greetingName } from "@/lib/doctorName";
+import { doctorDisplayName, greetingFirstName, greetingName, shortDoctorName } from "@/lib/doctorName";
 
 // UX (Vitor's secretary test): greet with the user's own first name, or
 // none when it's empty or just the email's local part.
@@ -43,6 +43,15 @@ describe("greetingFirstName", () => {
     expect(greetingName("นพดล ใจดี")).toEqual({ title: "", first: "นพดล" });
     expect(greetingName("Dra. Ana Souza")).toEqual({ title: "Dra.", first: "Ana" });
     expect(greetingName("Prof. Dr. Carlos Melo")).toEqual({ title: "Prof. Dr.", first: "Carlos" });
+  });
+  // Two Thai titles: only the last one is against the name (b9; the app's
+  // #517 line 88: "ดร. นพ.สมชาย").
+  it("stacked Thai titles stay space-separated", () => {
+    expect(doctorDisplayName("ดร. นพ. สมชาย ดี")).toBe("ดร. นพ.สมชาย ดี");
+    expect(doctorDisplayName("ดร.นพ.สมชาย ดี", { firstOnly: true })).toBe("ดร. นพ.สมชาย");
+    expect(shortDoctorName("ดร. นพ. สมชาย ใจ ดี")).toBe("ดร. นพ.สมชาย ดี");
+    expect(greetingName("ดร. นพ. สมชาย ดี")).toEqual({ title: "ดร. นพ.", first: "สมชาย" });
+    expect(greetingFirstName("ดร นพ สมชาย ดี", "x@y.com")).toBe("ดร. นพ.สมชาย");
   });
   it("none when empty or the email's local part", () => {
     expect(greetingFirstName("", "a@b.com")).toBe("");

@@ -33,10 +33,13 @@ function splitTitles(name: string | null | undefined): { titles: Title[]; rest: 
   return { titles, rest: rest.trim() };
 }
 
-// Titles then the name: a space between, none after a Thai title.
+// Titles then the name: the titles space-separated; the last one against
+// the name when it's Thai ("ดร. นพ.สมชาย", the app's #517), else a space.
 function joinTitles(titles: Title[], name: string): string {
-  const parts = [...titles, { text: name, attached: false }].filter((p) => p.text);
-  return parts.map((p, i) => (i > 0 && !parts[i - 1].attached ? " " : "") + p.text).join("");
+  const head = titles.map((t) => t.text).join(" ");
+  if (!name) return head;
+  if (!head) return name;
+  return `${head}${titles[titles.length - 1].attached ? "" : " "}${name}`;
 }
 
 export function doctorDisplayName(name: string | null | undefined, opts: { firstOnly?: boolean } = {}): string {
