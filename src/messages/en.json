@@ -14,6 +14,7 @@
     "iosBeta": "iPhone beta – install with TestFlight",
     "iosBetaHint": "Requires Apple's free TestFlight app",
     "signupCta": "Start your free trial",
+    "watchTour": "Watch the 2-minute tour",
     "haveAccount": "Already have an account?",
     "preferApp": "Prefer the app? Download it:",
     "trialLine": "{days} days free · no credit card · then {price}/month",
