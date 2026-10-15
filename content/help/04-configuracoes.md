@@ -99,14 +99,14 @@ Thai title: "เชิญเลขานุการ"
 Em **Início**, na lista para configurar a clínica, toque em **Compartilhar link de convite**. Ou em **Configurações → Seu código de convite para pacientes**, toque em **Compartilhar** (sem código ainda? toque em **Gerar código de convite**). Quem abrir o link baixa o app ou entra pelo site e pede consultas com você. **Novo** gera um código novo e o anterior deixa de funcionar.
 {pending:invited-patients-live,app-1.4.0} Quem entra com o código aparece logo em **Pacientes** com o selo **Novo, via convite**. Em **Início**, toque em **Manter** para ficar com o paciente, ou em **Remover** para desconectar a conta (o cadastro é arquivado). Se o e-mail já estava em outro cadastro, aparece **Mesmo e-mail de {nome}: mesclar?**.
 {pending:invite-same-practice-live} Se um paciente que já é seu digitar o código pessoal de outro cadastro da sua clínica, ele vê "Você já está conectado a {médico}. Peça à clínica para juntar seus cadastros.": junte os dois em **Mesclar com outro paciente**. Com o código de outra clínica, ele é orientado a falar com o suporte.
-{pending:invite-joined-push-live} Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**.
+{pending:invite-joined-push-live,clinic-push-no-name-live} Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **Um novo paciente entrou com seu código de convite**.
 {pending:invite-connect-live} Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele.
 {pending:multi-doctor-live} Um paciente pode estar conectado a vários médicos. No app, ele vê **Meus médicos** em **Início** (um cartão por médico) e em **Configurações → Meus médicos**; no site, em **Minhas consultas**. Ele adiciona outro médico em **+ Adicionar médico**, com o código que esse médico compartilhou: não existe lista de médicos para procurar. Cada médico vê só os próprios dados. O paciente pode **Desconectar** de você, exceto enquanto tiver consultas marcadas ou confirmadas com você (ele precisa falar com a clínica para cancelá-las); os pedidos pendentes são cancelados, você é avisado, e o cadastro dele continua na sua clínica.
 **en**
 On **Home**, in the setup checklist, tap **Share invite link**. Or in **Settings → Your patient invite code**, tap **Share** (no code yet? tap **Generate invite code**). Anyone who opens the link gets the app or the website and can request appointments with you. **New** creates a new code and the old one stops working.
 {pending:invited-patients-live,app-1.4.0} Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge. On **Home**, tap **Keep** to keep the patient, or **Remove** to disconnect the account (the record is archived). If the email was already on another record, you see **Same email as {name}: merge?**.
 {pending:invite-same-practice-live} If one of your patients enters the personal code of another record in your clinic, they see "You're already connected to {doctor}. Ask the clinic to combine your records.": combine the two with **Merge with another patient**. With another clinic's code, they're told to contact support.
-{pending:invite-joined-push-live} When someone joins with your code, you and your secretaries get a notification, **New patient**: **{name} joined with your invite code**.
+{pending:invite-joined-push-live,clinic-push-no-name-live} When someone joins with your code, you and your secretaries get a notification, **New patient**: **A new patient joined with your invite code**.
 {pending:invite-connect-live} After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, restore the record from **Archived** and share its personal code.
 {pending:multi-doctor-live} A patient can be connected to several doctors. In the app, they see **My doctors** on **Home** (a card per doctor) and in **Settings → My doctors**; on the website, in **My appointments**. They add another doctor with **+ Add a doctor** and the code that doctor shared: there's no list of doctors to browse. Each doctor sees only their own data. The patient can **Disconnect** from you, except while they have scheduled or confirmed appointments with you (they must ask the clinic to cancel them); pending requests are cancelled, you're told, and their record stays in your clinic.
 **No site:** {unless:invited-patients-live} Em **Agenda**, clique em **Compartilhar link de convite**, ou em **Configurações → Seu código de convite**, use **Copiar** ou **Copiar link**. **Gerar novo** cria um código novo e o anterior deixa de funcionar. Com a assinatura inativa, o código de convite não aparece em Configurações.
@@ -118,7 +118,7 @@ Thai title: "ลิงก์เชิญผู้ป่วย"
 ใน **หน้าแรก** ในรายการตั้งค่าคลินิก แตะ **แชร์ลิงก์คำเชิญ** หรือใน **การตั้งค่า → รหัสเชิญผู้ป่วยของคุณ** แตะ **แชร์** (ยังไม่มีรหัส? แตะ **สร้างรหัสเชิญ**) ผู้ที่เปิดลิงก์จะดาวน์โหลดแอปหรือเข้าทางเว็บไซต์ และขอนัดหมายกับคุณได้ **ใหม่** จะสร้างรหัสใหม่ และรหัสเดิมจะใช้ไม่ได้อีก
 {pending:invited-patients-live,app-1.4.0} ผู้ที่เข้าร่วมด้วยรหัสจะแสดงใน **ผู้ป่วย** ทันที พร้อมป้าย **ใหม่ ผ่านคำเชิญ** ใน **หน้าแรก** แตะ **เก็บไว้** เพื่อเก็บผู้ป่วยไว้ หรือ **นำออก** เพื่อยกเลิกการเชื่อมต่อบัญชี (แฟ้มจะถูกเก็บถาวร) หากอีเมลนี้อยู่ในแฟ้มอื่นแล้ว จะแสดง **อีเมลเดียวกับ {name}: รวมประวัติ?**
 {pending:invite-same-practice-live} หากผู้ป่วยของคุณป้อนรหัสส่วนตัวของอีกแฟ้มหนึ่งในคลินิกของคุณ ผู้ป่วยจะเห็น "คุณเชื่อมต่อกับ {doctor} แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ": รวมสองแฟ้มด้วย **รวมกับผู้ป่วยอีกคน…** หากใช้รหัสของคลินิกอื่น ผู้ป่วยจะได้รับคำแนะนำให้ติดต่อฝ่ายสนับสนุน
-{pending:invite-joined-push-live} เมื่อมีคนเข้าร่วมด้วยรหัสของคุณ คุณและเลขานุการจะได้รับการแจ้งเตือน **ผู้ป่วยใหม่**: **{name} เข้าร่วมผ่านคำเชิญของคุณ**
+{pending:invite-joined-push-live,clinic-push-no-name-live} เมื่อมีคนเข้าร่วมด้วยรหัสของคุณ คุณและเลขานุการจะได้รับการแจ้งเตือน **ผู้ป่วยใหม่**: **ผู้ป่วยใหม่เข้าร่วมด้วยรหัสคำเชิญของคุณ**
 {pending:invite-connect-live} หลังจาก **นำออก** บุคคลนั้นจะกลับมาด้วยรหัสเชิญของคลินิกไม่ได้ หากต้องการให้กลับมา ให้กู้คืนแฟ้มจาก **เก็บถาวร** แล้วส่งรหัสส่วนตัวของแฟ้มนั้น
 {pending:multi-doctor-live} ผู้ป่วยหนึ่งคนเชื่อมต่อกับแพทย์ได้หลายคน ในแอป ผู้ป่วยจะเห็น **แพทย์ของฉัน** ใน **หน้าแรก** (หนึ่งการ์ดต่อแพทย์หนึ่งคน) และใน **การตั้งค่า → แพทย์ของฉัน** ในเว็บไซต์ จะเห็นในหน้านัดหมายของฉัน ผู้ป่วยเพิ่มแพทย์คนอื่นได้ด้วย **+ เพิ่มแพทย์** และรหัสที่แพทย์คนนั้นแชร์ให้: ไม่มีรายชื่อแพทย์ให้ค้นหา แพทย์แต่ละคนเห็นเฉพาะข้อมูลของตนเอง ผู้ป่วย **ยกเลิกการเชื่อมต่อ** จากคุณได้ ยกเว้นขณะที่ยังมีนัดหมายที่นัดไว้หรือยืนยันแล้วกับคุณ (ต้องติดต่อคลินิกเพื่อยกเลิกก่อน) คำขอที่รอดำเนินการจะถูกยกเลิก คุณจะได้รับแจ้ง และแฟ้มของผู้ป่วยยังคงอยู่ในคลินิกของคุณ
 **ในเว็บไซต์:** {unless:invited-patients-live} ใน **ตารางนัด** คลิก **แชร์ลิงก์คำเชิญ** หรือใน **การตั้งค่า → รหัสเชิญของคุณ** ใช้ **คัดลอก** หรือ **คัดลอกลิงก์** **สร้างใหม่** จะสร้างรหัสใหม่ และรหัสเดิมจะใช้ไม่ได้อีก ขณะที่การสมัครสมาชิกไม่ได้ใช้งาน รหัสเชิญจะไม่แสดงในการตั้งค่า
@@ -143,19 +143,22 @@ Thai title: "ล็อกแอป"
 ## C7. Lembretes e notificações / Reminders and notifications
 **pt-BR**
 **Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário.
-{pending:app-lockscreen-privacy-live} No Android, com o celular bloqueado por PIN, padrão ou digital, os lembretes de consulta escondem os dados do paciente na tela bloqueada; desbloqueie o celular para vê-los.
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} As notificações da clínica que citam um paciente (novos pedidos de consulta, cancelamentos, remarcações e documentos enviados pelo paciente) fazem o mesmo.
+{pending:app-reminder-no-name-live} Os lembretes de consulta não mostram o nome do paciente; abra o app para ver com quem é a consulta.
+{pending:clinic-push-no-name-live} As notificações da clínica (novos pedidos de consulta, cancelamentos, horários propostos aceitos ou recusados, pedidos de remarcação e documentos enviados pelo paciente) não mostram o nome do paciente.
+{pending:invite-joined-push-live,clinic-push-no-name-live} O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome.
 **en**
 **Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
-{pending:app-lockscreen-privacy-live} On Android, when the phone is locked with a PIN, pattern or fingerprint, appointment reminders hide patient details on the lock screen; unlock the phone to see them.
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} Clinic notifications that name a patient (new booking requests, cancellations, reschedules and documents a patient sends) do the same.
+{pending:app-reminder-no-name-live} Appointment reminders don't show the patient's name; open the app to see who the visit is with.
+{pending:clinic-push-no-name-live} Clinic notifications (new booking requests, cancellations, accepted or declined time proposals, reschedule requests and documents a patient sends) don't show patient names.
+{pending:invite-joined-push-live,clinic-push-no-name-live} The notice that a new patient joined with your invite code doesn't show the name either.
 **No site:** Os lembretes e notificações são do app; o site não envia notificações.
 **On the website:** Reminders and notifications are app features; the website doesn't send notifications.
 Thai title: "การเตือนและการแจ้งเตือน"
 **th**
 ใน **การตั้งค่า** ส่วนการแจ้งเตือน เปิดการเตือนนัดหมาย เลือกว่าจะเตือนล่วงหน้าเท่าใด (15 นาที 1 ชั่วโมง 2 ชั่วโมง หรือ 24 ชั่วโมง) และสรุปประจำวัน
-{pending:app-lockscreen-privacy-live} บน Android เมื่อล็อกโทรศัพท์ด้วย PIN รูปแบบ หรือลายนิ้วมือ การเตือนนัดหมายจะซ่อนข้อมูลผู้ป่วยบนหน้าจอล็อก ปลดล็อกโทรศัพท์เพื่อดูข้อมูล
-{pending:app-lockscreen-privacy-live,clinic-push-privacy-live} การแจ้งเตือนของคลินิกที่ระบุชื่อผู้ป่วย (คำขอนัดหมายใหม่ การยกเลิก การเลื่อนนัด และเอกสารที่ผู้ป่วยส่ง) ก็ทำแบบเดียวกัน
+{pending:app-reminder-no-name-live} การเตือนนัดหมายจะไม่แสดงชื่อผู้ป่วย เปิดแอปเพื่อดูว่านัดกับใคร
+{pending:clinic-push-no-name-live} การแจ้งเตือนของคลินิก (คำขอนัดหมายใหม่ การยกเลิก การตอบรับหรือปฏิเสธเวลาที่เสนอ คำขอเลื่อนนัด และเอกสารที่ผู้ป่วยส่ง) จะไม่แสดงชื่อผู้ป่วย
+{pending:invite-joined-push-live,clinic-push-no-name-live} การแจ้งเตือนว่ามีผู้ป่วยใหม่เข้าร่วมด้วยรหัสคำเชิญของคุณก็ไม่แสดงชื่อเช่นกัน
 **ในเว็บไซต์:** การเตือนและการแจ้งเตือนเป็นฟีเจอร์ของแอป เว็บไซต์ไม่ส่งการแจ้งเตือน
 `open:settings-notifications`
 
