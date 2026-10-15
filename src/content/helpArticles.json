@@ -1649,10 +1649,6 @@
             },
             {
               "type": "p",
-              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**."
-            },
-            {
-              "type": "p",
               "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele."
             }
           ],
@@ -1664,10 +1660,6 @@
             {
               "type": "p",
               "text": "Anyone who joins with the code shows up right away in **Patients** with the **New, via invite** badge. On **Home**, tap **Keep** to keep the patient, or **Remove** to disconnect the account (the record is archived). If the email was already on another record, you see **Same email as {name}: merge?**."
-            },
-            {
-              "type": "p",
-              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **{name} joined with your invite code**."
             },
             {
               "type": "p",
