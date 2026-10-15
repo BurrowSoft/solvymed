@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { MyDoctor } from "@/lib/myDoctors";
-import { shortDoctorName } from "@/lib/doctorName";
+import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent";
 import { connectDoctor, disconnectDoctor } from "./doctor-actions";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
@@ -53,11 +53,13 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
   const [pending, start] = useTransition();
   const accent = readableAccent(brandAccent(doctor.accentColor), "#ffffff");
   const image = doctor.logoUrl ?? doctor.photoUrl;
+  // The name as everywhere: a Thai title against it ("นพ.ธีรวัฒน์"; 01).
+  const name = doctorDisplayName(doctor.name);
 
   const disconnect = () => start(async () => {
     const r = await safeCall(() => disconnectDoctor(doctor.id), NETWORK_FAILURE);
     setConfirming(false);
-    if (r.ok) { onNote({ kind: "ok", text: t("disconnected", { doctor: doctor.name }) }); router.refresh(); return; }
+    if (r.ok) { onNote({ kind: "ok", text: t("disconnected", { doctor: name }) }); router.refresh(); return; }
     if (r.code === "has_future_visits") { setBlocked(true); return; }
     onNote({ kind: "error", text: tAuth("errors.generic") });
   });
@@ -74,7 +76,7 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
           </span>
         )}
         <div className="min-w-0 flex-1">
-          <p className="line-clamp-2 font-bold text-slate-900 [overflow-wrap:anywhere]">{doctor.name}</p>
+          <p className="line-clamp-2 font-bold text-slate-900 [overflow-wrap:anywhere]">{name}</p>
           {doctor.specialty && <p className="truncate text-sm text-slate-500">{doctor.specialty}</p>}
         </div>
       </div>
@@ -92,15 +94,15 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
       </div>
       {confirming && (
         <div role="alertdialog" aria-labelledby={`disc-${doctor.id}`} data-testid="disconnect-confirm" className="mt-3 rounded-xl border border-red-100 bg-red-50 p-3">
-          <p id={`disc-${doctor.id}`} className="text-sm font-semibold text-slate-900">{t("disconnectTitle", { doctor: doctor.name })}</p>
-          <p className="mt-0.5 text-xs text-slate-600">{t("disconnectBody", { doctor: doctor.name })}</p>
+          <p id={`disc-${doctor.id}`} className="text-sm font-semibold text-slate-900">{t("disconnectTitle", { doctor: name })}</p>
+          <p className="mt-0.5 text-xs text-slate-600">{t("disconnectBody", { doctor: name })}</p>
           <div className="mt-2 flex gap-2">
             <button data-server type="button" disabled={pending} onClick={disconnect} className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-60">{t("disconnect")}</button>
             <button type="button" onClick={() => setConfirming(false)} className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700">{tCommon("cancel")}</button>
           </div>
         </div>
       )}
-      {blocked && <p role="alert" data-testid="disconnect-blocked" className="mt-2 text-sm text-amber-700">{t("disconnectBlocked", { doctor: doctor.name })}</p>}
+      {blocked && <p role="alert" data-testid="disconnect-blocked" className="mt-2 text-sm text-amber-700">{t("disconnectBlocked", { doctor: name })}</p>}
     </div>
   );
 }

@@ -38,6 +38,9 @@ describe("whoLine", () => {
     expect(whoLine("Dra. Ana Souza", "Clínica Sol")).toBe("Dra. Ana Souza · Clínica Sol");
     expect(whoLine("Dra. Ana Souza", null)).toBe("Dra. Ana Souza");
     expect(whoLine(null, " Clínica Sol ")).toBe("Clínica Sol");
+    // The visit rows (92 on #569): a Thai title against the name, as on the buttons.
+    expect(whoLine("นพ. ธีรวัฒน์ สุขใจ", "คลินิกสุขใจเวชกรรม")).toBe("นพ.ธีรวัฒน์ สุขใจ · คลินิกสุขใจเวชกรรม");
+    expect(whoLine("พญ สุดา", "พญ สุดา")).toBe("พญ.สุดา");
     expect(whoLine("Ana Souza", "ana souza")).toBe("Ana Souza");
     expect(whoLine(null, "")).toBe("");
   });
