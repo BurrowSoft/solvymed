@@ -257,6 +257,6 @@
   },
   "clinic-push-no-name-live": {
     "met": true,
-    "what": "Live 10-16 (#513: migration 227 + the clinic-notify deploy; 69's row: a booking request arrived with no name, 17:05Z, same code path for all 6 kinds). The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, false until the invite push is delivered), C5's no-name invite text, C7's invite sentence and their App Map rule."
+    "what": "Live 10-16 (#513: migration 227 + the clinic-notify deploy; 69's row: a booking request arrived with no name, 17:05Z, same code path for all 6 kinds). The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, delivered through clinic-notify since #514), C5's no-name invite text, C7's invite sentence and their App Map rule."
   }
 }
