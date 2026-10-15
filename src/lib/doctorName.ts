@@ -14,8 +14,7 @@ const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/
 const MAX_TITLES = 3;
 
 // Every supported country's titles (the Latin ones above; the Thai ones,
-// THAI_TITLE_LOOSE below: the same list greetingName uses, with or without
-// the dot). A Thai title is written with its dot, against the name, the
+// THAI_TITLE_LOOSE below, with or without the dot). A Thai title is written with its dot, against the name, the
 // usual Thai form (01, both platforms; the app's #517): "นพ. ธีรวัฒน์" and
 // "นพ ธีรวัฒน์" → "นพ.ธีรวัฒน์".
 type Title = { text: string; attached: boolean };
@@ -46,17 +45,12 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
   return joinTitles(titles, shown);
 }
 
-// Thai professional titles, typed before the name with or without a space
-// ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
-// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
-// typed.
-const THAI_TITLE = new RegExp(
-  // Longest first, so "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list).
-  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].sort((a, b) => b.length - a.length).map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
-);
-
-// A Thai title at the start of a name, with its dot or, without one,
-// followed by a space ("นพ.สมชาย", "นพ สมชาย"; never "ดร" inside "ดรุณี").
+// Thai professional titles: the ones the practice-country examples suggest
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. At the start of
+// a name, with its dot or, without one, followed by a space ("นพ.สมชาย",
+// "พญ. สุดา", "นพ สมชาย"; never "ดร" inside "ดรุณี"). Longest first, so
+// "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list). The one Thai-title
+// rule here: splitTitles, then every function above and below.
 const THAI_TITLE_LOOSE = new RegExp(
   `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
 );
@@ -84,27 +78,22 @@ export function withBrandTitle(title: string | null | undefined, name: string | 
 }
 
 // For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
-// title(s), as doctorDisplayName shows them, and the first name. Never a
-// title we add.
+// title(s), as doctorDisplayName shows them (a Thai one with its dot), and
+// the first name. Never a title we add. The message puts them together
+// (th: "เรียน {title}{name}", against the name).
 export function greetingName(name: string | null | undefined): { title: string; first: string } {
-  const typed = (name ?? "").trim().replace(/\s+/g, " ");
-  const thai = typed.match(THAI_TITLE);
-  if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
-  const { titles, rest } = splitTitles(typed);
+  const { titles, rest } = splitTitles(name);
   return { title: joinTitles(titles, ""), first: rest.split(" ")[0] ?? "" };
 }
 
 // For a button ("Marcar consulta com Dra. Ana Lima"; e7): the typed
 // title(s), the first and the last name, so a long full name fits (the
-// button also wraps to 2 lines, then ellipsis). Thai titles as typed.
+// button also wraps to 2 lines, then ellipsis). A Thai title against the
+// name, as everywhere ("นพ.สมชาย ใจดี"; 01).
 export function shortDoctorName(name: string | null | undefined): string {
-  const typed = (name ?? "").trim().replace(/\s+/g, " ");
-  const thai = typed.match(THAI_TITLE);
-  const { titles, rest } = thai ? { titles: [], rest: typed.slice(thai[0].length) } : splitTitles(typed);
+  const { titles, rest } = splitTitles(name);
   const parts = rest.split(" ").filter(Boolean);
   const names = parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts;
-  // A Thai title is written against the name ("นพ.สมชาย"), as typed.
-  if (thai) return `${thai[1]}${/\s$/.test(thai[0]) ? " " : ""}${names.join(" ")}`.trim();
   return joinTitles(titles, names.join(" "));
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { greetingFirstName } from "@/lib/doctorName";
+import { greetingFirstName, greetingName } from "@/lib/doctorName";
 
 // UX (Vitor's secretary test): greet with the user's own first name, or
 // none when it's empty or just the email's local part.
@@ -33,6 +33,16 @@ describe("greetingFirstName", () => {
     expect(greetingFirstName("Dra. Helena Costa", "x@y.com")).toBe("Dra. Helena");
     expect(greetingFirstName("Prof. Dr. Carlos Melo", "x@y.com")).toBe("Prof. Dr. Carlos");
     expect(greetingFirstName("dott.ssa Giulia Rossi", "x@y.com")).toBe("Dott.ssa Giulia");
+  });
+  // The Founders e-mail's greeting (th "เรียน {title}{name}"): the same rule.
+  it("greetingName: the Thai title with its dot, however typed; Latin unchanged", () => {
+    for (const typed of ["นพ.สมชาย ใจดี", "นพ. สมชาย ใจดี", "นพ สมชาย ใจดี"]) {
+      expect(greetingName(typed)).toEqual({ title: "นพ.", first: "สมชาย" });
+    }
+    expect(greetingName("ทพญ. มาลี สมใจ")).toEqual({ title: "ทพญ.", first: "มาลี" });
+    expect(greetingName("นพดล ใจดี")).toEqual({ title: "", first: "นพดล" });
+    expect(greetingName("Dra. Ana Souza")).toEqual({ title: "Dra.", first: "Ana" });
+    expect(greetingName("Prof. Dr. Carlos Melo")).toEqual({ title: "Prof. Dr.", first: "Carlos" });
   });
   it("none when empty or the email's local part", () => {
     expect(greetingFirstName("", "a@b.com")).toBe("");

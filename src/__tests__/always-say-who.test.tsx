@@ -109,7 +109,8 @@ describe("long doctor names on the book buttons", () => {
     expect(shortDoctorName("Prof. Dr. Carlos Eduardo Pereira")).toBe("Prof. Dr. Carlos Pereira");
     expect(shortDoctorName("Ana Souza")).toBe("Ana Souza");
     expect(shortDoctorName("นพ.สมชาย ใจดี มากมาย")).toBe("นพ.สมชาย มากมาย");
-    expect(shortDoctorName("พญ. สุดา รักษ์ดี")).toBe("พญ. สุดา รักษ์ดี");
+    expect(shortDoctorName("พญ. สุดา รักษ์ดี")).toBe("พญ.สุดา รักษ์ดี"); // against the name (01)
+    expect(shortDoctorName("พญ สุดา รักษ์ดี")).toBe("พญ.สุดา รักษ์ดี");
     expect(shortDoctorName("ทพญ.มาลี สมใจ ดีมาก")).toBe("ทพญ.มาลี ดีมาก");
     expect(shortDoctorName("Dra. Ana Maria Souza Lima")).toBe("Dra. Ana Lima");
   });
