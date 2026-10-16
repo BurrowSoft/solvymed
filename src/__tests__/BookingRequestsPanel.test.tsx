@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 
 // Mock next-intl to avoid requiring NextIntlClientProvider
@@ -270,3 +270,40 @@ describe('BookingRequestsPanel', () => {
 
 // The "All" schedule's dispatcher (166) imports every action; these tests mock them.
 vi.mock("@/app/[locale]/(site)/dashboard/(gated)/schedule/row-actions", () => ({ actForRow: vi.fn() }));
+
+// Past or not on the PRACTICE's clock, never the browser's (1c): the same
+// instant is a different hour, even a different day, in São Paulo and
+// Bangkok. Only Date is faked; the browser's own zone no longer matters.
+describe("BookingRequestsPanel: the practice's time zone decides what's past", () => {
+  const SP = "America/Sao_Paulo";
+  const BKK = "Asia/Bangkok";
+  const today10 = { ...TENTATIVE_BOOKING, id: "b-z", date: "2030-01-16", start_time: "10:00:00", end_time: "10:30:00" };
+  const confirmable = () => screen.queryByRole("button", { name: "Confirm" }) !== null;
+  afterEach(() => vi.useRealTimers());
+  const at = (iso: string) => { vi.useFakeTimers({ toFake: ["Date"] }); vi.setSystemTime(new Date(iso)); };
+
+  it("same day: 09:25 in São Paulo (19:25 in Bangkok) keeps a 10:00 request confirmable", () => {
+    at("2030-01-16T12:25:00Z");
+    render(<BookingRequestsPanel bookings={[today10]} timeZone={SP} />);
+    expect(confirmable()).toBe(true);
+  });
+
+  it("same instant, a Bangkok practice: its 10:30 has passed, so the request is past", () => {
+    at("2030-01-16T12:25:00Z");
+    render(<BookingRequestsPanel bookings={[today10]} timeZone={BKK} />);
+    expect(confirmable()).toBe(false);
+  });
+
+  it("across midnight: 22:00 on the 16th in São Paulo is the 17th in Bangkok; a 23:00 request stays confirmable", () => {
+    at("2030-01-17T01:00:00Z");
+    const late = { ...today10, start_time: "23:00:00", end_time: "23:30:00" };
+    render(<BookingRequestsPanel bookings={[late]} timeZone={SP} />);
+    expect(confirmable()).toBe(true);
+  });
+
+  it("the 'All' schedule: each request on its own doctor's clock, over the panel's zone", () => {
+    at("2030-01-16T12:25:00Z");
+    render(<BookingRequestsPanel bookings={[{ ...today10, zone: BKK }]} timeZone={SP} />);
+    expect(confirmable()).toBe(false);
+  });
+});
