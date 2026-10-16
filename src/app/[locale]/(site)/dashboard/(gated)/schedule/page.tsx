@@ -169,7 +169,7 @@ export default async function SchedulePage({
       </div>
 
       {/* Booking Requests */}
-      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} idKind={countryProfile(practiceCountry).kind} />
+      <BookingRequestsPanel bookings={tentativeBookings as Parameters<typeof BookingRequestsPanel>[0]["bookings"]} idKind={countryProfile(practiceCountry).kind} timeZone={timeZone} />
 
       {/* ── List view (current design) ── */}
       {view === "list" && (
@@ -218,6 +218,7 @@ export default async function SchedulePage({
           view={view}
           currency={currency}
           procedures={procedures}
+          timeZone={timeZone}
         />
       )}
       <ScheduleUndoToast />

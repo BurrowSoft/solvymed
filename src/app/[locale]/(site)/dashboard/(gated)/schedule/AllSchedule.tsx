@@ -51,9 +51,10 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
       color,
       calendar: profile.calendar,
     };
+    const zone = validZone(clinic?.time_zone);
     return {
       tag,
-      zone: validZone(clinic?.time_zone),
+      zone,
       ctx: {
         currency: profile.currency,
         pixKey: profile.paymentQr === "pix" ? clinic?.pix_key ?? null : null,
@@ -65,7 +66,8 @@ async function practicePart(p: MyPractice, userId: string, color: string): Promi
         procedures: (procsResult.data ?? []) as RowPracticeCtx["procedures"],
         country,
       },
-      bookings: ((bookings ?? []) as Bookings).map((b) => ({ ...b, practice: tag })),
+      // Each request is past or not on its own doctor's clock (1c).
+      bookings: ((bookings ?? []) as Bookings).map((b) => ({ ...b, practice: tag, zone })),
     };
   });
 }
@@ -175,6 +177,7 @@ export async function AllSchedule({ practices, userId, today, date, doctor, view
           procedures={shown[0].ctx.procedures}
           doctors={doctors}
           doctorOrder={shownIds}
+          timeZone={zone}
         />
       ) : (
         <>
