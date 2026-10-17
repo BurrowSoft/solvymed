@@ -887,7 +887,15 @@
       "button": "Reenviar e-mail de confirmação",
       "wait": "Você pode reenviar em {seconds} s.",
       "sent": "E-mail de confirmação enviado. Verifique sua caixa de entrada.",
-      "spamHint": "Não chegou? Verifique a pasta de spam ou lixo eletrônico."
+      "spamHint": "Não chegou? Verifique a pasta de spam ou lixo eletrônico.",
+      "neutralSent": "Se este endereço tiver uma conta não confirmada, enviamos um novo e-mail de confirmação."
+    },
+    "confirmEmail": {
+      "title": "Confirme seu e-mail",
+      "sentTo": "Enviamos um link de confirmação para {email}.",
+      "openMail": "Abrir e-mail",
+      "wrongEmail": "E-mail errado? Corrigir",
+      "forgotQuestion": "Ainda não confirmou o e-mail?"
     }
   },
   "myAppointments": {

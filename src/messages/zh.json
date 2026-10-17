@@ -887,7 +887,15 @@
       "button": "重新发送确认邮件",
       "wait": "{seconds} 秒后可重新发送。",
       "sent": "确认邮件已发送。请查看收件箱。",
-      "spamHint": "没收到？请检查垃圾邮件文件夹。"
+      "spamHint": "没收到？请检查垃圾邮件文件夹。",
+      "neutralSent": "如果此地址有未确认的账户，我们已发送新的确认邮件。"
+    },
+    "confirmEmail": {
+      "title": "确认您的电子邮件",
+      "sentTo": "我们已向 {email} 发送确认链接。",
+      "openMail": "打开邮箱",
+      "wrongEmail": "邮箱填错了？更正",
+      "forgotQuestion": "还没有确认邮箱？"
     }
   },
   "myAppointments": {
