@@ -786,7 +786,8 @@
       "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
       "backToCountry": "Kembali",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "Pasien bergabung melalui tautan undangan dokter mereka"
+      "rolePatientViaInvite": "Pasien bergabung melalui tautan undangan dokter mereka",
+      "loading": "Memuat…"
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",

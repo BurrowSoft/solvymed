@@ -81,7 +81,14 @@ export default function SignupPage() {
       });
     return () => { cancelled = true; };
   }, [isSecretaryFlow, secretaryCode]);
-  const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
+  const urlRole = searchParams.get("role");
+  const [role, setRole] = useState<Role>(
+    isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : urlRole === "patient" ? "patient" : "professional",
+  );
+  // Before hydration (slow mobile lines from the ads, 01): every tap in the
+  // funnel is a link or waits; React takes over once it's here.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   // An address that already has a confirmed account: the neutral screen.
@@ -118,9 +125,19 @@ export default function SignupPage() {
   const country = parseCountryChoice(searchParams.get("c"));
   const countryStep = thaiEnabled && !isSecretaryFlow && !isJoinFlow;
   const [english, setEnglish] = useState(locale === "en");
+  const englishRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (englishRef.current && englishRef.current.checked !== english) setEnglish(englishRef.current.checked);
+    // On mount only: the DOM's state as the visitor left it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   // The step's suggested country (layout, from the request): first and
   // primary, still one tap; null = as listed.
   const countryGuess = useCountryGuess();
+  // A country reached by its link (before hydration) is saved like a click.
+  useEffect(() => {
+    if (countryStep && country) document.cookie = signupCountryCookie(country);
+  }, [countryStep, country]);
   const goTo = (href: string, newLocale: string) => {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
     router.push(href);
@@ -328,7 +345,7 @@ export default function SignupPage() {
   // and on the invite / join-link signups, which skip it.
   const englishBox = (onChange: (checked: boolean) => void) => (
     <label className="mt-5 flex items-center justify-center gap-2 text-sm text-slate-600">
-      <input type="checkbox" checked={english} onChange={(e) => { setEnglish(e.target.checked); onChange(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
+      <input ref={englishRef} type="checkbox" checked={english} onChange={(e) => { setEnglish(e.target.checked); onChange(e.target.checked); }} className="h-4 w-4 accent-teal-600" />
       Use SolvyMed in English
     </label>
   );
@@ -348,11 +365,12 @@ export default function SignupPage() {
           <h1 className="mb-6 text-center text-lg font-bold text-slate-900">Onde você está? · คุณอยู่ที่ไหน? · Where are you?</h1>
           <div className="grid gap-3">
             {orderedCountryStep(countryGuess).map((c) => (
-              <button
+              <a
                 key={c.code}
-                type="button"
+                href={countryStepHref(c.code, c.locale, searchParams)}
                 data-suggested={c.code === countryGuess ? "true" : undefined}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);
                   const next = english ? "en" : c.locale;
@@ -366,7 +384,7 @@ export default function SignupPage() {
               >
                 <span aria-hidden="true">{c.flag}</span>
                 {c.label}
-              </button>
+              </a>
             ))}
           </div>
           {englishBox(() => {})}
@@ -403,15 +421,38 @@ export default function SignupPage() {
             English switch (back to the language the link opened in). */}
         {thaiEnabled && !countryStep && (
           <div className="-mt-3 mb-6">
-            {englishBox((checked) => {
+            {(() => {
+              // A link (it navigates either way), so it works before hydration.
               const q = new URLSearchParams(searchParams.toString());
               const back = q.get("from") ?? "pt-BR";
+              const checked = !english;
               if (checked) q.set("from", locale);
               else q.delete("from");
               const next = checked ? "en" : back;
               const qs = q.toString();
-              goTo(`${next === "en" ? "" : `/${next}`}/auth/signup${qs ? `?${qs}` : ""}`, next);
-            })}
+              // Always the explicit prefix, /en/ too: an unprefixed /auth/signup
+              // is sent back to the NEXT_LOCALE cookie's language (pt-BR from
+              // the first visit) when tapped before hydration (92 on #583);
+              // the middleware takes /en/… as the choice and drops the prefix.
+              const href = `/${next}/auth/signup${qs ? `?${qs}` : ""}`;
+              return (
+                <a
+                  href={href}
+                  role="checkbox"
+                  aria-checked={english}
+                  data-testid="signup-english-switch"
+                  onClick={(e) => { e.preventDefault(); setEnglish(checked); goTo(href, next); }}
+                  // A checkbox toggles with Space too (b9; Enter already follows the link).
+                  onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); setEnglish(checked); goTo(href, next); } }}
+                  className="mt-5 flex items-center justify-center gap-2 text-sm text-slate-600"
+                >
+                  <span aria-hidden="true" className={`flex h-4 w-4 items-center justify-center rounded-sm border ${english ? "border-teal-600 bg-teal-600 text-white" : "border-slate-400 bg-white"}`}>
+                    {english ? "✓" : ""}
+                  </span>
+                  Use SolvyMed in English
+                </a>
+              );
+            })()}
           </div>
         )}
 
@@ -435,6 +476,7 @@ export default function SignupPage() {
           <div className="grid grid-cols-2 gap-3">
             <RoleCard
               selected={role === "professional"}
+              href={(() => { const q = new URLSearchParams(searchParams.toString()); q.set("role", "professional"); return `?${q.toString()}`; })()}
               onSelect={() => setRole("professional")}
               icon={
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
@@ -446,6 +488,7 @@ export default function SignupPage() {
             />
             <RoleCard
               selected={role === "patient"}
+              href={(() => { const q = new URLSearchParams(searchParams.toString()); q.set("role", "patient"); return `?${q.toString()}`; })()}
               onSelect={() => setRole("patient")}
               icon={
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
@@ -569,13 +612,15 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !hydrated}
+            aria-busy={!hydrated || undefined}
             className="w-full rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {loading || !hydrated ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="spinner-white" />
-                {t("signup.submit")}
+                {/* Before hydration: why it waits (01: so a slow line doesn't look broken). */}
+                {hydrated ? t("signup.submit") : t("signup.loading")}
               </span>
             ) : (
               t("signup.submit")
@@ -600,18 +645,23 @@ export default function SignupPage() {
 }
 
 function RoleCard({
-  selected, onSelect, icon, label, description,
+  selected, href, onSelect, icon, label, description,
 }: {
   selected: boolean;
+  href: string;
   onSelect: () => void;
   icon: React.ReactNode;
   label: string;
   description: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onSelect}
+    // A link before hydration (to ?role=…, which the page reads); a toggle after.
+    <a
+      href={href}
+      role="button"
+      aria-pressed={selected}
+      onClick={(e) => { e.preventDefault(); onSelect(); }}
+      onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); onSelect(); } }}
       className={`flex flex-col items-center gap-2 rounded-2xl border-2 p-4 text-left transition-all ${
         selected
           ? "border-teal-500 bg-teal-50 shadow-sm"
@@ -621,6 +671,6 @@ function RoleCard({
       <span className={selected ? "text-teal-600" : "text-slate-400"}>{icon}</span>
       <span className={`text-sm font-bold leading-tight ${selected ? "text-teal-900" : "text-slate-700"}`}>{label}</span>
       <span className={`text-xs leading-snug text-center ${selected ? "text-teal-700" : "text-slate-400"}`}>{description}</span>
-    </button>
+    </a>
   );
 }

@@ -786,7 +786,8 @@
       "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях.",
       "backToCountry": "Назад",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "Пациенты присоединяются по ссылке-приглашению своего врача"
+      "rolePatientViaInvite": "Пациенты присоединяются по ссылке-приглашению своего врача",
+      "loading": "Загрузка…"
     },
     "forgotPassword": {
       "title": "Забыли пароль?",

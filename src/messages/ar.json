@@ -786,7 +786,8 @@
       "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
       "backToCountry": "رجوع",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "ينضم المرضى عبر رابط الدعوة من طبيبهم"
+      "rolePatientViaInvite": "ينضم المرضى عبر رابط الدعوة من طبيبهم",
+      "loading": "جارٍ التحميل…"
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",

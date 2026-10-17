@@ -786,7 +786,8 @@
       "fullNameHint": "ใส่คำนำหน้าได้ถ้าต้องการ ({titles}) จะแสดงในคำทักทาย",
       "backToCountry": "กลับ",
       "secretaryInviteFor": "คำเชิญนี้สำหรับ {email}",
-      "rolePatientViaInvite": "ผู้ป่วยเข้าร่วมผ่านลิงก์เชิญจากแพทย์"
+      "rolePatientViaInvite": "ผู้ป่วยเข้าร่วมผ่านลิงก์เชิญจากแพทย์",
+      "loading": "กำลังโหลด…"
     },
     "forgotPassword": {
       "title": "ลืมรหัสผ่าน?",
