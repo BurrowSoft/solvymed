@@ -438,6 +438,8 @@ export default function SignupPage() {
                   aria-checked={english}
                   data-testid="signup-english-switch"
                   onClick={(e) => { e.preventDefault(); setEnglish(checked); goTo(href, next); }}
+                  // A checkbox toggles with Space too (b9; Enter already follows the link).
+                  onKeyDown={(e) => { if (e.key === " ") { e.preventDefault(); setEnglish(checked); goTo(href, next); } }}
                   className="mt-5 flex items-center justify-center gap-2 text-sm text-slate-600"
                 >
                   <span aria-hidden="true" className={`flex h-4 w-4 items-center justify-center rounded-sm border ${english ? "border-teal-600 bg-teal-600 text-white" : "border-slate-400 bg-white"}`}>

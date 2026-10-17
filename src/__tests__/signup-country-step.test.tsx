@@ -145,6 +145,13 @@ describe("signup before hydration", () => {
     expect(html("c=BR").querySelector("input[name]")).toBeNull();
   });
 
+  it("the join English switch also toggles with Space (b9; a11y)", () => {
+    const { unmount } = show("join=ABC123");
+    fireEvent.keyDown(screen.getByRole("checkbox", { name: "Use SolvyMed in English" }), { key: " " });
+    expect(h.push).toHaveBeenCalledWith("/auth/signup?join=ABC123&from=pt-BR");
+    unmount();
+  });
+
   it("after hydration the submit is enabled", () => {
     const { unmount } = show("c=BR");
     expect(screen.getByRole("button", { name: pt.auth.signup.submit })).not.toBeDisabled();
