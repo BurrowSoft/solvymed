@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "Sei già collegato a un altro medico. Per cambiare, contatta l'assistenza.",
       "alreadyConnectedSamePractice": "Sei già collegato a {doctor}. Chiedi allo studio di unire le tue schede.",
       "alreadyConnectedSamePracticeNoName": "Sei già collegato a questo studio. Chiedi allo studio di unire le tue schede.",
-      "codeUnavailable": "Impossibile collegarsi con questo codice. Contatta lo studio."
+      "codeUnavailable": "Impossibile collegarsi con questo codice. Contatta lo studio.",
+      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code."
     },
     "pendingConfirmation": {
       "loading": "Verifica dello stato…",
@@ -881,6 +882,12 @@
       "linkExpired": "Questo link è scaduto o è già stato usato. Richiedine uno nuovo.",
       "network": "Nessuna connessione. Controlla la connessione a Internet e riprova.",
       "generic": "Qualcosa è andato storto. Riprova."
+    },
+    "resendConfirmation": {
+      "button": "Resend confirmation e-mail",
+      "wait": "You can resend in {seconds} s.",
+      "sent": "Confirmation e-mail sent. Check your inbox.",
+      "spamHint": "Not there? Check your spam or junk folder."
     }
   },
   "myAppointments": {

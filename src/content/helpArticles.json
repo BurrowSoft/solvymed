@@ -2259,8 +2259,8 @@
         "id": "K3",
         "category": "conta",
         "title": {
-          "pt": "Esqueci a senha",
-          "en": "Forgot password"
+          "pt": "Problemas para entrar",
+          "en": "Trouble signing in"
         },
         "body": {
           "pt": [
@@ -2277,8 +2277,8 @@
           ]
         },
         "web": {
-          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**."
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
         },
         "webUnavailable": false,
         "open": null,

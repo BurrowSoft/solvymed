@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "Anda sudah terhubung dengan dokter lain. Untuk mengganti, hubungi dukungan.",
       "alreadyConnectedSamePractice": "Anda sudah terhubung dengan {doctor}. Minta klinik untuk menggabungkan data Anda.",
       "alreadyConnectedSamePracticeNoName": "Anda sudah terhubung dengan klinik ini. Minta klinik untuk menggabungkan data Anda.",
-      "codeUnavailable": "Tidak dapat terhubung dengan kode ini. Silakan hubungi klinik."
+      "codeUnavailable": "Tidak dapat terhubung dengan kode ini. Silakan hubungi klinik.",
+      "storedCodeNotFound": "Kode undangan tidak ditemukan. Minta kodenya ke klinik Anda."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -881,6 +882,12 @@
       "linkExpired": "Tautan ini sudah kedaluwarsa atau sudah digunakan. Minta tautan baru.",
       "network": "Tidak ada koneksi. Periksa internet Anda lalu coba lagi.",
       "generic": "Terjadi kesalahan. Coba lagi."
+    },
+    "resendConfirmation": {
+      "button": "Kirim ulang email konfirmasi",
+      "wait": "Anda dapat mengirim ulang dalam {seconds} dtk.",
+      "sent": "Email konfirmasi terkirim. Periksa kotak masuk Anda.",
+      "spamHint": "Tidak ada? Periksa folder spam atau sampah."
     }
   },
   "myAppointments": {

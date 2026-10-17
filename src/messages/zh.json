@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "您已与其他医生连接。如需更换，请联系客服。",
       "alreadyConnectedSamePractice": "您已与 {doctor} 连接。请让诊所合并您的档案。",
       "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。",
-      "codeUnavailable": "无法使用此代码连接。请联系诊所。"
+      "codeUnavailable": "无法使用此代码连接。请联系诊所。",
+      "storedCodeNotFound": "未找到邀请码。请向您的诊所索取邀请码。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -881,6 +882,12 @@
       "linkExpired": "此链接已过期或已被使用。请重新获取。",
       "network": "无网络连接。请检查网络后重试。",
       "generic": "出现问题，请重试。"
+    },
+    "resendConfirmation": {
+      "button": "重新发送确认邮件",
+      "wait": "{seconds} 秒后可重新发送。",
+      "sent": "确认邮件已发送。请查看收件箱。",
+      "spamHint": "没收到？请检查垃圾邮件文件夹。"
     }
   },
   "myAppointments": {

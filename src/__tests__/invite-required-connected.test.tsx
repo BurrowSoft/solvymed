@@ -16,9 +16,10 @@ const h = vi.hoisted(() => ({
   connectLive: false,
   connect: { data: null, error: null } as RpcResult,
   push: vi.fn(),
+  search: "",
 }));
 vi.mock("@/lib/conditions", () => ({ conditionMet: (id: string) => (id === "invite-connect-live" ? h.connectLive : false) }));
-vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useParams: () => ({ locale: "pt-BR" }), useRouter: () => ({ push: h.push }) }));
+vi.mock("next/navigation", async (orig) => ({ ...(await orig<typeof import("next/navigation")>()), useParams: () => ({ locale: "pt-BR" }), useRouter: () => ({ push: h.push }), useSearchParams: () => new URLSearchParams(h.search) }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => {
     const row = (data: unknown) => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data }) }) }) });
@@ -110,5 +111,36 @@ describe("invite code while already connected", () => {
     expect(await screen.findByText(pt.auth.inviteRequired.codeInvalid)).toBeInTheDocument();
     unmount();
     h.connectLive = false;
+  });
+});
+
+// 01 (13's logs): sent here because the code saved at sign-up matched
+// nothing: the page says so first, above its field for a new code.
+describe("invite-required: why the saved code didn't link", () => {
+  const show = () =>
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <InviteRequiredPage />
+      </NextIntlClientProvider>,
+    );
+
+  it("?code=notfound: 'not found, ask your clinic' + the code field", () => {
+    h.search = "code=notfound";
+    show();
+    expect(screen.getByText("Código de convite não encontrado. Peça o código à sua clínica.")).toBeInTheDocument();
+    expect(document.getElementById("invite-required-code")).not.toBeNull();
+    h.search = "";
+  });
+
+  it("?code=unavailable: the code no longer admits", () => {
+    h.search = "code=unavailable";
+    show();
+    expect(screen.getByText(pt.auth.inviteRequired.codeUnavailable)).toBeInTheDocument();
+    h.search = "";
+  });
+
+  it("no reason: no message until a try", () => {
+    show();
+    expect(document.querySelector(".error-banner")).toBeNull();
   });
 });
