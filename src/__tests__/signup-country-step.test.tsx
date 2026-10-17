@@ -94,7 +94,7 @@ describe("signup: country first", () => {
     const { unmount } = show("join=ABC123");
     expect(screen.queryByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeNull();
     fireEvent.click(screen.getByRole("checkbox", { name: "Use SolvyMed in English" }));
-    expect(h.push).toHaveBeenCalledWith("/auth/signup?join=ABC123&from=pt-BR");
+    expect(h.push).toHaveBeenCalledWith("/en/auth/signup?join=ABC123&from=pt-BR");
     unmount();
   });
 });
@@ -133,7 +133,7 @@ describe("signup before hydration", () => {
   it("the join link's English switch is a link", () => {
     const sw = html("join=ABC123").querySelector('[data-testid="signup-english-switch"]');
     expect(sw?.tagName).toBe("A");
-    expect(sw).toHaveAttribute("href", "/auth/signup?join=ABC123&from=pt-BR");
+    expect(sw).toHaveAttribute("href", "/en/auth/signup?join=ABC123&from=pt-BR");
   });
 
   it("the submit waits for the script (a native POST lost what was typed)", () => {
@@ -148,7 +148,7 @@ describe("signup before hydration", () => {
   it("the join English switch also toggles with Space (b9; a11y)", () => {
     const { unmount } = show("join=ABC123");
     fireEvent.keyDown(screen.getByRole("checkbox", { name: "Use SolvyMed in English" }), { key: " " });
-    expect(h.push).toHaveBeenCalledWith("/auth/signup?join=ABC123&from=pt-BR");
+    expect(h.push).toHaveBeenCalledWith("/en/auth/signup?join=ABC123&from=pt-BR");
     unmount();
   });
 

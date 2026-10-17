@@ -430,7 +430,11 @@ export default function SignupPage() {
               else q.delete("from");
               const next = checked ? "en" : back;
               const qs = q.toString();
-              const href = `${next === "en" ? "" : `/${next}`}/auth/signup${qs ? `?${qs}` : ""}`;
+              // Always the explicit prefix, /en/ too: an unprefixed /auth/signup
+              // is sent back to the NEXT_LOCALE cookie's language (pt-BR from
+              // the first visit) when tapped before hydration (92 on #583);
+              // the middleware takes /en/… as the choice and drops the prefix.
+              const href = `/${next}/auth/signup${qs ? `?${qs}` : ""}`;
               return (
                 <a
                   href={href}
