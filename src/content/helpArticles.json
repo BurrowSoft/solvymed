@@ -2266,13 +2266,13 @@
           "pt": [
             {
               "type": "p",
-              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora)."
+              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas)."
             }
           ],
           "en": [
             {
               "type": "p",
-              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour)."
+              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours)."
             }
           ]
         },
