@@ -35,14 +35,14 @@ Thai title: "เปลี่ยนรหัสผ่าน"
 ---
 ## K3. Esqueci a senha / Forgot password
 **pt-BR**
-Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora).
+Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas).
 **en**
-On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour).
+On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours).
 **No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.
 **On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**.
 Thai title: "ลืมรหัสผ่าน"
 **th**
-ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)
+ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 24 ชั่วโมง)
 **ในเว็บไซต์:** ที่หน้าจอเข้าสู่ระบบ คลิก **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วคลิก **ส่งลิงก์รีเซ็ต**
 `open:none`
 
