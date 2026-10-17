@@ -33,7 +33,7 @@ for (const c of CASES) {
 
       await gotoIn(page, locale, "/auth/signup");
       // The country step comes first (no ?c= yet).
-      const country = page.getByRole("button", { name: c.button });
+      const country = page.getByRole("link", { name: c.button });
       await expect(country).toBeVisible();
       // Wait for React to hydrate the button before clicking: a click on the
       // server-rendered HTML does nothing and leaves the country step on screen
@@ -69,5 +69,5 @@ for (const c of CASES) {
 test("?c=TH opens the form directly, in Thai", async ({ page }) => {
   await gotoIn(page, byCode("th"), "/auth/signup?c=TH");
   await expect(page.getByRole("heading", { name: th.auth.signup.title })).toBeVisible();
-  await expect(page.getByRole("button", { name: /ประเทศไทย/ })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: /ประเทศไทย/ })).toHaveCount(0);
 });

@@ -786,7 +786,8 @@
       "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
       "backToCountry": "Quay lại",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "Bệnh nhân tham gia qua liên kết mời của bác sĩ"
+      "rolePatientViaInvite": "Bệnh nhân tham gia qua liên kết mời của bác sĩ",
+      "loading": "Đang tải…"
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

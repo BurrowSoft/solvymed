@@ -786,7 +786,8 @@
       "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
       "backToCountry": "Voltar",
       "secretaryInviteFor": "Este convite é para {email}.",
-      "rolePatientViaInvite": "Pacientes entram pelo link de convite do seu médico"
+      "rolePatientViaInvite": "Pacientes entram pelo link de convite do seu médico",
+      "loading": "Carregando…"
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",

@@ -786,7 +786,8 @@
       "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu ({titles}); er erscheint in der Begrüßung.",
       "backToCountry": "Zurück",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "Patients join through their doctor's invite link"
+      "rolePatientViaInvite": "Patients join through their doctor's invite link",
+      "loading": "Loading…"
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",

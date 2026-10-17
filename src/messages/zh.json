@@ -786,7 +786,8 @@
       "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
       "backToCountry": "返回",
       "secretaryInviteFor": "This invite is for {email}.",
-      "rolePatientViaInvite": "患者通过医生的邀请链接加入"
+      "rolePatientViaInvite": "患者通过医生的邀请链接加入",
+      "loading": "加载中…"
     },
     "forgotPassword": {
       "title": "忘记密码？",
