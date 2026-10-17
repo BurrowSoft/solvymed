@@ -785,7 +785,8 @@
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
       "backToCountry": "Retour",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "rolePatientViaInvite": "Patients join through their doctor's invite link"
     },
     "forgotPassword": {
       "title": "Mot de passe oublié ?",
