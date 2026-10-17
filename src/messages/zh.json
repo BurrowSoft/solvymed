@@ -786,7 +786,8 @@
       "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
       "backToCountry": "返回",
       "secretaryInviteFor": "This invite is for {email}.",
-      "loading": "加载中…"
+      "loading": "加载中…",
+      "rolePatientViaInvite": "患者通过医生的邀请链接加入"
     },
     "forgotPassword": {
       "title": "忘记密码？",
@@ -908,6 +909,14 @@
       "body": "如果这是新地址，我们已向您发送了确认链接。已有账户？请登录或重置密码。",
       "signIn": "登录",
       "forgot": "忘记密码？"
+    },
+    "becomeProfessional": {
+      "link": "我是医疗专业人员",
+      "body": "要将此账户切换为医疗专业人员账户吗？您的免费试用将开始。",
+      "countryLabel": "您的诊所在哪里？",
+      "switch": "切换账户",
+      "cancel": "取消",
+      "errorLinked": "此账户已关联到诊所，无法切换。"
     }
   },
   "myAppointments": {

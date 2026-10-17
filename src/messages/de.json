@@ -786,7 +786,8 @@
       "fullNameHint": "Fügen Sie auf Wunsch Ihren Titel hinzu ({titles}); er erscheint in der Begrüßung.",
       "backToCountry": "Zurück",
       "secretaryInviteFor": "This invite is for {email}.",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "rolePatientViaInvite": "Patients join through their doctor's invite link"
     },
     "forgotPassword": {
       "title": "Passwort vergessen?",
@@ -908,6 +909,14 @@
       "body": "If this address is new, we sent you a confirmation link. Already have an account? Sign in or reset your password.",
       "signIn": "Sign in",
       "forgot": "Forgot password?"
+    },
+    "becomeProfessional": {
+      "link": "I'm a health professional",
+      "body": "Switch this account to a health professional account? You'll start your free trial.",
+      "countryLabel": "Where is your practice?",
+      "switch": "Switch account",
+      "cancel": "Cancel",
+      "errorLinked": "This account is already linked to a clinic, so it can't be switched."
     }
   },
   "myAppointments": {

@@ -270,5 +270,9 @@
   "app-signup-neutral-live": {
     "met": true,
     "what": "LIVE 2026-10-17: 13's mobile #525 released to production 16:22:06Z (group 8303a25e; the bundle ca verified). The app's neutral sign-up screen for an address that already has a confirmed account (13's mobile #525: \"Verifique seu e-mail\" + Entrar + Esqueceu sua senha?, no code field; switch-aware body) is in a RELEASED app build (OTA or store; 13 pings). Gates the App Map's app rule for that screen; the website's twin is live with #580."
+  },
+  "become-professional-live": {
+    "met": false,
+    "what": "\"Sou profissional de saúde\" on the invite-code gate: 13's migration 231 (become_professional(p_country, p_time_zone): an unlinked, role-less or unconnected patient account becomes a professional with a 15-day trial) is applied on production AND reviewed, with the app's twin. Gates the website's link + confirm step (invite-required), Help K3's line and the App Map rule. Vitor's decision 10-18 (a Thai doctor stuck as a patient)."
   }
 }

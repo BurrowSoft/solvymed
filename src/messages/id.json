@@ -786,7 +786,8 @@
       "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
       "backToCountry": "Kembali",
       "secretaryInviteFor": "This invite is for {email}.",
-      "loading": "Memuat…"
+      "loading": "Memuat…",
+      "rolePatientViaInvite": "Pasien bergabung melalui tautan undangan dokter mereka"
     },
     "forgotPassword": {
       "title": "Lupa kata sandi?",
@@ -908,6 +909,14 @@
       "body": "Jika alamat ini baru, kami telah mengirim tautan konfirmasi. Sudah punya akun? Masuk atau atur ulang kata sandi Anda.",
       "signIn": "Masuk",
       "forgot": "Lupa kata sandi?"
+    },
+    "becomeProfessional": {
+      "link": "Saya tenaga kesehatan",
+      "body": "Ubah akun ini menjadi akun tenaga kesehatan? Masa uji coba gratis Anda akan dimulai.",
+      "countryLabel": "Di mana praktik Anda?",
+      "switch": "Ubah akun",
+      "cancel": "Batal",
+      "errorLinked": "Akun ini sudah terhubung ke klinik, jadi tidak dapat diubah."
     }
   },
   "myAppointments": {
