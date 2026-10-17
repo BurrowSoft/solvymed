@@ -9,6 +9,7 @@ import { AuthCard } from "@/components/AuthCard";
 import { IconBadge } from "@/components/IconBadge";
 import { conditionMet } from "@/lib/conditions";
 import { signOutHere } from "@/lib/signOut";
+import { BecomeProfessional } from "@/components/BecomeProfessional";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -261,6 +262,10 @@ export default function InviteRequiredPage() {
             )}
           </button>
         </form>
+
+        {/* A doctor who signed up as a patient by mistake (Vitor, 10-18): switch
+            this account to a professional one (migration 231; the app has it). */}
+        {conditionMet("become-professional-live") && <BecomeProfessional locale={locale} />}
 
         <button
           onClick={handleSignOut}

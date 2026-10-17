@@ -908,6 +908,14 @@
       "body": "If this address is new, we sent you a confirmation link. Already have an account? Sign in or reset your password.",
       "signIn": "Sign in",
       "forgot": "Forgot password?"
+    },
+    "becomeProfessional": {
+      "link": "I'm a health professional",
+      "body": "Switch this account to a health professional account? You'll start your free trial.",
+      "countryLabel": "Where is your practice?",
+      "switch": "Switch account",
+      "cancel": "Cancel",
+      "errorLinked": "This account is already linked to a clinic, so it can't be switched."
     }
   },
   "myAppointments": {

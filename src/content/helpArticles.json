@@ -2377,6 +2377,10 @@
             },
             {
               "type": "p",
+              "text": "Se você é profissional de saúde e se cadastrou como paciente por engano, na tela do código de convite toque em **Sou profissional de saúde** e confirme o país do consultório: a conta passa a ser de profissional e seu teste gratuito começa."
+            },
+            {
+              "type": "p",
               "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (abre o app de e-mail do celular), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
             },
             {
@@ -2400,6 +2404,10 @@
             {
               "type": "p",
               "text": "If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
+            },
+            {
+              "type": "p",
+              "text": "If you're a health professional and signed up as a patient by mistake, on the invite-code screen tap **I'm a health professional** and confirm your practice's country: the account becomes a professional one and your free trial starts."
             },
             {
               "type": "p",

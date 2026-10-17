@@ -908,6 +908,14 @@
       "body": "Nếu địa chỉ này mới, chúng tôi đã gửi cho bạn một liên kết xác nhận. Đã có tài khoản? Hãy đăng nhập hoặc đặt lại mật khẩu.",
       "signIn": "Đăng nhập",
       "forgot": "Quên mật khẩu?"
+    },
+    "becomeProfessional": {
+      "link": "Tôi là nhân viên y tế",
+      "body": "Chuyển tài khoản này thành tài khoản nhân viên y tế? Thời gian dùng thử miễn phí của bạn sẽ bắt đầu.",
+      "countryLabel": "Phòng khám của bạn ở đâu?",
+      "switch": "Chuyển tài khoản",
+      "cancel": "Hủy",
+      "errorLinked": "Tài khoản này đã được liên kết với một phòng khám nên không thể chuyển."
     }
   },
   "myAppointments": {

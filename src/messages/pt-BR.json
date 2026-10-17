@@ -908,6 +908,14 @@
       "body": "Se este endereço for novo, enviamos um link de confirmação. Já tem uma conta? Entre ou redefina sua senha.",
       "signIn": "Entrar",
       "forgot": "Esqueceu sua senha?"
+    },
+    "becomeProfessional": {
+      "link": "Sou profissional de saúde",
+      "body": "Mudar esta conta para uma conta de profissional de saúde? Seu período de teste gratuito vai começar.",
+      "countryLabel": "Onde fica seu consultório?",
+      "switch": "Mudar conta",
+      "cancel": "Cancelar",
+      "errorLinked": "Esta conta já está vinculada a uma clínica e não pode ser alterada."
     }
   },
   "myAppointments": {
