@@ -887,7 +887,15 @@
       "button": "Kirim ulang email konfirmasi",
       "wait": "Anda dapat mengirim ulang dalam {seconds} dtk.",
       "sent": "Email konfirmasi terkirim. Periksa kotak masuk Anda.",
-      "spamHint": "Tidak ada? Periksa folder spam atau sampah."
+      "spamHint": "Tidak ada? Periksa folder spam atau sampah.",
+      "neutralSent": "Jika alamat ini memiliki akun yang belum dikonfirmasi, kami telah mengirim email konfirmasi baru."
+    },
+    "confirmEmail": {
+      "title": "Konfirmasi email Anda",
+      "sentTo": "Kami mengirim tautan konfirmasi ke {email}.",
+      "openMail": "Buka email",
+      "wrongEmail": "Email salah? Perbaiki",
+      "forgotQuestion": "Belum mengonfirmasi email Anda?"
     }
   },
   "myAppointments": {

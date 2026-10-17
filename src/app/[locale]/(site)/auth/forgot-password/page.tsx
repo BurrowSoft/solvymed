@@ -12,6 +12,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { ResendConfirmation } from "@/components/ResendConfirmation";
 import { fieldValue } from "@/lib/formField";
 
 export default function ForgotPasswordPage() {
@@ -22,6 +23,8 @@ export default function ForgotPasswordPage() {
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  // The address typed, for the resend line on the sent screen (01).
+  const [sentTo, setSentTo] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
   const submitting = useRef(false);
@@ -67,6 +70,7 @@ export default function ForgotPasswordPage() {
     if (authError) {
       setError(authErrorText(authError) ?? t("errors.generic"));
     } else {
+      setSentTo(email);
       setSuccess(true);
     }
   }
@@ -88,6 +92,14 @@ export default function ForgotPasswordPage() {
             {t("forgotPassword.success")}
           </h1>
           <p className="mb-8 text-slate-500">{t("forgotPassword.successSub")}</p>
+          {/* Shown to everyone (01): an unconfirmed account gets the sign-up
+              link again; the result reads the same for any address. */}
+          {sentTo && (
+            <div data-testid="forgot-unconfirmed" className="mb-6 text-left text-sm">
+              <p className="text-slate-600">{t("confirmEmail.forgotQuestion")}</p>
+              <ResendConfirmation email={sentTo} locale={locale} neutral />
+            </div>
+          )}
 
           <Link
             href={localePath("/auth/login")}

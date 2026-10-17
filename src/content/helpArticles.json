@@ -2253,8 +2253,8 @@
           ]
         },
         "web": {
-          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela. Logo após o cadastro, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (Gmail, Outlook, Yahoo e iCloud) e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo).",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen. Right after signing up, the **Confirm your e-mail** screen shows the address, **Open e-mail** (Gmail, Outlook, Yahoo and iCloud) and **Wrong e-mail? Fix it** (to sign up again with the right address)."
         },
         "webUnavailable": false,
         "open": null,

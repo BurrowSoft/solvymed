@@ -14,7 +14,10 @@ import { authErrorKey } from "@/lib/authErrors";
 // starts the same wait), and a hint to look in spam. As the app (13).
 export const RESEND_COOLDOWN_S = 60;
 
-export function ResendConfirmation({ email, locale, captchaToken }: { email: string; locale: string; captchaToken?: string | null }) {
+// neutral (the forgot-password screen, shown to everyone): any outcome but
+// the rate limit reads the same, so it never tells whether the address has
+// an account or whether it is confirmed (01; account enumeration).
+export function ResendConfirmation({ email, locale, captchaToken, neutral = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean }) {
   const t = useTranslations("auth.resendConfirmation");
   const authErrorText = useAuthErrorText();
   const [sending, setSending] = useState(false);
@@ -38,7 +41,7 @@ export function ResendConfirmation({ email, locale, captchaToken }: { email: str
       options: { emailRedirectTo: signupEmailRedirect(locale), ...(captchaToken ? { captchaToken } : {}) },
     });
     setSending(false);
-    if (e) {
+    if (e && !(neutral && authErrorKey(e) !== "rateLimited")) {
       setError(authErrorText(e) ?? "");
       // Supabase's own limit (60 s per address): the same wait (13, the app).
       if (authErrorKey(e) === "rateLimited") setWait(RESEND_COOLDOWN_S);
@@ -60,7 +63,7 @@ export function ResendConfirmation({ email, locale, captchaToken }: { email: str
         {t("button")}
       </button>
       <p role="status" aria-live="polite" className="text-slate-600">
-        {sent ? t("sent") : ""}
+        {sent ? t(neutral ? "neutralSent" : "sent") : ""}
       </p>
       {wait > 0 && <p data-testid="resend-wait" className="text-slate-500">{t("wait", { seconds: wait })}</p>}
       {error && <p role="alert" className="text-red-600">{error}</p>}

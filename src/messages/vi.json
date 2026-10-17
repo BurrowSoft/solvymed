@@ -887,7 +887,15 @@
       "button": "Gửi lại email xác nhận",
       "wait": "Bạn có thể gửi lại sau {seconds} giây.",
       "sent": "Đã gửi email xác nhận. Hãy kiểm tra hộp thư đến.",
-      "spamHint": "Không thấy? Hãy kiểm tra thư mục thư rác."
+      "spamHint": "Không thấy? Hãy kiểm tra thư mục thư rác.",
+      "neutralSent": "Nếu địa chỉ này có tài khoản chưa xác nhận, chúng tôi đã gửi một email xác nhận mới."
+    },
+    "confirmEmail": {
+      "title": "Xác nhận email của bạn",
+      "sentTo": "Chúng tôi đã gửi liên kết xác nhận đến {email}.",
+      "openMail": "Mở email",
+      "wrongEmail": "Sai email? Sửa lại",
+      "forgotQuestion": "Bạn chưa xác nhận email?"
     }
   },
   "myAppointments": {
