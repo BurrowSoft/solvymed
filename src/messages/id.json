@@ -900,6 +900,13 @@
       "codeLabel": "Atau masukkan kode 8 digit dari email",
       "codeConfirm": "Konfirmasi",
       "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru."
+    },
+    "signupExisting": {
+      "title": "Periksa email Anda",
+      "bodyWithCode": "Jika alamat ini baru, kami telah mengirim tautan dan kode. Sudah punya akun? Masuk atau atur ulang kata sandi Anda.",
+      "body": "Jika alamat ini baru, kami telah mengirim tautan konfirmasi. Sudah punya akun? Masuk atau atur ulang kata sandi Anda.",
+      "signIn": "Masuk",
+      "forgot": "Lupa kata sandi?"
     }
   },
   "myAppointments": {

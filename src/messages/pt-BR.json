@@ -900,6 +900,13 @@
       "codeLabel": "Ou digite o código de 8 dígitos do e-mail",
       "codeConfirm": "Confirmar",
       "codeInvalid": "Código inválido ou expirado. Reenvie o e-mail para receber um novo."
+    },
+    "signupExisting": {
+      "title": "Verifique seu e-mail",
+      "bodyWithCode": "Se este endereço for novo, enviamos um link e um código. Já tem uma conta? Entre ou redefina sua senha.",
+      "body": "Se este endereço for novo, enviamos um link de confirmação. Já tem uma conta? Entre ou redefina sua senha.",
+      "signIn": "Entrar",
+      "forgot": "Esqueceu sua senha?"
     }
   },
   "myAppointments": {

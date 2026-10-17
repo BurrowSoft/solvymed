@@ -215,3 +215,38 @@ describe("Confirme seu e-mail: the code (confirm_by_code)", () => {
     h.flags = { data: null, error: null };
   });
 });
+
+// b9's sweep (01): an address that already has a confirmed account got
+// "Já existe uma conta com este e-mail", which told anyone which addresses
+// have accounts. Now the app's neutral screen (13's #525): true for a new
+// address and an existing one alike.
+describe("sign-up with an already registered address: the neutral screen", () => {
+  async function signUpExisting(flags: { data: unknown; error: unknown }) {
+    h.flags = flags;
+    h.signUp.mockReset().mockResolvedValue({ data: { user: { id: "u-x", identities: [] } }, error: null });
+    wrap(<SignupPage />);
+    byId("signup-full-name").value = "Ana";
+    byId("signup-email").value = "ana@x.example";
+    byId("signup-password").value = "longenough1";
+    byId("signup-confirm-password").value = "longenough1";
+    fireEvent.submit(byId("signup-email").form!);
+    await screen.findByTestId("signup-existing");
+  }
+
+  it("says the same as for a new address, with Sign in and Forgot password; never 'already exists'", async () => {
+    await signUpExisting({ data: [{ key: "confirm_by_code", enabled: true }], error: null });
+    expect(screen.getByText(pt.auth.signupExisting.title)).toBeInTheDocument();
+    // The switch is read after the screen shows (as on the confirm page).
+    await waitFor(() => expect(screen.getByTestId("signup-existing")).toHaveTextContent(pt.auth.signupExisting.bodyWithCode));
+    expect(screen.queryByText(pt.auth.signup.emailExists)).toBeNull();
+    expect(screen.getByTestId("signup-existing-login")).toHaveAttribute("href", "/pt-BR/auth/login");
+    expect(screen.getByTestId("signup-existing-forgot")).toHaveAttribute("href", "/pt-BR/auth/forgot-password");
+    expect(screen.queryByTestId("confirm-by-code")).toBeNull();
+    h.flags = { data: null, error: null };
+  });
+
+  it("while the code switch is off, it doesn't promise a code", async () => {
+    await signUpExisting({ data: null, error: null });
+    expect(screen.getByTestId("signup-existing")).toHaveTextContent(pt.auth.signupExisting.body);
+  });
+});

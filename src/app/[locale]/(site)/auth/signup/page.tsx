@@ -84,6 +84,8 @@ export default function SignupPage() {
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  // An address that already has a confirmed account: the neutral screen.
+  const [existing, setExisting] = useState(false);
   // The address the link went to, for "Resend the confirmation e-mail" (01).
   const [sentTo, setSentTo] = useState("");
   // "E-mail errado? Corrigir" (01): back to the form to sign up again with
@@ -94,11 +96,11 @@ export default function SignupPage() {
   // until then (or if it can't be read) the link-only text, no code field.
   const [byCode, setByCode] = useState(false);
   useEffect(() => {
-    if (!success) return;
+    if (!success && !existing) return;
     let live = true;
     void publicFlag(createClient(), "confirm_by_code").then((on) => { if (live) setByCode(on); });
     return () => { live = false; };
-  }, [success]);
+  }, [success, existing]);
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
   const submitting = useRef(false);
@@ -237,15 +239,37 @@ export default function SignupPage() {
     if (authError) {
       setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signUpData.user?.identities?.length === 0) {
-      // Supabase returns an empty identities array (no error) when the email is
-      // already registered — avoid leaking "email exists" by pointing to login.
-      setError(t("signup.emailExists"));
+      // Supabase returns an empty identities array (no error) when the address
+      // already has a confirmed account. Saying so ("Já existe uma conta…")
+      // told anyone which addresses have accounts (b9's sweep). Now the same
+      // neutral screen as the app's (13): it reads true for a new address and
+      // for an existing one, with Sign in and Forgot password.
+      setSentTo(email);
+      setExisting(true);
     } else {
       track("signup_submitted", { role });
       setSentTo(email);
       setDraft({ name: fullName, code: isJoinFlow ? "" : inviteCode });
       setSuccess(true);
     }
+  }
+
+  if (existing) {
+    return (
+      <AuthPageShell>
+        <AuthCard centered>
+          <Logo />
+          <h1 className="auth-heading">{t("signupExisting.title")}</h1>
+          <p className="mb-6 text-slate-500" data-testid="signup-existing">{t(byCode ? "signupExisting.bodyWithCode" : "signupExisting.body")}</p>
+          <Link href={localePath("/auth/login")} data-testid="signup-existing-login" className="mb-3 inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-3 text-base font-bold text-white shadow-md transition hover:bg-teal-700">
+            {t("signupExisting.signIn")}
+          </Link>
+          <Link href={localePath("/auth/forgot-password")} data-testid="signup-existing-forgot" className="inline-flex w-full items-center justify-center rounded-xl border border-teal-200 bg-white px-6 py-3 text-base font-semibold text-teal-700 transition hover:bg-teal-50">
+            {t("signupExisting.forgot")}
+          </Link>
+        </AuthCard>
+      </AuthPageShell>
+    );
   }
 
   if (success) {
