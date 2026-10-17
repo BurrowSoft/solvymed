@@ -35,12 +35,12 @@ Thai title: "เปลี่ยนรหัสผ่าน"
 ---
 ## K3. Problemas para entrar / Trouble signing in
 **pt-BR**
-Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora).
+Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas).
 {pending:app-auth-recovery-live} E-mail não confirmado? Na tela de entrada, toque em **Reenviar e-mail de confirmação** (um reenvio por minuto) e verifique também a pasta de spam.
 {pending:app-auth-recovery-live} Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.
 {pending:confirm-by-code-live} O e-mail de confirmação também traz um código de 8 dígitos: no app, digite-o na tela **Confirme seu e-mail** se o link não abrir.
 **en**
-On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour).
+On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours).
 {pending:app-auth-recovery-live} E-mail not confirmed? On the sign-in screen, tap **Resend confirmation e-mail** (one resend per minute) and also check your spam folder.
 {pending:app-auth-recovery-live} If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen.
 {pending:confirm-by-code-live} The confirmation e-mail also has an 8-digit code: in the app, type it on the **Confirm your e-mail** screen if the link doesn't open.
@@ -50,7 +50,7 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 **On the website:** {pending:confirm-by-code-live} On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen. Right after signing up, the **Confirm your e-mail** screen shows the address, **Open e-mail** (Gmail, Outlook, Yahoo and iCloud) and **Wrong e-mail? Fix it** (to sign up again with the right address). The confirmation e-mail also has an 8-digit code: type it on **Confirm your e-mail** if the link doesn't open.
 Thai title: "เข้าสู่ระบบไม่ได้"
 **th**
-ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)
+ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 24 ชั่วโมง)
 {pending:app-auth-recovery-live} ยังไม่ได้ยืนยันอีเมล? ที่หน้าจอเข้าสู่ระบบ แตะ **ส่งอีเมลยืนยันอีกครั้ง** (ส่งได้หนึ่งครั้งต่อนาที) และตรวจสอบโฟลเดอร์จดหมายขยะด้วย
 {pending:app-auth-recovery-live} หากเห็น **ไม่พบรหัสเชิญ โปรดขอรหัสจากคลินิกของคุณ** ให้ป้อนรหัสของคลินิกในหน้าจอเดียวกันนั้น
 {pending:confirm-by-code-live} อีเมลยืนยันมีรหัส 8 หลักด้วย หากลิงก์เปิดไม่ได้ ให้กรอกรหัสในหน้าจอ **ยืนยันอีเมลของคุณ** ในแอป

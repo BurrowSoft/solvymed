@@ -276,7 +276,7 @@ export default function SignupPage() {
               {t("confirmEmail.openMail")}
             </a>
           )}
-          {sentTo && <div className="mb-4 text-left"><ResendConfirmation email={sentTo} locale={locale} /></div>}
+          {sentTo && <div className="mb-4 text-left"><ResendConfirmation email={sentTo} locale={locale} justSent /></div>}
           {!lockedEmail && (
             <button
               type="button"

@@ -77,6 +77,12 @@ describe("Confirme seu e-mail (after sign-up)", () => {
     expect(screen.getByTestId("resend-confirmation-button")).toBeInTheDocument();
   });
 
+  it("right after sign-up the resend is already counting down (an e-mail just went out)", async () => {
+    await signUp("ana@gmail.com");
+    expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled();
+    expect(screen.getByTestId("resend-wait")).toHaveTextContent("60");
+  });
+
   it("an unknown provider: no 'Abrir e-mail'", async () => {
     await signUp("ana@clinica.example");
     expect(screen.queryByTestId("confirm-email-open")).toBeNull();
@@ -119,12 +125,23 @@ describe("forgot password: the resend line, the same for every address", () => {
     await waitFor(() => expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled());
   });
 
-  it("only the rate limit says something else", async () => {
+  it("offline: says so, never sent (b9; nothing was sent)", async () => {
     await sent();
-    h.resend.mockReset().mockResolvedValue({ error: { code: "over_email_send_rate_limit", status: 429 } });
+    h.resend.mockReset().mockResolvedValue({ error: { name: "AuthRetryableFetchError", status: 0, message: "Failed to fetch" } });
     fireEvent.click(screen.getByTestId("resend-confirmation-button"));
     await screen.findByRole("alert");
     expect(screen.queryByText(pt.auth.resendConfirmation.neutralSent)).toBeNull();
+    expect(screen.getByTestId("resend-confirmation-button")).not.toBeDisabled();
+  });
+
+  it("the rate limit: just the wait (no red error, no 'sent'; ca/01)", async () => {
+    await sent();
+    h.resend.mockReset().mockResolvedValue({ error: { code: "over_email_send_rate_limit", status: 429 } });
+    fireEvent.click(screen.getByTestId("resend-confirmation-button"));
+    await screen.findByTestId("resend-wait");
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.queryByText(pt.auth.resendConfirmation.neutralSent)).toBeNull();
+    expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled();
   });
 });
 
