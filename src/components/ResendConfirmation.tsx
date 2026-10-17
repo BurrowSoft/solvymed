@@ -41,10 +41,13 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
       options: { emailRedirectTo: signupEmailRedirect(locale), ...(captchaToken ? { captchaToken } : {}) },
     });
     setSending(false);
-    if (e && !(neutral && authErrorKey(e) !== "rateLimited")) {
+    // Neutral: only the rate limit and a network failure show as errors; they
+    // say nothing about the address (offline, nothing was sent; b9).
+    const key = e ? authErrorKey(e) : null;
+    if (e && !(neutral && key !== "rateLimited" && key !== "network")) {
       setError(authErrorText(e) ?? "");
       // Supabase's own limit (60 s per address): the same wait (13, the app).
-      if (authErrorKey(e) === "rateLimited") setWait(RESEND_COOLDOWN_S);
+      if (key === "rateLimited") setWait(RESEND_COOLDOWN_S);
       return;
     }
     setSent(true);

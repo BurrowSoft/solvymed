@@ -117,6 +117,15 @@ describe("forgot password: the resend line, the same for every address", () => {
     await waitFor(() => expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled());
   });
 
+  it("offline: says so, never sent (b9; nothing was sent)", async () => {
+    await sent();
+    h.resend.mockReset().mockResolvedValue({ error: { name: "AuthRetryableFetchError", status: 0, message: "Failed to fetch" } });
+    fireEvent.click(screen.getByTestId("resend-confirmation-button"));
+    await screen.findByRole("alert");
+    expect(screen.queryByText(pt.auth.resendConfirmation.neutralSent)).toBeNull();
+    expect(screen.getByTestId("resend-confirmation-button")).not.toBeDisabled();
+  });
+
   it("only the rate limit says something else", async () => {
     await sent();
     h.resend.mockReset().mockResolvedValue({ error: { code: "over_email_send_rate_limit", status: 429 } });
