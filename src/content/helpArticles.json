@@ -2267,12 +2267,28 @@
             {
               "type": "p",
               "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas)."
+            },
+            {
+              "type": "p",
+              "text": "E-mail não confirmado? Na tela de entrada, toque em **Reenviar e-mail de confirmação** (um reenvio por minuto) e verifique também a pasta de spam."
+            },
+            {
+              "type": "p",
+              "text": "Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours)."
+            },
+            {
+              "type": "p",
+              "text": "E-mail not confirmed? On the sign-in screen, tap **Resend confirmation e-mail** (one resend per minute) and also check your spam folder."
+            },
+            {
+              "type": "p",
+              "text": "If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
             }
           ]
         },
