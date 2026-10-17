@@ -895,7 +895,11 @@
       "sentTo": "Chúng tôi đã gửi liên kết xác nhận đến {email}.",
       "openMail": "Mở email",
       "wrongEmail": "Sai email? Sửa lại",
-      "forgotQuestion": "Bạn chưa xác nhận email?"
+      "forgotQuestion": "Bạn chưa xác nhận email?",
+      "sentToWithCode": "Chúng tôi đã gửi liên kết và mã đến {email}.",
+      "codeLabel": "Hoặc nhập mã 8 chữ số trong email",
+      "codeConfirm": "Xác nhận",
+      "codeInvalid": "Mã không hợp lệ hoặc đã hết hạn. Hãy gửi lại email để nhận mã mới."
     }
   },
   "myAppointments": {

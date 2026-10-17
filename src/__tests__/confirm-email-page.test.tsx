@@ -15,6 +15,8 @@ const h = vi.hoisted(() => ({
   signUp: vi.fn(),
   resetForEmail: vi.fn(),
   resend: vi.fn(),
+  verifyOtp: vi.fn(),
+  flags: { data: null, error: null } as { data: unknown; error: unknown },
 }));
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
@@ -24,8 +26,8 @@ vi.mock("next/navigation", async (orig) => ({
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
-    auth: { signUp: h.signUp, resetPasswordForEmail: h.resetForEmail, resend: h.resend },
-    rpc: async () => ({ data: null, error: null }),
+    auth: { signUp: h.signUp, resetPasswordForEmail: h.resetForEmail, resend: h.resend, verifyOtp: h.verifyOtp },
+    rpc: async (fn: string) => (fn === "get_public_flags" ? h.flags : { data: null, error: null }),
   }),
 }));
 vi.mock("@supabase/supabase-js", () => ({
@@ -140,5 +142,76 @@ describe("forgot password: the resend line, the same for every address", () => {
     expect(screen.queryByRole("alert")).toBeNull();
     expect(screen.queryByText(pt.auth.resendConfirmation.neutralSent)).toBeNull();
     expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled();
+  });
+});
+
+// PR B: the code, only while the shared switch confirm_by_code is on (the
+// e-mail carries it then); anything uncertain is off.
+describe("Confirme seu e-mail: the code (confirm_by_code)", () => {
+  it.each([
+    ["off", { data: [{ key: "confirm_by_code", enabled: false }], error: null }],
+    ["missing", { data: [], error: null }],
+    ["not deployed yet", { data: null, error: { code: "PGRST202" } }],
+  ])("%s: link-only text, no code field", async (_, flags) => {
+    h.flags = flags;
+    await signUp("ana@gmail.com");
+    await waitFor(() => expect(screen.getByTestId("confirm-email-sent-to")).toHaveTextContent("Enviamos um link de confirmação para ana@gmail.com."));
+    expect(screen.queryByTestId("confirm-by-code")).toBeNull();
+  });
+
+  it("on: 'link and a code', the field; a good code confirms and routes like the link", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset().mockResolvedValue({ error: null });
+    const fetchMock = vi.fn(async () => new Response(JSON.stringify({ redirect: "/pt-BR/auth/professional-welcome" })));
+    vi.stubGlobal("fetch", fetchMock);
+    const assign = vi.fn();
+    const original = window.location;
+    Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    expect(screen.getByTestId("confirm-email-sent-to")).toHaveTextContent("Enviamos um link e um código para ana@gmail.com.");
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234 5678" } });
+    fireEvent.click(screen.getByTestId("confirm-code-submit"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/professional-welcome"));
+    expect(h.verifyOtp).toHaveBeenCalledWith({ email: "ana@gmail.com", token: "12345678", type: "signup" });
+    expect(fetchMock).toHaveBeenCalledWith("/api/auth/after-verify", expect.objectContaining({ method: "POST", body: JSON.stringify({ locale: "pt-BR", type: "signup" }) }));
+    vi.unstubAllGlobals();
+    Object.defineProperty(window, "location", { configurable: true, value: original });
+  });
+
+  it("no connection: the network text, never 'invalid or expired' (b9)", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset().mockResolvedValue({ error: { name: "AuthRetryableFetchError", status: 0, message: "Failed to fetch" } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    fireEvent.click(screen.getByTestId("confirm-code-submit"));
+    await screen.findByText(pt.auth.errors.network);
+    expect(screen.queryByText(pt.auth.confirmEmail.codeInvalid)).toBeNull();
+    h.flags = { data: null, error: null };
+  });
+
+  it("exactly 8 digits (the app's parity): fewer can't be sent, more are cut", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset();
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "123456" } });
+    expect(screen.getByTestId("confirm-code-submit")).toBeDisabled();
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567890" } });
+    expect(byId("confirm-code").value).toBe("12345678");
+    expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled();
+    h.flags = { data: null, error: null };
+  });
+
+  it("a wrong or expired code: says so, stays on the page", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset().mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "00000000" } });
+    fireEvent.click(screen.getByTestId("confirm-code-submit"));
+    await screen.findByText(pt.auth.confirmEmail.codeInvalid);
+    h.flags = { data: null, error: null };
   });
 });
