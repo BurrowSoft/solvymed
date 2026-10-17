@@ -785,7 +785,8 @@
       "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
       "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
       "backToCountry": "Quay lại",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "Đang tải…"
     },
     "forgotPassword": {
       "title": "Quên mật khẩu?",

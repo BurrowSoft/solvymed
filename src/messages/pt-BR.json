@@ -785,7 +785,8 @@
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
       "backToCountry": "Voltar",
-      "secretaryInviteFor": "Este convite é para {email}."
+      "secretaryInviteFor": "Este convite é para {email}.",
+      "loading": "Carregando…"
     },
     "forgotPassword": {
       "title": "Esqueceu sua senha?",

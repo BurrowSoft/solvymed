@@ -139,6 +139,8 @@ describe("signup before hydration", () => {
   it("the submit waits for the script (a native POST lost what was typed)", () => {
     const submit = html("c=BR").querySelector('button[type="submit"]');
     expect(submit).toHaveAttribute("disabled");
+    // It says why (01): "Carregando…" with the spinner, until the script is in.
+    expect(submit).toHaveTextContent(pt.auth.signup.loading);
     // Credential fields stay without name= (no GET leak; feedback rule).
     expect(html("c=BR").querySelector("input[name]")).toBeNull();
   });

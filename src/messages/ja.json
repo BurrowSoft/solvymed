@@ -785,7 +785,8 @@
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
       "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
       "backToCountry": "戻る",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "読み込み中…"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",

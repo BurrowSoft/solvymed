@@ -785,7 +785,8 @@
       "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
       "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
       "backToCountry": "رجوع",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "جارٍ التحميل…"
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",

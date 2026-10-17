@@ -785,7 +785,8 @@
       "consentCheckbox": "Ho letto e accetto i <terms>Termini di utilizzo</terms> e l'<privacy>Informativa sulla privacy</privacy>",
       "fullNameHint": "Se vuoi, aggiungi il tuo titolo ({titles}): compare nei saluti.",
       "backToCountry": "Indietro",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "Loading…"
     },
     "forgotPassword": {
       "title": "Password dimenticata?",

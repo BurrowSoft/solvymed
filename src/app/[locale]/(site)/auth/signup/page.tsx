@@ -610,10 +610,11 @@ export default function SignupPage() {
             aria-busy={!hydrated || undefined}
             className="w-full rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? (
+            {loading || !hydrated ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="spinner-white" />
-                {t("signup.submit")}
+                {/* Before hydration: why it waits (01: so a slow line doesn't look broken). */}
+                {hydrated ? t("signup.submit") : t("signup.loading")}
               </span>
             ) : (
               t("signup.submit")

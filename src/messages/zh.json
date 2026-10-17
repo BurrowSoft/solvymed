@@ -785,7 +785,8 @@
       "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
       "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
       "backToCountry": "返回",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "加载中…"
     },
     "forgotPassword": {
       "title": "忘记密码？",

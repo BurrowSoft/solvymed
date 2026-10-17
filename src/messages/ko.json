@@ -785,7 +785,8 @@
       "consentCheckbox": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽었으며 이에 동의합니다",
       "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다.",
       "backToCountry": "돌아가기",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "loading": "불러오는 중…"
     },
     "forgotPassword": {
       "title": "비밀번호를 잊으셨나요?",
