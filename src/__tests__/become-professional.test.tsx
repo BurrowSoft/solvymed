@@ -81,6 +81,16 @@ describe("BecomeProfessional", () => {
     expect(assign).not.toHaveBeenCalled();
   });
 
+  it("already_professional (a double tap): refresh and on to the welcome (13)", async () => {
+    h.rpc.mockResolvedValue({ data: null, error: { message: "already_professional", code: "P0001" } });
+    show();
+    fireEvent.click(screen.getByText(pt.auth.becomeProfessional.link));
+    fireEvent.click(screen.getByLabelText(/Brasil/));
+    fireEvent.click(screen.getByTestId("become-professional-switch"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/professional-welcome"));
+    expect(h.refresh).toHaveBeenCalled();
+  });
+
   it("other refusals: the generic text", async () => {
     h.rpc.mockResolvedValue({ data: null, error: { message: "is_secretary", code: "P0001" } });
     show();

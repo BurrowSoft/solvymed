@@ -55,7 +55,9 @@ export function BecomeProfessional({ locale }: { locale: string }) {
     setError("");
     const supabase = createClient();
     const { error: rpcError } = await supabase.rpc("become_professional", { p_country: country, p_time_zone: browserTimeZone() });
-    if (rpcError) {
+    // already_professional: a double tap (or another tab) already switched it;
+    // nothing to fix, so on to the welcome as after a success (13).
+    if (rpcError && !(rpcError.message ?? "").includes("already_professional")) {
       setWorking(false);
       const m = rpcError.message ?? "";
       setError(
