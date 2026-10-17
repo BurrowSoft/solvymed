@@ -212,8 +212,8 @@
     "what": "The signature image is on for everyone: the server flag studio_signature_image (migration 225) enabled for all practices, with the §6f signature-image bullet live and the account-close cleanup (#538). Gates the C17 signature line and the App Map's signature rule; flip it with the flag."
   },
   "document-studio-live": {
-    "met": false,
-    "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
+    "met": true,
+    "what": "LIVE at the Studio launch (Vitor's go via 01, 2026-10-17): 13's server flag document_studio ON + migration 226 live + #557 (privacy §6f) merged; this flips in that window. Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
   },
   "app-share-default-live": {
     "met": true,
