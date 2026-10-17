@@ -38,6 +38,7 @@ Thai title: "เปลี่ยนรหัสผ่าน"
 Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas).
 {pending:app-auth-recovery-live} E-mail não confirmado? Na tela de entrada, toque em **Reenviar e-mail de confirmação** (um reenvio por minuto) e verifique também a pasta de spam.
 {pending:app-auth-recovery-live} Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.
+{pending:become-professional-live} Se você é profissional de saúde e se cadastrou como paciente por engano, na tela do código de convite toque em **Sou profissional de saúde** e confirme o país do consultório: a conta passa a ser de profissional e seu teste gratuito começa.
 Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (para endereços Gmail, Outlook, Yahoo e iCloud), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo).
 No app, depois de pedir o link em **Esqueceu sua senha?**, **Ainda não confirmou o e-mail?** reenvia o e-mail de confirmação.
 {pending:confirm-by-code-live} O e-mail de confirmação também traz um código de 8 dígitos: no app, digite-o na tela **Confirme seu e-mail** se o link não abrir.
@@ -45,6 +46,7 @@ No app, depois de pedir o link em **Esqueceu sua senha?**, **Ainda não confirmo
 On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours).
 {pending:app-auth-recovery-live} E-mail not confirmed? On the sign-in screen, tap **Resend confirmation e-mail** (one resend per minute) and also check your spam folder.
 {pending:app-auth-recovery-live} If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen.
+{pending:become-professional-live} If you're a health professional and signed up as a patient by mistake, on the invite-code screen tap **I'm a health professional** and confirm your practice's country: the account becomes a professional one and your free trial starts.
 Right after signing up in the app, the **Confirm your e-mail** screen shows the address, **Open e-mail** (for Gmail, Outlook, Yahoo and iCloud addresses), the resend and **Wrong e-mail? Fix it** (to sign up again with the right address).
 In the app, after asking for the link under **Forgot your password?**, **Haven't confirmed your e-mail yet?** sends the confirmation e-mail again.
 {pending:confirm-by-code-live} The confirmation e-mail also has an 8-digit code: in the app, type it on the **Confirm your e-mail** screen if the link doesn't open.
@@ -57,6 +59,7 @@ Thai title: "เข้าสู่ระบบไม่ได้"
 ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 24 ชั่วโมง)
 {pending:app-auth-recovery-live} ยังไม่ได้ยืนยันอีเมล? ที่หน้าจอเข้าสู่ระบบ แตะ **ส่งอีเมลยืนยันอีกครั้ง** (ส่งได้หนึ่งครั้งต่อนาที) และตรวจสอบโฟลเดอร์จดหมายขยะด้วย
 {pending:app-auth-recovery-live} หากเห็น **ไม่พบรหัสเชิญ โปรดขอรหัสจากคลินิกของคุณ** ให้ป้อนรหัสของคลินิกในหน้าจอเดียวกันนั้น
+{pending:become-professional-live} หากคุณเป็นบุคลากรทางการแพทย์และสมัครเป็นผู้ป่วยโดยไม่ได้ตั้งใจ ที่หน้าจอรหัสเชิญ ให้แตะ **ฉันเป็นบุคลากรทางการแพทย์** แล้วยืนยันประเทศของคลินิก บัญชีจะเปลี่ยนเป็นบัญชีบุคลากรทางการแพทย์และช่วงทดลองใช้ฟรีจะเริ่มต้น
 หลังสมัครสมาชิกในแอป หน้าจอ **ยืนยันอีเมลของคุณ** จะแสดงอีเมล **เปิดอีเมล** (สำหรับอีเมล Gmail, Outlook, Yahoo และ iCloud) การส่งอีกครั้ง และ **อีเมลไม่ถูกต้อง? แก้ไข** (เพื่อสมัครใหม่ด้วยอีเมลที่ถูกต้อง)
 ในแอป หลังจากขอลิงก์ที่ **ลืมรหัสผ่าน?** แล้ว **ยังไม่ได้ยืนยันอีเมล?** จะส่งอีเมลยืนยันอีกครั้ง
 {pending:confirm-by-code-live} อีเมลยืนยันมีรหัส 8 หลักด้วย หากลิงก์เปิดไม่ได้ ให้กรอกรหัสในหน้าจอ **ยืนยันอีเมลของคุณ** ในแอป
