@@ -270,5 +270,9 @@
   "app-signup-neutral-live": {
     "met": true,
     "what": "LIVE 2026-10-17: 13's mobile #525 released to production 16:22:06Z (group 8303a25e; the bundle ca verified). The app's neutral sign-up screen for an address that already has a confirmed account (13's mobile #525: \"Verifique seu e-mail\" + Entrar + Esqueceu sua senha?, no code field; switch-aware body) is in a RELEASED app build (OTA or store; 13 pings). Gates the App Map's app rule for that screen; the website's twin is live with #580."
+  },
+  "app-1-9-1-live": {
+    "met": false,
+    "what": "The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
   }
 }
