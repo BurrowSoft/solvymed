@@ -785,7 +785,8 @@
       "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
       "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
       "backToCountry": "رجوع",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "rolePatientViaInvite": "ينضم المرضى عبر رابط الدعوة من طبيبهم"
     },
     "forgotPassword": {
       "title": "نسيت كلمة المرور؟",

@@ -453,7 +453,7 @@ export default function SignupPage() {
                 </svg>
               }
               label={t("signup.rolePatient")}
-              description={t("signup.rolePatientDesc")}
+              description={t("signup.rolePatientViaInvite")}
             />
           </div>
           <p className="mt-3 text-center text-xs text-slate-500">{t("signup.secretaryNeedsInvite")}</p>
