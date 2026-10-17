@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { renderToString } from "react-dom/server";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -33,14 +34,14 @@ function show(query: string, guess: CountryChoice | null = null) {
   );
 }
 
-const stepButtons = () => screen.getAllByRole("button").filter((b) => /Brasil|ประเทศไทย/.test(b.textContent ?? ""));
+const stepButtons = () => screen.getAllByRole("link").filter((b) => /Brasil|ประเทศไทย/.test(b.textContent ?? ""));
 
 describe("signup: country first", () => {
   it("starts with the two countries; a tap continues in that country's language", () => {
     const { unmount } = show("");
     expect(screen.getByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeInTheDocument();
     expect(screen.queryByLabelText(/e-mail/i)).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: /ประเทศไทย/ }));
+    fireEvent.click(screen.getByRole("link", { name: /ประเทศไทย/ }));
     expect(h.push).toHaveBeenCalledWith("/th/auth/signup?c=TH");
     unmount();
   });
@@ -48,7 +49,7 @@ describe("signup: country first", () => {
   it("\"Use SolvyMed in English\" continues in English", () => {
     const { unmount } = show("");
     fireEvent.click(screen.getByLabelText("Use SolvyMed in English"));
-    fireEvent.click(screen.getByRole("button", { name: /Brasil/ }));
+    fireEvent.click(screen.getByRole("link", { name: /Brasil/ }));
     expect(h.push).toHaveBeenCalledWith("/auth/signup?c=BR");
     unmount();
   });
@@ -92,8 +93,66 @@ describe("signup: country first", () => {
   it("a join link skips the step and offers only the English switch", () => {
     const { unmount } = show("join=ABC123");
     expect(screen.queryByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeNull();
-    fireEvent.click(screen.getByLabelText("Use SolvyMed in English"));
+    fireEvent.click(screen.getByRole("checkbox", { name: "Use SolvyMed in English" }));
     expect(h.push).toHaveBeenCalledWith("/auth/signup?join=ABC123&from=pt-BR");
+    unmount();
+  });
+});
+
+// Before hydration (01: ad traffic on slow mobile lines). A tap before the
+// script arrives used to do nothing; the server HTML is what can be tapped
+// then, so these read it (renderToString: no effects, no handlers).
+describe("signup before hydration", () => {
+  const html = (query: string) => {
+    h.params = new URLSearchParams(query);
+    const div = document.createElement("div");
+    div.innerHTML = renderToString(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <CountryGuessProvider guess={null}>
+          <SignupPage />
+        </CountryGuessProvider>
+      </NextIntlClientProvider>,
+    );
+    return div;
+  };
+
+  it("each country is a link to its step, in its language", () => {
+    const hrefs = [...html("").querySelectorAll("a")].filter((a) => /Brasil|ประเทศไทย/.test(a.textContent ?? "")).map((a) => a.getAttribute("href"));
+    expect(hrefs).toEqual(["/pt-BR/auth/signup?c=BR", "/th/auth/signup?c=TH"]);
+  });
+
+  it("the role cards are links to ?role=…, and ?role=patient starts as patient", () => {
+    const form = html("c=BR");
+    const cards = [...form.querySelectorAll('a[role="button"]')];
+    expect(cards.map((a) => a.getAttribute("href"))).toEqual(["?c=BR&role=professional", "?c=BR&role=patient"]);
+    expect(cards.map((a) => a.getAttribute("aria-pressed"))).toEqual(["true", "false"]);
+    const asPatient = [...html("c=BR&role=patient").querySelectorAll('a[role="button"]')];
+    expect(asPatient.map((a) => a.getAttribute("aria-pressed"))).toEqual(["false", "true"]);
+  });
+
+  it("the join link's English switch is a link", () => {
+    const sw = html("join=ABC123").querySelector('[data-testid="signup-english-switch"]');
+    expect(sw?.tagName).toBe("A");
+    expect(sw).toHaveAttribute("href", "/auth/signup?join=ABC123&from=pt-BR");
+  });
+
+  it("the submit waits for the script (a native POST lost what was typed)", () => {
+    const submit = html("c=BR").querySelector('button[type="submit"]');
+    expect(submit).toHaveAttribute("disabled");
+    // Credential fields stay without name= (no GET leak; feedback rule).
+    expect(html("c=BR").querySelector("input[name]")).toBeNull();
+  });
+
+  it("after hydration the submit is enabled", () => {
+    const { unmount } = show("c=BR");
+    expect(screen.getByRole("button", { name: pt.auth.signup.submit })).not.toBeDisabled();
+    unmount();
+  });
+
+  it("a country reached by its link (?c=) is saved in the cookie, as a tap did", () => {
+    document.cookie = "solvymed_signup_country=; path=/; max-age=0";
+    const { unmount } = show("c=TH");
+    expect(document.cookie).toContain("solvymed_signup_country=TH");
     unmount();
   });
 });
