@@ -13,6 +13,7 @@ const h = vi.hoisted(() => ({
   role: { role: "professional" } as Record<string, unknown>,
   rpc: vi.fn(async (_name: string, _args?: unknown): Promise<{ data: unknown; error: null | { message: string } }> => ({ data: [], error: null })),
   sub: null as null | Record<string, unknown>,
+  resend: vi.fn(async (_args?: unknown): Promise<{ error: null | { code?: string; status?: number } }> => ({ error: null })),
 }));
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
@@ -22,7 +23,7 @@ vi.mock("next/navigation", async (orig) => ({
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
-    auth: { signInWithPassword: h.signIn },
+    auth: { signInWithPassword: h.signIn, resend: h.resend },
     from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: h.role }) }) }) }),
     rpc: (name: string, args?: unknown) =>
       name === "get_effective_subscription" ? Promise.resolve({ data: h.sub ? [h.sub] : [], error: null }) : h.rpc(name, args),
@@ -107,6 +108,22 @@ describe("sign-in links a stored invite code", () => {
     h.rpc.mockReset().mockResolvedValue({ data: null, error: { message: "patient_archived" } });
     fireEvent.submit(fill().form!);
     await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required"));
+  });
+
+  // 01 (13's logs): a code that matches nothing was a dead end; the retry
+  // form now says why, above its field for a new code.
+  it("a code that matches nothing → the invite form, saying it wasn't found", async () => {
+    patient("ZZZ999");
+    h.rpc.mockReset().mockResolvedValue({ data: null, error: null });
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required?code=notfound"));
+  });
+
+  it("a code that no longer admits → the invite form, saying so", async () => {
+    patient("OLD2");
+    h.rpc.mockReset().mockResolvedValue({ data: "unavailable", error: null });
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(h.push).toHaveBeenCalledWith("/pt-BR/auth/invite-required?code=unavailable"));
   });
 
   it("no code, or a role row already there (e.g. removed by a clinic): no attempt, the invite form", async () => {
@@ -207,5 +224,33 @@ describe("login tab order", () => {
     expect(document.querySelectorAll("form [tabindex]")).toHaveLength(0);
     expect(screen.getByLabelText(pt.auth.login.email)).toHaveAttribute("type", "email");
     expect(screen.getByLabelText(pt.auth.login.password)).toHaveAttribute("type", "password");
+  });
+});
+
+// 01 (13's logs): a sign-in with an unconfirmed e-mail was a dead end. It
+// now offers "Resend the confirmation e-mail" (then a wait) + a spam hint.
+describe("login with an unconfirmed e-mail", () => {
+  it("offers the resend, sends the sign-up link to that address, then waits", async () => {
+    h.signIn.mockReset().mockResolvedValue({ data: { user: null }, error: { code: "email_not_confirmed", status: 400 } });
+    h.resend.mockReset().mockResolvedValue({ error: null });
+    fireEvent.submit(fill().form!);
+    const resend = await screen.findByTestId("resend-confirmation-button");
+    fireEvent.click(resend);
+    await waitFor(() => expect(h.resend).toHaveBeenCalledTimes(1));
+    expect(h.resend).toHaveBeenCalledWith({
+      type: "signup",
+      email: "a@b.co",
+      options: { emailRedirectTo: "https://www.solvymed.com/api/auth/callback?locale=pt-BR" },
+    });
+    await waitFor(() => expect(resend).toBeDisabled());
+    fireEvent.click(resend);
+    expect(h.resend).toHaveBeenCalledTimes(1);
+  });
+
+  it("not offered for other errors", async () => {
+    h.signIn.mockReset().mockResolvedValue({ data: { user: null }, error: { code: "invalid_credentials", status: 400 } });
+    fireEvent.submit(fill().form!);
+    await waitFor(() => expect(document.querySelector(".error-banner")).not.toBeNull());
+    expect(screen.queryByTestId("resend-confirmation")).toBeNull();
   });
 });

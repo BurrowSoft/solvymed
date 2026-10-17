@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "이미 다른 의사에게 연결되어 있습니다. 변경하려면 지원팀에 문의하세요.",
       "alreadyConnectedSamePractice": "이미 {doctor}에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
       "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
-      "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요."
+      "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요.",
+      "storedCodeNotFound": "초대 코드를 찾을 수 없습니다. 병원에 코드를 문의하세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
@@ -881,6 +882,20 @@
       "linkExpired": "링크가 만료되었거나 이미 사용되었습니다. 새 링크를 요청하세요.",
       "network": "연결되지 않았습니다. 인터넷 연결을 확인한 뒤 다시 시도하세요.",
       "generic": "문제가 발생했습니다. 다시 시도하세요."
+    },
+    "resendConfirmation": {
+      "button": "확인 이메일 다시 보내기",
+      "wait": "{seconds}초 후에 다시 보낼 수 있습니다.",
+      "sent": "확인 이메일을 보냈습니다. 받은편지함을 확인하세요.",
+      "spamHint": "없나요? 스팸함을 확인하세요.",
+      "neutralSent": "이 주소에 확인되지 않은 계정이 있다면 새 확인 이메일을 보냈습니다."
+    },
+    "confirmEmail": {
+      "title": "이메일을 확인하세요",
+      "sentTo": "{email}(으)로 확인 링크를 보냈습니다.",
+      "openMail": "이메일 열기",
+      "wrongEmail": "이메일이 틀렸나요? 수정하기",
+      "forgotQuestion": "아직 이메일을 확인하지 않으셨나요?"
     }
   },
   "myAppointments": {

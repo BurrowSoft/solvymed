@@ -10,6 +10,8 @@ import { AuthCard } from "@/components/AuthCard";
 import { Logo } from "@/components/Logo";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
+import { authErrorKey } from "@/lib/authErrors";
+import { ResendConfirmation } from "@/components/ResendConfirmation";
 import { OpenInApp } from "@/components/OpenInApp";
 import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { conditionMet } from "@/lib/conditions";
@@ -25,6 +27,9 @@ export default function LoginPage() {
   const router = useRouter();
 
   const [error, setError] = useState("");
+  // A sign-in refused for an unconfirmed e-mail: that address, for "Resend
+  // the confirmation e-mail" (01; it was a dead end).
+  const [unconfirmed, setUnconfirmed] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time: a double-click lands before the disabled button
   // re-renders (Vitor 1.4.0).
@@ -48,6 +53,7 @@ export default function LoginPage() {
     const email = fieldValue(e.currentTarget, "login-email").trim();
     const password = fieldValue(e.currentTarget, "login-password");
     setError("");
+    setUnconfirmed("");
     if (turnstileEnabled && !captchaToken) {
       setError(t("captchaFailed"));
       return;
@@ -86,11 +92,14 @@ export default function LoginPage() {
       if (error) return null;
       if (kind === "personal") return localePath("/my-appointments");
       if (kind === "public") return localePath("/auth/pending-confirmation");
-      return null;
+      // The code matched nothing (or no longer admits): say so on the retry
+      // form, with its field for a new code (01; a dead end in 13's logs).
+      return localePath(`/auth/invite-required?code=${kind === "unavailable" ? "unavailable" : "notfound"}`);
     }
 
     if (authError) {
       setError(authErrorText(authError) ?? t("errors.generic"));
+      if (authErrorKey(authError) === "emailNotConfirmed") setUnconfirmed(email);
     } else if (signInData.user) {
       const { data: roleRow } = await supabase
         .from("user_roles")
@@ -165,6 +174,7 @@ export default function LoginPage() {
             {error}
           </div>
         )}
+        {unconfirmed && <ResendConfirmation email={unconfirmed} locale={locale} captchaToken={captchaToken} />}
 
         <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>

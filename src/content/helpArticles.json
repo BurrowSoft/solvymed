@@ -2179,6 +2179,97 @@
         "open": "settings-patient-fields",
         "appOnly": null,
         "appTitle": null
+      },
+      {
+        "id": "C17",
+        "category": "configuracoes",
+        "title": {
+          "pt": "Document Studio",
+          "en": "Document Studio"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Em **Configurações → Minha marca → Document Studio**, escolha a aparência de todos os seus documentos: o **Modelo** (Clássico, Elegante, Moderno ou Minimalista; novos modelos são adicionados regularmente), as **Cores** (quatro paletas prontas ou a sua **Cor principal**, **Destaque** e **Fundo**), a **Fonte** (Sarabun, Trirong ou Prompt), como aparece o seu **Nome**, o **Logo no cabeçalho** e, se quiser, o logo suave atrás do texto, as **Faixas de seção**, os **Campos de paciente e data**, o **Rodapé** (1 a 3 colunas, os seus locais de atendimento e até 6 contatos: telefone, WhatsApp, LINE, Instagram, site ou e-mail) e a **Faixa inferior**. Os **Textos de cabeçalho e rodapé** são definidos por tipo de documento."
+            },
+            {
+              "type": "p",
+              "text": "No app: **Configurações → Document Studio** (logo abaixo de Minha marca). As seções são as mesmas; no app, a prévia fica no alto e pode ser recolhida, **Salvar** fica no topo da tela, e uma cor personalizada é digitada como código hexadecimal (#RRGGBB). Se o design salvo foi feito numa versão mais nova que o app não consegue ler, aparece um erro com **Recarregar**, em vez do editor."
+            },
+            {
+              "type": "p",
+              "text": "Escolher um modelo aplica a aparência sugerida dele (fonte, faixas de seção, campos e faixa inferior); as suas cores, o logo, o rodapé e os textos continuam, e tudo pode ser mudado depois."
+            },
+            {
+              "type": "p",
+              "text": "A **Prévia** mostra uma receita de exemplo com as suas escolhas, como ela sai no PDF. Em **Salvar design**, os documentos que você abrir, imprimir ou compartilhar a partir daí usam o novo visual; as cópias já compartilhadas com pacientes mantêm o visual com que foram compartilhadas."
+            },
+            {
+              "type": "p",
+              "text": "O nome, a especialidade, o registro e os logos vêm de **Minha marca**. No Brasil, a receita de controle especial mantém o layout legal; na Tailândia, o recibo."
+            },
+            {
+              "type": "p",
+              "text": "Se o design foi alterado em outro lugar (outro aparelho ou outra aba) depois que você abriu a página, **Salvar design** não sobrescreve: aparece um aviso para recarregar a página. Só o médico edita o design. Sair da página com alterações não salvas pergunta **Descartar alterações?**."
+            },
+            {
+              "type": "p",
+              "text": "No site, **Imprimir / Salvar PDF** na receita, no histórico do paciente e no recibo imprime o PDF com o seu design. Um documento longo continua em outras páginas: cada página mostra \"Página X de Y\" e, a partir da segunda, o nome do paciente e a data no alto; a assinatura fica só na última."
+            },
+            {
+              "type": "p",
+              "text": "**Papel timbrado**, no fim da página: imprime uma página com o seu design para cartas e orientações aos pacientes. O título e o texto são opcionais e não são salvos; sem texto, a página sai em branco para escrever à mão, sem assinatura. Com texto, aparecem o seu nome e o registro embaixo, nunca uma imagem de assinatura."
+            },
+            {
+              "type": "p",
+              "text": "**Cartazes**: escolha um modelo (**Horário de atendimento**, com os horários de Configurações; **Um serviço**; **Aviso**; **Agende online**, com um QR code do seu link de convite) e o formato (**A4** ou **A3** em PDF, **Post** ou **Story do Instagram** em PNG), veja a prévia e clique em **Baixar**. O cartaz usa o seu design e sempre mostra o seu nome e o registro; nunca dados de pacientes nem assinatura. No Brasil, o cartaz não mostra a especialidade nem preço. O que você digita não é salvo. Se gerar um novo código de convite, baixe os cartazes de novo: o QR antigo deixa de funcionar."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "In **Settings → My brand → Document Studio**, choose the look of all your documents: the **Layout** (Classic, Elegant, Modern or Minimal; more layouts are added regularly), the **Colours** (four ready-made palettes, or your own **Main colour**, **Accent** and **Background**), the **Typeface** (Sarabun, Trirong or Prompt), how your **Name** appears, the **Logo in the header** and, if you like, the logo shown faintly behind the text, the **Section bars**, the **Patient and date fields**, the **Footer** (1 to 3 columns, your practice locations and up to 6 contacts: phone, WhatsApp, LINE, Instagram, website or e-mail) and the **Bottom band**. The **Header and footer texts** are set per document type."
+            },
+            {
+              "type": "p",
+              "text": "In the app: **Settings → Document Studio** (just below My brand). The sections are the same; in the app the preview sits at the top and can be collapsed, **Save** is at the top of the screen, and a custom colour is typed as a hex code (#RRGGBB). If the saved design was made by a newer version the app can't read, an error with **Reload** shows instead of the editor."
+            },
+            {
+              "type": "p",
+              "text": "Picking a layout applies its suggested look (typeface, section bars, fields and bottom band); your colours, logo, footer and texts stay, and you can change everything afterwards."
+            },
+            {
+              "type": "p",
+              "text": "The **Preview** shows a sample prescription with your choices, as it comes out in the PDF. After **Save design**, the documents you open, print or share from then on use the new look; copies already shared with patients keep the look they were shared with."
+            },
+            {
+              "type": "p",
+              "text": "The name, specialty, registration and logos come from **My brand**. In Brazil, the special control prescription keeps its legal layout; in Thailand, the receipt does."
+            },
+            {
+              "type": "p",
+              "text": "If the design was changed elsewhere (another device or tab) after you opened the page, **Save design** doesn't overwrite it: a message asks you to reload the page. Only the doctor edits the design. Leaving the page with unsaved changes asks **Discard changes?**."
+            },
+            {
+              "type": "p",
+              "text": "On the website, **Print / Save as PDF** on the prescription, the patient's history and the receipt prints the PDF in your design. A long document continues on more pages: each page shows \"Page X of Y\" and, from the second on, the patient's name and the date at the top; the signature is only on the last one."
+            },
+            {
+              "type": "p",
+              "text": "**Letterhead**, at the end of the page: prints a page in your design for letters and patient handouts. The title and the text are optional and aren't saved; without text the page prints blank to write on by hand, with no signature. With text, your name and registration appear under it, never a signature image."
+            },
+            {
+              "type": "p",
+              "text": "**Posters**: pick a template (**Opening hours**, from your hours in Settings; **A service**; **Announcement**; **Book online**, with a QR code of your invite link) and a format (**A4** or **A3** as PDF, **Instagram post** or **story** as PNG), check the preview and click **Download**. A poster uses your design and always shows your name and registration; never patient data or a signature. In Brazil, posters show no specialty and no price. What you type isn't saved. If you generate a new invite code, download your posters again: the old QR stops working."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": "settings-studio",
+        "appOnly": null,
+        "appTitle": null
       }
     ]
   },
@@ -2267,26 +2358,42 @@
         "id": "K3",
         "category": "conta",
         "title": {
-          "pt": "Esqueci a senha",
-          "en": "Forgot password"
+          "pt": "Problemas para entrar",
+          "en": "Trouble signing in"
         },
         "body": {
           "pt": [
             {
               "type": "p",
-              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora)."
+              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas)."
+            },
+            {
+              "type": "p",
+              "text": "E-mail não confirmado? Na tela de entrada, toque em **Reenviar e-mail de confirmação** (um reenvio por minuto) e verifique também a pasta de spam."
+            },
+            {
+              "type": "p",
+              "text": "Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela."
             }
           ],
           "en": [
             {
               "type": "p",
-              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour)."
+              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours)."
+            },
+            {
+              "type": "p",
+              "text": "E-mail not confirmed? On the sign-in screen, tap **Resend confirmation e-mail** (one resend per minute) and also check your spam folder."
+            },
+            {
+              "type": "p",
+              "text": "If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
             }
           ]
         },
         "web": {
-          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**."
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela. Logo após o cadastro, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (Gmail, Outlook, Yahoo e iCloud) e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo).",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen. Right after signing up, the **Confirm your e-mail** screen shows the address, **Open e-mail** (Gmail, Outlook, Yahoo and iCloud) and **Wrong e-mail? Fix it** (to sign up again with the right address)."
         },
         "webUnavailable": false,
         "open": null,

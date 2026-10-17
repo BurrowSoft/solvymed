@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
       "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
       "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
-      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám."
+      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám.",
+      "storedCodeNotFound": "Không tìm thấy mã mời. Hãy hỏi phòng khám của bạn để lấy mã."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -881,6 +882,20 @@
       "linkExpired": "Liên kết này đã hết hạn hoặc đã được sử dụng. Hãy yêu cầu liên kết mới.",
       "network": "Không có kết nối. Hãy kiểm tra internet rồi thử lại.",
       "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "resendConfirmation": {
+      "button": "Gửi lại email xác nhận",
+      "wait": "Bạn có thể gửi lại sau {seconds} giây.",
+      "sent": "Đã gửi email xác nhận. Hãy kiểm tra hộp thư đến.",
+      "spamHint": "Không thấy? Hãy kiểm tra thư mục thư rác.",
+      "neutralSent": "Nếu địa chỉ này có tài khoản chưa xác nhận, chúng tôi đã gửi một email xác nhận mới."
+    },
+    "confirmEmail": {
+      "title": "Xác nhận email của bạn",
+      "sentTo": "Chúng tôi đã gửi liên kết xác nhận đến {email}.",
+      "openMail": "Mở email",
+      "wrongEmail": "Sai email? Sửa lại",
+      "forgotQuestion": "Bạn chưa xác nhận email?"
     }
   },
   "myAppointments": {

@@ -212,8 +212,8 @@
     "what": "The signature image is on for everyone: the server flag studio_signature_image (migration 225) enabled for all practices, with the §6f signature-image bullet live and the account-close cleanup (#538). Gates the C17 signature line and the App Map's signature rule; flip it with the flag."
   },
   "document-studio-live": {
-    "met": false,
-    "what": "Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
+    "met": true,
+    "what": "LIVE at the Studio launch (Vitor's go via 01, 2026-10-17): 13's server flag document_studio ON + migration 226 live + #557 (privacy §6f) merged; this flips in that window. Document Studio (1.9.0 headline) is live on BOTH platforms: the design RPC applied, the website's Studio (PR2-PR5) merged and the app's released, and the Help C17 text checked against the final screens. The product itself is switched by the server flag document_studio (migration 223, per-practice testers; lib/studio/live studioEnabled, the app reads the same key): flag and this condition flip in the same window. This condition gates only the text: Help C17 and the App Map's Studio rule."
   },
   "app-share-default-live": {
     "met": true,
@@ -258,5 +258,9 @@
   "clinic-push-no-name-live": {
     "met": true,
     "what": "Live 10-16 (#513: migration 227 + the clinic-notify deploy; 69's row: a booking request arrived with no name, 17:05Z, same code path for all 6 kinds). The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, delivered through clinic-notify since #514), C5's no-name invite text, C7's invite sentence and their App Map rule."
+  },
+  "app-auth-recovery-live": {
+    "met": true,
+    "what": "LIVE 2026-10-17: 13's mobile #518 released to production 08:09:10Z (OTA, runtime 1.9.0, group 40b1f6c6; the bundle ca verified on staging). The app's sign-in recovery (13's mobile #518, OTA): an unconfirmed e-mail offers \"Reenviar e-mail de confirmação\" (60 s between sends) + a spam hint, and a patient whose stored invite code matches nothing gets the \"Código de convite não encontrado\" gate with a field for a new code, in a RELEASED app build (OTA or store; 13 pings). Gates Help K3's two app lines and the App Map's app rule; the website's half is live with #572."
   }
 }

@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "Sie sind bereits mit einer anderen Praxis verbunden. Zum Wechseln wenden Sie sich an den Support.",
       "alreadyConnectedSamePractice": "Sie sind bereits mit {doctor} verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
       "alreadyConnectedSamePracticeNoName": "Sie sind bereits mit dieser Praxis verbunden. Bitten Sie die Praxis, Ihre Einträge zusammenzuführen.",
-      "codeUnavailable": "Mit diesem Code ist keine Verbindung möglich. Bitte wenden Sie sich an die Praxis."
+      "codeUnavailable": "Mit diesem Code ist keine Verbindung möglich. Bitte wenden Sie sich an die Praxis.",
+      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
@@ -881,6 +882,20 @@
       "linkExpired": "Dieser Link ist abgelaufen oder wurde bereits verwendet. Fordern Sie einen neuen an.",
       "network": "Keine Verbindung. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
       "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    },
+    "resendConfirmation": {
+      "button": "Resend confirmation e-mail",
+      "wait": "You can resend in {seconds} s.",
+      "sent": "Confirmation e-mail sent. Check your inbox.",
+      "spamHint": "Not there? Check your spam or junk folder.",
+      "neutralSent": "If this address has an unconfirmed account, we've sent a new confirmation e-mail."
+    },
+    "confirmEmail": {
+      "title": "Confirm your e-mail",
+      "sentTo": "We sent a confirmation link to {email}.",
+      "openMail": "Open e-mail",
+      "wrongEmail": "Wrong e-mail? Fix it",
+      "forgotQuestion": "Haven't confirmed your e-mail yet?"
     }
   },
   "myAppointments": {

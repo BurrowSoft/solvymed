@@ -12,6 +12,9 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { signupEmailRedirect } from "@/lib/authEmailRedirect";
+import { ResendConfirmation } from "@/components/ResendConfirmation";
+import { mailboxLink } from "@/lib/mailboxLink";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
@@ -79,6 +82,11 @@ export default function SignupPage() {
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  // The address the link went to, for "Resend the confirmation e-mail" (01).
+  const [sentTo, setSentTo] = useState("");
+  // "E-mail errado? Corrigir" (01): back to the form to sign up again with
+  // the right address, the name and code kept (the password is retyped).
+  const [draft, setDraft] = useState({ name: "", code: "" });
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
   const submitting = useRef(false);
@@ -206,7 +214,7 @@ export default function SignupPage() {
         },
         // The callback has no [locale] segment; this lands the user on the
         // page in the language they signed up in.
-        emailRedirectTo: `https://www.solvymed.com/api/auth/callback?locale=${encodeURIComponent(locale)}`,
+        emailRedirectTo: signupEmailRedirect(locale),
         ...(captchaToken ? { captchaToken } : {}),
       },
     });
@@ -222,11 +230,14 @@ export default function SignupPage() {
       setError(t("signup.emailExists"));
     } else {
       track("signup_submitted", { role });
+      setSentTo(email);
+      setDraft({ name: fullName, code: isJoinFlow ? "" : inviteCode });
       setSuccess(true);
     }
   }
 
   if (success) {
+    const mailbox = mailboxLink(sentTo);
     return (
       <AuthPageShell>
         <AuthCard centered>
@@ -236,8 +247,33 @@ export default function SignupPage() {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </IconBadge>
-          <h1 className="auth-heading">{t("signup.success")}</h1>
-          <p className="mb-8 text-slate-500">{t("signup.successSub")}</p>
+          {/* "Confirme seu e-mail" (01's spec: never lose a user here): the
+              address, its mailbox, the resend, and a way back to fix a
+              mistyped address (sign up again; no server edit of the account). */}
+          <h1 className="auth-heading">{t("confirmEmail.title")}</h1>
+          <p className="mb-6 text-slate-500" data-testid="confirm-email-sent-to">{t("confirmEmail.sentTo", { email: sentTo })}</p>
+          {mailbox && (
+            <a
+              href={mailbox}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="confirm-email-open"
+              className="mb-4 inline-flex w-full items-center justify-center rounded-xl bg-teal-600 px-6 py-3 text-base font-bold text-white shadow-md transition hover:bg-teal-700"
+            >
+              {t("confirmEmail.openMail")}
+            </a>
+          )}
+          {sentTo && <div className="mb-4 text-left"><ResendConfirmation email={sentTo} locale={locale} justSent /></div>}
+          {!lockedEmail && (
+            <button
+              type="button"
+              data-testid="confirm-email-fix"
+              onClick={() => setSuccess(false)}
+              className="mb-6 block w-full text-sm font-semibold text-teal-700 hover:underline"
+            >
+              {t("confirmEmail.wrongEmail")}
+            </button>
+          )}
           <Link href={localePath("/")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             {t("backToHome")}
           </Link>
@@ -398,6 +434,7 @@ export default function SignupPage() {
             <input
               id="signup-invite-code"
               type="text"
+              defaultValue={draft.code}
               // Not `required`: the browser's bubble would pre-empt the
               // translated signup.inviteCodeRequired that handleSubmit shows.
               aria-required="true"
@@ -429,6 +466,7 @@ export default function SignupPage() {
               type="text"
               id="signup-full-name"
               required
+              defaultValue={draft.name}
               autoComplete="name"
               className="text-input"
             />
@@ -445,7 +483,7 @@ export default function SignupPage() {
             {lockedEmail ? (
               <input key="locked" id="signup-email" type="email" value={lockedEmail} readOnly autoComplete="email" className="text-input bg-slate-50" />
             ) : (
-              <input key="typed" id="signup-email" type="email" required autoComplete="email" className="text-input" />
+              <input key="typed" id="signup-email" type="email" required autoComplete="email" defaultValue={sentTo} autoFocus={!!sentTo} className="text-input" />
             )}
             {lockedEmail && <p data-testid="invite-email-locked" className="mt-1.5 text-xs text-slate-500">{t("signup.secretaryInviteFor", { email: lockedEmail })}</p>}
           </div>

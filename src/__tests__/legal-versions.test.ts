@@ -80,3 +80,30 @@ describe("privacy 2026-10-17: the 1.8.0 release (documents, clinical documents, 
     }
   });
 });
+
+describe("privacy 2026-10-21: §6f My brand and Document Studio (the Studio launch)", () => {
+  it("the Studio flip and the version go together (the accepting migration for 2026-10-21 applied first)", async () => {
+    const { conditionMet } = await import("@/lib/conditions");
+    if (conditionMet("document-studio-live")) expect(PRIVACY_VERSION >= "2026-10-21").toBe(true);
+  });
+
+  it("§6f says what's live, in both languages, and nothing that isn't (text = enforcement)", async () => {
+    const fs = await import("node:fs");
+    const en = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyEn.tsx", "utf8");
+    const pt = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyPtBR.tsx", "utf8");
+    expect(en).toContain("6f. My brand and Document Studio (professionals)");
+    expect(pt).toContain("6f. Minha marca e Document Studio (profissionais)");
+    expect(en).toContain("Posters, social images and letterheads are made on the professional&rsquo;s own device");
+    expect(pt).toContain("Cartazes, imagens para redes sociais e papéis timbrados são gerados no próprio aparelho do profissional");
+    expect(en).toContain("The brand, the document design and their images are deleted");
+    expect(pt).toContain("A marca, o design dos documentos e suas imagens são apagados");
+    // Not live yet, so not in §6f: the uploaded signature image and the
+    // reversed logo (§3.8's drawn-signature bullets are the app's, #533).
+    const sixF = (s: string) => s.slice(s.indexOf('title="6f.'), s.indexOf("<Section", s.indexOf('title="6f.')));
+    expect(sixF(en).length).toBeGreaterThan(100);
+    // Nor a poster image upload (brand-asset's poster_image, public once enabled;
+    // off behind STUDIO_ASSET_KINDS, like logo_reversed; ad F1).
+    for (const w of ["signature image", "handwritten", "reversed logo", "poster image", "image for the poster"]) expect(sixF(en).toLowerCase()).not.toContain(w);
+    for (const w of ["imagem da sua assinatura", "próprio punho", "logo invertido", "imagem do cartaz", "imagem para o cartaz"]) expect(sixF(pt).toLowerCase()).not.toContain(w);
+  });
+});
