@@ -785,7 +785,8 @@
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
       "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
       "backToCountry": "戻る",
-      "secretaryInviteFor": "This invite is for {email}."
+      "secretaryInviteFor": "This invite is for {email}.",
+      "rolePatientViaInvite": "患者は医師の招待リンクから参加します"
     },
     "forgotPassword": {
       "title": "パスワードをお忘れですか？",
@@ -907,6 +908,14 @@
       "body": "このアドレスが新規の場合、確認リンクを送信しました。すでにアカウントをお持ちですか？ログインするか、パスワードを再設定してください。",
       "signIn": "ログイン",
       "forgot": "パスワードをお忘れですか？"
+    },
+    "becomeProfessional": {
+      "link": "医療従事者です",
+      "body": "このアカウントを医療従事者のアカウントに切り替えますか？無料トライアルが始まります。",
+      "countryLabel": "診療所はどこにありますか？",
+      "switch": "アカウントを切り替える",
+      "cancel": "キャンセル",
+      "errorLinked": "このアカウントはすでにクリニックとつながっているため、切り替えられません。"
     }
   },
   "myAppointments": {
