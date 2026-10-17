@@ -38,6 +38,9 @@ describe("whoLine", () => {
     expect(whoLine("Dra. Ana Souza", "Clínica Sol")).toBe("Dra. Ana Souza · Clínica Sol");
     expect(whoLine("Dra. Ana Souza", null)).toBe("Dra. Ana Souza");
     expect(whoLine(null, " Clínica Sol ")).toBe("Clínica Sol");
+    // The visit rows (92 on #569): a Thai title against the name, as on the buttons.
+    expect(whoLine("นพ. ธีรวัฒน์ สุขใจ", "คลินิกสุขใจเวชกรรม")).toBe("นพ.ธีรวัฒน์ สุขใจ · คลินิกสุขใจเวชกรรม");
+    expect(whoLine("พญ สุดา", "พญ สุดา")).toBe("พญ.สุดา");
     expect(whoLine("Ana Souza", "ana souza")).toBe("Ana Souza");
     expect(whoLine(null, "")).toBe("");
   });
@@ -109,7 +112,8 @@ describe("long doctor names on the book buttons", () => {
     expect(shortDoctorName("Prof. Dr. Carlos Eduardo Pereira")).toBe("Prof. Dr. Carlos Pereira");
     expect(shortDoctorName("Ana Souza")).toBe("Ana Souza");
     expect(shortDoctorName("นพ.สมชาย ใจดี มากมาย")).toBe("นพ.สมชาย มากมาย");
-    expect(shortDoctorName("พญ. สุดา รักษ์ดี")).toBe("พญ. สุดา รักษ์ดี");
+    expect(shortDoctorName("พญ. สุดา รักษ์ดี")).toBe("พญ.สุดา รักษ์ดี"); // against the name (01)
+    expect(shortDoctorName("พญ สุดา รักษ์ดี")).toBe("พญ.สุดา รักษ์ดี");
     expect(shortDoctorName("ทพญ.มาลี สมใจ ดีมาก")).toBe("ทพญ.มาลี ดีมาก");
     expect(shortDoctorName("Dra. Ana Maria Souza Lima")).toBe("Dra. Ana Lima");
   });

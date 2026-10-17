@@ -1657,7 +1657,7 @@
             },
             {
               "type": "p",
-              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**."
+              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **Um novo paciente entrou com seu código de convite**."
             },
             {
               "type": "p",
@@ -1675,7 +1675,7 @@
             },
             {
               "type": "p",
-              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **{name} joined with your invite code**."
+              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **A new patient joined with your invite code**."
             },
             {
               "type": "p",
@@ -1734,12 +1734,28 @@
             {
               "type": "p",
               "text": "**Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário."
+            },
+            {
+              "type": "p",
+              "text": "As notificações da clínica (novos pedidos de consulta, cancelamentos, horários propostos aceitos ou recusados, pedidos de remarcação e documentos enviados pelo paciente) não mostram o nome do paciente."
+            },
+            {
+              "type": "p",
+              "text": "O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary."
+            },
+            {
+              "type": "p",
+              "text": "Clinic notifications (new booking requests, cancellations, accepted or declined time proposals, reschedule requests and documents a patient sends) don't show patient names."
+            },
+            {
+              "type": "p",
+              "text": "The notice that a new patient joined with your invite code doesn't show the name either."
             }
           ]
         },
@@ -2399,6 +2415,36 @@
           ]
         },
         "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K10",
+        "category": "conta",
+        "title": {
+          "pt": "Vídeos tutoriais",
+          "en": "Video tutorials"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Vídeos curtos mostrando cada parte do SolvyMed, no YouTube, na playlist do país da sua clínica (Brasil em português, Tailândia em tailandês). Eles abrem numa nova aba."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Short videos showing each part of SolvyMed, on YouTube, in the playlist for your clinic's country (Brazil in Portuguese, Thailand in Thai). They open in a new tab."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Vídeos tutoriais** fica no fim do menu lateral (médicos e secretárias), no rodapé do site e no topo da Central de Ajuda.",
+          "en": "**Video tutorials** is at the end of the side menu (doctors and secretaries), in the site footer and at the top of the Help Center."
+        },
         "webUnavailable": false,
         "open": null,
         "appOnly": null,

@@ -14,6 +14,7 @@
     "iosBeta": "เวอร์ชันเบต้าสำหรับ iPhone – ติดตั้งผ่าน TestFlight",
     "iosBetaHint": "ต้องใช้แอป TestFlight ของ Apple (ฟรี)",
     "signupCta": "เริ่มทดลองใช้ฟรี",
+    "watchTour": "ดูทัวร์ 2 นาที",
     "haveAccount": "มีบัญชีอยู่แล้ว?",
     "preferApp": "ใช้แอปสะดวกกว่า? ดาวน์โหลดที่นี่:",
     "trialLine": "ทดลองใช้ฟรี {days} วัน · ไม่ต้องใช้บัตรเครดิต · จากนั้น {price}/เดือน",
@@ -2457,5 +2458,9 @@
     "discardTitle": "ทิ้งการเปลี่ยนแปลงหรือไม่",
     "discard": "ทิ้ง",
     "keepEditing": "แก้ไขต่อ"
+  },
+  "videoTutorials": {
+    "title": "วิดีโอสอนการใช้งาน",
+    "subtitle": "วิดีโอสั้นแนะนำการใช้งานแต่ละส่วนของ SolvyMed"
   }
 }

@@ -10,6 +10,7 @@ import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/l
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
 import { BROWSER_LANGUAGES_HEADER } from "./lib/signupCountry";
+import { APP_SHORTLINK_TARGET, isAppShortlink } from "./lib/appStores";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -20,6 +21,12 @@ const intlMiddleware = createMiddleware(routing);
 
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
+
+  // solvymed.com/app → the Play listing (lib/appStores): first, before the
+  // locale and auth handling, which must never see it. No cookies set.
+  if (isAppShortlink(pathname, routing.locales)) {
+    return NextResponse.redirect(APP_SHORTLINK_TARGET, { status: 302 });
+  }
 
   // /pt/… and odd casing (/pt-br/…, /zh-tw/…) → the real locale prefix.
   const canonical = canonicalLocalePath(pathname, routing.locales);

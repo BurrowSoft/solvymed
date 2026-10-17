@@ -1,11 +1,18 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 vi.mock("next-intl/server", () => ({
   getTranslations: async () => (k: string) => `founders.${k}`,
   setRequestLocale: () => {},
 }));
+
+// The page modules, imported once before the tests: the first import is
+// slow when the whole suite loads the machine (it passed 5 s inside the
+// first test on 10-15, as saved-once did); the tests reuse the cache.
+beforeAll(async () => {
+  await Promise.all([import("@/app/[locale]/(site)/founders/page"), import("@/app/[locale]/(site)/founders/rules/page")]);
+}, 180_000);
 
 // UX (1 Oct): /founders shares with the brand kit's blue banner (1200×630).
 describe("the Founders share preview", () => {

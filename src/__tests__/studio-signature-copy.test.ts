@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
@@ -57,6 +57,16 @@ vi.mock("@/app/[locale]/(site)/dashboard/(gated)/patients/medical-documents-acti
     },
   }),
 }));
+
+// The renderers' modules, imported once before the tests: the first import
+// is slow when the whole suite loads the machine (it passed 60 s inside the
+// first test on 10-15, as saved-once did); the tests reuse the cache.
+beforeAll(async () => {
+  await Promise.all([
+    import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MedicalDocuments"),
+    import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/snapshots"),
+  ]);
+}, 180_000);
 
 describe("legal layouts never take the image", () => {
   it("the special control prescription, issued with the flag on and an image saved: no image read", async () => {

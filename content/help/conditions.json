@@ -105,7 +105,7 @@
   },
   "invite-joined-push-live": {
     "met": true,
-    "what": "Migration 148 is live (server-side, pg_net): the doctor and the secretaries get the push \"{name} entrou com seu código de convite\" when a patient joins with its code (app or website signup; server-side). Gates its Help C5 / App Map lines."
+    "what": "The invite-joined push (\"Novo paciente\") is DELIVERED: the doctor and the secretaries get it when a patient joins with the practice's code (app or website signup). Migration 148 sent it from SQL without an Expo access token (403, never delivered; hidden 10-16 by #565); since migration 228 (#514) it goes through the outbox → clinic-notify. 69's #514 row 10-16: \"Um novo paciente entrou com seu código de convite\" arrived 18:07:01Z, no name, outbox row sent on the first attempt. Gates its Help C5 / App Map lines."
   },
   "status-reason-live": {
     "met": true,
@@ -242,5 +242,21 @@
   "save-once-live": {
     "met": true,
     "what": "Saved once is live on BOTH platforms: the website's PR3 (#524) and its follow-up (#526) are merged, and the app's update (PR A, idempotent saves, migration 216; 01a13204) passed 78's row (02, 2026-10-13). A retry after a lost answer never makes a second record; a retry with changes shows \"already saved\" and the stored version (Help K9)."
+  },
+  "app-video-tutorials-live": {
+    "met": false,
+    "what": "The app's \"Video tutorials\" row (8d's #502: Settings → Support, doctors and secretaries, the practice country's playlist) is in a RELEASED store build (1.9.0). Gates Help K10's app line and the App Map's app sentence; the website's half is live with its own PR."
+  },
+  "app-signature-device-only-live": {
+    "met": false,
+    "what": "The app's drawn signature is device-only in a RELEASED store build: BOTH 8d's #496 (Android backups/transfers and iCloud backup exclude it) AND #497 (stored in the iOS Keychain this-device-only / Android Keystore; an iPhone keeps it across a reinstall, Android doesn't) and the setting is renamed \"Assinatura desenhada\" / \"Drawn signature\" / \"ลายมือชื่อที่วาด\" (#500). On 1.8.x Android auto-backup can restore it, so the \"draw it again on a new phone\" line waits for the release (d6: text = enforcement). Gates Help P6's signature line and the App Map's drawn-signature rule."
+  },
+  "app-reminder-no-name-live": {
+    "met": false,
+    "what": "The app's appointment reminders carry NO patient name (01's plan change 10-15: Android doesn't honour an app's lock-screen setting on its channels, so hidden content can't be promised; replaces app-lockscreen-privacy-live) in a RELEASED store build (1.9.0; 13's ping). Gates Help C7's reminder line and the App Map's reminder rule."
+  },
+  "clinic-push-no-name-live": {
+    "met": true,
+    "what": "Live 10-16 (#513: migration 227 + the clinic-notify deploy; 69's row: a booking request arrived with no name, 17:05Z, same code path for all 6 kinds). The staff server pushes from clinic-notify (new booking requests, cancellations, reschedule requests, accepted/declined proposals, a patient's uploaded document; 6 kinds) carry NO patient name: 13's app PR #513 deployed + a tester row (independent of the app release; 13 pings; replaces clinic-push-privacy-live). Gates Help C7's clinic-notification line and the App Map's rule; with invite-joined-push-live (the 7th kind, delivered through clinic-notify since #514), C5's no-name invite text, C7's invite sentence and their App Map rule."
   }
 }

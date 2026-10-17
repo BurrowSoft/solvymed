@@ -264,6 +264,11 @@ export const TH_CERT: Record<"th" | "en", ThCertWords> = {
 };
 export const thCertWords = (lang: DocLang): ThCertWords => (lang === "th" ? TH_CERT.th : TH_CERT.en);
 
+// The place of examination with no clinic name or address: a line to fill in
+// by hand, not a bare label (02; the app prints the same 12 underscores).
+export const PLACE_BLANK = "____________";
+export const placeText = (place: string | null | undefined): string => (place ?? "").trim() || PLACE_BLANK;
+
 // The registration line under the signer's name (cf, 76's #413 row; app and
 // web identical).  Only a registration of digits is formatted: Brazil
 // "CRM {no.}/{UF}" (no UF saved → "CRM {no.}"); Thailand the medical licence in

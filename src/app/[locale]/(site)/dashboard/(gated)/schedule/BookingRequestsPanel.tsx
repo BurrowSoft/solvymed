@@ -9,7 +9,7 @@ import type { PatientIdKind } from "@/lib/patientIds";
 import { formatDateLabel, formatShortDate, formatTimeLabel } from "@/lib/dateLabels";
 import { createClient } from "@/lib/supabase/client";
 import { confirmBookingAndAddPatient, rejectBooking, proposeNewTime, acceptRescheduleRequest, declineRescheduleRequest } from "./booking-actions";
-import { toLocalDateString } from "@/lib/slots";
+import { clinicDate, clinicTime } from "@/lib/clinicTime";
 import { looksBuddhistEra } from "@/lib/buddhistEra";
 import { REASON_MAX, statusReasonLive } from "@/lib/statusReason";
 import { DoctorTimePicker } from "@/components/DoctorTimePicker";
@@ -37,6 +37,9 @@ type Booking = {
   proposed_end_time?: string | null;
   // The "All" schedule (166): the request's doctor; its actions act for them.
   practice?: DoctorTagInfo | null;
+  // ...and that doctor's time zone (each request is past or not on its own
+  // practice's clock); otherwise the panel's timeZone.
+  zone?: string | null;
 };
 
 type PatientProfile = {
@@ -62,7 +65,7 @@ function addToTime(hhmm: string, mins: number): string {
   return `${String(Math.floor(t / 60) % 24).padStart(2, "0")}:${String(t % 60).padStart(2, "0")}`;
 }
 
-export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Booking[]; idKind?: PatientIdKind }) {
+export function BookingRequestsPanel({ bookings, idKind = "BR", timeZone }: { bookings: Booking[]; idKind?: PatientIdKind; timeZone?: string | null }) {
   const t = useTranslations("schedule");
   // Only the practice country's ID columns are read (pre-110: CPF only).
   const idFields = usePatientIdFields(idKind);
@@ -113,11 +116,15 @@ export function BookingRequestsPanel({ bookings, idKind = "BR" }: { bookings: Bo
 
   if (!bookings.length) return null;
 
-  const todayStr = now ? toLocalDateString(now) : "";
-  const nowHHMM = now ? `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}` : "";
-
+  // Past or not on the PRACTICE's clock (its date and end time are the
+  // practice's), never the browser's: a browser in a zone ahead faded a
+  // still-future request and hid Confirmar; one behind kept past ones
+  // confirmable (1c; the practice-calendar rule).
   function isObsolete(b: Booking): boolean {
     if (!now) return false;
+    const zone = b.zone ?? timeZone;
+    const todayStr = clinicDate(now, zone);
+    const nowHHMM = clinicTime(now, zone);
     const isPatientProposal = b.status === "proposal" && b.scheduled_by === "patient";
     const checkDate = isPatientProposal && b.proposed_date ? b.proposed_date : b.date;
     const checkEnd  = isPatientProposal && b.proposed_end_time ? b.proposed_end_time : b.end_time;
