@@ -176,13 +176,14 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         </Section>
       )}
 
-      <Section title="6f. My brand (professionals)">
+      <Section title="6f. My brand and Document Studio (professionals)">
         <ul className="list-disc space-y-1 pl-5">
-          <li>In My brand, a professional can add a display name, title, specialty, registration line and brand colour, a square logo, a wide logo (for documents) and a photo. We store what they save, together with the images.</li>
+          <li>In My brand and Document Studio, a professional can add a display name, title, specialty, registration line and brand colour, a square logo, a wide logo (for documents) and a photo, and choose the look of their documents (layout, colours, typeface, the contact details and practice locations shown in the footer, and header and footer texts). We store what they save, together with the images.</li>
           <li><strong>The logo and the photo are public once saved:</strong> anyone who has an image&rsquo;s link can open it. The logo (or, without one, the photo), name, title, specialty and colour are shown on the professional&rsquo;s public invite link page to anyone, and on their booking page to the patients connected to them; the documents they issue show the logo, colour, name, specialty and registration line. Don&rsquo;t upload anything you don&rsquo;t want to be public.</li>
           <li>The professional can change or remove any image at any time in My brand. A removed or replaced image stops being reachable within about a minute.</li>
           <li>A profile photo added before My brand stays private: it isn&rsquo;t shown on these pages.</li>
-          <li>The brand and its images are deleted when the professional closes or deletes their account.</li>
+          <li>Posters, social images and letterheads are made on the professional&rsquo;s own device from their design: we don&rsquo;t store them or the text typed for them. They never include patient data or a signature. A booking poster&rsquo;s QR code contains the professional&rsquo;s public invite link.</li>
+          <li>The brand, the document design and their images are deleted when the professional closes or deletes their account.</li>
         </ul>
       </Section>
 
