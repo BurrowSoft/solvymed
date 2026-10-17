@@ -15,6 +15,8 @@ import { MIN_PASSWORD_LENGTH } from "@/lib/password";
 import { signupEmailRedirect } from "@/lib/authEmailRedirect";
 import { ResendConfirmation } from "@/components/ResendConfirmation";
 import { mailboxLink } from "@/lib/mailboxLink";
+import { publicFlag } from "@/lib/publicFlags";
+import { ConfirmByCode } from "@/components/ConfirmByCode";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
@@ -87,6 +89,16 @@ export default function SignupPage() {
   // "E-mail errado? Corrigir" (01): back to the form to sign up again with
   // the right address, the name and code kept (the password is retyped).
   const [draft, setDraft] = useState({ name: "", code: "" });
+  // PR B: the e-mail also carries a code once the shared switch
+  // confirm_by_code is on (app + web flip together with the template);
+  // until then (or if it can't be read) the link-only text, no code field.
+  const [byCode, setByCode] = useState(false);
+  useEffect(() => {
+    if (!success) return;
+    let live = true;
+    void publicFlag(createClient(), "confirm_by_code").then((on) => { if (live) setByCode(on); });
+    return () => { live = false; };
+  }, [success]);
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
   const submitting = useRef(false);
@@ -251,7 +263,8 @@ export default function SignupPage() {
               address, its mailbox, the resend, and a way back to fix a
               mistyped address (sign up again; no server edit of the account). */}
           <h1 className="auth-heading">{t("confirmEmail.title")}</h1>
-          <p className="mb-6 text-slate-500" data-testid="confirm-email-sent-to">{t("confirmEmail.sentTo", { email: sentTo })}</p>
+          <p className="mb-6 text-slate-500" data-testid="confirm-email-sent-to">{t(byCode ? "confirmEmail.sentToWithCode" : "confirmEmail.sentTo", { email: sentTo })}</p>
+          {byCode && sentTo && <ConfirmByCode email={sentTo} locale={locale} />}
           {mailbox && (
             <a
               href={mailbox}

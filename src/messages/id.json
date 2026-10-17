@@ -895,7 +895,11 @@
       "sentTo": "Kami mengirim tautan konfirmasi ke {email}.",
       "openMail": "Buka email",
       "wrongEmail": "Email salah? Perbaiki",
-      "forgotQuestion": "Belum mengonfirmasi email Anda?"
+      "forgotQuestion": "Belum mengonfirmasi email Anda?",
+      "sentToWithCode": "Kami mengirim tautan dan kode ke {email}.",
+      "codeLabel": "Atau masukkan kode 8 digit dari email",
+      "codeConfirm": "Konfirmasi",
+      "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru."
     }
   },
   "myAppointments": {

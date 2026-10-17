@@ -895,7 +895,11 @@
       "sentTo": "我們已將確認連結寄至 {email}。",
       "openMail": "開啟信箱",
       "wrongEmail": "信箱填錯了？更正",
-      "forgotQuestion": "還沒有確認信箱？"
+      "forgotQuestion": "還沒有確認信箱？",
+      "sentToWithCode": "我們已將連結和驗證碼寄至 {email}。",
+      "codeLabel": "或輸入郵件中的 8 位數驗證碼",
+      "codeConfirm": "確認",
+      "codeInvalid": "驗證碼無效或已過期。請重新寄送郵件以取得新驗證碼。"
     }
   },
   "myAppointments": {

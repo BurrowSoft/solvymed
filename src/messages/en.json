@@ -895,7 +895,11 @@
       "sentTo": "We sent a confirmation link to {email}.",
       "openMail": "Open e-mail",
       "wrongEmail": "Wrong e-mail? Fix it",
-      "forgotQuestion": "Haven't confirmed your e-mail yet?"
+      "forgotQuestion": "Haven't confirmed your e-mail yet?",
+      "sentToWithCode": "We sent a link and a code to {email}.",
+      "codeLabel": "Or enter the 8-digit code from the e-mail",
+      "codeConfirm": "Confirm",
+      "codeInvalid": "Code invalid or expired. Resend the e-mail for a new one."
     }
   },
   "myAppointments": {
