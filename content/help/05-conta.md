@@ -39,7 +39,7 @@ Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o
 **en**
 On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour).
 **No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação**; se não chegar, verifique a pasta de spam.
-**On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your email isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail**; if it doesn't arrive, check your spam folder.
+**On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail**; if it doesn't arrive, check your spam folder.
 Thai title: "ลืมรหัสผ่าน"
 **th**
 ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)

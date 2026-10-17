@@ -2254,7 +2254,7 @@
         },
         "web": {
           "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação**; se não chegar, verifique a pasta de spam.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your email isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail**; if it doesn't arrive, check your spam folder."
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail**; if it doesn't arrive, check your spam folder."
         },
         "webUnavailable": false,
         "open": null,
