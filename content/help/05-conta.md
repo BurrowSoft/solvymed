@@ -33,7 +33,7 @@ Thai title: "เปลี่ยนรหัสผ่าน"
 `open:settings`
 
 ---
-## K3. Esqueci a senha / Forgot password
+## K3. Problemas para entrar / Trouble signing in
 **pt-BR**
 Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora).
 {pending:app-auth-recovery-live} E-mail não confirmado? Na tela de entrada, toque em **Reenviar e-mail de confirmação** (um reenvio por minuto) e verifique também a pasta de spam.
@@ -44,7 +44,7 @@ On the sign-in screen, tap **Forgot your password?**, enter your email and open 
 {pending:app-auth-recovery-live} If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen.
 **No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.
 **On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen.
-Thai title: "ลืมรหัสผ่าน"
+Thai title: "เข้าสู่ระบบไม่ได้"
 **th**
 ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)
 {pending:app-auth-recovery-live} ยังไม่ได้ยืนยันอีเมล? ที่หน้าจอเข้าสู่ระบบ แตะ **ส่งอีเมลยืนยันอีกครั้ง** (ส่งได้หนึ่งครั้งต่อนาที) และตรวจสอบโฟลเดอร์จดหมายขยะด้วย

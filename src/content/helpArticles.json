@@ -2235,8 +2235,8 @@
         "id": "K3",
         "category": "conta",
         "title": {
-          "pt": "Esqueci a senha",
-          "en": "Forgot password"
+          "pt": "Problemas para entrar",
+          "en": "Trouble signing in"
         },
         "body": {
           "pt": [
