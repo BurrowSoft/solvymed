@@ -14,6 +14,7 @@
     "iosBeta": "iPhone ベータ版 – TestFlight でインストール",
     "iosBetaHint": "Apple の無料アプリ TestFlight が必要です",
     "signupCta": "無料トライアルを始める",
+    "watchTour": "2分間のツアーを見る",
     "haveAccount": "アカウントをお持ちの方",
     "preferApp": "アプリ派の方はこちらからダウンロード：",
     "trialLine": "{days}日間無料 · クレジットカード不要 · その後 {price}/月",
@@ -836,7 +837,8 @@
       "alreadyConnectedNoName": "すでに別の医師とつながっています。変更するにはサポートにお問い合わせください。",
       "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
       "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。",
-      "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。"
+      "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。",
+      "storedCodeNotFound": "招待コードが見つかりません。クリニックにコードを確認してください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -880,6 +882,12 @@
       "linkExpired": "このリンクは期限切れか、すでに使用されています。新しいリンクをリクエストしてください。",
       "network": "接続できません。インターネット接続を確認して、もう一度お試しください。",
       "generic": "問題が発生しました。もう一度お試しください。"
+    },
+    "resendConfirmation": {
+      "button": "確認メールを再送信",
+      "wait": "{seconds} 秒後に再送信できます。",
+      "sent": "確認メールを送信しました。受信トレイを確認してください。",
+      "spamHint": "届いていない場合は、迷惑メールフォルダを確認してください。"
     }
   },
   "myAppointments": {
@@ -2427,5 +2435,9 @@
     "discardTitle": "変更を破棄しますか？",
     "discard": "破棄",
     "keepEditing": "編集を続ける"
+  },
+  "videoTutorials": {
+    "title": "動画チュートリアル",
+    "subtitle": "SolvyMed の各機能を紹介する短い動画"
   }
 }

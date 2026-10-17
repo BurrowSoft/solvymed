@@ -634,7 +634,7 @@
             },
             {
               "type": "p",
-              "text": "Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e a assinatura em **Configurações**."
+              "text": "Para a receita sair com seus dados, preencha seu registro profissional (ex.: CRM) em **Configurações → Cadastros** e desenhe sua assinatura em **Configurações → Assinatura desenhada**. Sua assinatura desenhada fica guardada somente neste celular. Em um celular novo, ou se ela sumir depois de reinstalar o app, entre na conta e desenhe de novo."
             },
             {
               "type": "p",
@@ -652,7 +652,7 @@
             },
             {
               "type": "p",
-              "text": "For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and your signature in **Settings**."
+              "text": "For the prescription to show your details, fill in your professional registration (e.g. CRM) in **Settings → Registrations** and draw your signature in **Settings → Drawn signature**. Your drawn signature is kept on this phone only. On a new phone, or if it's missing after reinstalling the app, sign in and draw it again."
             },
             {
               "type": "p",
@@ -1029,6 +1029,10 @@
             {
               "type": "p",
               "text": "No app, uma receita nova tem **Compartilhar com o paciente** (ligado de início): ao salvar, uma cópia em PDF vai para a pasta **Prescrições** do paciente. Uma cópia sem a sua assinatura desenhada traz \"Cópia sem assinatura, para consulta do paciente.\"; uma correção da receita substitui a cópia, e o paciente vê **Corrigido em** (no app, uma receita não é editada: é corrigida). Depois de salvar com o compartilhamento ligado, o app mostra **Compartilhando com o paciente…** e espera: o X e o voltar ficam bloqueados até o compartilhamento terminar; se falhar, o aviso oferece **Tentar de novo**. Se o seu espaço de documentos estiver cheio, a receita é salva mas não compartilhada."
+            },
+            {
+              "type": "p",
+              "text": "No app também: ao corrigir uma receita, ou editar ou corrigir um documento, **Compartilhar com o paciente** começa como a cópia está agora: ligado se o paciente a vê, desligado se você a ocultou ou nunca a compartilhou (ligue para compartilhar de novo)."
             }
           ],
           "en": [
@@ -1055,6 +1059,10 @@
             {
               "type": "p",
               "text": "In the app, a new prescription has **Share with the patient** (on by default): when you save, a PDF copy goes to the patient's **Prescriptions** folder. A copy without your drawn signature says \"Unsigned copy, for the patient's reference.\"; a correction of the prescription replaces the copy, and the patient sees **Corrected on** (in the app a prescription isn't edited: it's corrected). After saving with sharing on, the app shows **Sharing with the patient…** and waits: X and back are blocked until the share finishes; if it fails, the alert offers **Try again**. If your document storage is full, the prescription is saved but not shared."
+            },
+            {
+              "type": "p",
+              "text": "In the app too: when you correct a prescription, or edit or correct a document, **Share with the patient** starts as its copy is now: on if the patient sees it, off if you hid it or never shared it (switch it on to share again)."
             }
           ]
         },
@@ -1467,6 +1475,10 @@
             {
               "type": "p",
               "text": "No primeiro uso, o app pergunta **Onde você está?**: toque em **Brasil** ou **ประเทศไทย**. Para médicos, esse é o país da clínica. Ele define a moeda, o preço do plano, o documento do paciente e o QR de pagamento. Para mudar depois, fale com support@solvymed.com. Pacientes e secretárias não fazem essa escolha."
+            },
+            {
+              "type": "p",
+              "text": "No app, fechar uma tela das Configurações com ✕, Voltar ou tocando fora pergunta **Descartar alterações?** enquanto houver algo não salvo. Telas que salvam sozinhas (pastas de documentos, procedimentos, imagens da marca, avisos silenciados) não perguntam."
             }
           ],
           "en": [
@@ -1480,6 +1492,10 @@
             {
               "type": "p",
               "text": "The first time you open the app, it asks **Where are you?**: tap **Brasil** or **ประเทศไทย**. For doctors, that's the clinic's country. It sets the currency, the plan price, the patient ID field and the payment QR. To change it later, contact support@solvymed.com. Patients and secretaries don't make this choice."
+            },
+            {
+              "type": "p",
+              "text": "In the app, closing a Settings screen with ✕, Back or a tap outside asks **Discard changes?** while something is unsaved. Screens that save on their own (document folders, procedures, brand images, muted notices) don't ask."
             }
           ]
         },
@@ -1649,7 +1665,7 @@
             },
             {
               "type": "p",
-              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **{nome} entrou com seu código de convite**."
+              "text": "Quando alguém entra com o seu código, você e suas secretárias recebem uma notificação, **Novo paciente**: **Um novo paciente entrou com seu código de convite**."
             },
             {
               "type": "p",
@@ -1667,7 +1683,7 @@
             },
             {
               "type": "p",
-              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **{name} joined with your invite code**."
+              "text": "When someone joins with your code, you and your secretaries get a notification, **New patient**: **A new patient joined with your invite code**."
             },
             {
               "type": "p",
@@ -1726,12 +1742,36 @@
             {
               "type": "p",
               "text": "**Configurações → Notificações**: ative os lembretes de consulta, escolha a antecedência (15 min, 1 h, 2 h ou 24 h) e o resumo diário."
+            },
+            {
+              "type": "p",
+              "text": "Os lembretes de consulta não mostram o nome do paciente; abra o app para ver com quem é a consulta."
+            },
+            {
+              "type": "p",
+              "text": "As notificações da clínica (novos pedidos de consulta, cancelamentos, horários propostos aceitos ou recusados, pedidos de remarcação e documentos enviados pelo paciente) não mostram o nome do paciente."
+            },
+            {
+              "type": "p",
+              "text": "O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome."
             }
           ],
           "en": [
             {
               "type": "p",
               "text": "**Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary."
+            },
+            {
+              "type": "p",
+              "text": "Appointment reminders don't show the patient's name; open the app to see who the visit is with."
+            },
+            {
+              "type": "p",
+              "text": "Clinic notifications (new booking requests, cancellations, accepted or declined time proposals, reschedule requests and documents a patient sends) don't show patient names."
+            },
+            {
+              "type": "p",
+              "text": "The notice that a new patient joined with your invite code doesn't show the name either."
             }
           ]
         },
@@ -2219,26 +2259,26 @@
         "id": "K3",
         "category": "conta",
         "title": {
-          "pt": "Esqueci a senha",
-          "en": "Forgot password"
+          "pt": "Problemas para entrar",
+          "en": "Trouble signing in"
         },
         "body": {
           "pt": [
             {
               "type": "p",
-              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora)."
+              "text": "Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 24 horas)."
             }
           ],
           "en": [
             {
               "type": "p",
-              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour)."
+              "text": "On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 24 hours)."
             }
           ]
         },
         "web": {
-          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**."
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela.",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen."
         },
         "webUnavailable": false,
         "open": null,
@@ -2346,6 +2386,84 @@
         "appTitle": null
       },
       {
+        "id": "K7",
+        "category": "conta",
+        "title": {
+          "pt": "Sem internet",
+          "en": "No internet connection"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Sem internet, o SolvyMed mostra **Sem conexão com a internet. Você pode ver o que está aberto, mas as alterações não serão salvas.** no alto da tela."
+            },
+            {
+              "type": "p",
+              "text": "Você continua vendo o que já está aberto, mas nada é salvo: os botões que precisam do servidor ficam apagados e, ao tocar, repetem o aviso."
+            },
+            {
+              "type": "p",
+              "text": "O que você digitou continua no formulário. Quando a conexão volta, o aviso some e você pode salvar."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Without internet, SolvyMed shows **No internet connection. You can view what's open, but changes won't be saved.** at the top of the screen."
+            },
+            {
+              "type": "p",
+              "text": "You can still see what's already open, but nothing is saved: buttons that need the server are greyed out and, when tapped, repeat the message."
+            },
+            {
+              "type": "p",
+              "text": "What you typed stays in the form. When the connection is back, the message goes away and you can save."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K8",
+        "category": "conta",
+        "title": {
+          "pt": "Data e hora erradas",
+          "en": "Wrong date and time"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Se a data e a hora do seu dispositivo estiverem erradas (mais de 5 minutos), o SolvyMed mostra **A data e a hora do seu dispositivo parecem erradas. Ative a data e hora automáticas e tente de novo.**"
+            },
+            {
+              "type": "p",
+              "text": "Ative a data e hora automáticas nas configurações do dispositivo. Você continua conectado e o que digitou não se perde; quando o relógio estiver certo, o aviso some sozinho."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "If your device's date and time are wrong (by more than 5 minutes), SolvyMed shows **Your device's date and time look wrong. Turn on automatic date and time, then try again.**"
+            },
+            {
+              "type": "p",
+              "text": "Turn on automatic date and time in your device's settings. You stay signed in and nothing you typed is lost; once the clock is right, the message goes away by itself."
+            }
+          ]
+        },
+        "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
         "id": "K9",
         "category": "conta",
         "title": {
@@ -2391,6 +2509,44 @@
           ]
         },
         "web": null,
+        "webUnavailable": false,
+        "open": null,
+        "appOnly": null,
+        "appTitle": null
+      },
+      {
+        "id": "K10",
+        "category": "conta",
+        "title": {
+          "pt": "Vídeos tutoriais",
+          "en": "Video tutorials"
+        },
+        "body": {
+          "pt": [
+            {
+              "type": "p",
+              "text": "Vídeos curtos mostrando cada parte do SolvyMed, no YouTube, na playlist do país da sua clínica (Brasil em português, Tailândia em tailandês). Eles abrem numa nova aba."
+            },
+            {
+              "type": "p",
+              "text": "No app: **Configurações → Suporte → Vídeos tutoriais** (médicos e secretárias)."
+            }
+          ],
+          "en": [
+            {
+              "type": "p",
+              "text": "Short videos showing each part of SolvyMed, on YouTube, in the playlist for your clinic's country (Brazil in Portuguese, Thailand in Thai). They open in a new tab."
+            },
+            {
+              "type": "p",
+              "text": "In the app: **Settings → Support → Video tutorials** (doctors and secretaries)."
+            }
+          ]
+        },
+        "web": {
+          "pt": "**Vídeos tutoriais** fica no fim do menu lateral (médicos e secretárias), no rodapé do site e no topo da Central de Ajuda.",
+          "en": "**Video tutorials** is at the end of the side menu (doctors and secretaries), in the site footer and at the top of the Help Center."
+        },
         "webUnavailable": false,
         "open": null,
         "appOnly": null,

@@ -14,6 +14,7 @@
     "iosBeta": "Bản beta cho iPhone – cài qua TestFlight",
     "iosBetaHint": "Cần ứng dụng TestFlight miễn phí của Apple",
     "signupCta": "Bắt đầu dùng thử miễn phí",
+    "watchTour": "Xem video giới thiệu 2 phút",
     "haveAccount": "Đã có tài khoản?",
     "preferApp": "Thích dùng ứng dụng? Tải về:",
     "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
@@ -836,7 +837,8 @@
       "alreadyConnectedNoName": "Bạn đã kết nối với một bác sĩ khác. Để đổi, hãy liên hệ bộ phận hỗ trợ.",
       "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
       "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
-      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám."
+      "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám.",
+      "storedCodeNotFound": "Không tìm thấy mã mời. Hãy hỏi phòng khám của bạn để lấy mã."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -880,6 +882,12 @@
       "linkExpired": "Liên kết này đã hết hạn hoặc đã được sử dụng. Hãy yêu cầu liên kết mới.",
       "network": "Không có kết nối. Hãy kiểm tra internet rồi thử lại.",
       "generic": "Đã xảy ra lỗi. Vui lòng thử lại."
+    },
+    "resendConfirmation": {
+      "button": "Gửi lại email xác nhận",
+      "wait": "Bạn có thể gửi lại sau {seconds} giây.",
+      "sent": "Đã gửi email xác nhận. Hãy kiểm tra hộp thư đến.",
+      "spamHint": "Không thấy? Hãy kiểm tra thư mục thư rác."
     }
   },
   "myAppointments": {
@@ -2427,5 +2435,9 @@
     "discardTitle": "Bỏ các thay đổi?",
     "discard": "Bỏ",
     "keepEditing": "Tiếp tục sửa"
+  },
+  "videoTutorials": {
+    "title": "Video hướng dẫn",
+    "subtitle": "Video ngắn giới thiệu từng phần của SolvyMed"
   }
 }

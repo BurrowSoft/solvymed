@@ -21,7 +21,7 @@ import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
-import { shortDoctorName } from "@/lib/doctorName";
+import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { MyDoctors } from "./MyDoctors";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
@@ -539,7 +539,7 @@ export function MyAppointmentsClient({
         ) : doctorName && (
           <section data-testid="your-doctor" className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{t("yourDoctor")}</p>
-            <p className="mt-1 font-bold text-slate-900">{doctorName}</p>
+            <p className="mt-1 font-bold text-slate-900">{doctorDisplayName(doctorName)}</p>
             {(myProfessionalMeta?.specialty || myProfessionalMeta?.clinicName) && (
               <p className="text-sm text-slate-500">
                 {[myProfessionalMeta?.specialty, whoLine(null, myProfessionalMeta?.clinicName) !== doctorName ? myProfessionalMeta?.clinicName : null].filter(Boolean).join(" · ")}

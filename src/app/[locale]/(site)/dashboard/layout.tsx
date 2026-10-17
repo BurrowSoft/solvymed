@@ -242,6 +242,7 @@ export default async function DashboardLayout({
           photoUrl={professional?.photo_url}
           isSecretary={isSecretary}
           languages={practice.languages}
+          videoTutorialsUrl={practice.videoTutorialsUrl}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>

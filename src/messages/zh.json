@@ -14,6 +14,7 @@
     "iosBeta": "iPhone 测试版 – 通过 TestFlight 安装",
     "iosBetaHint": "需要 Apple 免费的 TestFlight 应用",
     "signupCta": "开始免费试用",
+    "watchTour": "观看 2 分钟导览",
     "haveAccount": "已有账户？",
     "preferApp": "更喜欢用应用？在此下载：",
     "trialLine": "免费 {days} 天 · 无需信用卡 · 之后每月 {price}",
@@ -836,7 +837,8 @@
       "alreadyConnectedNoName": "您已与其他医生连接。如需更换，请联系客服。",
       "alreadyConnectedSamePractice": "您已与 {doctor} 连接。请让诊所合并您的档案。",
       "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。",
-      "codeUnavailable": "无法使用此代码连接。请联系诊所。"
+      "codeUnavailable": "无法使用此代码连接。请联系诊所。",
+      "storedCodeNotFound": "未找到邀请码。请向您的诊所索取邀请码。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -880,6 +882,12 @@
       "linkExpired": "此链接已过期或已被使用。请重新获取。",
       "network": "无网络连接。请检查网络后重试。",
       "generic": "出现问题，请重试。"
+    },
+    "resendConfirmation": {
+      "button": "重新发送确认邮件",
+      "wait": "{seconds} 秒后可重新发送。",
+      "sent": "确认邮件已发送。请查看收件箱。",
+      "spamHint": "没收到？请检查垃圾邮件文件夹。"
     }
   },
   "myAppointments": {
@@ -2427,5 +2435,9 @@
     "discardTitle": "放弃更改？",
     "discard": "放弃",
     "keepEditing": "继续编辑"
+  },
+  "videoTutorials": {
+    "title": "视频教程",
+    "subtitle": "介绍 SolvyMed 各项功能的短视频"
   }
 }

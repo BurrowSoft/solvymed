@@ -7,10 +7,26 @@
 // shared case table); the /api/assistant route re-masks with this too. Change
 // both together. Dates in any shape ("29/09", "2026-09-28", "29.09.2026"),
 // times, amounts and plain numbers ("1500 2000") are left alone.
+/** A CPF's two check digits (mod 11); 11 equal digits are never a CPF. */
+export function isValidCpf(value: string): boolean {
+  const d = value.replace(/\D/g, "");
+  if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false;
+  const check = (len: number) => {
+    let sum = 0;
+    for (let i = 0; i < len; i++) sum += Number(d[i]) * (len + 1 - i);
+    const r = (sum * 10) % 11;
+    return r === 10 ? 0 : r;
+  };
+  return check(9) === Number(d[9]) && check(10) === Number(d[10]);
+}
+
 export function maskPersonalData(text: string): string {
   return text
     .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "[email]")
-    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, "[cpf]")
+    // 11 digits are masked either way; only a real CPF (check digits) is
+    // labelled [cpf]: a Brazilian mobile with its DDD is 11 digits too (the
+    // app's #505, c3).
+    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, (m) => (isValidCpf(m) ? "[cpf]" : "[phone]"))
     // International numbers first ("+55 11 91234-5678" has 13 digits too).
     .replace(/\+\d[\d\s()-]{7,17}\d/g, "[phone]")
     // Thai ID: 13 digits, optionally grouped (1-2345-67890-12-3).

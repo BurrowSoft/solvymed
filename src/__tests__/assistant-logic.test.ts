@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { maskPersonalData } from "@/lib/assistant/mask";
+import { isValidCpf, maskPersonalData } from "@/lib/assistant/mask";
 import { bestArticle, createMockBackend, mockAnswer, plusMinutes } from "@/lib/assistant/mockBackend";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import type { AnswerChunk } from "@/lib/assistant/types";
@@ -15,6 +15,28 @@ describe("maskPersonalData (spec §6: identifiers are masked; names go as typed)
     ["email maria.silva@gmail.com ok", "email [email] ok"],
   ])("%j → %j", (input, out) => {
     expect(maskPersonalData(input)).toBe(out);
+  });
+
+  // The app's #505 (c3, 1.9.0), verbatim: a Brazilian mobile with its DDD is
+  // 11 digits, like a CPF. Both stay masked; only a real CPF (check digits)
+  // is labelled [cpf].
+  it.each([
+    ["tel 11912345678", "tel [phone]"],
+    ["tel 119.123.456-78", "tel [phone]"],
+    ["cpf 111.111.111-11", "cpf [phone]"],
+    ["cpf 529.982.247-25", "cpf [cpf]"],
+    ["cpf 52998224725", "cpf [cpf]"],
+  ])("11 digits: %j → %j", (input, out) => {
+    expect(maskPersonalData(input)).toBe(out);
+  });
+
+  it("isValidCpf: the check digits, never 11 equal digits", () => {
+    expect(isValidCpf("123.456.789-09")).toBe(true);
+    expect(isValidCpf("529.982.247-25")).toBe(true);
+    expect(isValidCpf("529.982.247-26")).toBe(false);
+    expect(isValidCpf("11912345678")).toBe(false);
+    expect(isValidCpf("00000000000")).toBe(false);
+    expect(isValidCpf("1234567890")).toBe(false);
   });
 
   it("leaves ordinary questions alone (times, dates, amounts)", () => {

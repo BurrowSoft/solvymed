@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { AppointmentStatusSelect, DeleteAppointmentButton, NewAppointmentButton, RescheduleButton } from "./ScheduleClient";
 import { MOVABLE_STATUSES } from "@/lib/scheduleChecks";
 import { toLocalDateString } from "@/lib/slots";
+import { clinicTime } from "@/lib/clinicTime";
 import { formatMoney } from "@/lib/money";
 import { hasAmount, showsPayment } from "@/lib/paymentRules";
 import type { Currency } from "@/lib/country";
@@ -157,10 +158,12 @@ function TimeGrid({
   showHeaders,
   doctorCols,
   tagFor,
+  timeZone,
 }: {
   days: string[];
   appointments: CalendarAppt[];
   today: string;
+  timeZone?: string | null;
   onSelect: (a: CalendarAppt) => void;
   onDayClick?: (day: string) => void;
   showHeaders: boolean;
@@ -179,13 +182,15 @@ function TimeGrid({
   const [nowMins, setNowMins] = useState<number | null>(null);
   useEffect(() => {
     const tick = () => {
-      const now = new Date();
-      setNowMins(now.getHours() * 60 + now.getMinutes());
+      // The practice's clock, as `today` is (1c): a browser in another zone
+      // drew the line at its own hour on the practice's today.
+      const [h, m] = clinicTime(new Date(), timeZone).split(":").map(Number);
+      setNowMins(h * 60 + m);
     };
     tick();
     const id = setInterval(tick, 60_000);
     return () => clearInterval(id);
-  }, []);
+  }, [timeZone]);
   const nowTop = nowMins === null ? 0 : ((nowMins - FIRST_H * 60) / 60) * HOUR_H;
   const showNow = nowMins !== null && nowMins >= FIRST_H * 60 && nowMins <= LAST_H * 60;
 
@@ -363,8 +368,11 @@ export function CalendarView({
   procedures = [],
   doctors,
   doctorOrder,
+  timeZone,
 }: {
   appointments: CalendarAppt[];
+  // The practice's time zone (the now line), as `today` is.
+  timeZone?: string | null;
   // "Todos" (166): every shown doctor (by their list's order). Day = a
   // column per doctor; week and month show each appointment's doctor; the
   // detail acts for that appointment's doctor, with their money,
@@ -439,6 +447,7 @@ export function CalendarView({
               showHeaders={view === "week"}
               doctorCols={view === "day" ? doctorCols : undefined}
               tagFor={tagFor}
+              timeZone={timeZone}
             />
           </div>
         )}

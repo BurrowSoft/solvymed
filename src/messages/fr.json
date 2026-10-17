@@ -14,6 +14,7 @@
     "iosBeta": "Bêta iPhone – installez-la avec TestFlight",
     "iosBetaHint": "Nécessite l'app gratuite TestFlight d'Apple",
     "signupCta": "Commencez votre essai gratuit",
+    "watchTour": "Watch the 2-minute tour",
     "haveAccount": "Vous avez déjà un compte ?",
     "preferApp": "Vous préférez l'application ? Téléchargez-la :",
     "trialLine": "{days} days free · no credit card · then {price}/month",
@@ -836,7 +837,8 @@
       "alreadyConnectedNoName": "Vous êtes déjà connecté à un autre médecin. Pour changer, contactez le support.",
       "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
       "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers.",
-      "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet."
+      "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet.",
+      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
@@ -880,6 +882,12 @@
       "linkExpired": "Ce lien a expiré ou a déjà été utilisé. Demandez-en un nouveau.",
       "network": "Pas de connexion. Vérifiez votre accès à Internet et réessayez.",
       "generic": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "resendConfirmation": {
+      "button": "Resend confirmation e-mail",
+      "wait": "You can resend in {seconds} s.",
+      "sent": "Confirmation e-mail sent. Check your inbox.",
+      "spamHint": "Not there? Check your spam or junk folder."
     }
   },
   "myAppointments": {
@@ -2427,5 +2435,9 @@
     "discardTitle": "Abandonner les modifications ?",
     "discard": "Abandonner",
     "keepEditing": "Continuer la modification"
+  },
+  "videoTutorials": {
+    "title": "Video tutorials",
+    "subtitle": "Short videos showing each part of SolvyMed"
   }
 }

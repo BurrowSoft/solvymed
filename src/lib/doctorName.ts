@@ -13,35 +13,49 @@ import { THAI_TITLES } from "./country";
 const TITLE = /^(dott\.ssa|dott|dra|dr|profa|prof|pr)(?:(\.?ª\.?|\.)\s*|\s+|$)/i;
 const MAX_TITLES = 3;
 
-function splitTitles(name: string | null | undefined): { titles: string[]; rest: string } {
+// Every supported country's titles (the Latin ones above; the Thai ones,
+// THAI_TITLE_LOOSE below, with or without the dot). A Thai title is written with its dot, against the name, the
+// usual Thai form (01, both platforms; the app's #517): "นพ. ธีรวัฒน์" and
+// "นพ ธีรวัฒน์" → "นพ.ธีรวัฒน์".
+type Title = { text: string; attached: boolean };
+
+function splitTitles(name: string | null | undefined): { titles: Title[]; rest: string } {
   let rest = (name ?? "").trim().replace(/\s+/g, " ");
-  const titles: string[] = [];
-  for (let m = rest.match(TITLE); m && titles.length < MAX_TITLES; m = rest.match(TITLE)) {
-    titles.push(`${m[1].charAt(0).toUpperCase()}${m[1].slice(1).toLowerCase()}${m[2] ?? ""}`);
-    rest = rest.slice(m[0].length);
+  const titles: Title[] = [];
+  while (titles.length < MAX_TITLES) {
+    const thai = rest.match(THAI_TITLE_LOOSE);
+    const m = thai ? null : rest.match(TITLE);
+    if (thai) titles.push({ text: `${thai[1]}.`, attached: true });
+    else if (m) titles.push({ text: `${m[1].charAt(0).toUpperCase()}${m[1].slice(1).toLowerCase()}${m[2] ?? ""}`, attached: false });
+    else break;
+    rest = rest.slice((thai ?? m)![0].length);
   }
   return { titles, rest: rest.trim() };
+}
+
+// Titles then the name: the titles space-separated; the last one against
+// the name when it's Thai ("ดร. นพ.สมชาย", the app's #517), else a space.
+function joinTitles(titles: Title[], name: string): string {
+  const head = titles.map((t) => t.text).join(" ");
+  if (!name) return head;
+  if (!head) return name;
+  return `${head}${titles[titles.length - 1].attached ? "" : " "}${name}`;
 }
 
 export function doctorDisplayName(name: string | null | undefined, opts: { firstOnly?: boolean } = {}): string {
   const { titles, rest } = splitTitles(name);
   const shown = opts.firstOnly ? rest.split(" ")[0] ?? "" : rest;
-  return [...titles, shown].filter(Boolean).join(" ");
+  return joinTitles(titles, shown);
 }
 
-// Thai professional titles, typed before the name with or without a space
-// ("นพ.สมชาย", "พญ. สุดา"): the ones the practice-country examples suggest
-// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. Kept exactly as
-// typed.
-const THAI_TITLE = new RegExp(
-  // Longest first, so "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list).
-  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].sort((a, b) => b.length - a.length).map((s) => s.replace(/\./g, "\\.")).join("|")})\\s*`,
-);
-
-// A Thai title at the start of a name, with its dot or, without one,
-// followed by a space ("นพ.สมชาย", "นพ สมชาย"; never "ดร" inside "ดรุณี").
+// Thai professional titles: the ones the practice-country examples suggest
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. At the start of
+// a name, with its dot or, without one, followed by a space ("นพ.สมชาย",
+// "พญ. สุดา", "นพ สมชาย"; never "ดร" inside "ดรุณี"). Longest first, so
+// "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list). The one Thai-title
+// rule here: splitTitles, then every function above and below.
 const THAI_TITLE_LOOSE = new RegExp(
-  `^(?:${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
+  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
 );
 
 // The brand's name with its chosen title (1.5.0 My brand; e7, both
@@ -67,35 +81,30 @@ export function withBrandTitle(title: string | null | undefined, name: string | 
 }
 
 // For a greeting (UX, "Olá, Dra. Ana!", "เรียน นพ.สมชาย"): the typed
-// title(s), as doctorDisplayName shows them, and the first name. Never a
-// title we add.
+// title(s), as doctorDisplayName shows them (a Thai one with its dot), and
+// the first name. Never a title we add. The message puts them together
+// (th: "เรียน {title}{name}", against the name).
 export function greetingName(name: string | null | undefined): { title: string; first: string } {
-  const typed = (name ?? "").trim().replace(/\s+/g, " ");
-  const thai = typed.match(THAI_TITLE);
-  if (thai) return { title: thai[1], first: typed.slice(thai[0].length).split(" ")[0] ?? "" };
-  const { titles, rest } = splitTitles(typed);
-  return { title: titles.join(" "), first: rest.split(" ")[0] ?? "" };
+  const { titles, rest } = splitTitles(name);
+  return { title: joinTitles(titles, ""), first: rest.split(" ")[0] ?? "" };
 }
 
 // For a button ("Marcar consulta com Dra. Ana Lima"; e7): the typed
 // title(s), the first and the last name, so a long full name fits (the
-// button also wraps to 2 lines, then ellipsis). Thai titles as typed.
+// button also wraps to 2 lines, then ellipsis). A Thai title against the
+// name, as everywhere ("นพ.สมชาย ใจดี"; 01).
 export function shortDoctorName(name: string | null | undefined): string {
-  const typed = (name ?? "").trim().replace(/\s+/g, " ");
-  const thai = typed.match(THAI_TITLE);
-  const { titles, rest } = thai ? { titles: [thai[1]], rest: typed.slice(thai[0].length) } : splitTitles(typed);
+  const { titles, rest } = splitTitles(name);
   const parts = rest.split(" ").filter(Boolean);
   const names = parts.length > 2 ? [parts[0], parts[parts.length - 1]] : parts;
-  // A Thai title is written against the name ("นพ.สมชาย"), as typed.
-  if (thai) return `${titles[0]}${/\s$/.test(thai[0]) ? " " : ""}${names.join(" ")}`.trim();
-  return [...titles, ...names].join(" ");
+  return joinTitles(titles, names.join(" "));
 }
 
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",
 // "Prof. Dr. carlos" → "C"); a bare title keeps its own letter.
 export function nameInitial(name: string | null | undefined): string {
   const { titles, rest } = splitTitles(name);
-  return (rest || titles[0] || "").charAt(0).toUpperCase();
+  return (rest || titles[0]?.text || "").charAt(0).toUpperCase();
 }
 
 // The first name to greet the signed-in user with: their own, or none
