@@ -17,13 +17,16 @@ export const RESEND_COOLDOWN_S = 60;
 // neutral (the forgot-password screen, shown to everyone): any outcome but
 // the rate limit reads the same, so it never tells whether the address has
 // an account or whether it is confirmed (01; account enumeration).
-export function ResendConfirmation({ email, locale, captchaToken, neutral = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean }) {
+// justSent (the sign-up's own screen): an e-mail went out a moment ago, so
+// the countdown starts at once; an early tap would only meet Supabase's
+// per-address limit (ca on the app; 01).
+export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean }) {
   const t = useTranslations("auth.resendConfirmation");
   const authErrorText = useAuthErrorText();
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
-  const [wait, setWait] = useState(0);
+  const [wait, setWait] = useState(justSent ? RESEND_COOLDOWN_S : 0);
 
   useEffect(() => {
     if (wait <= 0) return;
@@ -44,10 +47,14 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
     // Neutral: only the rate limit and a network failure show as errors; they
     // say nothing about the address (offline, nothing was sent; b9).
     const key = e ? authErrorKey(e) : null;
-    if (e && !(neutral && key !== "rateLimited" && key !== "network")) {
+    // Supabase's own limit (60 s per address): just the wait line, never a
+    // red error (ca/01: it isn't a mistake, only "not yet").
+    if (key === "rateLimited") {
+      setWait(RESEND_COOLDOWN_S);
+      return;
+    }
+    if (e && !(neutral && key !== "network")) {
       setError(authErrorText(e) ?? "");
-      // Supabase's own limit (60 s per address): the same wait (13, the app).
-      if (key === "rateLimited") setWait(RESEND_COOLDOWN_S);
       return;
     }
     setSent(true);
