@@ -63,7 +63,15 @@
 // own backup). The §5 Sentry row stays "app and website": no edge function
 // reports to Sentry yet (c5, 10-13); naming them waits for c5's edge scrub
 // PR and its own wording step. Mobile 219 (accepting 2026-10-19) applied FIRST.
-export const PRIVACY_VERSION = "2026-10-19";
+// 2026-10-21 (DRAFT; the Studio launch): §6f My brand AND Document Studio:
+// the document design is stored; posters, social images and letterheads are
+// made on the device, never stored, without patient data or a signature; the
+// booking QR holds the public invite link; the design is deleted with the
+// account. Left out until live: the uploaded signature image
+// (studio-signature-live) and the reversed logo (no upload yet). Mobile's
+// accepting migration for ('privacy','2026-10-21') applied FIRST; merged with
+// the document_studio flag flip (document-studio-live).
+export const PRIVACY_VERSION = "2026-10-21";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -75,7 +83,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-14"; // 2026-10-19 went live (#533 merged) 2026-10-14 UTC; re-set it if the merge slips past that day
+export const PRIVACY_PUBLISHED = "2026-10-17"; // 2026-10-21 goes live with the Studio launch (#557), merge day 2026-10-17 UTC; re-set it if the merge slips past that day
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only
