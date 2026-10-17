@@ -2377,7 +2377,7 @@
             },
             {
               "type": "p",
-              "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (para endereços Gmail, Outlook, Yahoo e iCloud), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
+              "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (abre o app de e-mail do celular), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
             },
             {
               "type": "p",
@@ -2403,7 +2403,7 @@
             },
             {
               "type": "p",
-              "text": "Right after signing up in the app, the **Confirm your e-mail** screen shows the address, **Open e-mail** (for Gmail, Outlook, Yahoo and iCloud addresses), the resend and **Wrong e-mail? Fix it** (to sign up again with the right address)."
+              "text": "Right after signing up in the app, the **Confirm your e-mail** screen shows the address, **Open e-mail** (opens your phone's mail app), the resend and **Wrong e-mail? Fix it** (to sign up again with the right address)."
             },
             {
               "type": "p",
