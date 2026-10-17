@@ -35,6 +35,10 @@ for (const c of CASES) {
       // The country step comes first (no ?c= yet).
       const country = page.getByRole("button", { name: c.button });
       await expect(country).toBeVisible();
+      // Wait for React to hydrate the button before clicking: a click on the
+      // server-rendered HTML does nothing and leaves the country step on screen
+      // (it flaked on the slow line in three smoke runs). Same marker as signIn().
+      await expect.poll(() => country.evaluate((b) => Object.keys(b).some((k) => k.startsWith("__reactProps"))), { timeout: 60_000 }).toBe(true);
       await country.click();
       await expect(page).toHaveURL(new RegExp(`[?&]c=${c.country}\\b`));
       await expect(page.getByRole("heading", { name: s.title })).toBeVisible();
