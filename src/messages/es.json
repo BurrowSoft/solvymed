@@ -900,6 +900,13 @@
       "codeLabel": "Or enter the 8-digit code from the e-mail",
       "codeConfirm": "Confirm",
       "codeInvalid": "Code invalid or expired. Resend the e-mail for a new one."
+    },
+    "signupExisting": {
+      "title": "Check your e-mail",
+      "bodyWithCode": "If this address is new, we sent you a link and a code. Already have an account? Sign in or reset your password.",
+      "body": "If this address is new, we sent you a confirmation link. Already have an account? Sign in or reset your password.",
+      "signIn": "Sign in",
+      "forgot": "Forgot password?"
     }
   },
   "myAppointments": {

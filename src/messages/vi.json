@@ -900,6 +900,13 @@
       "codeLabel": "Hoặc nhập mã 8 chữ số trong email",
       "codeConfirm": "Xác nhận",
       "codeInvalid": "Mã không hợp lệ hoặc đã hết hạn. Hãy gửi lại email để nhận mã mới."
+    },
+    "signupExisting": {
+      "title": "Kiểm tra email của bạn",
+      "bodyWithCode": "Nếu địa chỉ này mới, chúng tôi đã gửi cho bạn một liên kết và một mã. Đã có tài khoản? Hãy đăng nhập hoặc đặt lại mật khẩu.",
+      "body": "Nếu địa chỉ này mới, chúng tôi đã gửi cho bạn một liên kết xác nhận. Đã có tài khoản? Hãy đăng nhập hoặc đặt lại mật khẩu.",
+      "signIn": "Đăng nhập",
+      "forgot": "Quên mật khẩu?"
     }
   },
   "myAppointments": {

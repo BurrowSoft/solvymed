@@ -900,6 +900,13 @@
       "codeLabel": "或输入邮件中的 8 位验证码",
       "codeConfirm": "确认",
       "codeInvalid": "验证码无效或已过期。请重新发送邮件以获取新验证码。"
+    },
+    "signupExisting": {
+      "title": "请查看您的邮箱",
+      "bodyWithCode": "如果这是新地址，我们已向您发送了链接和验证码。已有账户？请登录或重置密码。",
+      "body": "如果这是新地址，我们已向您发送了确认链接。已有账户？请登录或重置密码。",
+      "signIn": "登录",
+      "forgot": "忘记密码？"
     }
   },
   "myAppointments": {

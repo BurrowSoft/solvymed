@@ -266,5 +266,9 @@
   "confirm-by-code-live": {
     "met": true,
     "what": "LIVE in the confirm-by-code window (2026-10-17): 13's template #524 (the 8-digit code) PATCHed + server_flags confirm_by_code ON, after the app's #522 (prod 11:07:02Z) and web #578 were live. The confirmation e-mail carries an 8-digit code AND server_flags confirm_by_code is on (migration 229; 13 PATCHes the template in the same window, after the web code field (PR B) and the app OTA are live). Gates Help K3's code line and the App Map's code rule. Flip with 13's ping."
+  },
+  "app-signup-neutral-live": {
+    "met": true,
+    "what": "LIVE 2026-10-17: 13's mobile #525 released to production 16:22:06Z (group 8303a25e; the bundle ca verified). The app's neutral sign-up screen for an address that already has a confirmed account (13's mobile #525: \"Verifique seu e-mail\" + Entrar + Esqueceu sua senha?, no code field; switch-aware body) is in a RELEASED app build (OTA or store; 13 pings). Gates the App Map's app rule for that screen; the website's twin is live with #580."
   }
 }
