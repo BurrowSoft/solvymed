@@ -48,6 +48,13 @@ describe("routeAfterAuth: patients", () => {
     expect(await routeAfterAuth(fakeDb({ before: linked }), patient({}, old), "/th", "magiclink")).toBe("/th/my-appointments");
   });
 
+  // 01 (13's logs): a sign-up code that matches nothing was a dead end;
+  // the retry form now says the code wasn't found.
+  it("a stored code that matches nothing: the connect form says 'not found'", async () => {
+    const db = fakeDb({ before: null, personal: false, publicProf: null });
+    expect(await routeAfterAuth(db, patient({ invite_code: "ZZZ999" }), "/pt-BR", "signup")).toBe("/pt-BR/auth/invite-required?code=notfound");
+  });
+
   it("a removed patient (no link, no invite) gets the connect form", async () => {
     const removed: Row = { role: "patient", invited_by_professional_id: null, linked_patient_id: null };
     expect(await routeAfterAuth(fakeDb({ before: removed }), patient(), "", "magiclink")).toBe("/auth/invite-required");

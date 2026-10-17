@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { AuthPageShell } from "@/components/AuthPageShell";
@@ -17,7 +17,13 @@ export default function InviteRequiredPage() {
   const router = useRouter();
 
   const [inviteCode, setInviteCode] = useState("");
-  const [error, setError] = useState("");
+  // Sent here because the code saved at sign-up matched nothing (?code=notfound)
+  // or no longer admits (?code=unavailable): say so first, above the field
+  // for a new code (01; it was a dead end).
+  const reason = useSearchParams()?.get("code");
+  const [error, setError] = useState(() =>
+    reason === "notfound" ? t("inviteRequired.storedCodeNotFound") : reason === "unavailable" ? t("inviteRequired.codeUnavailable") : "",
+  );
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {

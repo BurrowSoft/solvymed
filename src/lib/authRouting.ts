@@ -62,7 +62,9 @@ export async function routeAfterAuth(
     if (linkError) return `${localePrefix}/auth/invite-required`;
     if (fullyLinked) return `${localePrefix}/auth/patient-welcome`;
     const { data: profId, error: profLinkError } = await supabase.rpc("link_by_professional_public_code", { p_public_code: inviteCode });
-    if (profLinkError || !profId) return `${localePrefix}/auth/invite-required`;
+    if (profLinkError) return `${localePrefix}/auth/invite-required`;
+    // Neither code matched: the retry form says the code wasn't found (01).
+    if (!profId) return `${localePrefix}/auth/invite-required?code=notfound`;
     // Since 145 the public code links at once too: read the result, so both
     // codes land on the welcome deterministically (3e saw both pages).
     const { data: after } = await supabase

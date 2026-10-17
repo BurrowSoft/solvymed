@@ -837,7 +837,8 @@
       "alreadyConnectedNoName": "您已與其他醫師連結。如需更換，請聯絡客服。",
       "alreadyConnectedSamePractice": "您已與 {doctor} 連結。請診所合併您的病歷。",
       "alreadyConnectedSamePracticeNoName": "您已與此診所連結。請診所合併您的病歷。",
-      "codeUnavailable": "無法使用此代碼連結。請聯絡診所。"
+      "codeUnavailable": "無法使用此代碼連結。請聯絡診所。",
+      "storedCodeNotFound": "找不到邀請碼。請向您的診所索取邀請碼。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
@@ -881,6 +882,12 @@
       "linkExpired": "此連結已過期或已使用。請重新取得。",
       "network": "沒有網路連線。請檢查網路後再試一次。",
       "generic": "發生錯誤，請再試一次。"
+    },
+    "resendConfirmation": {
+      "button": "重新傳送確認郵件",
+      "wait": "{seconds} 秒後可重新傳送。",
+      "sent": "確認郵件已傳送。請查看收件匣。",
+      "spamHint": "沒收到？請檢查垃圾郵件資料夾。"
     }
   },
   "myAppointments": {

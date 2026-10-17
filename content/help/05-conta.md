@@ -38,12 +38,12 @@ Thai title: "เปลี่ยนรหัสผ่าน"
 Na tela de entrada, toque em **Esqueceu sua senha?**, digite seu e-mail e abra o link que chega (vale 1 hora).
 **en**
 On the sign-in screen, tap **Forgot your password?**, enter your email and open the link you receive (valid for 1 hour).
-**No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**.
-**On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**.
+**No site:** Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação**; se não chegar, verifique a pasta de spam.
+**On the website:** On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your email isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail**; if it doesn't arrive, check your spam folder.
 Thai title: "ลืมรหัสผ่าน"
 **th**
 ที่หน้าจอเข้าสู่ระบบ แตะ **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วเปิดลิงก์ที่ได้รับ (ใช้ได้ภายใน 1 ชั่วโมง)
-**ในเว็บไซต์:** ที่หน้าจอเข้าสู่ระบบ คลิก **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วคลิก **ส่งลิงก์รีเซ็ต**
+**ในเว็บไซต์:** ที่หน้าจอเข้าสู่ระบบ คลิก **ลืมรหัสผ่าน?** ป้อนอีเมลของคุณ แล้วคลิก **ส่งลิงก์รีเซ็ต** หากยังไม่ได้ยืนยันอีเมล หน้าจอเข้าสู่ระบบจะแสดง **ส่งอีเมลยืนยันอีกครั้ง** หากไม่ได้รับ โปรดตรวจสอบโฟลเดอร์จดหมายขยะ
 `open:none`
 
 ---

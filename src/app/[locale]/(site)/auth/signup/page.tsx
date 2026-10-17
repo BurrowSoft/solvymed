@@ -12,6 +12,8 @@ import { BrandMark } from "@/components/BrandMark";
 import { IconBadge } from "@/components/IconBadge";
 import { isWellFormedSecretaryCode, normalizeSecretaryCode } from "@/lib/secretary";
 import { MIN_PASSWORD_LENGTH } from "@/lib/password";
+import { signupEmailRedirect } from "@/lib/authEmailRedirect";
+import { ResendConfirmation } from "@/components/ResendConfirmation";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
@@ -79,6 +81,8 @@ export default function SignupPage() {
   const [role, setRole] = useState<Role>(isJoinFlow ? "patient" : isSecretaryFlow ? "secretary" : "professional");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  // The address the link went to, for "Resend the confirmation e-mail" (01).
+  const [sentTo, setSentTo] = useState("");
   const [loading, setLoading] = useState(false);
   // One submit at a time (a double-click lands before the disabled re-render).
   const submitting = useRef(false);
@@ -206,7 +210,7 @@ export default function SignupPage() {
         },
         // The callback has no [locale] segment; this lands the user on the
         // page in the language they signed up in.
-        emailRedirectTo: `https://www.solvymed.com/api/auth/callback?locale=${encodeURIComponent(locale)}`,
+        emailRedirectTo: signupEmailRedirect(locale),
         ...(captchaToken ? { captchaToken } : {}),
       },
     });
@@ -222,6 +226,7 @@ export default function SignupPage() {
       setError(t("signup.emailExists"));
     } else {
       track("signup_submitted", { role });
+      setSentTo(email);
       setSuccess(true);
     }
   }
@@ -238,6 +243,7 @@ export default function SignupPage() {
           </IconBadge>
           <h1 className="auth-heading">{t("signup.success")}</h1>
           <p className="mb-8 text-slate-500">{t("signup.successSub")}</p>
+          {sentTo && <div className="mb-6 text-left"><ResendConfirmation email={sentTo} locale={locale} /></div>}
           <Link href={localePath("/")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             {t("backToHome")}
           </Link>
