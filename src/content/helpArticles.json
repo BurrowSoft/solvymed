@@ -1033,6 +1033,10 @@
             {
               "type": "p",
               "text": "No app também: ao corrigir uma receita, ou editar ou corrigir um documento, **Compartilhar com o paciente** começa como a cópia está agora: ligado se o paciente a vê, desligado se você a ocultou ou nunca a compartilhou (ligue para compartilhar de novo)."
+            },
+            {
+              "type": "p",
+              "text": "Se você salvou uma receita ou um documento com **Compartilhar com o paciente** ligado e a cópia não chegou ao paciente (por exemplo, a conexão caiu), ele aparece marcado **Ainda não compartilhado** na lista **Receitas e documentos**. Use **Compartilhar com o paciente** ao lado da marca para enviar de novo (a marca some quando o compartilhamento dá certo), ou **Não compartilhar** se ele deve ficar só com você. Ela nunca aparece quando você escolheu não compartilhar, nem para pacientes sem conta no app."
             }
           ],
           "en": [
@@ -1063,6 +1067,10 @@
             {
               "type": "p",
               "text": "In the app too: when you correct a prescription, or edit or correct a document, **Share with the patient** starts as its copy is now: on if the patient sees it, off if you hid it or never shared it (switch it on to share again)."
+            },
+            {
+              "type": "p",
+              "text": "If you saved a prescription or a document with **Share with the patient** on and the copy didn't reach the patient (for example, the connection dropped), it shows **Not shared yet** in the **Prescriptions & documents** list. Use **Share with the patient** next to the mark to send it again (the mark goes away once it's shared), or **Don't share** if it should stay with you. It never shows when you chose not to share, or for patients without an app account."
             }
           ]
         },
