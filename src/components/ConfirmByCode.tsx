@@ -11,6 +11,9 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 // e-mail carries the code). The code confirms the sign-up like the link:
 // the session is set here, then the server routes as for a clicked link
 // (/api/auth/after-verify: role linking, the invite code, the welcome).
+// The code is 8 digits (Supabase's mailer_otp_length; the app's field too).
+const CODE_LENGTH = 8;
+
 export function ConfirmByCode({ email, locale }: { email: string; locale: string }) {
   const t = useTranslations("auth.confirmEmail");
   const authErrorText = useAuthErrorText();
@@ -20,15 +23,17 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
 
   async function confirm(e: React.FormEvent) {
     e.preventDefault();
-    if (working || code.length < 6) return;
+    if (working || code.length !== CODE_LENGTH) return;
     setWorking(true);
     setError("");
     const supabase = createClient();
     const { error: verifyError } = await supabase.auth.verifyOtp({ email, token: code, type: "signup" });
     if (verifyError) {
       setWorking(false);
-      // Too many tries: the usual text; any other refusal: invalid or expired.
-      setError(authErrorKey(verifyError) === "rateLimited" ? authErrorText(verifyError) ?? t("codeInvalid") : t("codeInvalid"));
+      // Too many tries or no connection: their usual texts (nothing was
+      // checked; b9); any other refusal: invalid or expired.
+      const key = authErrorKey(verifyError);
+      setError(key === "rateLimited" || key === "network" ? authErrorText(verifyError) ?? t("codeInvalid") : t("codeInvalid"));
       return;
     }
     const res = await fetch("/api/auth/after-verify", {
@@ -49,12 +54,12 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
           inputMode="numeric"
           autoComplete="one-time-code"
           value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 10))}
+          onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH))}
           className="text-input font-mono tracking-widest"
         />
         <button
           type="submit"
-          disabled={working || code.length < 6}
+          disabled={working || code.length !== CODE_LENGTH}
           data-testid="confirm-code-submit"
           className="shrink-0 rounded-xl bg-teal-600 px-5 py-3 font-bold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
         >

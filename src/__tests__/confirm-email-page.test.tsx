@@ -179,6 +179,31 @@ describe("Confirme seu e-mail: the code (confirm_by_code)", () => {
     Object.defineProperty(window, "location", { configurable: true, value: original });
   });
 
+  it("no connection: the network text, never 'invalid or expired' (b9)", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset().mockResolvedValue({ error: { name: "AuthRetryableFetchError", status: 0, message: "Failed to fetch" } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    fireEvent.click(screen.getByTestId("confirm-code-submit"));
+    await screen.findByText(pt.auth.errors.network);
+    expect(screen.queryByText(pt.auth.confirmEmail.codeInvalid)).toBeNull();
+    h.flags = { data: null, error: null };
+  });
+
+  it("exactly 8 digits (the app's parity): fewer can't be sent, more are cut", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset();
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "123456" } });
+    expect(screen.getByTestId("confirm-code-submit")).toBeDisabled();
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567890" } });
+    expect(byId("confirm-code").value).toBe("12345678");
+    expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled();
+    h.flags = { data: null, error: null };
+  });
+
   it("a wrong or expired code: says so, stays on the page", async () => {
     h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
     h.verifyOtp.mockReset().mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
