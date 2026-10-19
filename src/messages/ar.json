@@ -17,6 +17,8 @@
     "watchTour": "شاهد الجولة في دقيقتين",
     "haveAccount": "لديك حساب بالفعل؟",
     "preferApp": "تفضّل التطبيق؟ نزّله من هنا:",
+    "androidPrimary": "حمّل التطبيق من Google Play",
+    "continueOnWeb": "أو تابع على الموقع",
     "trialLine": "{days} يومًا مجانًا · دون بطاقة ائتمان · ثم {price} شهريًا",
     "trialLineNoPrice": "{days} يومًا مجانًا · دون بطاقة ائتمان"
   },

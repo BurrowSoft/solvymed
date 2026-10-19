@@ -17,6 +17,8 @@
     "watchTour": "Tonton tur 2 menit",
     "haveAccount": "Sudah punya akun?",
     "preferApp": "Lebih suka aplikasinya? Unduh di sini:",
+    "androidPrimary": "Unduh di Google Play",
+    "continueOnWeb": "atau lanjutkan di situs web",
     "trialLine": "Gratis {days} hari · tanpa kartu kredit · lalu {price}/bulan",
     "trialLineNoPrice": "Gratis {days} hari · tanpa kartu kredit"
   },

@@ -6,6 +6,7 @@ import { heroMedia } from "@/lib/heroMedia";
 import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { HeroClip } from "@/components/HeroClip";
 import { SignupCta } from "@/components/SignupCta";
+import { AndroidAppCta } from "@/components/AndroidAppCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ThaiLandingSection } from "@/components/ThaiLandingSection";
 import { Link } from "@/i18n/navigation";
@@ -122,10 +123,20 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </p>
 
               <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center md:justify-start">
-                <SignupCta
-                  label={t("hero.signupCta")}
-                  className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+                {/* Android phones: Google Play first (F5, components/AndroidAppCta). */}
+                <AndroidAppCta
+                  locale={locale}
+                  label={t("hero.androidPrimary")}
+                  webLabel={t("hero.continueOnWeb")}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+                  webClassName="text-sm font-semibold text-teal-100 underline hover:text-white"
                 />
+                <div className="android-hide">
+                  <SignupCta
+                    label={t("hero.signupCta")}
+                    className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
+                  />
+                </div>
                 {hero.tourUrl && (
                   <a
                     href={hero.tourUrl}
@@ -218,10 +229,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {t("cta.heading")}
             </h2>
             <p className="mb-10 text-slate-400">{t("cta.sub")}</p>
-            <SignupCta
-              label={t("hero.signupCta")}
-              className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400"
+            <AndroidAppCta
+              locale={locale}
+              label={t("hero.androidPrimary")}
+              webLabel={t("hero.continueOnWeb")}
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400"
+              webClassName="text-sm font-semibold text-slate-300 underline hover:text-white"
             />
+            <div className="android-hide">
+              <SignupCta
+                label={t("hero.signupCta")}
+                className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400"
+              />
+            </div>
             <p className="mb-4 mt-10 text-sm font-medium text-slate-400">{t("hero.preferApp")}</p>
             <AppDownloadButtons />
           </div>

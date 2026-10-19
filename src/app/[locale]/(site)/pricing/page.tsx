@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { SignupCta } from "@/components/SignupCta";
+import { AndroidAppCta } from "@/components/AndroidAppCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { Link } from "@/i18n/navigation";
 import { liveFeatures, pdfsInLocale } from "@/lib/liveFeatures";
@@ -42,6 +43,7 @@ export default async function PricingPage({
   const { locale } = await params;
   const { c } = await searchParams;
   const t = await getTranslations("pricing");
+  const tHero = await getTranslations("hero");
   const geo = (await headers()).get("x-vercel-ip-country");
   const choice = pricingCountry({ chosen: c, geo, locale });
   // The same table checkout charges from (never a second hard-coded price).
@@ -101,10 +103,19 @@ export default async function PricingPage({
               </p>
             </div>
             <div className="flex flex-col gap-4 p-8">
-              <SignupCta
-                label={t("cta")}
-                className="block rounded-xl bg-teal-600 px-6 py-3 text-center text-base font-bold text-white shadow transition hover:bg-teal-700"
+              <AndroidAppCta
+                locale={locale}
+                label={tHero("androidPrimary")}
+                webLabel={tHero("continueOnWeb")}
+                className="block w-full rounded-xl bg-teal-600 px-6 py-3 text-center text-base font-bold text-white shadow transition hover:bg-teal-700"
+                webClassName="text-sm font-semibold text-teal-700 underline"
               />
+              <div className="android-hide">
+                <SignupCta
+                  label={t("cta")}
+                  className="block rounded-xl bg-teal-600 px-6 py-3 text-center text-base font-bold text-white shadow transition hover:bg-teal-700"
+                />
+              </div>
               <p className="text-center text-xs text-slate-400">{t("cancel")}</p>
             </div>
           </div>

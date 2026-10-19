@@ -17,6 +17,8 @@
     "watchTour": "Смотреть 2-минутный обзор",
     "haveAccount": "Уже есть аккаунт?",
     "preferApp": "Удобнее в приложении? Скачайте:",
+    "androidPrimary": "Скачать в Google Play",
+    "continueOnWeb": "или продолжить на сайте",
     "trialLine": "{days} дней бесплатно · без кредитной карты · затем {price}/мес.",
     "trialLineNoPrice": "{days} дней бесплатно · без кредитной карты"
   },

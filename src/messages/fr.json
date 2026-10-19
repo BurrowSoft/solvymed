@@ -17,6 +17,8 @@
     "watchTour": "Watch the 2-minute tour",
     "haveAccount": "Vous avez déjà un compte ?",
     "preferApp": "Vous préférez l'application ? Téléchargez-la :",
+    "androidPrimary": "Download on Google Play",
+    "continueOnWeb": "or continue on the website",
     "trialLine": "{days} days free · no credit card · then {price}/month",
     "trialLineNoPrice": "{days} days free · no credit card"
   },

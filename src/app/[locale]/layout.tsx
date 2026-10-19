@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { ConsentBanner } from "@/components/ConsentBanner";
+import { PLATFORM_SCRIPT } from "@/lib/appStores";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -136,7 +137,12 @@ export default async function LocaleLayout({
     .join(", ");
 
   return (
-    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={fontClass}>
+    // suppressHydrationWarning: the platform script below adds data-platform
+    // to <html> before React hydrates (funnel F5).
+    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"} className={fontClass} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: PLATFORM_SCRIPT }} />
+      </head>
       <body style={{ fontFamily }} className="min-h-screen bg-white text-slate-900 antialiased">
         {/* Each route group gives its client components the messages they
             need: (site) all of them, /help only a few (the page source
