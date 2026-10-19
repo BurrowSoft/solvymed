@@ -144,12 +144,16 @@ export default function SignupPage() {
   useEffect(() => {
     if (viewStep) track("signup_view", { step: viewStep });
   }, [viewStep]);
-  // A country the visitor didn't tap: taken from the page's path (F2,
-  // #588), so the funnel's country step still counts it (01, b9).
-  const countryFromPath = countryStep && !!country && !parseCountryChoice(searchParams.get("c"));
+  // A country the visitor didn't tap here, so the funnel's country step
+  // still counts it (01, b9): "path" = taken from the page's path (F2,
+  // #588); "link" = ?c= reached without a tap on this page (a tap before
+  // hydration follows the plain link, or a link with ?c=).
+  const tappedCountry = useRef(false);
+  const countryInQuery = !!parseCountryChoice(searchParams.get("c"));
   useEffect(() => {
-    if (countryFromPath && country && viewStep === "form") track("signup_country", { c: country, source: "path" });
-  }, [countryFromPath, country, viewStep]);
+    if (viewStep !== "form" || !countryStep || !country || tappedCountry.current) return;
+    track("signup_country", { c: country, source: countryInQuery ? "link" : "path" });
+  }, [viewStep, countryStep, country, countryInQuery]);
   const formStarted = useRef(false);
   const formStart = () => {
     if (formStarted.current) return;
@@ -396,6 +400,7 @@ export default function SignupPage() {
                 data-suggested={c.code === countryGuess ? "true" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
+                  tappedCountry.current = true;
                   track("signup_country", { c: c.code, source: "step" });
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);

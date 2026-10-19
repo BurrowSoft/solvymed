@@ -54,9 +54,16 @@ describe("signup funnel events", () => {
     unmount();
   });
 
-  it("a country in ?c= was tapped on the step: no second signup_country", () => {
-    const { unmount } = show("c=BR");
-    expect(events().filter(([e]) => e === "signup_country")).toEqual([]);
+  it("?c= reached without a tap here (a tap before hydration): signup_country {source: link}, once", () => {
+    const { rerender, unmount } = show("c=BR");
+    rerender(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <CountryGuessProvider guess={null}>
+          <SignupPage />
+        </CountryGuessProvider>
+      </NextIntlClientProvider>,
+    );
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([["signup_country", { c: "BR", source: "link" }]]);
     unmount();
   });
 
