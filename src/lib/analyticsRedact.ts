@@ -23,6 +23,16 @@ const SAFE_PARAMS = new Set([
   "date", "week", "view", "tab", "archived", "locale", "country",
 ]);
 
+// Keys kept only with one of these exact values (funnel F3): the signup's
+// practice country, the role card, and the step markers. Anything else in
+// them is redacted like any other value.
+const SAFE_VALUES: Record<string, ReadonlySet<string>> = {
+  c: new Set(["BR", "TH"]),
+  role: new Set(["professional", "patient"]),
+  step: new Set(["country"]),
+  lr: new Set(["1"]),
+};
+
 export function redactAnalyticsUrl(raw: string): string | null {
   let url: URL;
   try {
@@ -39,7 +49,10 @@ export function redactAnalyticsUrl(raw: string): string | null {
   // Record ids (patients, appointments, professionals) say whose page it is.
   url.pathname = url.pathname.replace(UUID_SEGMENT, "/[id]");
   for (const key of new Set(url.searchParams.keys())) {
-    if (!SAFE_PARAMS.has(key)) url.searchParams.set(key, "[redacted]");
+    if (SAFE_PARAMS.has(key)) continue;
+    const values = url.searchParams.getAll(key);
+    if (SAFE_VALUES[key] && values.length === 1 && SAFE_VALUES[key].has(values[0])) continue;
+    url.searchParams.set(key, "[redacted]");
   }
   url.hash = "";
   return url.toString();

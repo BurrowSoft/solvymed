@@ -67,6 +67,18 @@ describe("redactAnalyticsUrl", () => {
     expect(redactAnalyticsUrl(`${B}/dashboard/${id}x`)).toBe(`${B}/dashboard/${id}x`);
   });
 
+  it("funnel F3: c, role, step and lr kept only with their known values", () => {
+    expect(redactAnalyticsUrl(`${B}/pt-BR/auth/signup?c=BR&role=patient&utm_source=ad`)).toBe(
+      `${B}/pt-BR/auth/signup?c=BR&role=patient&utm_source=ad`,
+    );
+    expect(redactAnalyticsUrl(`${B}/th/auth/signup?c=TH&step=country&lr=1`)).toBe(`${B}/th/auth/signup?c=TH&step=country&lr=1`);
+    // Anything else in those keys (or a repeated key) is redacted; codes still are.
+    expect(redactAnalyticsUrl(`${B}/auth/signup?c=a%40b.co&role=X&join=AB12CD&gclid=xyz`)).toBe(
+      `${B}/auth/signup?c=%5Bredacted%5D&role=%5Bredacted%5D&join=%5Bredacted%5D&gclid=%5Bredacted%5D`,
+    );
+    expect(redactAnalyticsUrl(`${B}/auth/signup?c=BR&c=TH`)).toBe(`${B}/auth/signup?c=%5Bredacted%5D`);
+  });
+
   it("drops unparseable URLs", () => {
     expect(redactAnalyticsUrl("not a url")).toBeNull();
   });

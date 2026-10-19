@@ -22,6 +22,7 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
 import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, pathCountry, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { autoLocaleArrival } from "@/lib/localeArrival";
+import { noteCountryTap, takeCountryTap } from "@/lib/signupFunnel";
 import { useCountryGuess } from "./CountryGuess";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
@@ -141,6 +142,37 @@ export default function SignupPage() {
   useEffect(() => {
     if (countryStep && country) document.cookie = signupCountryCookie(country);
   }, [countryStep, country]);
+  // Funnel events (F3, specs/signup-funnel-fixes.md). track() sends only
+  // with analytics consent; no props carry anything the visitor typed.
+  const viewStep = success || existing ? null : countryStep && !country ? "country" : "form";
+  useEffect(() => {
+    if (viewStep) track("signup_view", { step: viewStep });
+  }, [viewStep]);
+  // A country the visitor didn't tap here, so the funnel's country step
+  // still counts it (01, b9): "path" = taken from the page's path (F2,
+  // #588); "link" = ?c= reached without a tap (a tap before hydration
+  // follows the plain link, or a link with ?c=). A tap is noted in memory
+  // across the navigation to its form, even into another language, so the
+  // form doesn't count it again (lib/signupFunnel; 24 on #589). Once per
+  // choice on this page (the ref also covers an effect run twice).
+  const countedCountry = useRef<string | null>(null);
+  const countryInQuery = !!parseCountryChoice(searchParams.get("c"));
+  useEffect(() => {
+    if (viewStep !== "form" || !countryStep || !country || countedCountry.current === country) return;
+    countedCountry.current = country;
+    if (takeCountryTap(country)) return;
+    track("signup_country", { c: country, source: countryInQuery ? "link" : "path" });
+  }, [viewStep, countryStep, country, countryInQuery]);
+  const formStarted = useRef(false);
+  const formStart = () => {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    track("signup_form_start");
+  };
+  const pickRole = (next: Role) => {
+    if (next !== role) track("signup_role", { role: next });
+    setRole(next);
+  };
   const goTo = (href: string, newLocale: string) => {
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; samesite=lax`;
     router.push(href);
@@ -257,6 +289,9 @@ export default function SignupPage() {
     if (turnstileEnabled) setCaptchaReset((n) => n + 1);
 
     if (authError) {
+      // The auth error code only (e.g. weak_password), never its message or
+      // anything typed (funnel F3).
+      track("signup_error", { code: authError.code ?? "unknown" });
       setError(authErrorText(authError) ?? t("errors.generic"));
     } else if (signUpData.user?.identities?.length === 0) {
       // Supabase returns an empty identities array (no error) when the address
@@ -374,6 +409,8 @@ export default function SignupPage() {
                 data-suggested={c.code === countryGuess ? "true" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
+                  noteCountryTap(c.code);
+                  track("signup_country", { c: c.code, source: "step" });
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);
                   const next = english ? "en" : c.locale;
@@ -492,7 +529,7 @@ export default function SignupPage() {
             <RoleCard
               selected={role === "professional"}
               href={(() => { const q = new URLSearchParams(searchParams.toString()); q.set("role", "professional"); return `?${q.toString()}`; })()}
-              onSelect={() => setRole("professional")}
+              onSelect={() => pickRole("professional")}
               icon={
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -504,7 +541,7 @@ export default function SignupPage() {
             <RoleCard
               selected={role === "patient"}
               href={(() => { const q = new URLSearchParams(searchParams.toString()); q.set("role", "patient"); return `?${q.toString()}`; })()}
-              onSelect={() => setRole("patient")}
+              onSelect={() => pickRole("patient")}
               icon={
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
@@ -554,7 +591,7 @@ export default function SignupPage() {
           </div>
         )}
 
-        <form id="signup-form" method="post" onSubmit={handleSubmit} className="space-y-4">
+        <form id="signup-form" method="post" onSubmit={handleSubmit} onFocus={formStart} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>
             <input
