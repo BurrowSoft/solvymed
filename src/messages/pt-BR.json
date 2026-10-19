@@ -787,6 +787,11 @@
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
       "backToCountry": "Voltar",
+      "countryLine": {
+        "BR": "Consultório no Brasil",
+        "TH": "Consultório na Tailândia"
+      },
+      "countryChange": "Alterar",
       "secretaryInviteFor": "Este convite é para {email}.",
       "rolePatientViaInvite": "Pacientes entram pelo link de convite do seu médico",
       "loading": "Carregando…"
@@ -1239,6 +1244,9 @@
     "acceptAll": "Aceitar tudo",
     "necessaryOnly": "Somente necessários",
     "choose": "Escolher…",
+    "textShort": "Usamos cookies necessários. Com sua permissão, também de análise e marketing.",
+    "acceptShort": "Aceitar",
+    "declineShort": "Recusar",
     "save": "Salvar escolhas",
     "necessaryTitle": "Necessários",
     "necessaryDesc": "Mantêm você conectado e lembram seu idioma e esta escolha. Sempre ativos.",

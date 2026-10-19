@@ -9,7 +9,7 @@ import { canonicalLocalePath, pickLocale } from "./lib/localeDetect";
 import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/landingRoute";
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
-import { BROWSER_LANGUAGES_HEADER } from "./lib/signupCountry";
+import { BROWSER_LANGUAGES_HEADER, LOCALE_REDIRECT_PARAM } from "./lib/signupCountry";
 import { appShortlinkPlayTarget, isAndroidPhone, isAppShortlink } from "./lib/appStores";
 import { CONSENT_COOKIE, parseConsent } from "./lib/consent";
 
@@ -204,6 +204,7 @@ export async function middleware(req: NextRequest) {
     if (locale !== routing.defaultLocale) {
       const url = req.nextUrl.clone();
       url.pathname = `/${locale}${pathname === "/" ? "" : pathname}`;
+      url.searchParams.set(LOCALE_REDIRECT_PARAM, "1");
       const res = NextResponse.redirect(url, { status: 302 });
       res.cookies.set("NEXT_LOCALE", locale, { maxAge: AUTO_LOCALE_MAX_AGE, path: "/", sameSite: "lax" });
       return finalize(res);
@@ -234,7 +235,21 @@ export async function middleware(req: NextRequest) {
   // nothing read and replaced next-intl's response, so any URL with
   // ?country= lost its locale rewrite: a 404 in English, English text in
   // pt/th (#279). Removed; geo testing uses local `next dev`.)
-  return finalize(intlMiddleware(req));
+  const res = intlMiddleware(req);
+  // next-intl sends an unprefixed URL to the NEXT_LOCALE cookie's language:
+  // marked like the redirect above (?lr=1), so the signup doesn't take the
+  // practice country from a language the site picked (funnel F2, b9).
+  if (!hasLocalePrefix && !isApiOrAsset) markLocaleRedirect(res, req.url);
+  return finalize(res);
+}
+
+function markLocaleRedirect(res: NextResponse, base: string) {
+  const location = res.headers.get("location");
+  if (!location || res.status < 300 || res.status >= 400) return;
+  const url = new URL(location, base);
+  if (!(routing.locales as readonly string[]).includes(url.pathname.split("/")[1] ?? "")) return;
+  url.searchParams.set(LOCALE_REDIRECT_PARAM, "1");
+  res.headers.set("location", url.toString());
 }
 
 export const config = {

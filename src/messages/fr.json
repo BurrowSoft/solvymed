@@ -787,6 +787,11 @@
       "consentCheckbox": "J'ai lu et j'accepte les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy>",
       "fullNameHint": "Ajoutez votre titre si vous le souhaitez ({titles}) : il apparaît dans les salutations.",
       "backToCountry": "Retour",
+      "countryLine": {
+        "BR": "Clinic in Brazil",
+        "TH": "Clinic in Thailand"
+      },
+      "countryChange": "Change",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "Patients join through their doctor's invite link",
       "loading": "Loading…"
@@ -1239,6 +1244,9 @@
     "acceptAll": "Tout accepter",
     "necessaryOnly": "Nécessaires uniquement",
     "choose": "Choisir…",
+    "textShort": "We use necessary cookies. With your OK, also analytics and marketing cookies.",
+    "acceptShort": "Accept",
+    "declineShort": "Decline",
     "save": "Enregistrer mes choix",
     "necessaryTitle": "Nécessaires",
     "necessaryDesc": "Vous gardent connecté et mémorisent votre langue et ce choix. Toujours actifs.",

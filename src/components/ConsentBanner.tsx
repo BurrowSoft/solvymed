@@ -22,8 +22,10 @@ import { track } from "@/lib/track";
 let landing: Attribution | null = null;
 
 // Same style for every choice: no emphasis nudging towards "Accept all".
+// On phones, Accept and Decline share one row at the same size.
 const BUTTON =
-  "rounded-xl border border-teal-600 bg-white px-4 py-2 text-sm font-semibold text-teal-700 transition hover:bg-teal-50";
+  "rounded-xl border border-teal-600 bg-white px-3 py-2 text-sm font-semibold text-teal-700 transition hover:bg-teal-50 sm:px-4";
+const CHOOSE_LINK = "font-semibold text-teal-700 underline hover:text-teal-800";
 
 // LGPD cookie banner. Shown until the visitor answers (and again after 12
 // months or a consent-version change), except on transactional pages;
@@ -37,6 +39,7 @@ export function ConsentBanner() {
   const [choosing, setChoosing] = useState(false);
   const [choice, setChoice] = useState<Consent>({ analytics: false, marketing: false });
   const firstControl = useRef<HTMLInputElement>(null);
+  const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     landing ??= captureAttribution({
@@ -74,7 +77,34 @@ export function ConsentBanner() {
   }, [consent?.analytics, pathname]);
 
   const unanswered = ready && !consent && !isTransactionalPath(pathname, routing.locales);
-  if (!reopened && !unanswered) return null;
+  const shown = reopened || unanswered;
+
+  // The page gets bottom padding as tall as the banner, so every control
+  // (the sign-up's country buttons, its form) can scroll above it, and
+  // --consent-h so the auth pages centre above it (AuthPageShell). Nothing
+  // renders before hydration (ready is false on the server), so the
+  // pre-hydration page is never covered.
+  useEffect(() => {
+    const el = bar.current;
+    if (!shown || !el) return;
+    const body = document.body;
+    const root = document.documentElement;
+    const before = body.style.paddingBottom;
+    const fit = () => {
+      body.style.paddingBottom = `${el.offsetHeight}px`;
+      root.style.setProperty("--consent-h", `${el.offsetHeight}px`);
+    };
+    fit();
+    const ro = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(fit);
+    ro?.observe(el);
+    return () => {
+      ro?.disconnect();
+      body.style.paddingBottom = before;
+      root.style.removeProperty("--consent-h");
+    };
+  }, [shown]);
+
+  if (!shown) return null;
 
   function decide(next: Consent) {
     saveConsent(next);
@@ -83,16 +113,28 @@ export function ConsentBanner() {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 p-3 sm:p-6">
+    <div ref={bar} data-testid="consent-banner" className="pointer-events-none fixed inset-x-0 bottom-0 z-50 p-2 sm:p-6">
       <section
         aria-label={t("title")}
-        className="pointer-events-auto mx-auto max-w-2xl rounded-2xl border border-slate-200 bg-white p-5 text-slate-700 shadow-xl"
+        className="pointer-events-auto mx-auto max-h-[85vh] max-w-2xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 shadow-xl sm:p-5"
       >
-        <p className="text-sm leading-relaxed">
-          {t("text")}{" "}
-          <Link href="/privacy" className="font-semibold text-teal-700 underline hover:text-teal-800">
+        {/* Phones: one short sentence, so the bar stays under ~30% of the
+            screen (the long one covered the sign-up's buttons on an
+            iPhone SE). Same choices, same consent. */}
+        <p className="text-sm leading-snug sm:leading-relaxed">
+          <span className="sm:hidden">{t("textShort")}</span>
+          <span className="hidden sm:inline">{t("text")}</span>{" "}
+          <Link href="/privacy" className={CHOOSE_LINK}>
             {t("privacyLink")}
           </Link>
+          {!choosing && (
+            <span className="sm:hidden">
+              {" · "}
+              <button type="button" className={CHOOSE_LINK} onClick={() => { setChoice(consentOrNone()); setChoosing(true); }}>
+                {t("choose")}
+              </button>
+            </span>
+          )}
         </p>
 
         {choosing && (
@@ -115,19 +157,21 @@ export function ConsentBanner() {
           </fieldset>
         )}
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-2 grid grid-cols-2 gap-2 sm:mt-4 sm:flex sm:flex-wrap">
           <button type="button" className={BUTTON} onClick={() => decide({ analytics: true, marketing: true })}>
-            {t("acceptAll")}
+            <span className="sm:hidden">{t("acceptShort")}</span>
+            <span className="hidden sm:inline">{t("acceptAll")}</span>
           </button>
           <button type="button" className={BUTTON} onClick={() => decide({ analytics: false, marketing: false })}>
-            {t("necessaryOnly")}
+            <span className="sm:hidden">{t("declineShort")}</span>
+            <span className="hidden sm:inline">{t("necessaryOnly")}</span>
           </button>
           {choosing ? (
-            <button type="button" className={BUTTON} onClick={() => decide(choice)}>
+            <button type="button" className={`${BUTTON} col-span-2`} onClick={() => decide(choice)}>
               {t("save")}
             </button>
           ) : (
-            <button type="button" className={BUTTON} onClick={() => { setChoice(consentOrNone()); setChoosing(true); }}>
+            <button type="button" className={`${BUTTON} hidden sm:inline-block`} onClick={() => { setChoice(consentOrNone()); setChoosing(true); }}>
               {t("choose")}
             </button>
           )}

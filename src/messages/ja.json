@@ -787,6 +787,11 @@
       "consentCheckbox": "<terms>利用規約</terms>と<privacy>プライバシーポリシー</privacy>を読み、同意します",
       "fullNameHint": "必要に応じて肩書き（{titles}）を付けてください。あいさつに表示されます。",
       "backToCountry": "戻る",
+      "countryLine": {
+        "BR": "ブラジルのクリニック",
+        "TH": "タイのクリニック"
+      },
+      "countryChange": "変更",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "患者は医師の招待リンクから参加します",
       "loading": "読み込み中…"
@@ -1239,6 +1244,9 @@
     "acceptAll": "すべて許可",
     "necessaryOnly": "必要なもののみ",
     "choose": "選択…",
+    "textShort": "必要なCookieを使用しています。許可いただければ、分析・マーケティング用Cookieも使用します。",
+    "acceptShort": "許可",
+    "declineShort": "拒否",
     "save": "選択を保存",
     "necessaryTitle": "必須",
     "necessaryDesc": "ログイン状態、言語、この選択を保持します。常に有効です。",
