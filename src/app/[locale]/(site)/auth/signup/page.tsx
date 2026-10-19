@@ -22,6 +22,7 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
 import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, pathCountry, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { autoLocaleArrival } from "@/lib/localeArrival";
+import { noteCountryTap, takeCountryTap } from "@/lib/signupFunnel";
 import { useCountryGuess } from "./CountryGuess";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
@@ -149,12 +150,17 @@ export default function SignupPage() {
   }, [viewStep]);
   // A country the visitor didn't tap here, so the funnel's country step
   // still counts it (01, b9): "path" = taken from the page's path (F2,
-  // #588); "link" = ?c= reached without a tap on this page (a tap before
-  // hydration follows the plain link, or a link with ?c=).
-  const tappedCountry = useRef(false);
+  // #588); "link" = ?c= reached without a tap (a tap before hydration
+  // follows the plain link, or a link with ?c=). A tap is noted in memory
+  // across the navigation to its form, even into another language, so the
+  // form doesn't count it again (lib/signupFunnel; 24 on #589). Once per
+  // choice on this page (the ref also covers an effect run twice).
+  const countedCountry = useRef<string | null>(null);
   const countryInQuery = !!parseCountryChoice(searchParams.get("c"));
   useEffect(() => {
-    if (viewStep !== "form" || !countryStep || !country || tappedCountry.current) return;
+    if (viewStep !== "form" || !countryStep || !country || countedCountry.current === country) return;
+    countedCountry.current = country;
+    if (takeCountryTap(country)) return;
     track("signup_country", { c: country, source: countryInQuery ? "link" : "path" });
   }, [viewStep, countryStep, country, countryInQuery]);
   const formStarted = useRef(false);
@@ -403,7 +409,7 @@ export default function SignupPage() {
                 data-suggested={c.code === countryGuess ? "true" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
-                  tappedCountry.current = true;
+                  noteCountryTap(c.code);
                   track("signup_country", { c: c.code, source: "step" });
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);

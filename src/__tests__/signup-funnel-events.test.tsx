@@ -67,6 +67,22 @@ describe("signup funnel events", () => {
     unmount();
   });
 
+  it("a tap into another language (/pt-BR step → /th form, a new page): one signup_country, the tap's (24 on #589)", () => {
+    const step = show("step=country");
+    fireEvent.click(screen.getByRole("link", { name: /ประเทศไทย/ }));
+    step.unmount();
+    const form = show("c=TH");
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([["signup_country", { c: "TH", source: "step" }]]);
+    form.unmount();
+    // The next page load without a tap counts its ?c= again, as a link.
+    const later = show("c=TH");
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([
+      ["signup_country", { c: "TH", source: "step" }],
+      ["signup_country", { c: "TH", source: "link" }],
+    ]);
+    later.unmount();
+  });
+
   it("/pt-BR opened by the visitor (F2, #588): the form and signup_country {source: path}, once", () => {
     const { unmount } = show("");
     expect(events().filter(([e]) => e === "signup_view")).toEqual([["signup_view", { step: "form" }]]);
