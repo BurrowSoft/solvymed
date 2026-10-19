@@ -785,6 +785,11 @@
       "consentCheckbox": "Я прочитал(а) и принимаю <terms>Условия использования</terms> и <privacy>Политику конфиденциальности</privacy>",
       "fullNameHint": "При желании добавьте звание ({titles}): оно появится в приветствиях.",
       "backToCountry": "Назад",
+      "countryLine": {
+        "BR": "Клиника в Бразилии",
+        "TH": "Клиника в Таиланде"
+      },
+      "countryChange": "Изменить",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "Пациенты присоединяются по ссылке-приглашению своего врача",
       "loading": "Загрузка…"

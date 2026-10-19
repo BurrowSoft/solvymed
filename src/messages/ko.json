@@ -785,6 +785,11 @@
       "consentCheckbox": "<terms>이용약관</terms> 및 <privacy>개인정보 처리방침</privacy>을 읽었으며 이에 동의합니다",
       "fullNameHint": "원하면 호칭({titles})을 붙이세요. 인사말에 표시됩니다.",
       "backToCountry": "돌아가기",
+      "countryLine": {
+        "BR": "브라질의 병원",
+        "TH": "태국의 병원"
+      },
+      "countryChange": "변경",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "환자는 담당 의사의 초대 링크로 가입합니다",
       "loading": "불러오는 중…"

@@ -785,6 +785,11 @@
       "consentCheckbox": "Li e aceito os <terms>Termos de Uso</terms> e a <privacy>Política de Privacidade</privacy>",
       "fullNameHint": "Se quiser, inclua seu título ({titles}): ele aparece nas saudações.",
       "backToCountry": "Voltar",
+      "countryLine": {
+        "BR": "Consultório no Brasil",
+        "TH": "Consultório na Tailândia"
+      },
+      "countryChange": "Alterar",
       "secretaryInviteFor": "Este convite é para {email}.",
       "rolePatientViaInvite": "Pacientes entram pelo link de convite do seu médico",
       "loading": "Carregando…"

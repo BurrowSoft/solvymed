@@ -785,6 +785,11 @@
       "consentCheckbox": "قرأتُ <terms>شروط الاستخدام</terms> و<privacy>سياسة الخصوصية</privacy> وأوافق عليهما",
       "fullNameHint": "أضف لقبك إن أردت ({titles})؛ يظهر في التحيات.",
       "backToCountry": "رجوع",
+      "countryLine": {
+        "BR": "عيادة في البرازيل",
+        "TH": "عيادة في تايلاند"
+      },
+      "countryChange": "تغيير",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "ينضم المرضى عبر رابط الدعوة من طبيبهم",
       "loading": "جارٍ التحميل…"

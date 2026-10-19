@@ -785,6 +785,11 @@
       "consentCheckbox": "Saya telah membaca dan menyetujui <terms>Ketentuan Penggunaan</terms> dan <privacy>Kebijakan Privasi</privacy>",
       "fullNameHint": "Tambahkan gelar Anda jika mau ({titles}); gelar akan muncul di sapaan.",
       "backToCountry": "Kembali",
+      "countryLine": {
+        "BR": "Klinik di Brasil",
+        "TH": "Klinik di Thailand"
+      },
+      "countryChange": "Ubah",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "Pasien bergabung melalui tautan undangan dokter mereka",
       "loading": "Memuat…"

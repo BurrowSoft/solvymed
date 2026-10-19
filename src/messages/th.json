@@ -785,6 +785,11 @@
       "consentCheckbox": "ฉันได้อ่านและยอมรับ<terms>ข้อกำหนดการใช้งาน</terms>และ<privacy>นโยบายความเป็นส่วนตัว</privacy>",
       "fullNameHint": "ใส่คำนำหน้าได้ถ้าต้องการ ({titles}) จะแสดงในคำทักทาย",
       "backToCountry": "กลับ",
+      "countryLine": {
+        "BR": "คลินิกในประเทศบราซิล",
+        "TH": "คลินิกในประเทศไทย"
+      },
+      "countryChange": "เปลี่ยน",
       "secretaryInviteFor": "คำเชิญนี้สำหรับ {email}",
       "rolePatientViaInvite": "ผู้ป่วยเข้าร่วมผ่านลิงก์เชิญจากแพทย์",
       "loading": "กำลังโหลด…"

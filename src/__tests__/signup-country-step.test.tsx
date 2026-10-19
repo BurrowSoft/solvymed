@@ -36,9 +36,35 @@ function show(query: string, guess: CountryChoice | null = null) {
 
 const stepButtons = () => screen.getAllByRole("link").filter((b) => /Brasil|ประเทศไทย/.test(b.textContent ?? ""));
 
+describe("funnel F2: the country from the visitor's own path", () => {
+  it("/pt-BR opened by the visitor: the form, with \"Consultório no Brasil · Alterar\" under the title", () => {
+    const { unmount } = show("");
+    expect(screen.queryByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeNull();
+    expect(screen.getByTestId("signup-country-line")).toHaveTextContent(`${pt.auth.signup.countryLine.BR} · ${pt.auth.signup.countryChange}`);
+    expect(screen.getByTestId("signup-country-change")).toHaveAttribute("href", "/pt-BR/auth/signup?step=country");
+    unmount();
+  });
+
+  it("a language the site picked (?lr=1) or Alterar (?step=country): the step", () => {
+    for (const q of ["lr=1", "step=country"]) {
+      const { unmount } = show(q);
+      expect(screen.getByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeInTheDocument();
+      unmount();
+    }
+  });
+
+  it("Paciente hides the line; Profissional de saúde shows it again", () => {
+    const { unmount } = show("role=patient");
+    expect(screen.queryByTestId("signup-country-line")).toBeNull();
+    fireEvent.click(screen.getByText(pt.auth.signup.roleDoctor));
+    expect(screen.getByTestId("signup-country-line")).toBeInTheDocument();
+    unmount();
+  });
+});
+
 describe("signup: country first", () => {
   it("starts with the two countries; a tap continues in that country's language", () => {
-    const { unmount } = show("");
+    const { unmount } = show("lr=1");
     expect(screen.getByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeInTheDocument();
     expect(screen.queryByLabelText(/e-mail/i)).toBeNull();
     fireEvent.click(screen.getByRole("link", { name: /ประเทศไทย/ }));
@@ -47,7 +73,7 @@ describe("signup: country first", () => {
   });
 
   it("\"Use SolvyMed in English\" continues in English", () => {
-    const { unmount } = show("");
+    const { unmount } = show("lr=1");
     fireEvent.click(screen.getByLabelText("Use SolvyMed in English"));
     fireEvent.click(screen.getByRole("link", { name: /Brasil/ }));
     expect(h.push).toHaveBeenCalledWith("/auth/signup?c=BR");
@@ -58,14 +84,14 @@ describe("signup: country first", () => {
     const { unmount } = show("c=BR");
     expect(screen.queryByText("Onde você está? · คุณอยู่ที่ไหน? · Where are you?")).toBeNull();
     const back = screen.getByRole("link", { name: pt.auth.signup.backToCountry });
-    expect(back).toHaveAttribute("href", "/pt-BR/auth/signup");
+    expect(back).toHaveAttribute("href", "/pt-BR/auth/signup?step=country");
     expect(document.querySelector("select#signup-country")).toBeNull();
     unmount();
   });
 
   it("a suggested country goes first in the primary style; nothing is chosen or stored until a tap", () => {
     document.cookie = "solvymed_signup_country=; path=/; max-age=0";
-    const { unmount } = show("", "TH");
+    const { unmount } = show("lr=1", "TH");
     const [first, second] = stepButtons();
     expect(first).toHaveTextContent("ประเทศไทย");
     expect(first).toHaveAttribute("data-suggested", "true");
@@ -83,7 +109,7 @@ describe("signup: country first", () => {
   });
 
   it("no suggestion: as before, Brasil first and both outlined", () => {
-    const { unmount } = show("");
+    const { unmount } = show("lr=1");
     const buttons = stepButtons();
     expect(buttons.map((b) => b.textContent)).toEqual(["🇧🇷Brasil", "🇹🇭ประเทศไทย"]);
     expect(buttons.every((b) => !b.hasAttribute("data-suggested") && b.className.includes("bg-white"))).toBe(true);
@@ -117,7 +143,7 @@ describe("signup before hydration", () => {
   };
 
   it("each country is a link to its step, in its language", () => {
-    const hrefs = [...html("").querySelectorAll("a")].filter((a) => /Brasil|ประเทศไทย/.test(a.textContent ?? "")).map((a) => a.getAttribute("href"));
+    const hrefs = [...html("lr=1").querySelectorAll("a")].filter((a) => /Brasil|ประเทศไทย/.test(a.textContent ?? "")).map((a) => a.getAttribute("href"));
     expect(hrefs).toEqual(["/pt-BR/auth/signup?c=BR", "/th/auth/signup?c=TH"]);
   });
 

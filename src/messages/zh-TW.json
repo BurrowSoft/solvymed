@@ -785,6 +785,11 @@
       "consentCheckbox": "我已閱讀並同意<terms>使用條款</terms>與<privacy>隱私權政策</privacy>",
       "fullNameHint": "如有需要，可加上頭銜（{titles}），會顯示在問候語中。",
       "backToCountry": "返回",
+      "countryLine": {
+        "BR": "診所在巴西",
+        "TH": "診所在泰國"
+      },
+      "countryChange": "變更",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "患者透過醫師的邀請連結加入",
       "loading": "載入中…"
