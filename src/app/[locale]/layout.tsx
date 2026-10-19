@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import localFont from "next/font/local";
 import { ConsentBanner } from "@/components/ConsentBanner";
+import { LocaleArrival } from "@/components/LocaleArrival";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
@@ -143,6 +144,7 @@ export default async function LocaleLayout({
             must not carry strings like the subscription copy, store
             rules). The cookie banner gets just its own. */}
         {children}
+        <LocaleArrival />
         <NextIntlClientProvider locale={locale} messages={pickMessages(messages, ["consent"])}>
           <ConsentBanner />
         </NextIntlClientProvider>

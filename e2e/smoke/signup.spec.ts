@@ -31,8 +31,9 @@ for (const c of CASES) {
       const signupCalls: string[] = [];
       await page.route(/\/auth\/v1\/signup/, (route) => { signupCalls.push(route.request().url()); return route.abort(); });
 
-      await gotoIn(page, locale, "/auth/signup");
-      // The country step comes first (no ?c= yet).
+      // The country step (?step=country: /pt-BR and /th opened directly
+      // now start at the form with their country, funnel F2).
+      await gotoIn(page, locale, "/auth/signup?step=country");
       const country = page.getByRole("link", { name: c.button });
       await expect(country).toBeVisible();
       // Wait for React to hydrate the button before clicking: a click on the
@@ -63,6 +64,15 @@ for (const c of CASES) {
     });
   }
 }
+
+// Funnel F2: a country's own path, opened directly, starts at the form
+// with that country under the title and "Change" back to the step.
+test("/pt-BR/auth/signup opens the form with \"Consultório no Brasil · Alterar\"", async ({ page }) => {
+  await gotoIn(page, byCode("pt-BR"), "/auth/signup");
+  await expect(page.getByRole("heading", { name: ptBR.auth.signup.title })).toBeVisible();
+  await expect(page.getByTestId("signup-country-line")).toContainText(ptBR.auth.signup.countryLine.BR);
+  await expect(page.getByRole("link", { name: /Brasil/ })).toHaveCount(0);
+});
 
 // ?c= in the link skips the country step (the landing's CTA and the
 // Founders form link this way).

@@ -785,6 +785,11 @@
       "consentCheckbox": "我已阅读并同意<terms>使用条款</terms>和<privacy>隐私政策</privacy>",
       "fullNameHint": "如需要，可加上头衔（{titles}），会显示在问候语中。",
       "backToCountry": "返回",
+      "countryLine": {
+        "BR": "诊所在巴西",
+        "TH": "诊所在泰国"
+      },
+      "countryChange": "更改",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "患者通过医生的邀请链接加入",
       "loading": "加载中…"

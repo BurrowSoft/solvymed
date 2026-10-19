@@ -75,13 +75,39 @@ export function orderedCountryStep(guess: CountryChoice | null) {
 }
 
 // The signup page in a language, keeping its query, with ?c= set (a
-// choice) or removed (back to the step).
+// choice) or removed with ?step=country (back to the step: without it a
+// country's own path would pick its country again, see pathCountry).
 export function countryStepHref(country: CountryChoice | null, locale: string, params: { toString(): string }): string {
   const q = new URLSearchParams(params.toString());
-  if (country) q.set("c", country);
-  else q.delete("c");
+  if (country) {
+    q.set("c", country);
+    q.delete(STEP_PARAM);
+    q.delete(LOCALE_REDIRECT_PARAM);
+  } else {
+    q.delete("c");
+    q.set(STEP_PARAM, "country");
+  }
   const qs = q.toString();
   return `${locale === "en" ? "" : `/${locale}`}/auth/signup${qs ? `?${qs}` : ""}`;
+}
+
+// Funnel F2 (specs/signup-funnel-fixes.md): a country's own path (/pt-BR →
+// BR, /th → TH: COUNTRY_STEP's locale, data; any other locale, /en included,
+// = no country) skips the step, but only when the visitor opened that path
+// themselves (an ad or landing URL). A language the site picked for them (a
+// NEXT_LOCALE cookie or browser-language redirect) says nothing about their
+// practice, so those redirects carry ?lr=1 (middleware) and the visit keeps
+// it (localeArrival). ?step=country is the way back to the step ("Change").
+export const LOCALE_REDIRECT_PARAM = "lr";
+export const STEP_PARAM = "step";
+
+export function countryForLocale(locale: string): CountryChoice | null {
+  return COUNTRY_STEP.find((c) => c.locale === locale)?.code ?? null;
+}
+
+export function pathCountry(locale: string, params: { has(name: string): boolean; get(name: string): string | null }, autoLocale: boolean): CountryChoice | null {
+  if (autoLocale || params.has("c") || params.has(LOCALE_REDIRECT_PARAM) || params.get(STEP_PARAM) === "country") return null;
+  return countryForLocale(locale);
 }
 
 // The signup metadata for the practice country. Before the Thai release
