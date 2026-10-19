@@ -67,6 +67,20 @@ describe("signup funnel events", () => {
     unmount();
   });
 
+  it("/pt-BR opened by the visitor (F2, #588): the form and signup_country {source: path}, once", () => {
+    const { unmount } = show("");
+    expect(events().filter(([e]) => e === "signup_view")).toEqual([["signup_view", { step: "form" }]]);
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([["signup_country", { c: "BR", source: "path" }]]);
+    unmount();
+  });
+
+  it("a site-picked language (?lr=1): the step, no signup_country until a tap", () => {
+    const { unmount } = show("lr=1");
+    expect(events()).toContainEqual(["signup_view", { step: "country" }]);
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([]);
+    unmount();
+  });
+
   it("the form: view once, role changes, first focus once", () => {
     const { unmount } = show("c=BR");
     expect(events().filter(([e]) => e === "signup_view")).toEqual([["signup_view", { step: "form" }]]);
