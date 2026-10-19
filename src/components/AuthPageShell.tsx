@@ -17,8 +17,10 @@ export function AuthPageShell({
   languageSwitcher?: boolean;
 }) {
   const tFooter = useTranslations("footer");
+  // Centred in the part of the screen the cookie banner leaves free
+  // (--consent-h, set by ConsentBanner), so the form isn't under it.
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-[calc(100svh-var(--consent-h,0px))] flex-col items-center justify-center bg-slate-50 px-4">
       {children}
       <div className="mt-6 mb-8 flex flex-wrap items-center justify-center gap-4">
         <LegalLinks />
