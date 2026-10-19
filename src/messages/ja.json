@@ -17,6 +17,8 @@
     "watchTour": "2分間のツアーを見る",
     "haveAccount": "アカウントをお持ちの方",
     "preferApp": "アプリ派の方はこちらからダウンロード：",
+    "androidPrimary": "Google Play でダウンロード",
+    "continueOnWeb": "またはウェブサイトで続ける",
     "trialLine": "{days}日間無料 · クレジットカード不要 · その後 {price}/月",
     "trialLineNoPrice": "{days}日間無料 · クレジットカード不要"
   },

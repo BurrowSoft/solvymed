@@ -17,11 +17,51 @@ export function playStoreUrl(medium: StoreMedium, campaign: string | null = null
   return `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}`;
 }
 
-// solvymed.com/app (Vitor: the link in video descriptions and posters): a
-// 302 to the Play listing with a FIXED referrer. Nothing of the visitor's
-// (no utm, no cookie) is passed on, so no consent question. 302, not 308:
-// the target can change (an iPhone page once the App Store exists).
+// solvymed.com/app (Vitor: the link in video descriptions and posters): on
+// an Android phone a 302 to the Play listing with this FIXED referrer (or
+// the visit's campaign with marketing consent, appShortlinkPlayTarget);
+// anywhere else to the landing (F6, middleware). 302, not 308: the target
+// can change (an iPhone page once the App Store exists).
 export const APP_SHORTLINK_TARGET = `${PLAY_STORE_URL}&referrer=${encodeURIComponent("utm_source=solvymed&utm_medium=shortlink")}`;
+
+// Funnel F5/F6 (specs/signup-funnel-fixes.md): the visit's own campaign as
+// the Play referrer: utm_source / utm_medium / utm_campaign only (never
+// click ids), and only with marketing consent (privacy §3.6: the campaign
+// that brought you is used only with your consent). Null without one.
+export type VisitUtm = Partial<Record<"utm_source" | "utm_medium" | "utm_campaign", string | null | undefined>>;
+const REFERRER_KEYS = ["utm_source", "utm_medium", "utm_campaign"] as const;
+
+export function visitReferrer(visit: VisitUtm | null | undefined): string | null {
+  if (!visit) return null;
+  const q = new URLSearchParams();
+  for (const key of REFERRER_KEYS) {
+    const v = (visit[key] ?? "").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 100);
+    if (v) q.set(key, v);
+  }
+  return q.has("utm_source") || q.has("utm_campaign") ? q.toString() : null;
+}
+
+export function playStoreUrlForVisit(medium: StoreMedium, visit: VisitUtm | null | undefined): string {
+  const referrer = visitReferrer(visit);
+  return referrer ? `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}` : playStoreUrl(medium);
+}
+
+// /app's Play target (F6): the shortlink's own referrer unless the visit
+// brings its campaign (with consent).
+export function appShortlinkPlayTarget(visit: VisitUtm | null | undefined): string {
+  const referrer = visitReferrer(visit);
+  return referrer ? `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}` : APP_SHORTLINK_TARGET;
+}
+
+// An Android phone (Android tablets omit "Mobile").
+export function isAndroidPhone(userAgent: string | null | undefined): boolean {
+  return /Android.+Mobile/i.test(userAgent ?? "");
+}
+
+// Run inline in <head> before first paint (root layout): marks Android
+// phones on <html> for the CSS in globals.css. A data attribute, not a
+// class, so React never rewrites it.
+export const PLATFORM_SCRIPT = `try{if(/Android.+Mobile/i.test(navigator.userAgent))document.documentElement.setAttribute("data-platform","android")}catch(e){}`;
 
 // /app, with or without a locale prefix (any case, a trailing slash).
 export function isAppShortlink(pathname: string, locales: readonly string[]): boolean {

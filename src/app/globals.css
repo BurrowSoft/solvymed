@@ -98,3 +98,10 @@
   [data-theme="auto"] .brand-logo-light { display: none; }
   [data-theme="auto"] .brand-logo-dark { display: inline-block; }
 }
+
+/* Funnel F5: Android phones get Google Play as the landing's first CTA. The
+   platform is set on <html> by an inline script before first paint (root
+   layout); without it (no JS, other devices) the page is as before. */
+.android-only { display: none; }
+html[data-platform="android"] .android-only { display: flex; }
+html[data-platform="android"] .android-hide { display: none; }

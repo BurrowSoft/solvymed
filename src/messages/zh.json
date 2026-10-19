@@ -17,6 +17,8 @@
     "watchTour": "观看 2 分钟导览",
     "haveAccount": "已有账户？",
     "preferApp": "更喜欢用应用？在此下载：",
+    "androidPrimary": "在 Google Play 下载",
+    "continueOnWeb": "或在网站上继续",
     "trialLine": "免费 {days} 天 · 无需信用卡 · 之后每月 {price}",
     "trialLineNoPrice": "免费 {days} 天 · 无需信用卡"
   },

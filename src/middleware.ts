@@ -10,7 +10,8 @@ import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/l
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
 import { BROWSER_LANGUAGES_HEADER, LOCALE_REDIRECT_PARAM } from "./lib/signupCountry";
-import { APP_SHORTLINK_TARGET, isAppShortlink } from "./lib/appStores";
+import { appShortlinkPlayTarget, isAndroidPhone, isAppShortlink } from "./lib/appStores";
+import { CONSENT_COOKIE, parseConsent } from "./lib/consent";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -22,10 +23,24 @@ const intlMiddleware = createMiddleware(routing);
 export async function middleware(req: NextRequest) {
   const { pathname, searchParams } = req.nextUrl;
 
-  // solvymed.com/app → the Play listing (lib/appStores): first, before the
-  // locale and auth handling, which must never see it. No cookies set.
+  // solvymed.com/app (lib/appStores): first, before the locale and auth
+  // handling, which must never see it. No cookies set. Funnel F6: an
+  // Android phone goes to the Play listing (the visit's utm as its referrer
+  // only with marketing consent, privacy §3.6; else the shortlink's own);
+  // anything else to the landing with the utm kept, where the locale
+  // handling below picks the language on the next request.
   if (isAppShortlink(pathname, routing.locales)) {
-    return NextResponse.redirect(APP_SHORTLINK_TARGET, { status: 302 });
+    if (isAndroidPhone(req.headers.get("user-agent"))) {
+      const marketing = parseConsent(req.cookies.get(CONSENT_COOKIE)?.value)?.marketing;
+      const visit = marketing
+        ? { utm_source: searchParams.get("utm_source"), utm_medium: searchParams.get("utm_medium"), utm_campaign: searchParams.get("utm_campaign") }
+        : null;
+      return NextResponse.redirect(appShortlinkPlayTarget(visit), { status: 302 });
+    }
+    // A plain URL, not a nextUrl clone (that keeps the trailing slash of /th/app/).
+    const url = new URL(pathname.replace(/\/app\/?$/i, "") || "/", req.url);
+    for (const [key, value] of searchParams) if (/^utm_[a-z]+$/.test(key)) url.searchParams.append(key, value);
+    return NextResponse.redirect(url, { status: 302 });
   }
 
   // /pt/… and odd casing (/pt-br/…, /zh-tw/…) → the real locale prefix.
