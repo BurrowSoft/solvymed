@@ -144,6 +144,12 @@ export default function SignupPage() {
   useEffect(() => {
     if (viewStep) track("signup_view", { step: viewStep });
   }, [viewStep]);
+  // A country the visitor didn't tap: taken from the page's path (F2,
+  // #588), so the funnel's country step still counts it (01, b9).
+  const countryFromPath = countryStep && !!country && !parseCountryChoice(searchParams.get("c"));
+  useEffect(() => {
+    if (countryFromPath && country && viewStep === "form") track("signup_country", { c: country, source: "path" });
+  }, [countryFromPath, country, viewStep]);
   const formStarted = useRef(false);
   const formStart = () => {
     if (formStarted.current) return;
@@ -390,7 +396,7 @@ export default function SignupPage() {
                 data-suggested={c.code === countryGuess ? "true" : undefined}
                 onClick={(e) => {
                   e.preventDefault();
-                  track("signup_country", { c: c.code });
+                  track("signup_country", { c: c.code, source: "step" });
                   // Saved with the language after the first sign-in (149).
                   document.cookie = signupCountryCookie(c.code);
                   const next = english ? "en" : c.locale;

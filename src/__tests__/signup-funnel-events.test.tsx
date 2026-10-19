@@ -50,7 +50,13 @@ describe("signup funnel events", () => {
     const { unmount } = show("step=country"); // the step before and after F2 (#588)
     expect(events()).toContainEqual(["signup_view", { step: "country" }]);
     fireEvent.click(screen.getByRole("link", { name: /ประเทศไทย/ }));
-    expect(events()).toContainEqual(["signup_country", { c: "TH" }]);
+    expect(events()).toContainEqual(["signup_country", { c: "TH", source: "step" }]);
+    unmount();
+  });
+
+  it("a country in ?c= was tapped on the step: no second signup_country", () => {
+    const { unmount } = show("c=BR");
+    expect(events().filter(([e]) => e === "signup_country")).toEqual([]);
     unmount();
   });
 
