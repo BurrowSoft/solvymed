@@ -20,7 +20,8 @@ import { ConfirmByCode } from "@/components/ConfirmByCode";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
-import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
+import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, pathCountry, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
+import { autoLocaleArrival } from "@/lib/localeArrival";
 import { useCountryGuess } from "./CountryGuess";
 import { thaiEnabled } from "@/lib/publicLocales";
 import { consentMetadata } from "@/lib/legalVersions";
@@ -121,8 +122,10 @@ export default function SignupPage() {
   // (it locks after signup). Invite and join-link signups already belong to a
   // practice, so they skip it. Before the Thai release there's no step (every
   // practice is Brazilian, the database default).
+  // A country's own path (/pt-BR, /th) opened by the visitor counts as its
+  // choice, shown with "Change" under the title (funnel F2, lib/signupCountry).
   const router = useRouter();
-  const country = parseCountryChoice(searchParams.get("c"));
+  const country = parseCountryChoice(searchParams.get("c")) ?? pathCountry(locale, searchParams, autoLocaleArrival());
   const countryStep = thaiEnabled && !isSecretaryFlow && !isJoinFlow;
   const [english, setEnglish] = useState(locale === "en");
   const englishRef = useRef<HTMLInputElement>(null);
@@ -446,6 +449,18 @@ export default function SignupPage() {
         <BrandMark />
 
         <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{t("signup.title")}</h1>
+        {/* The practice country locks after signup, so it's always in view,
+            with the way back to the step (funnel F2). Professionals only: a
+            patient's practice comes from the doctor's invite (01). */}
+        {countryStep && country && role === "professional" && (
+          <p data-testid="signup-country-line" className="mb-1 text-center text-sm font-semibold text-slate-700">
+            {t(`signup.countryLine.${country}`)}
+            {" · "}
+            <Link href={countryStepHref(null, locale, searchParams)} data-testid="signup-country-change" className="text-teal-700 underline hover:text-teal-800">
+              {t("signup.countryChange")}
+            </Link>
+          </p>
+        )}
         <p className="mb-6 text-center text-sm text-slate-500">{t("signup.subtitle")}</p>
 
         {/* Invite / join-link signups: the practice's country, so only the

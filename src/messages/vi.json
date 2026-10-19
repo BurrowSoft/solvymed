@@ -785,6 +785,11 @@
       "consentCheckbox": "Tôi đã đọc và chấp nhận <terms>Điều khoản sử dụng</terms> và <privacy>Chính sách quyền riêng tư</privacy>",
       "fullNameHint": "Bạn có thể thêm danh xưng ({titles}); danh xưng sẽ hiện trong lời chào.",
       "backToCountry": "Quay lại",
+      "countryLine": {
+        "BR": "Phòng khám ở Brazil",
+        "TH": "Phòng khám ở Thái Lan"
+      },
+      "countryChange": "Thay đổi",
       "secretaryInviteFor": "This invite is for {email}.",
       "rolePatientViaInvite": "Bệnh nhân tham gia qua liên kết mời của bác sĩ",
       "loading": "Đang tải…"
@@ -1237,6 +1242,9 @@
     "acceptAll": "Chấp nhận tất cả",
     "necessaryOnly": "Chỉ cần thiết",
     "choose": "Tùy chọn…",
+    "textShort": "Chúng tôi dùng cookie cần thiết. Nếu bạn đồng ý, chúng tôi dùng thêm cookie phân tích và tiếp thị.",
+    "acceptShort": "Chấp nhận",
+    "declineShort": "Từ chối",
     "save": "Lưu lựa chọn",
     "necessaryTitle": "Cần thiết",
     "necessaryDesc": "Giữ bạn đăng nhập, ghi nhớ ngôn ngữ và lựa chọn này. Luôn bật.",

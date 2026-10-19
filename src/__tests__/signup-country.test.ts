@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { COUNTRY_STEP, countryFromLanguages, countryStepHref, guessSignupCountry, orderedCountryStep, parseCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
+import { COUNTRY_STEP, countryForLocale, countryFromLanguages, countryStepHref, pathCountry, guessSignupCountry, orderedCountryStep, parseCountryChoice, signupCountryMetadata, type CountryChoice } from "@/lib/signupCountry";
 import { countryProfile } from "@/lib/country";
 import { getPlanPrice } from "@/lib/subscription";
 
@@ -31,7 +31,28 @@ describe("country first (Vitor, 2026-10-01): the signup's first step", () => {
   it("the choice and the back arrow keep the rest of the query", () => {
     expect(countryStepHref("BR", "pt-BR", new URLSearchParams("role=x"))).toBe("/pt-BR/auth/signup?role=x&c=BR");
     expect(countryStepHref("TH", "en", new URLSearchParams())).toBe("/auth/signup?c=TH");
-    expect(countryStepHref(null, "th", new URLSearchParams("c=TH&a=1"))).toBe("/th/auth/signup?a=1");
+    expect(countryStepHref(null, "th", new URLSearchParams("c=TH&a=1"))).toBe("/th/auth/signup?a=1&step=country");
+    // A choice ends the "back to the step" and the auto-language marks.
+    expect(countryStepHref("BR", "pt-BR", new URLSearchParams("step=country&lr=1&a=1"))).toBe("/pt-BR/auth/signup?a=1&c=BR");
+  });
+});
+
+describe("funnel F2: the country from the visitor's own path", () => {
+  const p = (q: string) => new URLSearchParams(q);
+  it("config data: pt-BR → BR, th → TH, anything else (en too) → none", () => {
+    expect(countryForLocale("pt-BR")).toBe("BR");
+    expect(countryForLocale("th")).toBe("TH");
+    expect(countryForLocale("en")).toBeNull();
+    expect(countryForLocale("ja")).toBeNull();
+  });
+  it("only without ?c=, ?lr, ?step=country and an auto-language visit", () => {
+    expect(pathCountry("th", p(""), false)).toBe("TH");
+    expect(pathCountry("pt-BR", p("utm_source=ad"), false)).toBe("BR");
+    expect(pathCountry("pt-BR", p("lr=1"), false)).toBeNull();
+    expect(pathCountry("pt-BR", p("step=country"), false)).toBeNull();
+    expect(pathCountry("pt-BR", p("c=XX"), false)).toBeNull();
+    expect(pathCountry("pt-BR", p(""), true)).toBeNull();
+    expect(pathCountry("en", p(""), false)).toBeNull();
   });
 });
 

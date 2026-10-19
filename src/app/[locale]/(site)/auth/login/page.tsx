@@ -13,10 +13,11 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { authErrorKey } from "@/lib/authErrors";
 import { ResendConfirmation } from "@/components/ResendConfirmation";
 import { OpenInApp } from "@/components/OpenInApp";
-import { SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
+import { LOCALE_REDIRECT_PARAM, SIGNUP_COUNTRY_COOKIE } from "@/lib/signupCountry";
 import { conditionMet } from "@/lib/conditions";
 import { fieldValue } from "@/lib/formField";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
+import { autoLocaleArrival } from "@/lib/localeArrival";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -236,8 +237,11 @@ export default function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-slate-500">
           {t("login.noAccount")}{" "}
+          {/* A language the site picked (?lr=1, lib/localeArrival) goes along:
+              the signup then asks for the country (funnel F2, b9). */}
           <Link
-            href={localePath("/auth/signup")}
+            href={localePath(searchParams.has(LOCALE_REDIRECT_PARAM) || autoLocaleArrival() ? `/auth/signup?${LOCALE_REDIRECT_PARAM}=1` : "/auth/signup")}
+            data-testid="login-signup"
             className="font-semibold text-teal-600 hover:underline"
           >
             {t("login.signUp")}
