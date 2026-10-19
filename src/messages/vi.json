@@ -17,6 +17,8 @@
     "watchTour": "Xem video giới thiệu 2 phút",
     "haveAccount": "Đã có tài khoản?",
     "preferApp": "Thích dùng ứng dụng? Tải về:",
+    "androidPrimary": "Tải trên Google Play",
+    "continueOnWeb": "hoặc tiếp tục trên trang web",
     "trialLine": "Miễn phí {days} ngày · không cần thẻ tín dụng · sau đó {price}/tháng",
     "trialLineNoPrice": "Miễn phí {days} ngày · không cần thẻ tín dụng"
   },
