@@ -108,7 +108,18 @@ describe("privacy 2026-10-21: §6f My brand and Document Studio (the Studio laun
   });
 });
 
+// Google's photo keys in the auth metadata (avatar_url, picture), however
+// they're read: .avatar_url, ?.picture, ["picture"]. The app has its own
+// guard (3e moves it to our own key); this one covers the web's src/.
+const PHOTO_READ = /avatar_url|\bpicture\b["']?\s*\]|(?:user_metadata|identity_data|meta)\??\.picture\b/;
+
 describe("privacy 2026-10-22: §3.1 Sign in with Google (232; text = enforcement)", () => {
+  it("the photo guard's pattern catches every way of reading the keys (and not unrelated words)", () => {
+    for (const hit of ["user.user_metadata.avatar_url", "user?.user_metadata?.picture", "user.user_metadata.picture",
+      "meta?.picture", "meta[\"picture\"]", "identity_data.picture", "{ avatar_url: x }"]) expect(PHOTO_READ.test(hit), hit).toBe(true);
+    for (const miss of ["disablePictureInPicture", "picture_filename", "a picture of the clinic"]) expect(PHOTO_READ.test(miss), miss).toBe(false);
+  });
+
   it("the version is 2026-10-22 or later (mobile 233 accepting it applied first)", () => {
     expect(PRIVACY_VERSION >= "2026-10-22").toBe(true);
   });
@@ -146,7 +157,7 @@ describe("privacy 2026-10-22: §3.1 Sign in with Google (232; text = enforcement
         const p = path.join(dir, e.name);
         if (e.isDirectory()) { if (e.name !== "__tests__") walk(p); continue; }
         if (!/.(ts|tsx)$/.test(e.name)) continue;
-        if (/avatar_url|user_metadata??.picture/.test(fs.readFileSync(p, "utf8"))) hits.push(p);
+        if (PHOTO_READ.test(fs.readFileSync(p, "utf8"))) hits.push(p);
       }
     };
     walk("src");
