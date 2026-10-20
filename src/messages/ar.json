@@ -744,6 +744,19 @@
     "titleWith": "Book with {doctor}"
   },
   "auth": {
+    "google": {
+      "continue": "المتابعة باستخدام Google",
+      "or": "أو",
+      "failed": "تعذّر فتح تسجيل الدخول عبر Google. حاول مرة أخرى."
+    },
+    "completeAccount": {
+      "title": "أكمل حسابك",
+      "subtitle": "خطوة أخيرة: أخبرنا من أنت.",
+      "countryLabel": "أين تقع عيادتك؟",
+      "countryRequired": "اختر بلد عيادتك.",
+      "consentRequired": "يرجى قبول شروط الاستخدام وسياسة الخصوصية.",
+      "submit": "متابعة"
+    },
     "passwordTooShort": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
     "login": {
       "title": "مرحباً بعودتك",

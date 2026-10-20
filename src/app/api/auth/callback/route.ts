@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
 import { routeAfterAuth } from "@/lib/authRouting";
 import { localeFromAcceptLanguage, matchLocaleTag } from "@/lib/localeDetect";
+import { GOOGLE_RETURN_PARAM, onboardingPending, parseGoogleRole } from "@/lib/googleSignIn";
+import { parseCountryChoice } from "@/lib/signupCountry";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -82,9 +84,25 @@ export async function GET(request: NextRequest) {
 
   const { data, error } = await supabase.auth.exchangeCodeForSession(code!);
   // Auth failed: login gives the user a clear path forward.
-  const redirectUrl = !error && data.session && data.user
-    ? new URL(await routeAfterAuth(supabase, data.user, localePrefix, type), origin)
-    : new URL(`${localePrefix}/auth/login`, origin);
+  let redirectUrl = new URL(`${localePrefix}/auth/login`, origin);
+  if (!error && data.session && data.user) {
+    // Back from our Google button (232): a new Google account completes it
+    // first ("Complete your account", with the country and role the page
+    // had); an existing one goes where a sign-in goes. gr= reports which.
+    const fromGoogle = searchParams.get("google") === "signup" || searchParams.get("google") === "login";
+    // Fail safe: an error is "not pending" (the usual routing).
+    if (fromGoogle && (await onboardingPending(supabase))) {
+      redirectUrl = new URL(`${localePrefix}/auth/complete-account`, origin);
+      const c = parseCountryChoice(searchParams.get("c"));
+      if (c) redirectUrl.searchParams.set("c", c);
+      const role = parseGoogleRole(searchParams.get("role"));
+      if (role) redirectUrl.searchParams.set("role", role);
+      redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "new");
+    } else {
+      redirectUrl = new URL(await routeAfterAuth(supabase, data.user, localePrefix, type), origin);
+      if (fromGoogle) redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "existing");
+    }
+  }
 
   const response = NextResponse.redirect(redirectUrl);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

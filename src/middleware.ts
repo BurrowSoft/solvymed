@@ -12,6 +12,7 @@ import { liveFeatures } from "./lib/liveFeatures";
 import { BROWSER_LANGUAGES_HEADER, LOCALE_REDIRECT_PARAM } from "./lib/signupCountry";
 import { appShortlinkPlayTarget, isAndroidPhone, isAppShortlink } from "./lib/appStores";
 import { CONSENT_COOKIE, parseConsent } from "./lib/consent";
+import { onboardingPending } from "./lib/googleSignIn";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -99,6 +100,12 @@ export async function middleware(req: NextRequest) {
       .select("role, invited_by_professional_id")
       .eq("user_id", user.id)
       .maybeSingle();
+    // A Google sign-up that hasn't completed its account (232's positive
+    // marker; an unlinked patient has none and keeps the invite gate).
+    // Fail safe (01): an error is "not pending", routing as before.
+    if (!roleRow && (await onboardingPending(supabase))) {
+      return withAuthCookies(NextResponse.redirect(new URL(`${prefix}/auth/complete-account`, req.url)));
+    }
     if (secretaryWithoutTeam(roleRow)) {
       const res = NextResponse.redirect(new URL(`${prefix}/auth/not-connected`, req.url));
       res.cookies.set(ACTING_COOKIE, "", { path: "/", maxAge: 0 });

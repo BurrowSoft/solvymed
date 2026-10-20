@@ -744,6 +744,19 @@
     "titleWith": "Book with {doctor}"
   },
   "auth": {
+    "google": {
+      "continue": "Tiếp tục với Google",
+      "or": "hoặc",
+      "failed": "Không mở được đăng nhập Google. Vui lòng thử lại."
+    },
+    "completeAccount": {
+      "title": "Hoàn tất tài khoản",
+      "subtitle": "Bước cuối: cho chúng tôi biết bạn là ai.",
+      "countryLabel": "Phòng khám của bạn ở đâu?",
+      "countryRequired": "Chọn quốc gia của phòng khám.",
+      "consentRequired": "Vui lòng đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư.",
+      "submit": "Tiếp tục"
+    },
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {
       "title": "Chào mừng trở lại",
