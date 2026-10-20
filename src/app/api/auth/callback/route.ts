@@ -5,6 +5,7 @@ import { routeAfterAuth } from "@/lib/authRouting";
 import { localeFromAcceptLanguage, matchLocaleTag } from "@/lib/localeDetect";
 import { GOOGLE_RETURN_PARAM, onboardingPending, parseGoogleRole } from "@/lib/googleSignIn";
 import { parseCountryChoice } from "@/lib/signupCountry";
+import { OAUTH_SIGN_IN } from "@/lib/firstConfirmation";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -99,7 +100,8 @@ export async function GET(request: NextRequest) {
       if (role) redirectUrl.searchParams.set("role", role);
       redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "new");
     } else {
-      redirectUrl = new URL(await routeAfterAuth(supabase, data.user, localePrefix, type), origin);
+      // An existing account back from Google: a sign-in, never the welcome.
+      redirectUrl = new URL(await routeAfterAuth(supabase, data.user, localePrefix, fromGoogle ? OAUTH_SIGN_IN : type), origin);
       if (fromGoogle) redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "existing");
     }
   }

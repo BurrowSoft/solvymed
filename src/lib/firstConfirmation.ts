@@ -7,13 +7,20 @@
 
 const FIRST_CONFIRMATION_WINDOW_MS = 10 * 60 * 1000;
 
+// The callback's link type for a Google round trip into an existing account.
+export const OAUTH_SIGN_IN = "oauth";
+
 export function isFirstConfirmation(
   user: { confirmed_at?: string | null; email_confirmed_at?: string | null },
   linkType: string | null | undefined,
   now: number = Date.now(),
 ): boolean {
-  // A password reset is never the welcome moment, even right after signup.
-  if (linkType === "recovery") return false;
+  // A password reset is never the welcome moment, even right after signup;
+  // nor is a sign-in with Google into an account that already exists (01:
+  // Google may confirm an unconfirmed account at that moment, a fresh stamp;
+  // a NEW Google account gets its welcome after "Complete your account",
+  // through after-verify's "signup").
+  if (linkType === "recovery" || linkType === OAUTH_SIGN_IN) return false;
   const stamp = user.email_confirmed_at ?? user.confirmed_at;
   if (!stamp) return false;
   const age = now - new Date(stamp).getTime();
