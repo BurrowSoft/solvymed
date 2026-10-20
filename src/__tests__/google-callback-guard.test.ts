@@ -10,6 +10,7 @@ import { NextRequest } from "next/server";
 
 const db = vi.hoisted(() => ({
   pending: false as boolean,
+  fail: null as null | "error" | "throw",
   role: null as { role: string; invited_by_professional_id: string | null } | null,
   rpcs: [] as string[],
 }));
@@ -22,7 +23,10 @@ vi.mock("@supabase/ssr", () => ({
     from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: db.role, error: null }) }) }) }),
     rpc: async (fn: string) => {
       db.rpcs.push(fn);
-      return fn === "signup_onboarding_is_pending" ? { data: db.pending, error: null } : { data: [], error: null };
+      if (fn !== "signup_onboarding_is_pending") return { data: [], error: null };
+      if (db.fail === "throw") throw new Error("network down");
+      if (db.fail === "error") return { data: null, error: { code: "PGRST202", message: "Could not find the function" } };
+      return { data: db.pending, error: null };
     },
   }),
 }));
@@ -41,6 +45,7 @@ beforeAll(async () => {
 });
 beforeEach(() => {
   db.pending = false;
+  db.fail = null;
   db.role = null;
   db.rpcs = [];
 });
@@ -68,6 +73,13 @@ describe("the callback after Google", () => {
     expect(to.searchParams.get("gr")).toBe("existing");
   });
 
+  it.each(["error", "throw"] as const)("FAIL SAFE in the callback: the pending RPC %ss → the usual routing", async (fail) => {
+    db.fail = fail;
+    const to = loc(await call("locale=pt-BR&google=signup&c=BR"));
+    expect(to.pathname).toBe("/pt-BR/dashboard");
+    expect(to.searchParams.get("gr")).toBe("existing");
+  });
+
   it("a PKCE return that isn't ours (no google=): no pending check, no marker", async () => {
     const to = loc(await call("locale=pt-BR"));
     expect(to.pathname).toBe("/pt-BR/dashboard");
@@ -90,6 +102,13 @@ describe("the middleware guard on dashboard routes", () => {
     db.pending = false;
     const res = await go("/pt-BR/dashboard");
     expect(res.headers.get("location") ?? "").not.toContain("complete-account");
+  });
+
+  it.each(["error", "throw"] as const)("FAIL SAFE: the pending RPC %ss (232 not live, network): routed exactly as before", async (fail) => {
+    db.fail = fail;
+    const res = await go("/pt-BR/dashboard");
+    expect(res.headers.get("location") ?? "").not.toContain("complete-account");
+    expect(res.status).toBeLessThan(500);
   });
 
   it("an account with a role never asks", async () => {

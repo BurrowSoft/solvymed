@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
 import { routeAfterAuth } from "@/lib/authRouting";
 import { localeFromAcceptLanguage, matchLocaleTag } from "@/lib/localeDetect";
-import { GOOGLE_RETURN_PARAM, parseGoogleRole } from "@/lib/googleSignIn";
+import { GOOGLE_RETURN_PARAM, onboardingPending, parseGoogleRole } from "@/lib/googleSignIn";
 import { parseCountryChoice } from "@/lib/signupCountry";
 
 export async function GET(request: NextRequest) {
@@ -90,10 +90,8 @@ export async function GET(request: NextRequest) {
     // first ("Complete your account", with the country and role the page
     // had); an existing one goes where a sign-in goes. gr= reports which.
     const fromGoogle = searchParams.get("google") === "signup" || searchParams.get("google") === "login";
-    const { data: pending } = fromGoogle
-      ? await supabase.rpc("signup_onboarding_is_pending")
-      : { data: false };
-    if (pending === true) {
+    // Fail safe: an error is "not pending" (the usual routing).
+    if (fromGoogle && (await onboardingPending(supabase))) {
       redirectUrl = new URL(`${localePrefix}/auth/complete-account`, origin);
       const c = parseCountryChoice(searchParams.get("c"));
       if (c) redirectUrl.searchParams.set("c", c);

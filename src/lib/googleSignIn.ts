@@ -56,3 +56,16 @@ export async function startGoogleSignIn(supabase: unknown, redirectTo: string): 
   });
   return { error };
 }
+
+// signup_onboarding_is_pending() (232), FAIL SAFE: only an explicit true is
+// "pending"; an error, a missing function (232 not live), a network failure
+// or anything else is "not pending", so routing stays exactly as before.
+type PendingReader = { rpc: (fn: "signup_onboarding_is_pending") => PromiseLike<{ data: unknown; error: unknown }> };
+export async function onboardingPending(supabase: unknown): Promise<boolean> {
+  try {
+    const { data, error } = await (supabase as PendingReader).rpc("signup_onboarding_is_pending");
+    return !error && data === true;
+  } catch {
+    return false;
+  }
+}
