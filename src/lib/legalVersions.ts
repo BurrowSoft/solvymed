@@ -71,7 +71,13 @@
 // (studio-signature-live) and the reversed logo (no upload yet). Mobile's
 // accepting migration for ('privacy','2026-10-21') applied FIRST; merged with
 // the document_studio flag flip (document-studio-live).
-export const PRIVACY_VERSION = "2026-10-21";
+// 2026-10-22 (DRAFT until Vitor's OK): §3.1 Sign in with Google: Google tells
+// us the name and e-mail (verified); a profile photo link may come too and
+// stays in the sign-in record, never shown or used (01's wording); a
+// password only for e-mail sign-ups. No §5 row (the user's own choice;
+// Google acts as its own controller). Mobile's accepting migration 233
+// (#532) applied FIRST; the app's PRIVACY_VERSION twin follows (3e).
+export const PRIVACY_VERSION = "2026-10-22";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -83,7 +89,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-17"; // 2026-10-21 goes live with the Studio launch (#557), merge day 2026-10-17 UTC; re-set it if the merge slips past that day
+export const PRIVACY_PUBLISHED = "2026-10-20"; // 2026-10-22 (Google sign-in §3.1): RE-SET to the merge day (UTC) when this PR merges
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only

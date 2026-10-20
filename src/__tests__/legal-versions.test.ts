@@ -107,3 +107,49 @@ describe("privacy 2026-10-21: §6f My brand and Document Studio (the Studio laun
     for (const w of ["imagem da sua assinatura", "próprio punho", "logo invertido", "imagem do cartaz", "imagem para o cartaz"]) expect(sixF(pt).toLowerCase()).not.toContain(w);
   });
 });
+
+describe("privacy 2026-10-22: §3.1 Sign in with Google (232; text = enforcement)", () => {
+  it("the version is 2026-10-22 or later (mobile 233 accepting it applied first)", () => {
+    expect(PRIVACY_VERSION >= "2026-10-22").toBe(true);
+  });
+
+  it("§3.1 says what Google sign-in does, in both languages, and nothing more", async () => {
+    const fs = await import("node:fs");
+    const en = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyEn.tsx", "utf8");
+    const pt = fs.readFileSync("src/app/[locale]/(site)/privacy/PrivacyPtBR.tsx", "utf8");
+    const s31 = (s: string, label: string) => s.slice(s.indexOf(label), s.indexOf("</p>", s.indexOf(label)));
+    const e = s31(en, "3.1 Account information");
+    const p = s31(pt, "3.1 Dados de conta");
+    // A password only for e-mail sign-ups (a Google account has none).
+    expect(e).toContain("if you sign up with an email, a password");
+    expect(p).toContain("se você se cadastrar com e-mail, senha");
+    // The scopes are openid/email/profile: the name and the e-mail (verified).
+    expect(e).toContain("Google tells us your name and email address and that the address is verified");
+    expect(p).toContain("o Google nos informa seu nome e seu e-mail e que o endereço é verificado");
+    // The photo link sits in the auth record (Supabase keeps the profile
+    // metadata) but nothing renders or uses it: said exactly so.
+    expect(e).toContain("it stays in your sign-in record, but we never show or use it");
+    expect(p).toContain("ele fica guardado no seu registro de acesso, mas nunca o exibimos nem o usamos");
+    // Nothing is posted to Google or read beyond that.
+    expect(e).toContain("We don&apos;t post anything to your Google account or read anything else from it");
+    expect(p).toContain("Não publicamos nada na sua conta Google nem lemos nada além disso");
+    // §5 lists processors under contract: Google sign-in isn't one (01).
+    expect(en).not.toMatch(/\["Google",\s*"Sign/);
+  });
+
+  it("no web code reads Google's profile photo (what §3.1 promises)", async () => {
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const hits: string[] = [];
+    const walk = (dir: string) => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const p = path.join(dir, e.name);
+        if (e.isDirectory()) { if (e.name !== "__tests__") walk(p); continue; }
+        if (!/.(ts|tsx)$/.test(e.name)) continue;
+        if (/avatar_url|user_metadata??.picture/.test(fs.readFileSync(p, "utf8"))) hits.push(p);
+      }
+    };
+    walk("src");
+    expect(hits).toEqual([]);
+  });
+});
