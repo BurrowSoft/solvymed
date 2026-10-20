@@ -271,6 +271,10 @@
     "met": true,
     "what": "LIVE 2026-10-17: 13's mobile #525 released to production 16:22:06Z (group 8303a25e; the bundle ca verified). The app's neutral sign-up screen for an address that already has a confirmed account (13's mobile #525: \"Verifique seu e-mail\" + Entrar + Esqueceu sua senha?, no code field; switch-aware body) is in a RELEASED app build (OTA or store; 13 pings). Gates the App Map's app rule for that screen; the website's twin is live with #580."
   },
+  "app-google-signin-live": {
+    "met": false,
+    "what": "Sign in with Google is in the Android app (3e, phase 2; an OTA or a store build, live for users), using the same complete_google_signup (232) and the same google_signin switch. Flip with the app's release; together with google-signin-live it shows Help K3's and the App Map's app line."
+  },
   "google-signin-live": {
     "met": false,
     "what": "Sign in with Google is live: migration 232 (#530: the onboarding-pending marker + complete_google_signup) applied on production, the Google provider ON in Supabase, the identity-linking proofs passed, and the public switch server_flags google_signin ON (one flip shows the button on the web and in the app). Flip together with that switch. Gates Help K3's Google line and the App Map rule."
