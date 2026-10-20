@@ -744,6 +744,19 @@
     "titleWith": "Book with {doctor}"
   },
   "auth": {
+    "google": {
+      "continue": "Lanjutkan dengan Google",
+      "or": "atau",
+      "failed": "Tidak dapat membuka login Google. Coba lagi."
+    },
+    "completeAccount": {
+      "title": "Lengkapi akun Anda",
+      "subtitle": "Langkah terakhir: beri tahu kami siapa Anda.",
+      "countryLabel": "Di mana praktik Anda?",
+      "countryRequired": "Pilih negara praktik Anda.",
+      "consentRequired": "Harap setujui Ketentuan Penggunaan dan Kebijakan Privasi.",
+      "submit": "Lanjutkan"
+    },
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {
       "title": "Selamat datang kembali",

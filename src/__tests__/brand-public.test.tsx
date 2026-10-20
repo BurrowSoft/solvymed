@@ -66,7 +66,8 @@ describe("the public invite link's brand (signup ?join=)", () => {
   it("no join code (a normal signup): no lookup at all", () => {
     h.params = new URLSearchParams("c=BR");
     render(<NextIntlClientProvider locale="pt-BR" messages={pt}><SignupPage /></NextIntlClientProvider>);
-    expect(h.rpc).not.toHaveBeenCalled();
+    // No brand lookup (the Google button reads get_public_flags, 232).
+    expect(h.rpc).not.toHaveBeenCalledWith("get_public_brand_by_code", expect.anything());
   });
 });
 

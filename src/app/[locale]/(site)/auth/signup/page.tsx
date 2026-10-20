@@ -20,6 +20,7 @@ import { ConfirmByCode } from "@/components/ConfirmByCode";
 import { TurnstileWidget, turnstileEnabled } from "@/components/TurnstileWidget";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import { track } from "@/lib/track";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { browserTimeZone, countryStepHref, orderedCountryStep, parseCountryChoice, pathCountry, signupCountryCookie, signupCountryMetadata } from "@/lib/signupCountry";
 import { autoLocaleArrival } from "@/lib/localeArrival";
 import { noteCountryTap, takeCountryTap } from "@/lib/signupFunnel";
@@ -591,6 +592,12 @@ export default function SignupPage() {
           </div>
         )}
 
+        {/* Google (232; off until the google_signin switch): the country and
+            role this page has travel to "Complete your account". Invite and
+            secretary links already belong to a practice: their own flow. */}
+        {!isJoinFlow && !isSecretaryFlow && (
+          <GoogleSignInButton locale={locale} source="signup" country={country} role={role === "patient" ? "patient" : "professional"} />
+        )}
         <form id="signup-form" method="post" onSubmit={handleSubmit} onFocus={formStart} className="space-y-4">
           <div>
             <label className="field-label">{t("signup.fullName")}</label>

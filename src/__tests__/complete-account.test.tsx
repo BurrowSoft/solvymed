@@ -1,0 +1,130 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import pt from "@/messages/pt-BR.json";
+import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legalVersions";
+
+// "Complete your account" (232): only for a pending Google account; the role,
+// the practice country (BR/TH, explicit; with Change), the name from Google,
+// the Terms + Privacy checkbox; complete_google_signup with the page's current
+// versions; then the same post-sign-up step as an e-mail confirmation.
+
+const h = vi.hoisted(() => ({
+  params: new URLSearchParams(),
+  user: { id: "g1", user_metadata: { full_name: "Dra Google" } } as { id: string; user_metadata: Record<string, unknown> } | null,
+  pending: true,
+  rpc: vi.fn(),
+  refresh: vi.fn(async () => ({ data: {}, error: null })),
+  track: vi.fn(),
+}));
+vi.mock("next/navigation", async (orig) => ({
+  ...(await orig<typeof import("next/navigation")>()),
+  useParams: () => ({ locale: "pt-BR" }),
+  useSearchParams: () => h.params,
+}));
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    auth: { getUser: async () => ({ data: { user: h.user } }), refreshSession: h.refresh },
+    rpc: async (fn: string, args?: unknown) =>
+      fn === "signup_onboarding_is_pending" ? { data: h.pending, error: null } : h.rpc(fn, args),
+  }),
+}));
+vi.mock("@/lib/track", () => ({ track: h.track }));
+
+import CompleteAccountPage from "@/app/[locale]/(site)/auth/complete-account/page";
+
+const show = (q = "") => {
+  h.params = new URLSearchParams(q);
+  return render(
+    <NextIntlClientProvider locale="pt-BR" messages={pt}>
+      <CompleteAccountPage />
+    </NextIntlClientProvider>,
+  );
+};
+
+describe("Complete your account", () => {
+  const replace = vi.fn();
+  const assign = vi.fn();
+  const original = window.location;
+  beforeEach(() => {
+    h.user = { id: "g1", user_metadata: { full_name: "Dra Google" } };
+    h.pending = true;
+    h.rpc.mockReset();
+    h.rpc.mockResolvedValue({ data: { status: "done" }, error: null });
+    h.track.mockReset();
+    replace.mockReset();
+    assign.mockReset();
+    Object.defineProperty(window, "location", { configurable: true, value: { ...original, replace, assign, origin: "https://www.solvymed.com" } });
+    vi.stubGlobal("fetch", vi.fn(async () => ({ json: async () => ({ redirect: "/pt-BR/auth/professional-welcome" }) })));
+  });
+  afterEach(() => {
+    Object.defineProperty(window, "location", { configurable: true, value: original });
+    vi.unstubAllGlobals();
+  });
+
+  it("not pending (completed, or another account): on to the dashboard; signed out: the login", async () => {
+    h.pending = false;
+    show();
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
+    h.user = null;
+    show();
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/auth/login"));
+  });
+
+  it("a doctor from Thailand: the line with Change, the name from Google, the RPC with the current versions, then after-verify", async () => {
+    show("c=TH&role=professional");
+    expect(await screen.findByTestId("complete-country-line")).toHaveTextContent(pt.auth.signup.countryLine.TH);
+    await waitFor(() => expect(screen.getByTestId("complete-name")).toHaveValue("Dra Google"));
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/professional-welcome"));
+    expect(h.rpc).toHaveBeenCalledWith("complete_google_signup", expect.objectContaining({
+      p_role: "professional", p_country: "TH", p_full_name: "Dra Google", p_invite_code: null,
+      p_privacy_version: PRIVACY_VERSION, p_terms_version: TERMS_VERSION, p_locale: "pt-BR", p_platform: "web",
+    }));
+    expect(h.refresh).toHaveBeenCalled();
+    expect(fetch).toHaveBeenCalledWith("/api/auth/after-verify", expect.objectContaining({ method: "POST" }));
+    expect(h.track).toHaveBeenCalledWith("signup_complete_submitted", { role: "professional" });
+  });
+
+  it("no country: the two countries; submitting without one says so; Change brings them back", async () => {
+    show();
+    await screen.findByTestId("complete-country-BR");
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.countryRequired);
+    fireEvent.click(screen.getByTestId("complete-country-BR"));
+    fireEvent.click(screen.getByTestId("complete-country-change"));
+    expect(screen.getByTestId("complete-country-TH")).toBeInTheDocument();
+    expect(h.rpc).not.toHaveBeenCalled();
+  });
+
+  it("a patient: the invite code is required; then sent upper-cased by the RPC's rules", async () => {
+    show("role=patient");
+    await screen.findByTestId("complete-invite-code");
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.signup.inviteCodeRequired);
+    fireEvent.change(screen.getByTestId("complete-invite-code"), { target: { value: " abc123 " } });
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    await waitFor(() => expect(h.rpc).toHaveBeenCalledWith("complete_google_signup", expect.objectContaining({
+      p_role: "patient", p_country: null, p_invite_code: "abc123",
+    })));
+  });
+
+  it("the Terms + Privacy checkbox is required; an RPC refusal shows its text and stays", async () => {
+    show("c=BR");
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
+    h.rpc.mockResolvedValue({ data: null, error: { message: "consent_required", code: "P0001" } });
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    await waitFor(() => expect(h.rpc).toHaveBeenCalled());
+    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
+    expect(assign).not.toHaveBeenCalled();
+  });
+});
