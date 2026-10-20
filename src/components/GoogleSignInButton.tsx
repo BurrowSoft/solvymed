@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { publicFlag } from "@/lib/publicFlags";
-import { googleRedirectTo, startGoogleSignIn, type GoogleRole, type GoogleSource } from "@/lib/googleSignIn";
+import { GOOGLE_TEST_PARAM, googleRedirectTo, startGoogleSignIn, type GoogleRole, type GoogleSource } from "@/lib/googleSignIn";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 
@@ -30,6 +30,14 @@ export function GoogleSignInButton({
 
   useEffect(() => {
     let live = true;
+    // The test window (01): with the Supabase provider on and the switch
+    // still off, ?google_test=1 shows the button for the tester's round
+    // trips. Safe by 232: any Google sign-up waits for "Complete your
+    // account"; with the provider off, Google refuses the sign-in.
+    if (new URLSearchParams(location.search).get(GOOGLE_TEST_PARAM) === "1") {
+      setOn(true);
+      return;
+    }
     void publicFlag(createClient(), "google_signin").then((v) => { if (live) setOn(v); });
     return () => { live = false; };
   }, []);

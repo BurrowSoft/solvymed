@@ -78,6 +78,18 @@ describe("GoogleSignInButton", () => {
     expect(h.track).toHaveBeenCalledWith("signup_google_start", { source: "signup" });
   });
 
+  it("?google_test=1 shows it with the switch off (the tester's window); nothing else does", async () => {
+    h.flags = [{ key: "google_signin", enabled: false }];
+    window.history.replaceState(null, "", "/pt-BR/auth/signup?google_test=1");
+    show();
+    expect(await screen.findByTestId("google-signin")).toBeInTheDocument();
+    window.history.replaceState(null, "", "/pt-BR/auth/signup?google_test=0");
+    const { container } = render(<NextIntlClientProvider locale="pt-BR" messages={pt}><GoogleSignInButton locale="pt-BR" source="login" /></NextIntlClientProvider>);
+    await new Promise((r) => setTimeout(r, 20));
+    expect(container.innerHTML).toBe("");
+    window.history.replaceState(null, "", "/");
+  });
+
   it("an OAuth error: says so, the button works again", async () => {
     h.flags = [{ key: "google_signin", enabled: true }];
     h.oauth.mockResolvedValue({ error: { message: "x" } });

@@ -17,6 +17,8 @@ export const GOOGLE_SCOPES = "openid email profile";
 // The callback's marker that this round trip started at our Google button,
 // so the landing page can report signup_google_return.
 export const GOOGLE_RETURN_PARAM = "gr";
+// Shows the button while the switch is off, for the tester's window (01).
+export const GOOGLE_TEST_PARAM = "google_test";
 
 export function parseGoogleRole(raw: string | null | undefined): GoogleRole | null {
   return raw === "professional" || raw === "patient" ? raw : null;
