@@ -744,6 +744,19 @@
     "titleWith": "Book with {doctor}"
   },
   "auth": {
+    "google": {
+      "continue": "Continue with Google",
+      "or": "or",
+      "failed": "Couldn't open Google sign-in. Please try again."
+    },
+    "completeAccount": {
+      "title": "Complete your account",
+      "subtitle": "One last step: tell us who you are.",
+      "countryLabel": "Where is your practice?",
+      "countryRequired": "Choose your practice's country.",
+      "consentRequired": "Please accept the Terms of Use and the Privacy Policy.",
+      "submit": "Continue"
+    },
     "passwordTooShort": "Password must be at least {min} characters.",
     "login": {
       "title": "Welcome back",

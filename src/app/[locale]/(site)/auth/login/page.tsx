@@ -18,6 +18,7 @@ import { conditionMet } from "@/lib/conditions";
 import { fieldValue } from "@/lib/formField";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 import { autoLocaleArrival } from "@/lib/localeArrival";
+import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -177,6 +178,7 @@ export default function LoginPage() {
         )}
         {unconfirmed && <ResendConfirmation email={unconfirmed} locale={locale} captchaToken={captchaToken} />}
 
+        <GoogleSignInButton locale={locale} source="login" />
         <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="login-email" className="field-label">

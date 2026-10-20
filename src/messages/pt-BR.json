@@ -744,6 +744,19 @@
     "titleWith": "Marcar consulta com {doctor}"
   },
   "auth": {
+    "google": {
+      "continue": "Continuar com Google",
+      "or": "ou",
+      "failed": "Não foi possível abrir o login do Google. Tente novamente."
+    },
+    "completeAccount": {
+      "title": "Complete sua conta",
+      "subtitle": "Último passo: conte quem você é.",
+      "countryLabel": "Onde fica seu consultório?",
+      "countryRequired": "Escolha o país do seu consultório.",
+      "consentRequired": "Aceite os Termos de Uso e a Política de Privacidade.",
+      "submit": "Continuar"
+    },
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
       "title": "Que bom ter você de volta",

@@ -4,7 +4,8 @@
 // an error, or the function not deployed yet (PGRST202).
 type FlagReader = { rpc: (fn: "get_public_flags") => PromiseLike<{ data: unknown; error: unknown }> };
 
-export type PublicFlag = "confirm_by_code";
+// google_signin: the Google button on the web and in the app (232).
+export type PublicFlag = "confirm_by_code" | "google_signin";
 
 export async function publicFlag(supabase: unknown, key: PublicFlag): Promise<boolean> {
   try {

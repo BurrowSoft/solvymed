@@ -99,6 +99,12 @@ export async function middleware(req: NextRequest) {
       .select("role, invited_by_professional_id")
       .eq("user_id", user.id)
       .maybeSingle();
+    // A Google sign-up that hasn't completed its account (232's positive
+    // marker; an unlinked patient has none and keeps the invite gate).
+    if (!roleRow) {
+      const { data: pending } = await supabase.rpc("signup_onboarding_is_pending");
+      if (pending === true) return withAuthCookies(NextResponse.redirect(new URL(`${prefix}/auth/complete-account`, req.url)));
+    }
     if (secretaryWithoutTeam(roleRow)) {
       const res = NextResponse.redirect(new URL(`${prefix}/auth/not-connected`, req.url));
       res.cookies.set(ACTING_COOKIE, "", { path: "/", maxAge: 0 });
