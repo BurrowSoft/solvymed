@@ -276,8 +276,8 @@
     "what": "Sign in with Google is in the Android app (3e, phase 2; an OTA or a store build, live for users), using the same complete_google_signup (232) and the same google_signin switch. Flip with the app's release; together with google-signin-live it shows Help K3's and the App Map's app line."
   },
   "google-signin-live": {
-    "met": false,
-    "what": "Sign in with Google is live: migration 232 (#530: the onboarding-pending marker + complete_google_signup) applied on production, the Google provider ON in Supabase, the identity-linking proofs passed, and the public switch server_flags google_signin ON (one flip shows the button on the web and in the app). Flip together with that switch. Gates Help K3's Google line and the App Map rule."
+    "met": true,
+    "what": "LIVE 2026-10-20: 232 live, the provider ON, 0c's part B 🟢 (linking proofs), google_signin ON (3e). Sign in with Google is live: migration 232 (#530: the onboarding-pending marker + complete_google_signup) applied on production, the Google provider ON in Supabase, the identity-linking proofs passed, and the public switch server_flags google_signin ON (one flip shows the button on the web and in the app). Flip together with that switch. Gates Help K3's Google line and the App Map rule."
   },
   "become-professional-live": {
     "met": true,

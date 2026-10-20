@@ -2381,6 +2381,10 @@
             },
             {
               "type": "p",
+              "text": "No site, o cadastro e a tela de entrada têm **Continuar com Google**: você entra com sua conta Google, sem senha nem e-mail de confirmação. Na primeira vez, a tela **Complete sua conta** pede se você é profissional de saúde (com o país do consultório) ou paciente (com o código de convite da clínica), seu nome e o aceite dos Termos de Uso e da Política de Privacidade. Se você já tem uma conta com o mesmo e-mail, entra nela."
+            },
+            {
+              "type": "p",
               "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (abre o app de e-mail do celular), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
             },
             {
@@ -2408,6 +2412,10 @@
             {
               "type": "p",
               "text": "If you're a health professional and signed up as a patient by mistake, on the invite-code screen tap **I'm a health professional** and confirm your practice's country: the account becomes a professional one and your free trial starts."
+            },
+            {
+              "type": "p",
+              "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it."
             },
             {
               "type": "p",
