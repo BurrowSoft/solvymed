@@ -13,6 +13,7 @@ const db = vi.hoisted(() => ({
   fail: null as null | "error" | "throw",
   role: null as { role: string; invited_by_professional_id: string | null } | null,
   rpcs: [] as string[],
+  linkTypes: [] as (string | null)[],
 }));
 vi.mock("@supabase/ssr", () => ({
   createServerClient: () => ({
@@ -30,7 +31,12 @@ vi.mock("@supabase/ssr", () => ({
     },
   }),
 }));
-vi.mock("@/lib/authRouting", () => ({ routeAfterAuth: async (_s: unknown, _u: unknown, prefix: string) => `${prefix}/dashboard` }));
+vi.mock("@/lib/authRouting", () => ({
+  routeAfterAuth: async (_s: unknown, _u: unknown, prefix: string, linkType: string | null) => {
+    db.linkTypes.push(linkType);
+    return `${prefix}/dashboard`;
+  },
+}));
 
 type Handler = (req: NextRequest) => Promise<Response>;
 let GET: Handler;
@@ -48,6 +54,7 @@ beforeEach(() => {
   db.fail = null;
   db.role = null;
   db.rpcs = [];
+  db.linkTypes = [];
 });
 
 const call = (q: string) => GET(new NextRequest(new URL(`/api/auth/callback?code=abc&${q}`, "https://www.solvymed.com")));
@@ -67,10 +74,11 @@ describe("the callback after Google", () => {
     expect(Object.fromEntries(to.searchParams)).toEqual({ gr: "new" });
   });
 
-  it("an existing account → the usual routing, marked existing", async () => {
+  it("an existing account → the usual routing as a sign-in (never the welcome), marked existing", async () => {
     const to = loc(await call("locale=pt-BR&google=login"));
     expect(to.pathname).toBe("/pt-BR/dashboard");
     expect(to.searchParams.get("gr")).toBe("existing");
+    expect(db.linkTypes).toEqual(["oauth"]);
   });
 
   it.each(["error", "throw"] as const)("FAIL SAFE in the callback: the pending RPC %ss → the usual routing", async (fail) => {
@@ -85,6 +93,7 @@ describe("the callback after Google", () => {
     expect(to.pathname).toBe("/pt-BR/dashboard");
     expect(to.searchParams.has("gr")).toBe(false);
     expect(db.rpcs).not.toContain("signup_onboarding_is_pending");
+    expect(db.linkTypes).toEqual([null]);
   });
 });
 

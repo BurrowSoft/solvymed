@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isFirstConfirmation } from "@/lib/firstConfirmation";
+import { isFirstConfirmation, OAUTH_SIGN_IN } from "@/lib/firstConfirmation";
 
 const now = new Date("2026-09-26T15:00:00Z").getTime();
 const ago = (ms: number) => new Date(now - ms).toISOString();
@@ -16,6 +16,9 @@ describe("isFirstConfirmation", () => {
     expect(isFirstConfirmation({ email_confirmed_at: ago(2 * 24 * 3600_000) }, "magiclink", now)).toBe(false);
     expect(isFirstConfirmation({ email_confirmed_at: ago(11 * 60_000) }, "signup", now)).toBe(false);
     expect(isFirstConfirmation({ email_confirmed_at: ago(5_000) }, "recovery", now)).toBe(false);
+    // An existing account signing in with Google (01): never the welcome,
+    // even when Google has just confirmed it (a fresh stamp).
+    expect(isFirstConfirmation({ email_confirmed_at: ago(5_000) }, OAUTH_SIGN_IN, now)).toBe(false);
     expect(isFirstConfirmation({}, "signup", now)).toBe(false);
   });
 });
