@@ -278,6 +278,15 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
 
   // Closing tells the tour (paused by "Experimentar agora") it can resume.
   const closePanel = () => { setOpen(false); window.dispatchEvent(new Event(CLOSED_EVENT)); };
+  // Escape closes the open panel too (keyboards, and the ✕ is never the only way).
+  const closeRef = useRef(closePanel);
+  closeRef.current = closePanel;
+  useEffect(() => {
+    if (!open || minimized) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !e.defaultPrevented) closeRef.current(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, minimized]);
   // The tour's "Experimentar agora": open and ask its question.
   const sendRef = useRef(send);
   sendRef.current = send;
@@ -315,11 +324,17 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
   return (
     <>
       {/* The panel: beside the content on wide screens (it pushes it), a
-          full-height sheet on narrow ones. */}
+          full-height sheet on narrow ones. On phones it starts below the
+          DEMO bar (--demo-bar-h, 0 outside a demo) and sits above the menu
+          button, the demo's hint/chip and tour pill (z-50..56) but below the
+          DEMO bar (60) and the demo's sheets (70): its ✕ is never covered
+          (Vitor, 10-23). Wide screens: the dashboard row's height, which
+          is already short of the DEMO bar. */}
       {open && !minimized && (
         <aside
           aria-label="SolvyAI"
-          className="fixed inset-0 z-40 flex flex-col bg-white lg:static lg:inset-auto lg:z-auto lg:h-screen lg:w-[400px] lg:shrink-0 lg:border-l lg:border-slate-100"
+          data-testid="solvyai-panel"
+          className="fixed inset-x-0 bottom-0 top-[var(--demo-bar-h,0px)] z-[58] flex flex-col bg-white lg:static lg:inset-auto lg:z-auto lg:h-full lg:w-[400px] lg:shrink-0 lg:border-l lg:border-slate-100"
         >
           <header className="flex items-center gap-2 border-b border-slate-100 px-4 py-3">
             <span className="text-lg text-teal-600" aria-hidden="true">✦</span>

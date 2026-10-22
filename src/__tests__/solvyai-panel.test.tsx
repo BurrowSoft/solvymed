@@ -84,6 +84,35 @@ function openPanel(props: Partial<Parameters<typeof SolvyAi>[0]> = {}) {
 }
 
 describe("SolvyAI panel (specs/assistant.md §2)", () => {
+  it("phones: the panel starts below the DEMO bar and above the demo's overlays, so its ✕ is never covered (Vitor, 10-23)", () => {
+    openPanel();
+    const panel = screen.getByTestId("solvyai-panel");
+    const cls = panel.className.split(" ");
+    expect(cls).toContain("top-[var(--demo-bar-h,0px)]");
+    expect(cls).toContain("z-[58]");
+    expect(cls).not.toContain("inset-0");
+    expect(cls).toContain("lg:h-full");
+    expect(screen.getByLabelText("assistant.close")).toBeInTheDocument();
+  });
+
+  it("Escape closes the panel; the ✕ still does too", () => {
+    openPanel();
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(screen.queryByTestId("solvyai-panel")).toBeNull();
+    fireEvent.click(screen.getByLabelText("assistant.open"));
+    fireEvent.click(screen.getByLabelText("assistant.close"));
+    expect(screen.queryByTestId("solvyai-panel")).toBeNull();
+  });
+
+  it("Escape does nothing while the panel is closed", () => {
+    render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
+    const closed = vi.fn();
+    window.addEventListener("solvyai-closed", closed);
+    fireEvent.keyDown(window, { key: "Escape" });
+    expect(closed).not.toHaveBeenCalled();
+    window.removeEventListener("solvyai-closed", closed);
+  });
+
   it("the ✦ button is the tour's spotlight target and opens the panel with this screen's chips", async () => {
     pathname = "/pt-BR/dashboard/schedule";
     render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
