@@ -347,3 +347,14 @@ describe("DemoCta (landing)", () => {
     expect(await screen.findByTestId("landing-demo-cta")).toHaveAttribute("href", "/demo?demo_test=1");
   });
 });
+
+describe("the dashboard in a demo (83: iPhone SE /th)", () => {
+  it("no \"what's new\" or SolvyAI intro sheet covers the DEMO bar and its sign-up: the demo has its own tour", async () => {
+    const { readFileSync } = await import("node:fs");
+    const src = readFileSync("src/app/[locale]/(site)/dashboard/layout.tsx", "utf8");
+    expect(src).toContain("newsPending={!isDemo && newsPending}");
+    expect(src).toContain("introPending={!isDemo && introPending}");
+    expect(src).toContain("introTestable={!isDemo && ");
+    expect(src).toContain("entry={isDemo || ");
+  });
+});
