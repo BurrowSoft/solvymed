@@ -276,8 +276,8 @@
     "what": "Sign in with Google is in the Android app (3e, phase 2; an OTA or a store build, live for users), using the same complete_google_signup (232) and the same google_signin switch. Flip with the app's release; together with google-signin-live it shows Help K3's and the App Map's app line."
   },
   "demo-mode-live": {
-    "met": false,
-    "what": "The web demo is live (specs/demo-mode.md): migration 234 (the sandbox, start_demo / end_demo, the side-effect guards, the 24 h cleanup) applied, the demo privacy text live, anonymous sign-ins ON in Supabase, the test window passed, and the public switch server_flags demo_mode ON. Flip with that switch. Gates Help K1's demo line and the App Map rule."
+    "met": true,
+    "what": "LIVE 2026-10-22 (with #599: the demo privacy text published, then 01 flips demo_mode; if the post-merge key/text check fails, set this back to false). The web demo is live (specs/demo-mode.md): migration 234 (the sandbox, start_demo / end_demo, the side-effect guards, the 24 h cleanup) applied, the demo privacy text live, anonymous sign-ins ON in Supabase, the test window passed, and the public switch server_flags demo_mode ON. Flip with that switch. Gates Help K1's demo line and the App Map rule."
   },
   "google-signin-live": {
     "met": true,
