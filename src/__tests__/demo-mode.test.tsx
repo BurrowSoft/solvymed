@@ -18,6 +18,9 @@ const h = vi.hoisted(() => ({
   locale: "pt-BR",
   verifyStatus: 200,
   serverFlagsFail: false,
+  // The demo's role exists once start_demo ran (the server's seed).
+  seeded: false,
+  prefetched: {} as Record<string, string>,
 }));
 // The bot check: the widget hands a token at once; /api/demo/verify answers verifyStatus.
 vi.mock("@/components/DemoTurnstile", async () => {
@@ -28,7 +31,16 @@ vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
   useParams: () => ({ locale: h.locale }),
   usePathname: () => "/pt-BR/dashboard",
-  useRouter: () => ({ push: vi.fn(), replace: (u: string) => replace(u), refresh: vi.fn(), prefetch: (u: string) => h.calls.push(`prefetch ${u}`) }),
+  // The router as Next behaves for /dashboard (83's ❌ on a55da1d3): a
+  // prefetch is rendered by the server AT THAT MOMENT and cached; the layout
+  // sends a session without a role (no start_demo yet) to /auth/login, and
+  // replace follows a cached redirect.
+  useRouter: () => ({
+    push: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: (u: string) => { h.calls.push(`prefetch ${u}`); h.prefetched[u] = h.seeded ? u : "/pt-BR/auth/login"; },
+    replace: (u: string) => replace(h.prefetched[u] ?? (h.seeded ? u : "/pt-BR/auth/login")),
+  }),
 }));
 vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
@@ -43,7 +55,7 @@ vi.mock("@/lib/supabase/client", () => ({
     rpc: async (fn: string, args?: Record<string, unknown>) => {
       h.calls.push(args ? `${fn}(${JSON.stringify(args)})` : fn);
       if (fn === "get_public_flags") return { data: h.flags, error: null };
-      if (fn === "start_demo") return { data: null, error: h.startError };
+      if (fn === "start_demo") { if (!h.startError) h.seeded = true; return { data: null, error: h.startError }; }
       return { data: null, error: null };
     },
     auth: {
@@ -75,6 +87,8 @@ beforeEach(() => {
   h.locale = "pt-BR";
   h.verifyStatus = 200;
   h.serverFlagsFail = false;
+  h.seeded = false;
+  h.prefetched = {};
   // /api/demo/verify as the route behaves (#604): the ticket, then start_demo
   // on the server with the caller's session → ready, or 409 with its refusal.
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string; method?: string }) => {
@@ -85,7 +99,7 @@ beforeEach(() => {
     const body = JSON.parse(init?.body ?? "{}") as { country?: string; locale?: string };
     h.calls.push(`start_demo(${JSON.stringify({ p_country: body.country, p_locale: body.locale })})`);
     const err = h.startError as { message?: string } | null;
-    if (!err) return new Response(JSON.stringify({ status: "ready" }), { status: 200 });
+    if (!err) { h.seeded = true; return new Response(JSON.stringify({ status: "ready" }), { status: 200 }); }
     const code = ["demo_off", "demo_busy", "unsupported_country", "demo_unverified"].find((c) => (err.message ?? "").includes(c));
     return new Response(JSON.stringify({ code: code ?? "start_failed" }), { status: code ? 409 : 503 });
   }));
@@ -147,7 +161,7 @@ describe("DemoBar", () => {
 describe("/demo", () => {
   const show = () => render(wrap(<DemoClient testAllowed siteKey="site" />));
 
-  it("a new visitor (#604): Turnstile and the anonymous sign-in together, then ONE call (ticket + start_demo on the server), the dashboard warmed, then opened in-app", async () => {
+  it("a new visitor (#604): Turnstile and the anonymous sign-in together, then ONE call (ticket + start_demo on the server), then the dashboard opened in-app, never via a stale prefetch (83)", async () => {
     h.flags = [{ key: "demo_mode", enabled: true }];
     show();
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
@@ -157,8 +171,9 @@ describe("/demo", () => {
     expect(h.calls.indexOf("signInAnonymously")).toBeLessThan(verify);
     // start_demo runs on the server (inside verify); never from the browser here.
     expect(h.calls.filter((c) => c.startsWith("start_demo"))).toHaveLength(1);
-    expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeGreaterThan(h.calls.indexOf("signInAnonymously"));
-    expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeLessThan(verify);
+    // 83's ❌: never a prefetch before the demo exists (it cached the login redirect).
+    expect(h.calls.some((c) => c.startsWith("prefetch"))).toBe(false);
+    expect(replace).not.toHaveBeenCalledWith("/pt-BR/auth/login");
     // F: the verify function is woken before the POST.
     expect(h.calls.indexOf("warm /api/demo/verify")).toBeGreaterThan(-1);
     expect(h.calls.indexOf("warm /api/demo/verify")).toBeLessThan(verify);

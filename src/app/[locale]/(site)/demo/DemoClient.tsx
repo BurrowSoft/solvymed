@@ -81,8 +81,11 @@ export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllo
         return { message: "demo_unverified" };
       }
     };
-    // The dashboard's code, fetched while the server works (#604, D).
-    const warm = () => { try { router.current.prefetch(`${prefix}/dashboard`); } catch { /* best-effort */ } };
+    // No prefetch of the dashboard before the demo exists (83's ❌ on
+    // a55da1d3): its layout sends a session WITHOUT a role to /auth/login,
+    // the role comes with start_demo, and Next caches a prefetched redirect,
+    // so router.replace followed it to the login. The in-app navigation below
+    // fetches the dashboard fresh, after start_demo.
     // Timing marks for the testers (performance.getEntriesByType("mark")):
     // nothing is sent anywhere (#604, 0e's split).
     const mark = (n: string) => { try { performance.mark(`demo:${n}`); } catch { /* not supported */ } };
@@ -118,14 +121,12 @@ export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllo
             supabase.auth.signInAnonymously().then(({ error }) => { if (error) throw error; fresh = true; mark("signed-in"); }),
           ]);
           if (!live) return;
-          warm();
           setStep("create");
           startError = await verifyAndStart(t);
           mark("verified-and-started");
         } else {
           // A returning session: an open sandbox answers "ready" with no
           // ticket; the check only when 234 asks (demo_unverified).
-          warm();
           setStep("create");
           startError = (await supabase.rpc("start_demo", { p_country: country, p_locale: locale })).error;
           if (refusal(startError) === "demo_unverified") {
@@ -156,7 +157,7 @@ export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllo
         if (!live) return;
         mark("open-dashboard");
         setStep("open");
-        // In-app navigation to the prefetched dashboard (no full reload).
+        // In-app navigation (no full reload), fetched now that the demo exists.
         router.current.replace(`${prefix}/dashboard`);
       } catch {
         await cleanUp(false);
