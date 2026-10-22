@@ -16,6 +16,7 @@ import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFiel
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
+import { DemoRealDataNote } from "@/components/DemoGate";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -172,6 +173,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
       )}
       {missing && <p role="alert" data-testid="missing-fields" className="text-sm text-red-600">{missing}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
+      <DemoRealDataNote />
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={pending} className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
           {pending ? t("saving") : t("savePatient")}

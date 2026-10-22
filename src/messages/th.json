@@ -37,7 +37,8 @@
     "tourStep1": "ดูสัปดาห์ของคุณ",
     "tourStep2": "เปิดเวชระเบียน",
     "tourStep3": "สร้างใบสั่งยาเป็น PDF",
-    "tourStep4": "ถาม SolvyAI"
+    "tourStep4": "ถาม SolvyAI",
+    "realDataHint": "อย่าใส่ข้อมูลผู้ป่วยจริงในเดโม"
   },
   "getApp": "ดาวน์โหลดแอป",
   "hero": {

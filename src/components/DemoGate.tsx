@@ -224,6 +224,37 @@ export function DemoValueSheet({ locale, country }: { locale: string; country: C
   );
 }
 
+// Don't enter real patient data (the spec's guardrail; 01's copy, cf):
+// on phones, where the bar holds only DEMO + the button, a one-time,
+// dismissible line under the bar (computers read it inside the bar).
+const HINT_KEY = "solvymed-demo-real-data-hint";
+export function DemoRealDataHint() {
+  const t = useTranslations("demo");
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    let closed = false;
+    try { closed = localStorage.getItem(HINT_KEY) === "closed"; } catch { /* storage blocked: show it */ }
+    setShow(!closed);
+  }, []);
+  if (!show) return null;
+  return (
+    <div data-testid="demo-real-data-hint" role="note" className="flex max-w-md items-center gap-2 rounded-xl bg-[#FEF3C7] py-1 pl-3 pr-1 text-xs font-semibold text-[#1F2937] shadow-md ring-1 ring-[#F59E0B]/40">
+      <span><span aria-hidden="true">⚠️ </span>{t("realDataHint")}</span>
+      <button type="button" aria-label={t("close")} onClick={() => { try { localStorage.setItem(HINT_KEY, "closed"); } catch { /* ok */ } setShow(false); }}
+        className="shrink-0 rounded-full px-1.5 text-[#1F2937]/50 hover:text-[#1F2937]">✕</button>
+    </div>
+  );
+}
+
+// The same line, small and muted, above Save where real data would go (new
+// or edited patient, record, prescription); in the demo only.
+export function DemoRealDataNote() {
+  const { demo } = useDemo();
+  const t = useTranslations("demo");
+  if (!demo) return null;
+  return <p data-testid="demo-real-data-note" className="text-xs text-slate-500"><span aria-hidden="true">⚠️ </span>{t("realDataHint")}</p>;
+}
+
 // Android phones (the web demo): a slim, dismissible chip under the amber
 // bar, to the Play listing with the consented campaign (F5's onClick logic).
 // Never stronger than DEMO and the sign-up button. iPhone: nothing.
@@ -237,7 +268,7 @@ export function DemoAndroidChip() {
   }, []);
   if (!show) return null;
   return (
-    <div data-testid="demo-android-chip" className="fixed inset-x-0 top-12 z-[55] flex justify-center px-3 pt-1.5 lg:hidden">
+    <div data-testid="demo-android-chip" className="flex justify-center">
       <div className="flex items-center gap-2 rounded-full bg-white/95 py-1 pl-3 pr-1 text-xs font-semibold text-slate-700 shadow-md ring-1 ring-slate-200">
         <a href="https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed" target="_blank" rel="noopener noreferrer"
           onClick={(e) => {

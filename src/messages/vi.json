@@ -37,7 +37,8 @@
     "tourStep1": "Xem tuần của bạn",
     "tourStep2": "Mở hồ sơ bệnh nhân",
     "tourStep3": "Tạo đơn thuốc PDF",
-    "tourStep4": "Hỏi SolvyAI"
+    "tourStep4": "Hỏi SolvyAI",
+    "realDataHint": "Đừng nhập dữ liệu bệnh nhân thật vào bản demo."
   },
   "getApp": "Tải ứng dụng",
   "hero": {

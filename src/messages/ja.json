@@ -37,7 +37,8 @@
     "tourStep1": "1週間を見る",
     "tourStep2": "カルテを開く",
     "tourStep3": "処方箋をPDFで作成",
-    "tourStep4": "SolvyAI に質問"
+    "tourStep4": "SolvyAI に質問",
+    "realDataHint": "デモには実際の患者データを入力しないでください。"
   },
   "getApp": "アプリを入手",
   "hero": {

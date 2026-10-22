@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { PDFDocument } from "pdf-lib";
 import { NextIntlClientProvider } from "next-intl";
@@ -28,7 +28,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 import { stampDemo } from "@/lib/pdf/demoStamp";
-import { DemoProvider, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
+import { DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
 
@@ -127,5 +127,40 @@ describe("the HTML print views (no saved design, or the designed PDF failed)", (
     unmount();
     render(wrap(<PrintToolbar backHref="/x" />));
     expect(screen.queryByTestId("demo-print-mark")).toBeNull();
+  });
+});
+
+describe("don't enter real patient data (the spec's guardrail; cf's #598 block)", () => {
+  beforeEach(() => localStorage.clear());
+
+  it("phones: a one-time line under the bar, gone for good once dismissed", () => {
+    const { unmount } = render(wrap(<DemoRealDataHint />));
+    expect(screen.getByTestId("demo-real-data-hint")).toHaveTextContent(pt.demo.realDataHint);
+    fireEvent.click(screen.getByRole("button", { name: pt.demo.close }));
+    expect(screen.queryByTestId("demo-real-data-hint")).toBeNull();
+    unmount();
+    render(wrap(<DemoRealDataHint />));
+    expect(screen.queryByTestId("demo-real-data-hint")).toBeNull();
+  });
+
+  it("forms: a muted line above Save, in the demo only", () => {
+    const { unmount } = render(wrap(<DemoProvider value={{ demo: true, locale: "pt-BR", country: "BR" }}><DemoRealDataNote /></DemoProvider>));
+    expect(screen.getByTestId("demo-real-data-note")).toHaveTextContent(pt.demo.realDataHint);
+    unmount();
+    render(wrap(<DemoRealDataNote />));
+    expect(screen.queryByTestId("demo-real-data-note")).toBeNull();
+  });
+
+  it("every locale has it; the patient, record and prescription forms carry the note", () => {
+    const dir = resolve(__dirname, "../messages");
+    for (const file of readdirSync(dir).filter((n) => n.endsWith(".json"))) {
+      const m = JSON.parse(readFileSync(resolve(dir, file), "utf8").trimStart());
+      expect(m.demo.realDataHint, file).toBeTruthy();
+    }
+    const src = (p: string) => readFileSync(resolve(__dirname, "..", p), "utf8");
+    const notes = (p: string) => src(p).split("<DemoRealDataNote />").length - 1;
+    expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/PatientsClient.tsx")).toBe(1);
+    expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient.tsx")).toBe(3);
+    expect(src("components/DemoBar.tsx")).toContain("data-testid=\"demo-bar-hint\"");
   });
 });

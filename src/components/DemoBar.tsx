@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { demoTitle, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
-import { DemoAndroidChip, DemoBlockedSheet, DemoValueSheet } from "./DemoGate";
+import { DemoAndroidChip, DemoBlockedSheet, DemoRealDataHint, DemoValueSheet } from "./DemoGate";
 import { DEMO_TOUR_OPEN_EVENT, DemoTour } from "./DemoTour";
 
 // The demo's bar (specs/demo-mode.md, Vitor's two musts): fixed at the top of
@@ -68,7 +68,11 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
     <DemoBlockedSheet locale={locale} country={country} />
     <DemoValueSheet locale={locale} country={country} />
     <DemoTour locale={locale} country={country} />
-    <DemoAndroidChip />
+    {/* Under the bar on phones and tablets: the real-data hint, then the Android chip. */}
+    <div className="pointer-events-none fixed inset-x-0 top-12 z-[55] flex flex-col items-center gap-1.5 px-3 pt-1.5 lg:hidden [&>*]:pointer-events-auto">
+      <DemoRealDataHint />
+      <DemoAndroidChip />
+    </div>
     <div
       data-testid="demo-bar"
       role="region"
@@ -96,9 +100,13 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
           </div>
         )}
       </div>
-      <span className="min-w-0 flex-1 truncate">
-        <span className="hidden sm:inline">{t("barText")}</span>
-        <span className="sm:hidden">{t("barTextShort")}</span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate">
+          <span className="hidden sm:inline">{t("barText")}</span>
+          <span className="sm:hidden">{t("barTextShort")}</span>
+        </span>
+        {/* Computers: the real-data hint as a smaller second line (01). */}
+        <span data-testid="demo-bar-hint" className="hidden truncate text-[11px] font-semibold leading-tight opacity-80 lg:block">{t("realDataHint")}</span>
       </span>
       <button type="button" aria-label={t("tourOpen")} data-testid="demo-tour-open" onClick={() => window.dispatchEvent(new Event(DEMO_TOUR_OPEN_EVENT))}
         className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#1F2937]/10 text-sm font-extrabold hover:bg-[#1F2937]/20">

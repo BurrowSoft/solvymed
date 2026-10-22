@@ -37,7 +37,8 @@
     "tourStep1": "이번 주 보기",
     "tourStep2": "환자 기록 열기",
     "tourStep3": "처방전 PDF 만들기",
-    "tourStep4": "SolvyAI에게 묻기"
+    "tourStep4": "SolvyAI에게 묻기",
+    "realDataHint": "데모에 실제 환자 데이터를 입력하지 마세요."
   },
   "getApp": "앱 다운로드",
   "hero": {

@@ -37,7 +37,8 @@
     "tourStep1": "Veja sua semana",
     "tourStep2": "Abra um prontuário",
     "tourStep3": "Crie uma receita em PDF",
-    "tourStep4": "Pergunte à SolvyAI"
+    "tourStep4": "Pergunte à SolvyAI",
+    "realDataHint": "Não digite dados reais de pacientes na demonstração."
   },
   "getApp": "Baixar o app",
   "hero": {

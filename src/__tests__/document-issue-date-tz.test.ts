@@ -51,7 +51,7 @@ describe("the issue date", () => {
   it("a Bangkok practice's certificate, read in São Paulo, is dated 14 Oct (its own exam day)", async () => {
     h.printData.mockResolvedValue(data("Asia/Bangkok"));
     h.medical.mockResolvedValue(new Uint8Array([1]));
-    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc(), { footer: "", unsignedCopy: null });
+    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc(), { footer: "", unsignedCopy: null, demoFooter: "DEMO" });
     expect(r).toMatchObject({ ok: true, issued: "2026-10-14" });
     expect(h.medical.mock.calls[0][0].issued).toBe("2026-10-14");
   });
@@ -59,7 +59,7 @@ describe("the issue date", () => {
   it("a São Paulo practice's document keeps its own day (13 Oct)", async () => {
     h.printData.mockResolvedValue(data("America/Sao_Paulo"));
     h.medical.mockResolvedValue(new Uint8Array([1]));
-    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc({ doc_type: "declaration", language: "pt-BR", fields: { date: "2026-10-13", from: "", to: "" } }), { footer: "", unsignedCopy: null });
+    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc({ doc_type: "declaration", language: "pt-BR", fields: { date: "2026-10-13", from: "", to: "" } }), { footer: "", unsignedCopy: null, demoFooter: "DEMO" });
     expect(r).toMatchObject({ ok: true, issued: "2026-10-13" });
   });
 
@@ -67,7 +67,7 @@ describe("the issue date", () => {
     const studio = { design: { font: "sarabun" }, logos: { square: null, wide: null, reversed: null }, practice: {}, texts: { header: null, footer: null } };
     h.printData.mockResolvedValue({ ...data("Asia/Bangkok"), data: { ...data("Asia/Bangkok").data, studio } });
     h.designed.mockResolvedValue(new Uint8Array([1]));
-    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc(), { footer: "", unsignedCopy: null });
+    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc(), { footer: "", unsignedCopy: null, demoFooter: "DEMO" });
     expect(r).toMatchObject({ ok: true, issued: "2026-10-14" });
     const blocks = h.designed.mock.calls[0][0].doc.blocks as { kind: string; cells?: [string, string][] }[];
     expect(blocks[0].cells).toEqual([["สถานที่ตรวจ", PLACE_BLANK], ["", "วันที่ 14 ตุลาคม 2569"]]);
@@ -77,7 +77,7 @@ describe("the issue date", () => {
   it("the controlled prescription's date too", async () => {
     h.printData.mockResolvedValue({ ...data("Asia/Bangkok"), data: { ...data("Asia/Bangkok").data, country: "BR", idKind: "cpf" } });
     h.controlled.mockResolvedValue(new Uint8Array([1]));
-    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc({ doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [] } }), { footer: "", unsignedCopy: null });
+    const r = await makeDocumentPdf("p0000000-0000-4000-8000-000000000001", doc({ doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [] } }), { footer: "", unsignedCopy: null, demoFooter: "DEMO" });
     expect(r).toMatchObject({ ok: true, issued: "2026-10-14" });
     expect(h.controlled.mock.calls[0][0].date).toBe("14/10/2026");
   });

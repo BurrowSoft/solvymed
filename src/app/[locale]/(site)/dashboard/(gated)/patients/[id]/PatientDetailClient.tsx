@@ -36,7 +36,7 @@ import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/r
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
 import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
 import { DemoGate } from "@/components/DemoGate";
-import { notifyDemoBlocked } from "@/components/DemoGate";
+import { DemoRealDataNote, notifyDemoBlocked } from "@/components/DemoGate";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -681,6 +681,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
         <p data-testid="missing-note" className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{tf("missingNote", { fields: missingNow.map(fieldLabels.missing).join(", ") })}</p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
+      <DemoRealDataNote />
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
         <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -1018,6 +1019,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           )}
           {dialog?.mode === "correct" && <ReasonField />}
           {error && <p className="text-sm text-red-600">{error}</p>}
+          <DemoRealDataNote />
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -1139,7 +1141,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     }));
   }
   function shareDoc(doc: MedDoc, correctsId: string | null, issued: boolean) {
-    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), issued }));
+    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), demoFooter: tDemo("pdfFooter"), issued }));
   }
   // Unsaved changes in the document dialog: closing asks first (ad).
   const docDirty = useRef(false);
@@ -1501,6 +1503,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             </div>
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
+          <DemoRealDataNote />
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending || shareRxWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">

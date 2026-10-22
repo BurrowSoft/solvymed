@@ -468,13 +468,15 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 // (02, 10-13); downloads and prints show the typed stamp only.
 // Demo mode (specs/demo-mode.md): a document made in a demo session (the
 // session itself says, never a prop) gets the DEMO stamp (lib/pdf/demoStamp),
-// in Sarabun (Thai + Latin). Real accounts are untouched.
-export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null; demoFooter?: string | null }, opts: { withSignature?: boolean } = {}):
+// in Sarabun (Thai + Latin). Real accounts are untouched. demoFooter is
+// required (cf): every caller passes the line, the session decides.
+export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null; demoFooter: string }, opts: { withSignature?: boolean } = {}):
   Promise<{ ok: true; bytes: Uint8Array; issued: string } | { ok: false; code: string }> {
   const r = await makeDocumentPdfRaw(patientId, doc, words, opts);
-  if (!r.ok || !words.demoFooter) return r;
-  const { data: { user } } = await createClient().auth.getUser().catch(() => ({ data: { user: null } }));
-  if (!isDemoUser(user)) return r;
+  if (!r.ok) return r;
+  let demo = false;
+  try { demo = isDemoUser((await createClient().auth.getUser()).data.user); } catch { /* no session read: a real account's path */ }
+  if (!demo) return r;
   const [{ stampDemo }, fonts] = await Promise.all([import("@/lib/pdf/demoStamp"), loadDesignFontBytes("sarabun")]);
   return { ...r, bytes: await stampDemo(r.bytes, words.demoFooter, fonts.regular) };
 }

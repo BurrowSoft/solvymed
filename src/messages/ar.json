@@ -37,7 +37,8 @@
     "tourStep1": "شاهد أسبوعك",
     "tourStep2": "افتح سجل مريض",
     "tourStep3": "أنشئ وصفة طبية PDF",
-    "tourStep4": "اسأل SolvyAI"
+    "tourStep4": "اسأل SolvyAI",
+    "realDataHint": "لا تُدخل بيانات مرضى حقيقية في العرض التجريبي."
   },
   "getApp": "احصل على التطبيق",
   "hero": {

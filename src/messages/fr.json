@@ -37,7 +37,8 @@
     "tourStep1": "See your week",
     "tourStep2": "Open a patient record",
     "tourStep3": "Create a prescription PDF",
-    "tourStep4": "Ask SolvyAI"
+    "tourStep4": "Ask SolvyAI",
+    "realDataHint": "Don't enter real patient data in the demo."
   },
   "getApp": "Télécharger l'app",
   "hero": {
