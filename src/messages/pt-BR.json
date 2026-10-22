@@ -39,7 +39,9 @@
     "tourStep3": "Crie uma receita em PDF",
     "tourStep4": "Pergunte à SolvyAI",
     "realDataHint": "Não digite dados reais de pacientes na demonstração.",
-    "verifying": "Verificando…"
+    "verifying": "Verificando…",
+    "stepCreate": "Criando sua clínica de demonstração…",
+    "stepOpen": "Abrindo sua agenda…"
   },
   "getApp": "Baixar o app",
   "hero": {

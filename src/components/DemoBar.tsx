@@ -22,6 +22,12 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
   const [leaving, setLeaving] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // The testers' timing mark: the dashboard is up (#604; /demo's marks share
+  // this timeline, since /demo opens it in-app).
+  useEffect(() => {
+    try { performance.mark("demo:dashboard"); } catch { /* not supported */ }
+  }, []);
+
   // "[Demo] " in front of every page title, also after client navigations
   // (Next rewrites <title>; the observer puts the prefix back).
   useEffect(() => {

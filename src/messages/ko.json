@@ -39,7 +39,9 @@
     "tourStep3": "처방전 PDF 만들기",
     "tourStep4": "SolvyAI에게 묻기",
     "realDataHint": "데모에 실제 환자 데이터를 입력하지 마세요.",
-    "verifying": "확인 중…"
+    "verifying": "확인 중…",
+    "stepCreate": "데모 클리닉을 만드는 중…",
+    "stepOpen": "일정을 여는 중…"
   },
   "getApp": "앱 다운로드",
   "hero": {

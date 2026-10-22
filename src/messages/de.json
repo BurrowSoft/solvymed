@@ -39,7 +39,9 @@
     "tourStep3": "Create a prescription PDF",
     "tourStep4": "Ask SolvyAI",
     "realDataHint": "Don't enter real patient data in the demo.",
-    "verifying": "Verifying…"
+    "verifying": "Verifying…",
+    "stepCreate": "Creating your demo clinic…",
+    "stepOpen": "Opening your schedule…"
   },
   "getApp": "App herunterladen",
   "hero": {

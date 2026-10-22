@@ -13,11 +13,15 @@ const h = vi.hoisted(() => ({
   rpcError: null as null | { message: string },
   siteverify: { success: true } as Record<string, unknown>,
   verifyBodies: [] as string[],
+  startError: null as null | { message: string },
   flags: [{ key: "demo_test_window", enabled: true }, { key: "demo_mode", enabled: false }] as { key: string; enabled: boolean }[],
   flagsError: null as null | { message: string },
 }));
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: async () => ({ auth: { getUser: async () => ({ data: { user: h.user } }) } }),
+  createClient: async () => ({
+    auth: { getUser: async () => ({ data: { user: h.user } }) },
+    rpc: async (fn: string, args: unknown) => { h.rpc.push({ fn, args, key: "caller-cookie" }); return { data: null, error: fn === "start_demo" ? h.startError : null }; },
+  }),
 }));
 vi.mock("@supabase/supabase-js", () => ({
   createClient: (_url: string, key: string) => ({
@@ -27,7 +31,7 @@ vi.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
-import { POST } from "@/app/api/demo/verify/route";
+import { GET, POST } from "@/app/api/demo/verify/route";
 
 const req = (body: unknown, headers: Record<string, string> = {}) =>
   new NextRequest(new URL("/api/demo/verify", "https://www.solvymed.com"), {
@@ -42,6 +46,7 @@ describe("/api/demo/verify", () => {
     h.rpcError = null;
     h.siteverify = { success: true };
     h.verifyBodies = [];
+    h.startError = null;
     h.flags = [{ key: "demo_test_window", enabled: true }, { key: "demo_mode", enabled: false }];
     h.flagsError = null;
     vi.stubEnv("VERCEL_ENV", "preview");
@@ -102,6 +107,50 @@ describe("/api/demo/verify", () => {
     expect((await POST(req({ token: "tok" }))).status).toBe(401);
     expect(h.verifyBodies).toEqual([]);
     expect(h.rpc).toEqual([]);
+  });
+
+  it("#604: with country + locale, the route starts the demo itself as the CALLER, after the ticket", async () => {
+    const res = await POST(req({ token: "tok", country: "TH", locale: "th" }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ status: "ready" });
+    expect(h.rpc).toEqual([
+      { fn: "issue_demo_ticket", args: { p_user: "anon-1", p_ip: "203.0.113.7" }, key: "service-role" },
+      { fn: "start_demo", args: { p_country: "TH", p_locale: "th" }, key: "caller-cookie" },
+    ]);
+  });
+
+  it("#604: Server-Timing carries the durations (siteverify, ticket, start), never values", async () => {
+    const res = await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }));
+    expect(res.headers.get("Server-Timing")).toMatch(/^siteverify;dur=\d+, ticket;dur=\d+, start;dur=\d+$/);
+  });
+
+  it.each(["demo_busy", "demo_off", "unsupported_country", "demo_unverified"])("#604: start_demo refuses with %s → 409 with that code", async (code) => {
+    h.startError = { message: code };
+    const res = await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }));
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ code });
+  });
+
+  it("#604: any other start_demo error → 503 start_failed; a failed check never starts", async () => {
+    h.startError = { message: "boom" };
+    expect((await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }))).status).toBe(503);
+    h.rpc = [];
+    h.siteverify = { success: false };
+    expect((await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }))).status).toBe(403);
+    expect(h.rpc).toEqual([]);
+  });
+
+  it("without country (the app's first version): only the ticket, {status: issued}", async () => {
+    const res = await POST(req({ token: "tok" }));
+    expect(await res.json()).toEqual({ status: "issued" });
+    expect(h.rpc.map((r) => r.fn)).toEqual(["issue_demo_ticket"]);
+  });
+
+  it("#604 F: GET is a no-op warm-up: 204, no session read, nothing called", async () => {
+    const res = GET();
+    expect(res.status).toBe(204);
+    expect(h.rpc).toEqual([]);
+    expect(h.verifyBodies).toEqual([]);
   });
 
   it("no token: 400", async () => {

@@ -17,6 +17,10 @@ const h = vi.hoisted(() => ({
   track: vi.fn(),
   locale: "pt-BR",
   verifyStatus: 200,
+  serverFlagsFail: false,
+  // The demo's role exists once start_demo ran (the server's seed).
+  seeded: false,
+  prefetched: {} as Record<string, string>,
 }));
 // The bot check: the widget hands a token at once; /api/demo/verify answers verifyStatus.
 vi.mock("@/components/DemoTurnstile", async () => {
@@ -27,18 +31,31 @@ vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
   useParams: () => ({ locale: h.locale }),
   usePathname: () => "/pt-BR/dashboard",
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
+  // The router as Next behaves for /dashboard (83's ❌ on a55da1d3): a
+  // prefetch is rendered by the server AT THAT MOMENT and cached; the layout
+  // sends a session without a role (no start_demo yet) to /auth/login, and
+  // replace follows a cached redirect.
+  useRouter: () => ({
+    push: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: (u: string) => { h.calls.push(`prefetch ${u}`); h.prefetched[u] = h.seeded ? u : "/pt-BR/auth/login"; },
+    replace: (u: string) => replace(h.prefetched[u] ?? (h.seeded ? u : "/pt-BR/auth/login")),
+  }),
 }));
 vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
 }));
 vi.mock("@/lib/track", () => ({ track: h.track }));
+// The server page reads the switch (#604).
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: async () => ({ rpc: async (fn: string) => { h.calls.push(`server:${fn}`); return h.serverFlagsFail ? { data: null, error: { message: "down" } } : { data: fn === "get_public_flags" ? h.flags : null, error: null }; } }),
+}));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     rpc: async (fn: string, args?: Record<string, unknown>) => {
       h.calls.push(args ? `${fn}(${JSON.stringify(args)})` : fn);
       if (fn === "get_public_flags") return { data: h.flags, error: null };
-      if (fn === "start_demo") return { data: null, error: h.startError };
+      if (fn === "start_demo") { if (!h.startError) h.seeded = true; return { data: null, error: h.startError }; }
       return { data: null, error: null };
     },
     auth: {
@@ -69,7 +86,23 @@ beforeEach(() => {
   h.track.mockReset();
   h.locale = "pt-BR";
   h.verifyStatus = 200;
-  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string }) => { h.calls.push(`verify ${init?.body}`); return new Response(JSON.stringify({}), { status: url === "/api/demo/verify" ? h.verifyStatus : 404 }); }));
+  h.serverFlagsFail = false;
+  h.seeded = false;
+  h.prefetched = {};
+  // /api/demo/verify as the route behaves (#604): the ticket, then start_demo
+  // on the server with the caller's session → ready, or 409 with its refusal.
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string; method?: string }) => {
+    if (init?.method === "GET") { h.calls.push(`warm ${url}`); return new Response(null, { status: 204 }); }
+    h.calls.push(`verify ${init?.body}`);
+    if (url !== "/api/demo/verify") return new Response("{}", { status: 404 });
+    if (h.verifyStatus !== 200) return new Response(JSON.stringify({ code: "turnstile_failed" }), { status: h.verifyStatus });
+    const body = JSON.parse(init?.body ?? "{}") as { country?: string; locale?: string };
+    h.calls.push(`start_demo(${JSON.stringify({ p_country: body.country, p_locale: body.locale })})`);
+    const err = h.startError as { message?: string } | null;
+    if (!err) { h.seeded = true; return new Response(JSON.stringify({ status: "ready" }), { status: 200 }); }
+    const code = ["demo_off", "demo_busy", "unsupported_country", "demo_unverified"].find((c) => (err.message ?? "").includes(c));
+    return new Response(JSON.stringify({ code: code ?? "start_failed" }), { status: code ? 409 : 503 });
+  }));
   assign.mockClear();
   replace.mockClear();
   Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "" } });
@@ -128,13 +161,30 @@ describe("DemoBar", () => {
 describe("/demo", () => {
   const show = () => render(wrap(<DemoClient testAllowed siteKey="site" />));
 
-  it("the bot check (01 + 0e): a new visitor passes Turnstile BEFORE any session, then the ticket, then start_demo", async () => {
+  it("a new visitor (#604): Turnstile and the anonymous sign-in together, then ONE call (ticket + start_demo on the server), then the dashboard opened in-app, never via a stale prefetch (83)", async () => {
     h.flags = [{ key: "demo_mode", enabled: true }];
     show();
-    await waitFor(() => expect(replace).toHaveBeenCalled());
-    const order = ["turnstile", "signInAnonymously", `verify ${JSON.stringify({ token: "tok" })}`];
-    expect(h.calls.filter((c) => order.includes(c))).toEqual(order);
-    expect(h.calls.findIndex((c) => c.startsWith("start_demo"))).toBeGreaterThan(h.calls.indexOf(order[2]));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
+    const verify = h.calls.indexOf(`verify ${JSON.stringify({ token: "tok", country: "BR", locale: "pt-BR" })}`);
+    expect(verify).toBeGreaterThan(-1);
+    expect(h.calls.indexOf("turnstile")).toBeLessThan(verify);
+    expect(h.calls.indexOf("signInAnonymously")).toBeLessThan(verify);
+    // start_demo runs on the server (inside verify); never from the browser here.
+    expect(h.calls.filter((c) => c.startsWith("start_demo"))).toHaveLength(1);
+    // 83's ❌: never a prefetch before the demo exists (it cached the login redirect).
+    expect(h.calls.some((c) => c.startsWith("prefetch"))).toBe(false);
+    expect(replace).not.toHaveBeenCalledWith("/pt-BR/auth/login");
+    // F: the verify function is woken before the POST.
+    expect(h.calls.indexOf("warm /api/demo/verify")).toBeGreaterThan(-1);
+    expect(h.calls.indexOf("warm /api/demo/verify")).toBeLessThan(verify);
+  });
+
+  it("the loading card shows the real steps (#604, E)", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    show();
+    expect(screen.getByTestId("demo-step")).toHaveTextContent(pt.demo.verifying);
+    await waitFor(() => expect(screen.getByTestId("demo-step")).toHaveAttribute("data-step", "open"));
+    expect(screen.getByTestId("demo-step")).toHaveTextContent(pt.demo.stepOpen);
   });
 
   it("the check fails (verify refused): end_demo, sign-out, the retry; start_demo never called", async () => {
@@ -193,10 +243,42 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(<DemoPage />));
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
       expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
       expect(h.calls).not.toContain("signInAnonymously");
       expect(h.calls.some((c) => c.startsWith("start_demo"))).toBe(false);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("#604: the server reads the switch; Cloudflare is contacted only when the demo is on (cf)", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    try {
+      const cf = () => document.head.querySelector('link[rel="preconnect"][href="https://challenges.cloudflare.com"]');
+      const { unmount } = render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
+      expect(h.calls).toContain("server:get_public_flags");
+      expect(h.calls).not.toContain("get_public_flags");
+      expect(cf()).toBeNull();
+      unmount();
+      h.flags = [{ key: "demo_mode", enabled: true }];
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      await waitFor(() => expect(cf()).not.toBeNull());
+      expect(h.calls.filter((c) => c === "get_public_flags")).toHaveLength(0);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("#604: a failed server read is unknown, not \"off\": the browser asks again (cf)", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    try {
+      h.serverFlagsFail = true;
+      h.flags = [{ key: "demo_mode", enabled: true }];
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      await waitFor(() => expect(h.calls).toContain("get_public_flags"));
+      expect(screen.queryByTestId("demo-unavailable")).toBeNull();
     } finally {
       vi.unstubAllEnvs();
     }
@@ -206,7 +288,7 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "preview");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(<DemoPage />));
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
       await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
     } finally {
       vi.unstubAllEnvs();
@@ -297,5 +379,16 @@ describe("DemoCta (landing)", () => {
     unmount();
     render(wrap(<DemoCta className="x" testAllowed />));
     expect(await screen.findByTestId("landing-demo-cta")).toHaveAttribute("href", "/demo?demo_test=1");
+  });
+});
+
+describe("the dashboard in a demo (83: iPhone SE /th)", () => {
+  it("no \"what's new\" or SolvyAI intro sheet covers the DEMO bar and its sign-up: the demo has its own tour", async () => {
+    const { readFileSync } = await import("node:fs");
+    const src = readFileSync("src/app/[locale]/(site)/dashboard/layout.tsx", "utf8");
+    expect(src).toContain("newsPending={!isDemo && newsPending}");
+    expect(src).toContain("introPending={!isDemo && introPending}");
+    expect(src).toContain("introTestable={!isDemo && ");
+    expect(src).toContain("entry={isDemo || ");
   });
 });

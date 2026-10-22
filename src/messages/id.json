@@ -39,7 +39,9 @@
     "tourStep3": "Buat resep PDF",
     "tourStep4": "Tanya SolvyAI",
     "realDataHint": "Jangan masukkan data pasien sungguhan di demo.",
-    "verifying": "Memverifikasi…"
+    "verifying": "Memverifikasi…",
+    "stepCreate": "Membuat klinik demo Anda…",
+    "stepOpen": "Membuka jadwal Anda…"
   },
   "getApp": "Unduh Aplikasi",
   "hero": {
