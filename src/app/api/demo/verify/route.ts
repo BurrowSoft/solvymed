@@ -66,15 +66,28 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-real-ip")?.trim() ?? "";
 
   let success = false;
+  // Cloudflare's own reason codes on a refusal (01: "invalid-input-response"
+  // proves the secret is accepted, "invalid-input-secret" means it isn't).
+  // Only its fixed codes, never the secret or the token.
+  let reasons: string[] = [];
   try {
     const form = new URLSearchParams({ secret, response: token });
     if (ip) form.set("remoteip", ip);
     const res = await fetch(SITEVERIFY, { method: "POST", body: form, signal: AbortSignal.timeout(8000) });
-    success = res.ok && demoTurnstileAnswerOk((await res.json()) as { success?: boolean; action?: string; hostname?: string }, test);
+    const answer = (await res.json()) as { success?: boolean; action?: string; hostname?: string; "error-codes"?: unknown };
+    success = res.ok && demoTurnstileAnswerOk(answer, test);
+    reasons = Array.isArray(answer["error-codes"])
+      ? answer["error-codes"].filter((c): c is string => typeof c === "string" && /^[a-z0-9-]{1,40}$/.test(c)).slice(0, 5)
+      : [];
+    // A pass with the wrong widget or site (demoTurnstileAnswerOk).
+    if (!success && answer.success === true) reasons = ["action-or-hostname"];
   } catch {
     return fail("verify_unreachable", 503);
   }
-  if (!success) return fail("turnstile_failed", 403);
+  if (!success) {
+    console.warn(`[demo/verify] turnstile refused: ${reasons.join(",") || "no-reason"}`);
+    return NextResponse.json({ code: "turnstile_failed", errors: reasons }, { status: 403 });
+  }
 
   const { error } = await admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null });
   if (error) return (error.message ?? "").includes("not_anonymous") ? fail("not_anonymous", 403) : fail("ticket_failed", 503);
