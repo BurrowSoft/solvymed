@@ -1,4 +1,22 @@
 ﻿{
+  "demo": {
+    "barLabel": "Modo demonstração",
+    "barText": "Modo demonstração · dados fictícios, apagados em 24 h",
+    "barTextShort": "Dados fictícios",
+    "signup": "Criar minha conta grátis",
+    "signupShort": "Criar conta grátis",
+    "exit": "Sair da demonstração",
+    "menu": "Opções da demonstração",
+    "loading": "Preparando sua clínica de demonstração…",
+    "unavailableTitle": "A demonstração não está disponível agora",
+    "unavailableBody": "Crie sua conta grátis em 1 minuto.",
+    "signedInTitle": "Você já está conectado",
+    "openDashboard": "Abrir meu painel",
+    "error": "Não foi possível abrir a demonstração. Tente novamente.",
+    "retry": "Tentar novamente",
+    "busy": "Muita gente está testando a demonstração agora. Tente de novo em instantes.",
+    "landingCta": "Ver demonstração"
+  },
   "getApp": "Baixar o app",
   "hero": {
     "badge": "App disponível agora",

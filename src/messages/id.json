@@ -1,4 +1,22 @@
 ﻿{
+  "demo": {
+    "barLabel": "Mode demo",
+    "barText": "Mode demo · data fiktif, dihapus setelah 24 jam",
+    "barTextShort": "Data fiktif",
+    "signup": "Buat akun gratis saya",
+    "signupShort": "Buat akun gratis",
+    "exit": "Keluar dari demo",
+    "menu": "Opsi demo",
+    "loading": "Menyiapkan klinik demo Anda…",
+    "unavailableTitle": "Demo belum tersedia saat ini",
+    "unavailableBody": "Buat akun gratis Anda dalam 1 menit.",
+    "signedInTitle": "Anda sudah masuk",
+    "openDashboard": "Buka dasbor saya",
+    "error": "Tidak dapat membuka demo. Coba lagi.",
+    "retry": "Coba lagi",
+    "busy": "Banyak orang sedang mencoba demo saat ini. Coba lagi sebentar lagi.",
+    "landingCta": "Coba demo"
+  },
   "getApp": "Unduh Aplikasi",
   "hero": {
     "badge": "Aplikasi tersedia sekarang",

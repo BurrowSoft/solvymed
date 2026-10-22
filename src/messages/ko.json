@@ -1,4 +1,22 @@
 ﻿{
+  "demo": {
+    "barLabel": "데모 모드",
+    "barText": "데모 모드 · 가상 데이터, 24시간 후 삭제",
+    "barTextShort": "가상 데이터",
+    "signup": "무료 계정 만들기",
+    "signupShort": "무료 계정 만들기",
+    "exit": "데모 종료",
+    "menu": "데모 옵션",
+    "loading": "데모 진료소를 준비하는 중…",
+    "unavailableTitle": "지금은 데모를 사용할 수 없습니다",
+    "unavailableBody": "1분 만에 무료 계정을 만드세요.",
+    "signedInTitle": "이미 로그인되어 있습니다",
+    "openDashboard": "내 대시보드 열기",
+    "error": "데모를 열 수 없습니다. 다시 시도하세요.",
+    "retry": "다시 시도",
+    "busy": "지금 많은 분이 데모를 사용 중입니다. 잠시 후 다시 시도하세요.",
+    "landingCta": "데모 체험하기"
+  },
   "getApp": "앱 다운로드",
   "hero": {
     "badge": "앱 출시 완료",
