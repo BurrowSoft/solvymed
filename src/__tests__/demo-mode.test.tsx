@@ -123,6 +123,12 @@ describe("lib/demo", () => {
     expect(isDemoUser({ is_anonymous: false })).toBe(false);
     expect(isDemoUser(null)).toBe(false);
   });
+  it("leaveDemo signs out LOCALLY: end_demo already deleted the user (no 403 user_not_found)", async () => {
+    const scopes: unknown[] = [];
+    await leaveDemo({ rpc: async () => ({ error: null }), auth: { signOut: async (o?: unknown) => { scopes.push(o); } } });
+    expect(scopes).toEqual([{ scope: "local" }]);
+  });
+
   it("leaveDemo: end_demo then sign-out; an end_demo failure never blocks the sign-out", async () => {
     await leaveDemo({ rpc: async () => { throw new Error("down"); }, auth: { signOut: async () => { h.calls.push("signOut"); } } });
     expect(h.calls).toEqual(["signOut"]);

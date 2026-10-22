@@ -38,7 +38,7 @@ export function demoTitle(title: string): string {
 
 type DemoEnder = {
   rpc: (fn: "end_demo") => PromiseLike<{ error: unknown }>;
-  auth: { signOut: () => PromiseLike<unknown> };
+  auth: { signOut: (options?: { scope?: "local" | "global" | "others" }) => PromiseLike<unknown> };
 };
 
 // Leaving the demo (exit or sign-up): the sandbox goes now (234's end_demo;
@@ -52,7 +52,10 @@ export async function leaveDemo(supabase: unknown): Promise<void> {
     // The hourly cleanup deletes it within 24 h.
   }
   try {
-    await s.auth.signOut();
+    // Local only: end_demo has already deleted the user, so a server-side
+    // sign-out answers 403 user_not_found (01, 10-22); the browser's session
+    // is what's left to clear.
+    await s.auth.signOut({ scope: "local" });
   } catch {
     // Nothing to sign out of.
   }
