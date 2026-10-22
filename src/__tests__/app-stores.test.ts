@@ -45,3 +45,22 @@ describe("iosAppLink", () => {
     expect(iosAppLink("landing", "https://testflight.apple.com/join/")).toEqual({ mode: "soon" });
   });
 });
+
+describe("androidStoreLink (01: the Play Store app, not its website, from in-app browsers)", () => {
+  it("an intent to market:// with the same id and referrer, and the exact web link as the fallback", async () => {
+    const { androidStoreLink, playStoreUrl } = await import("@/lib/appStores");
+    const web = playStoreUrl("landing", "ep07");
+    const link = androidStoreLink(web);
+    expect(link).toBe(`intent://details?id=com.burrowsoft.solvymed&referrer=${encodeURIComponent("utm_source=solvymed_web&utm_medium=web&utm_campaign=landing&utm_content=ep07")}#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=${encodeURIComponent(web)};end`);
+    const u = new URL(link);
+    expect(u.searchParams.get("referrer")).toBe("utm_source=solvymed_web&utm_medium=web&utm_campaign=landing&utm_content=ep07");
+    expect(decodeURIComponent(u.hash.match(/S.browser_fallback_url=([^;]+)/)![1])).toBe(web);
+  });
+
+  it("no referrer: none added", async () => {
+    const { androidStoreLink } = await import("@/lib/appStores");
+    expect(androidStoreLink("https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed")).toBe(
+      "intent://details?id=com.burrowsoft.solvymed#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.burrowsoft.solvymed;end",
+    );
+  });
+});

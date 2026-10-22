@@ -99,6 +99,10 @@ describe("AndroidAppCta", () => {
     const referrer = new URL(play.href).searchParams.get("referrer")!;
     expect(referrer).toBe("utm_source=youtube&utm_medium=video&utm_campaign=ep07");
     expect(play.href).not.toContain("gclid");
+    // The Play Store app, in this tab (01): an intent with the website as fallback.
+    expect(play.href.startsWith("intent://details?id=com.burrowsoft.solvymed&")).toBe(true);
+    expect(play.href).toContain("#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2F");
+    expect(play.target).toBe("_self");
     expect(h.track).toHaveBeenCalledWith("app_store_click", { platform: "android", c: "BR" });
   });
 });

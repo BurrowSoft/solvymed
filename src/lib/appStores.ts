@@ -53,6 +53,20 @@ export function appShortlinkPlayTarget(visit: VisitUtm | null | undefined): stri
   return referrer ? `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}` : APP_SHORTLINK_TARGET;
 }
 
+// Android (01; c6's row from YouTube): inside an in-app browser (a Chrome
+// Custom Tab) a play.google.com link opens the Play WEBSITE, an extra step
+// at the key moment. An intent:// to market:// opens the Play Store app
+// with the same referrer; a browser that can't (no Play Store) follows
+// S.browser_fallback_url, today's exact play.google.com link. One helper
+// for every Android store link (the landing CTA, /app, the demo's chip).
+export function androidStoreLink(playUrl: string): string {
+  const u = new URL(playUrl);
+  const id = u.searchParams.get("id") ?? "";
+  const referrer = u.searchParams.get("referrer");
+  const query = `id=${encodeURIComponent(id)}${referrer ? `&referrer=${encodeURIComponent(referrer)}` : ""}`;
+  return `intent://details?${query}#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=${encodeURIComponent(playUrl)};end`;
+}
+
 // An Android phone (Android tablets omit "Mobile").
 export function isAndroidPhone(userAgent: string | null | undefined): boolean {
   return /Android.+Mobile/i.test(userAgent ?? "");

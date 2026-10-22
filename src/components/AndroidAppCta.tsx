@@ -1,6 +1,6 @@
 "use client";
 
-import { playStoreUrl, playStoreUrlForVisit, type VisitUtm } from "@/lib/appStores";
+import { androidStoreLink, playStoreUrl, playStoreUrlForVisit, type VisitUtm } from "@/lib/appStores";
 import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
 import { currentConsent, readCookie } from "@/lib/consentClient";
 import { COUNTRY_STEP } from "@/lib/signupCountry";
@@ -46,7 +46,10 @@ export function AndroidAppCta({
         data-testid="android-app-cta-play"
         className={className}
         onClick={(e) => {
-          e.currentTarget.href = playStoreUrlForVisit("landing", consentedVisit());
+          // The Play Store app (an intent; the website as its fallback), in
+          // this tab: a new tab would be left blank behind the store (01).
+          e.currentTarget.href = androidStoreLink(playStoreUrlForVisit("landing", consentedVisit()));
+          e.currentTarget.target = "_self";
           track("app_store_click", { platform: "android", c: COUNTRY_STEP.find((s) => s.locale === locale)?.code ?? null });
         }}
       >
