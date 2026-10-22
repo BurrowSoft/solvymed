@@ -11,24 +11,35 @@ import { demoTurnstileAnswerOk, demoTurnstileKeys } from "@/lib/demoTurnstile";
 // the address Vercel saw (x-real-ip: set by Vercel, never by the client).
 // start_demo then needs that ticket (demo_unverified without it). Nothing
 // is stored here; the token and the address go only to Cloudflare and 234.
+// #604: with {country, locale} in the body (the web's /demo), the route then
+// calls start_demo itself with the caller's own session (it consumes the
+// single-use ticket) and answers {status:"ready"} or 409 {code} with
+// start_demo's refusal: one round trip less. Without them (the app's first
+// version): {status:"issued"}, as before.
 
 const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-type Code = "bad_token" | "unauthorized" | "not_anonymous" | "not_configured" | "verify_unreachable" | "turnstile_failed" | "ticket_failed" | "demo_preview_closed";
+type Code = "bad_token" | "unauthorized" | "not_anonymous" | "not_configured" | "verify_unreachable" | "turnstile_failed" | "ticket_failed" | "demo_preview_closed" | "start_failed";
+// start_demo's refusals (234), passed on as they are.
+const START_REFUSALS = ["demo_off", "demo_busy", "unsupported_country", "demo_unverified", "not_anonymous", "not_signed_in"] as const;
 
 function fail(code: Code, status: number) {
   return NextResponse.json({ code }, { status });
 }
 
-async function callerUser(request: NextRequest) {
+// The caller's verified user, and a client acting as that caller (for
+// start_demo).
+async function caller(request: NextRequest): Promise<{ user: { id: string; is_anonymous?: boolean } | null; db: SupabaseClient }> {
   const bearer = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
   if (bearer) {
-    const supabase = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+    const db = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
+      global: { headers: { Authorization: `Bearer ${bearer}` } },
       auth: { persistSession: false, autoRefreshToken: false },
     });
-    return (await supabase.auth.getUser(bearer)).data.user;
+    return { user: (await db.auth.getUser(bearer)).data.user, db };
   }
-  return (await (await createClient()).auth.getUser()).data.user;
+  const db = (await createClient()) as unknown as SupabaseClient;
+  return { user: (await db.auth.getUser()).data.user, db };
 }
 
 async function previewWindowOpen(admin: SupabaseClient): Promise<boolean> {
@@ -43,11 +54,12 @@ async function previewWindowOpen(admin: SupabaseClient): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json().catch(() => null)) as { token?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { token?: unknown; country?: unknown; locale?: unknown } | null;
   const token = typeof body?.token === "string" ? body.token : "";
   if (!token || token.length > 2048) return fail("bad_token", 400);
 
-  const user = await callerUser(request).catch(() => null);
+  const who = await caller(request).catch(() => null);
+  const user = who?.user ?? null;
   if (!user) return fail("unauthorized", 401);
   // Only the demo's anonymous sessions get a ticket (234 refuses others too).
   if (!isDemoUser(user)) return fail("not_anonymous", 403);
@@ -78,5 +90,10 @@ export async function POST(request: NextRequest) {
 
   const { error } = await admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null });
   if (error) return (error.message ?? "").includes("not_anonymous") ? fail("not_anonymous", 403) : fail("ticket_failed", 503);
-  return NextResponse.json({ status: "issued" });
+  if (typeof body?.country !== "string" || !who) return NextResponse.json({ status: "issued" });
+  const locale = typeof body.locale === "string" ? body.locale.slice(0, 10) : "en";
+  const { error: startError } = await who.db.rpc("start_demo", { p_country: body.country.slice(0, 2), p_locale: locale });
+  if (!startError) return NextResponse.json({ status: "ready" });
+  const refused = START_REFUSALS.find((c) => (startError.message ?? "").includes(c));
+  return refused ? NextResponse.json({ code: refused }, { status: 409 }) : fail("start_failed", 503);
 }

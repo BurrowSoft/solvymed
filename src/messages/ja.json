@@ -39,7 +39,9 @@
     "tourStep3": "処方箋をPDFで作成",
     "tourStep4": "SolvyAI に質問",
     "realDataHint": "デモには実際の患者データを入力しないでください。",
-    "verifying": "確認しています…"
+    "verifying": "確認しています…",
+    "stepCreate": "デモクリニックを作成しています…",
+    "stepOpen": "スケジュールを開いています…"
   },
   "getApp": "アプリを入手",
   "hero": {

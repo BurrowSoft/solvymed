@@ -39,7 +39,9 @@
     "tourStep3": "建立處方 PDF",
     "tourStep4": "詢問 SolvyAI",
     "realDataHint": "請勿在示範中輸入真實患者資料。",
-    "verifying": "正在驗證…"
+    "verifying": "正在驗證…",
+    "stepCreate": "正在建立您的示範診所…",
+    "stepOpen": "正在開啟您的行程…"
   },
   "getApp": "下載應用程式",
   "hero": {

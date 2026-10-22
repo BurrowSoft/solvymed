@@ -27,7 +27,7 @@ vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
   useParams: () => ({ locale: h.locale }),
   usePathname: () => "/pt-BR/dashboard",
-  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn() }),
+  useRouter: () => ({ push: vi.fn(), replace: (u: string) => replace(u), refresh: vi.fn(), prefetch: (u: string) => h.calls.push(`prefetch ${u}`) }),
 }));
 vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
@@ -69,7 +69,19 @@ beforeEach(() => {
   h.track.mockReset();
   h.locale = "pt-BR";
   h.verifyStatus = 200;
-  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string }) => { h.calls.push(`verify ${init?.body}`); return new Response(JSON.stringify({}), { status: url === "/api/demo/verify" ? h.verifyStatus : 404 }); }));
+  // /api/demo/verify as the route behaves (#604): the ticket, then start_demo
+  // on the server with the caller's session → ready, or 409 with its refusal.
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string }) => {
+    h.calls.push(`verify ${init?.body}`);
+    if (url !== "/api/demo/verify") return new Response("{}", { status: 404 });
+    if (h.verifyStatus !== 200) return new Response(JSON.stringify({ code: "turnstile_failed" }), { status: h.verifyStatus });
+    const body = JSON.parse(init?.body ?? "{}") as { country?: string; locale?: string };
+    h.calls.push(`start_demo(${JSON.stringify({ p_country: body.country, p_locale: body.locale })})`);
+    const err = h.startError as { message?: string } | null;
+    if (!err) return new Response(JSON.stringify({ status: "ready" }), { status: 200 });
+    const code = ["demo_off", "demo_busy", "unsupported_country", "demo_unverified"].find((c) => (err.message ?? "").includes(c));
+    return new Response(JSON.stringify({ code: code ?? "start_failed" }), { status: code ? 409 : 503 });
+  }));
   assign.mockClear();
   replace.mockClear();
   Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "" } });
@@ -128,13 +140,26 @@ describe("DemoBar", () => {
 describe("/demo", () => {
   const show = () => render(wrap(<DemoClient testAllowed siteKey="site" />));
 
-  it("the bot check (01 + 0e): a new visitor passes Turnstile BEFORE any session, then the ticket, then start_demo", async () => {
+  it("a new visitor (#604): Turnstile and the anonymous sign-in together, then ONE call (ticket + start_demo on the server), the dashboard warmed, then opened in-app", async () => {
     h.flags = [{ key: "demo_mode", enabled: true }];
     show();
-    await waitFor(() => expect(replace).toHaveBeenCalled());
-    const order = ["turnstile", "signInAnonymously", `verify ${JSON.stringify({ token: "tok" })}`];
-    expect(h.calls.filter((c) => order.includes(c))).toEqual(order);
-    expect(h.calls.findIndex((c) => c.startsWith("start_demo"))).toBeGreaterThan(h.calls.indexOf(order[2]));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
+    const verify = h.calls.indexOf(`verify ${JSON.stringify({ token: "tok", country: "BR", locale: "pt-BR" })}`);
+    expect(verify).toBeGreaterThan(-1);
+    expect(h.calls.indexOf("turnstile")).toBeLessThan(verify);
+    expect(h.calls.indexOf("signInAnonymously")).toBeLessThan(verify);
+    // start_demo runs on the server (inside verify); never from the browser here.
+    expect(h.calls.filter((c) => c.startsWith("start_demo"))).toHaveLength(1);
+    expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeGreaterThan(h.calls.indexOf("signInAnonymously"));
+    expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeLessThan(verify);
+  });
+
+  it("the loading card shows the real steps (#604, E)", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    show();
+    expect(screen.getByTestId("demo-step")).toHaveTextContent(pt.demo.verifying);
+    await waitFor(() => expect(screen.getByTestId("demo-step")).toHaveAttribute("data-step", "open"));
+    expect(screen.getByTestId("demo-step")).toHaveTextContent(pt.demo.stepOpen);
   });
 
   it("the check fails (verify refused): end_demo, sign-out, the retry; start_demo never called", async () => {
