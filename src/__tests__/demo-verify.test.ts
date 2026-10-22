@@ -27,7 +27,7 @@ vi.mock("@supabase/supabase-js", () => ({
   createClient: (_url: string, key: string) => ({
     auth: { getUser: async () => ({ data: { user: h.bearerUser } }) },
     rpc: async (fn: string, args: unknown) => { h.rpc.push({ fn, args, key }); return { data: { status: "issued" }, error: h.rpcError }; },
-    from: (table: string) => ({ select: () => ({ in: async () => (table === "server_flags" ? { data: h.flagsError ? null : h.flags, error: h.flagsError } : { data: null, error: { message: "no" } }) }) }),
+    from: (table: string) => ({ select: () => ({ eq: async (col: string, val: string) => (table === "server_flags" ? { data: h.flagsError ? null : h.flags.filter((r) => (r as Record<string, unknown>)[col] === val), error: h.flagsError } : { data: null, error: { message: "no" } }) }) }),
   }),
 }));
 
@@ -186,10 +186,10 @@ describe("/api/demo/verify", () => {
     h.flags = [{ key: "demo_test_window", enabled: c.window }, { key: "demo_mode", enabled: c.mode }];
   };
 
-  it.each(combos)("a preview (always-pass keys), window $window / demo_mode $mode: a ticket only for window on + demo_mode off (01, cf)", async (c) => {
+  it.each(combos)("a preview (always-pass keys), window $window / demo_mode $mode: a ticket whenever the testers' window is on, demo_mode or not (01, 83: the demo is public now)", async (c) => {
     setFlags(c);
     const res = await POST(req({ token: "tok" }));
-    if (c.window && !c.mode) {
+    if (c.window) {
       expect(res.status).toBe(200);
       expect(h.rpc.map((r) => r.fn)).toEqual(["issue_demo_ticket"]);
     } else {

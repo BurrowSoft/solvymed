@@ -44,10 +44,10 @@ async function caller(request: NextRequest): Promise<{ user: { id: string; is_an
 
 async function previewWindowOpen(admin: SupabaseClient): Promise<boolean> {
   try {
-    const { data, error } = await admin.from("server_flags").select("key, enabled").in("key", ["demo_mode", "demo_test_window"]);
+    const { data, error } = await admin.from("server_flags").select("key, enabled").eq("key", "demo_test_window");
     if (error || !Array.isArray(data)) return false;
     const on = (key: string) => data.some((r: { key: string; enabled: boolean }) => r.key === key && r.enabled === true);
-    return on("demo_test_window") && !on("demo_mode");
+    return on("demo_test_window");
   } catch {
     return false;
   }
@@ -71,9 +71,11 @@ export async function POST(request: NextRequest) {
   });
   // Off Production the check is Cloudflare's always-pass test keys, while
   // previews share Production's database (cf's #600 block): a preview mints
-  // a ticket ONLY during the testers' window (demo_test_window on) and
-  // never once the demo is public (demo_mode off), both read here with the
-  // service role (01). Anything else, or a failed read: no ticket.
+  // a ticket ONLY during the testers' window (demo_test_window on, read here
+  // with the service role; 01). Not tied to demo_mode any more (83, 10-22:
+  // with the demo public, that rule blocked every preview for good); the
+  // window is time-boxed by 01 and previews sit behind Vercel SSO. Anything
+  // else, or a failed read: no ticket.
   if (test && !(await previewWindowOpen(admin))) return fail("demo_preview_closed", 403);
   const ip = request.headers.get("x-real-ip")?.trim() ?? "";
 
