@@ -28,7 +28,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 import { stampDemo } from "@/lib/pdf/demoStamp";
-import { DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
+import { DemoAndroidChip, DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
 
@@ -162,5 +162,37 @@ describe("don't enter real patient data (the spec's guardrail; cf's #598 block)"
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/PatientsClient.tsx")).toBe(1);
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient.tsx")).toBe(3);
     expect(src("components/DemoBar.tsx")).toContain("data-testid=\"demo-bar-hint\"");
+  });
+});
+
+describe("the demo's Android chip (#601: the Play Store app, not its website)", () => {
+  const ANDROID = "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36";
+  const WEBVIEW = "Mozilla/5.0 (Linux; Android 14; Pixel 7; wv) AppleWebKit/537.36 Version/4.0 Chrome/129.0 Mobile Safari/537.36 Instagram 350.0";
+  const click = () => {
+    const a = screen.getByTestId("demo-android-chip").querySelector("a")!;
+    a.addEventListener("click", (e) => e.preventDefault());
+    fireEvent.click(a);
+    return a;
+  };
+  beforeEach(() => { sessionStorage.clear(); h.track.mockReset(); });
+
+  it("Android Chrome: an intent to the Play Store app, in this tab, the https listing as its fallback; the event", () => {
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue(ANDROID);
+    render(wrap(<DemoAndroidChip />));
+    const a = click();
+    expect(a.href.startsWith("intent://details?id=com.burrowsoft.solvymed")).toBe(true);
+    expect(a.href).toContain("#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2F");
+    expect(a.target).toBe("_self");
+    expect(h.track).toHaveBeenCalledWith("app_store_click", { platform: "android", from: "demo" });
+    ua.mockRestore();
+  });
+
+  it("a plain WebView (\"; wv)\"): the https listing in a new tab", () => {
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue(WEBVIEW);
+    render(wrap(<DemoAndroidChip />));
+    const a = click();
+    expect(a.href.startsWith("https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed")).toBe(true);
+    expect(a.target).toBe("_blank");
+    ua.mockRestore();
   });
 });

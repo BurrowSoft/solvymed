@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isDemoUser, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
-import { playStoreUrlForVisit } from "@/lib/appStores";
+import { isAndroidWebView, playStoreUrlForVisit, storeLinkForAgent } from "@/lib/appStores";
 import { consentedVisit } from "@/lib/consentedVisit";
 
 // Demo guards on the web (specs/demo-mode.md; 234's contract §5). The server
@@ -272,8 +272,11 @@ export function DemoAndroidChip() {
       <div className="flex items-center gap-2 rounded-full bg-white/95 py-1 pl-3 pr-1 text-xs font-semibold text-slate-700 shadow-md ring-1 ring-slate-200">
         <a href="https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed" target="_blank" rel="noopener noreferrer"
           onClick={(e) => {
-            // Set before the browser follows the link (F5: the consented campaign).
-            e.currentTarget.href = playStoreUrlForVisit("landing", consentedVisit());
+            // Set before the browser follows the link (F5: the consented campaign):
+            // the Play Store app (an intent, the website as its fallback) in
+            // this tab; a plain WebView keeps the https link (#601).
+            e.currentTarget.href = storeLinkForAgent(navigator.userAgent, playStoreUrlForVisit("landing", consentedVisit()));
+            if (!isAndroidWebView(navigator.userAgent)) e.currentTarget.target = "_self";
             track("app_store_click", { platform: "android", from: "demo" });
           }}
           className="underline-offset-2 hover:underline">
