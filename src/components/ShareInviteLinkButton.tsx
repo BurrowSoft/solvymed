@@ -6,10 +6,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { markInviteShared } from "@/lib/setupActions";
 import { withCountryHint } from "@/lib/signupCountry";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // "Share invite link" (first-run): copies the doctor's public join link.
 // Without a code yet, it opens Settings, where the invite code is created.
-export function ShareInviteLinkButton({ code, country = null, className = "", size = "md" }: { code: string | null; country?: string | null; className?: string; size?: "md" | "sm" }) {
+function ShareInviteLinkButtonInner({ code, country = null, className = "", size = "md" }: { code: string | null; country?: string | null; className?: string; size?: "md" | "sm" }) {
   const t = useTranslations("firstRun");
   const { locale } = useParams<{ locale: string }>();
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -37,5 +38,16 @@ export function ShareInviteLinkButton({ code, country = null, className = "", si
     <button type="button" onClick={handleCopy} className={style} aria-live="polite">
       {copied ? t("linkCopied") : t("shareInviteLink")}
     </button>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function ShareInviteLinkButton(props: Parameters<typeof ShareInviteLinkButtonInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <ShareInviteLinkButtonInner {...props} />
+    </DemoGate>
   );
 }

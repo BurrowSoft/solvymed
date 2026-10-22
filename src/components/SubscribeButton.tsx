@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { DemoGate, useDemo, useDemoSession } from "@/components/DemoGate";
 
 interface Props {
   locale: string;
@@ -19,7 +20,7 @@ const ERROR_CODE_KEY: Record<string, string> = {
   payment_failed: "errorPaymentFailed",
 };
 
-export function SubscribeButton({ locale, label, sublabel, userName, userEmail }: Props) {
+function SubscribeButtonInner({ locale, label, sublabel, userName, userEmail }: Props) {
   const t = useTranslations("subscription");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -63,5 +64,17 @@ export function SubscribeButton({ locale, label, sublabel, userName, userEmail }
       {sublabel && <p className="text-center text-xs text-slate-400">{sublabel}</p>}
       {error && <p className="text-center text-xs text-red-500">{error}</p>}
     </div>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function SubscribeButton(props: Parameters<typeof SubscribeButtonInner>[0]) {
+  const { demo } = useDemo();
+  const session = useDemoSession();
+  return (
+    <DemoGate demo={demo || session}>
+      <SubscribeButtonInner {...props} />
+    </DemoGate>
   );
 }

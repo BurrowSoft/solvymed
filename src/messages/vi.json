@@ -15,7 +15,12 @@
     "error": "Không mở được bản demo. Vui lòng thử lại.",
     "retry": "Thử lại",
     "busy": "Hiện có nhiều người đang dùng thử bản demo. Vui lòng thử lại sau giây lát.",
-    "landingCta": "Dùng thử demo"
+    "landingCta": "Dùng thử demo",
+    "blocked": "Có trong tài khoản của bạn",
+    "blockedBody": "Tạo tài khoản miễn phí để dùng tính năng này với bệnh nhân thật.",
+    "publicNotice": "Bạn đang ở chế độ demo. Hãy thoát để đặt lịch thật.",
+    "aiQuotaTitle": "Tạo tài khoản để tiếp tục trò chuyện với SolvyAI",
+    "aiQuotaBody": "Bản demo có 5 tin nhắn. Trong tài khoản của bạn, SolvyAI dùng được mỗi ngày."
   },
   "getApp": "Tải ứng dụng",
   "hero": {

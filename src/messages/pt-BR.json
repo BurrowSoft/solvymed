@@ -15,7 +15,12 @@
     "error": "Não foi possível abrir a demonstração. Tente novamente.",
     "retry": "Tentar novamente",
     "busy": "Muita gente está testando a demonstração agora. Tente de novo em instantes.",
-    "landingCta": "Ver demonstração"
+    "landingCta": "Ver demonstração",
+    "blocked": "Disponível na sua conta",
+    "blockedBody": "Crie sua conta grátis para usar isso com seus pacientes reais.",
+    "publicNotice": "Você está na demonstração. Saia para agendar de verdade.",
+    "aiQuotaTitle": "Crie sua conta para continuar conversando com a SolvyAI",
+    "aiQuotaBody": "A demonstração inclui 5 mensagens. Na sua conta, a SolvyAI está disponível todos os dias."
   },
   "getApp": "Baixar o app",
   "hero": {

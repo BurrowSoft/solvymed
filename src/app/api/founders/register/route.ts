@@ -4,6 +4,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { conditionMet } from "@/lib/conditions";
 import { mapRegisterError } from "@/lib/foundersUpload";
 import { sendFounderUploadNotice } from "@/lib/foundersEmail";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 // Founders stage 2: after the browser's upload, the file is registered as
 // the founder's sample (founder_register_sample, as the signed-in doctor,
@@ -20,6 +21,8 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ code: "not_allowed" }, { status: 401 });
+  // A demo (anonymous) session never reaches Stripe / closes / uploads (234 §5.7).
+  if (isDemoUser(user)) return NextResponse.json({ error: "Not available in the demo", code: DEMO_NOT_ALLOWED }, { status: 403 });
   if (!path.startsWith(`${user.id}/`) || path.includes("..") || path.length > 200) return NextResponse.json({ code: "not_allowed" }, { status: 403 });
 
   const { data, error } = await supabase.rpc("founder_register_sample", { p_object_path: path, p_confirmed_test_only: true });
