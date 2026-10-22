@@ -28,3 +28,28 @@ describe("the phone menu button", () => {
     expect(screen.getByRole("button", { name: "Fechar menu" })).toHaveAttribute("aria-expanded", "true");
   });
 });
+
+describe("the phone menu button vs SolvyAI's full-screen panel (Vitor, 10-23)", () => {
+  const renderSidebar = () => render(
+    <NextIntlClientProvider locale="pt-BR" messages={pt}>
+      <DashboardSidebar locale="pt-BR" firstName="Ana" email="ana@x.invalid" isSecretary={false} />
+    </NextIntlClientProvider>,
+  );
+
+  it("opening the drawer asks SolvyAI to close first; closing it doesn't", () => {
+    const asked = vi.fn();
+    window.addEventListener("solvyai-close", asked);
+    renderSidebar();
+    fireEvent.click(screen.getByRole("button", { name: "Abrir menu" }));
+    expect(asked).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole("button", { name: "Fechar menu" }));
+    expect(asked).toHaveBeenCalledTimes(1);
+    window.removeEventListener("solvyai-close", asked);
+  });
+
+  it("globals.css hides the ☰ below lg while the panel is open", async () => {
+    const { readFileSync } = await import("node:fs");
+    const css = readFileSync("src/app/globals.css", "utf8");
+    expect(css).toMatch(/@media \(max-width: 1023\.98px\) \{\s*html\[data-solvyai-open\] \[data-tour="nav-menu"\] \{ display: none; \}/);
+  });
+});

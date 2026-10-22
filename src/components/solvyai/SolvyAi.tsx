@@ -10,7 +10,7 @@ import { maskPersonalData, MAX_MESSAGE_CHARS, MAX_TURNS, MIN_SECONDS_BETWEEN } f
 import type { AnswerBlock, AnswerChunk, AssistantBackend, AssistantScreen, AssistantUsage, ConfirmationCard, SlotChoice } from "@/lib/assistant/types";
 import { isInternalHref, webPath } from "@/lib/assistant/targets";
 import { formatDateLabel, type DateCalendar } from "@/lib/dateLabels";
-import { BUTTON_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
+import { BUTTON_EVENT, CLOSE_REQUEST_EVENT, CLOSED_EVENT, OPEN_EVENT, readButtonHidden } from "./SolvyAiSettings";
 import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
@@ -285,8 +285,18 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
   useEffect(() => {
     if (!open || minimized) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !e.defaultPrevented) closeRef.current(); };
+    // The phone's menu drawer asks for the screen: close.
+    const onCloseRequest = () => closeRef.current();
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener(CLOSE_REQUEST_EVENT, onCloseRequest);
+    // While open, <html data-solvyai-open>: below lg, the menu button hides
+    // (globals.css) instead of floating over the full-screen panel.
+    document.documentElement.setAttribute("data-solvyai-open", "");
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener(CLOSE_REQUEST_EVENT, onCloseRequest);
+      document.documentElement.removeAttribute("data-solvyai-open");
+    };
   }, [open, minimized]);
   // The tour's "Experimentar agora": open and ask its question.
   const sendRef = useRef(send);

@@ -119,6 +119,14 @@ describe("SolvyAI panel (specs/assistant.md §2)", () => {
     expect(screen.queryByTestId("solvyai-panel")).toBeNull();
   });
 
+  it("while open, <html data-solvyai-open> is set (the ☰ hides below lg); closing clears it; the menu drawer's close request closes the panel", () => {
+    openPanel();
+    expect(document.documentElement.hasAttribute("data-solvyai-open")).toBe(true);
+    fireEvent(window, new Event("solvyai-close"));
+    expect(screen.queryByTestId("solvyai-panel")).toBeNull();
+    expect(document.documentElement.hasAttribute("data-solvyai-open")).toBe(false);
+  });
+
   it("Escape does nothing while the panel is closed", () => {
     render(<SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />);
     const closed = vi.fn();
