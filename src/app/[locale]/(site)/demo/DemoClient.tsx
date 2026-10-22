@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { publicFlag } from "@/lib/publicFlags";
 import { demoCountry, demoTestOn, isDemoUser, leaveDemo } from "@/lib/demo";
 import { track } from "@/lib/track";
+import { DemoTurnstile } from "@/components/DemoTurnstile";
 
 // /demo: the ads' landing (specs/demo-mode.md). Straight into the demo
 // clinic: no form, no country step (the path's country, as F2). An anonymous
@@ -21,7 +22,8 @@ import { track } from "@/lib/track";
 type State = "loading" | "unavailable" | "signedIn" | "busy" | "error";
 
 // testAllowed: ?demo_test=1 counts only off Production (page.tsx, the server).
-export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
+// siteKey: the demo's Turnstile key (lib/demoTurnstile, from the server).
+export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; siteKey: string }) {
   const t = useTranslations("demo");
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
@@ -29,6 +31,10 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
   const country = demoCountry(locale);
   const [state, setState] = useState<State>("loading");
   const [attempt, setAttempt] = useState(0);
+  // The bot check (01 + 0e): shown on the loading screen only while a token
+  // is awaited; the flow waits on this promise.
+  const [challenge, setChallenge] = useState(0);
+  const pending = useRef<{ resolve: (token: string) => void; reject: (e: Error) => void } | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -48,7 +54,18 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
       await leaveDemo(supabase);
     };
     const refusal = (e: { message?: string } | null) =>
-      ["demo_off", "demo_busy", "unsupported_country"].find((c) => (e?.message ?? "").includes(c)) ?? null;
+      ["demo_off", "demo_busy", "unsupported_country", "demo_unverified"].find((c) => (e?.message ?? "").includes(c)) ?? null;
+    // A Turnstile token, then /api/demo/verify (the ticket for this anonymous
+    // session and address). Any failure counts as 234's demo_unverified.
+    const token = () => new Promise<string>((resolve, reject) => {
+      if (!siteKey) return reject(new Error("demo_unverified"));
+      pending.current = { resolve, reject };
+      setChallenge((n) => n + 1);
+    });
+    const verify = async (t: string) => {
+      const res = await fetch("/api/demo/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: t }) });
+      if (!res.ok) throw new Error("demo_unverified");
+    };
     void (async () => {
       try {
         const on = demoTestOn(location.search, testAllowed) || (await publicFlag(supabase, "demo_mode"));
@@ -63,12 +80,27 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
           setState("signedIn");
           return;
         }
+        // A new visitor passes the check BEFORE any session is made; a
+        // returning one (an open sandbox answers "ready" with no ticket) only
+        // when 234 asks (demo_unverified).
+        const start = () => supabase.rpc("start_demo", { p_country: country, p_locale: locale });
+        let startError: { message?: string } | null;
         if (!user) {
+          const t = await token();
+          if (!live) return;
           const { error } = await supabase.auth.signInAnonymously();
           if (error) throw error;
           fresh = true;
+          try { await verify(t); } catch (e) { startError = { message: (e as Error).message }; }
+          startError ??= (await start()).error;
+        } else {
+          startError = (await start()).error;
+          if (refusal(startError) === "demo_unverified") {
+            const t = await token();
+            if (!live) return;
+            try { await verify(t); startError = (await start()).error; } catch (e) { startError = { message: (e as Error).message }; }
+          }
         }
-        const { error: startError } = await supabase.rpc("start_demo", { p_country: country, p_locale: locale });
         const refused = refusal(startError);
         if (refused) await cleanUp(true);
         // 234: demo_busy = over the abuse caps (per IP / in total): a moment.
@@ -82,6 +114,7 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
           if (live) setState("unavailable");
           return;
         }
+        // demo_unverified (the check failed): cleaned up above, a retry.
         if (startError) throw startError;
         track("demo_start", { platform: "web", c: country });
         window.location.replace(`${prefix}/dashboard`);
@@ -91,7 +124,7 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
       }
     })();
     return () => { live = false; };
-  }, [attempt, country, locale, prefix, testAllowed]);
+  }, [attempt, country, locale, prefix, testAllowed, siteKey]);
 
   return (
     <AuthPageShell>
@@ -101,6 +134,12 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
           <div data-testid="demo-loading" role="status" className="flex flex-col items-center gap-4 py-6">
             <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#F59E0B] border-t-transparent" aria-hidden="true" />
             <p className="text-base font-semibold text-slate-800">{t("loading")}</p>
+            <p data-testid="demo-loading-hint" className="text-center text-xs font-semibold text-slate-500"><span aria-hidden="true">⚠️ </span>{t("realDataHint")}</p>
+            {challenge > 0 && (
+              <DemoTurnstile key={challenge} siteKey={siteKey} locale={locale}
+                onToken={(tok) => { pending.current?.resolve(tok); pending.current = null; }}
+                onError={() => { pending.current?.reject(new Error("demo_unverified")); pending.current = null; }} />
+            )}
           </div>
         )}
         {state === "unavailable" && (
