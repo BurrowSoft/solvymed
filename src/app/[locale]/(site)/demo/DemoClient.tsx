@@ -57,6 +57,14 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
           if (live) setState("busy");
           return;
         }
+        // 234: demo_off = the switch (and the testers' window) is off on the
+        // server, whatever this page thought: the sign-up card, and the
+        // anonymous session just made goes (01, 10-22).
+        if (startError && (startError.message ?? "").includes("demo_off")) {
+          await supabase.auth.signOut().catch(() => undefined);
+          if (live) setState("unavailable");
+          return;
+        }
         if (startError) throw startError;
         track("demo_start", { platform: "web", c: country });
         window.location.replace(`${prefix}/dashboard`);
