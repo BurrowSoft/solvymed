@@ -11,7 +11,7 @@ export function DemoTurnstile({ siteKey, locale, onToken, onError }: {
   siteKey: string;
   locale: string;
   onToken: (token: string) => void;
-  onError: () => void;
+  onError: (code: "error" | "expired" | "load_failed") => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const cb = useRef({ onToken, onError });
@@ -29,10 +29,11 @@ export function DemoTurnstile({ siteKey, locale, onToken, onError }: {
           appearance: "interaction-only",
           language: locale,
           callback: (token: string) => cb.current.onToken(token),
-          "error-callback": () => cb.current.onError(),
+          "error-callback": () => cb.current.onError("error"),
+          "expired-callback": () => cb.current.onError("expired"),
         });
       })
-      .catch(() => cb.current.onError());
+      .catch(() => cb.current.onError("load_failed"));
     return () => {
       cancelled = true;
       if (id && window.turnstile) window.turnstile.remove(id);

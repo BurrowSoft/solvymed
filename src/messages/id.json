@@ -38,7 +38,8 @@
     "tourStep2": "Buka rekam medis pasien",
     "tourStep3": "Buat resep PDF",
     "tourStep4": "Tanya SolvyAI",
-    "realDataHint": "Jangan masukkan data pasien sungguhan di demo."
+    "realDataHint": "Jangan masukkan data pasien sungguhan di demo.",
+    "verifying": "Memverifikasi…"
   },
   "getApp": "Unduh Aplikasi",
   "hero": {

@@ -38,7 +38,8 @@
     "tourStep2": "Mở hồ sơ bệnh nhân",
     "tourStep3": "Tạo đơn thuốc PDF",
     "tourStep4": "Hỏi SolvyAI",
-    "realDataHint": "Đừng nhập dữ liệu bệnh nhân thật vào bản demo."
+    "realDataHint": "Đừng nhập dữ liệu bệnh nhân thật vào bản demo.",
+    "verifying": "Đang xác minh…"
   },
   "getApp": "Tải ứng dụng",
   "hero": {

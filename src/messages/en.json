@@ -38,7 +38,8 @@
     "tourStep2": "Open a patient record",
     "tourStep3": "Create a prescription PDF",
     "tourStep4": "Ask SolvyAI",
-    "realDataHint": "Don't enter real patient data in the demo."
+    "realDataHint": "Don't enter real patient data in the demo.",
+    "verifying": "Verifying…"
   },
   "getApp": "Get the App",
   "hero": {

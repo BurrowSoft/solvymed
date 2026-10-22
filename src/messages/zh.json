@@ -38,7 +38,8 @@
     "tourStep2": "打开患者病历",
     "tourStep3": "创建处方 PDF",
     "tourStep4": "询问 SolvyAI",
-    "realDataHint": "请勿在演示中输入真实患者数据。"
+    "realDataHint": "请勿在演示中输入真实患者数据。",
+    "verifying": "正在验证…"
   },
   "getApp": "下载应用",
   "hero": {
