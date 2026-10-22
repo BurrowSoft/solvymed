@@ -114,3 +114,10 @@ html[data-platform="android"] .android-hide { display: none; }
 }
 .demo-spotlight { position: relative; z-index: 45; border-radius: 0.75rem; animation: demo-spotlight-pulse 1.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .demo-spotlight { animation: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.9); } }
+
+/* SolvyAI's panel is full screen below lg: the phone's menu button (☰)
+   hides while it's open instead of floating over its title (Vitor 10-23;
+   components/solvyai/SolvyAi sets the attribute). */
+@media (max-width: 1023.98px) {
+  html[data-solvyai-open] [data-tour="nav-menu"] { display: none; }
+}
