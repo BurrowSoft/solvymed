@@ -28,7 +28,8 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 import { stampDemo } from "@/lib/pdf/demoStamp";
-import { DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
+import { DemoProvider, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
+import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
 
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
@@ -113,5 +114,18 @@ describe("the 2-minute tour", () => {
     render(wrap(<DemoTour locale="pt-BR" country="BR" />));
     fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
     expect(h.push).toHaveBeenCalledWith("/pt-BR/dashboard/schedule");
+  });
+});
+
+describe("the HTML print views (no saved design, or the designed PDF failed)", () => {
+  it("say DEMO in a demo, on screen and in print; never on a real account", () => {
+    const { unmount } = render(wrap(<DemoProvider value={{ demo: true, locale: "pt-BR", country: "BR" }}><PrintToolbar backHref="/x" /></DemoProvider>));
+    const mark = screen.getByTestId("demo-print-mark");
+    expect(mark).toHaveTextContent("DEMO");
+    expect(mark).toHaveTextContent(pt.demo.pdfFooter);
+    expect(mark.className).not.toContain("print-hide");
+    unmount();
+    render(wrap(<PrintToolbar backHref="/x" />));
+    expect(screen.queryByTestId("demo-print-mark")).toBeNull();
   });
 });

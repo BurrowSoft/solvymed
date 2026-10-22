@@ -8,6 +8,7 @@ import type { PosterContent, PosterFormat } from "@/lib/pdf/poster";
 import type { StudioDocData } from "@/lib/studio/forDocument";
 import { dateLocale } from "@/lib/dateLabels";
 import { countryProfile } from "@/lib/country";
+import { useDemo } from "@/components/DemoGate";
 
 // Document Studio PR5: posters and social images in the design (02,
 // 10-13). Fill, preview, download: nothing is stored, nothing uploaded.
@@ -32,6 +33,8 @@ type Props = {
 
 export function StudioPosters({ design, country, practice, logos, hours, inviteUrl }: Props) {
   const t = useTranslations("studio");
+  const tDemo = useTranslations("demo");
+  const { demo } = useDemo();
   const locale = useLocale();
   const rules = studioCountry(country);
   const [template, setTemplate] = useState<(typeof TEMPLATES)[number]>("hours");
@@ -78,7 +81,11 @@ export function StudioPosters({ design, country, practice, logos, hours, inviteU
     if (!input) throw new Error("nothing to make");
     const [{ renderPoster }, { fontsFor, bytesOf }] = await Promise.all([import("@/lib/pdf/poster"), import("@/lib/pdf/browser")]);
     const [fonts, square, reversed] = await Promise.all([fontsFor(design.font), bytesOf(logos.square), bytesOf(logos.reversed)]);
-    return renderPoster({ ...input, format: fmt, logos: { square, reversed } }, fonts);
+    const bytes = await renderPoster({ ...input, format: fmt, logos: { square, reversed } }, fonts);
+    // Demo: the DEMO stamp on the preview and on both downloads (PDF and PNG).
+    if (!demo) return bytes;
+    const { stampDemo } = await import("@/lib/pdf/demoStamp");
+    return stampDemo(bytes, tDemo("pdfFooter"), fonts.regular);
   }
 
   const key = JSON.stringify(input);

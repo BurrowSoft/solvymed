@@ -30,7 +30,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 vi.mock("@/lib/conditions", async (orig) => {
   const real = await orig<typeof import("@/lib/conditions")>();
-  return { ...real, conditionMet: (id: Parameters<typeof real.conditionMet>[0]) => (id === "founders-upload-live" ? true : real.conditionMet(id)) };
+  return { ...real, conditionMet: (id: Parameters<typeof real.conditionMet>[0]) => (id === "founders-upload-live" || id === "migration-126" ? true : real.conditionMet(id)) };
 });
 vi.mock("@/lib/liveFeatures", async (orig) => {
   const real = await orig<typeof import("@/lib/liveFeatures")>();
@@ -43,6 +43,7 @@ import { POST as portal } from "@/app/api/billing/portal/route";
 import { POST as close } from "@/app/api/account/close/route";
 import { POST as register } from "@/app/api/founders/register/route";
 import { POST as uploadUrl } from "@/app/api/founders/upload-url/route";
+import { GET as exportCsv } from "@/app/api/patients/export/route";
 import { DemoBlockedSheet, DemoGate, DemoProvider, notifyDemoBlocked } from "@/components/DemoGate";
 
 const post = (body: unknown = {}) =>
@@ -60,6 +61,7 @@ describe("the web's real-world routes refuse a demo session (234 §5.7)", () => 
     ["close account", () => close(post({ reason: "x" }))],
     ["founders register", () => register(post({ path: "anon-1/x.pdf", confirmed: true }))],
     ["founders upload URL", () => uploadUrl(post({ fileName: "patients.csv", size: 10, confirmed: true }))],
+    ["patients CSV export (no CSV leaves a demo)", () => exportCsv(new NextRequest(new URL("/api/patients/export?locale=pt-BR", "https://www.solvymed.com")))],
   ])("%s: 403 demo_not_allowed, before any query", async (_name, call) => {
     const res = await call();
     expect(res.status).toBe(403);

@@ -9,6 +9,7 @@ import { patientIdKind } from "@/lib/patientIds";
 import { routing } from "@/i18n/routing";
 import { getTranslations } from "next-intl/server";
 import { isAccessLogRefusal } from "@/lib/accessLog";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 // The patient list as CSV (Help P10): doctor only, every patient (active
 // and archived). Fail closed (UX 36): each exported patient's access log
@@ -24,6 +25,8 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ code: "unauthorized" }, { status: 401 });
+  // Demo mode (01, 10-22): no CSV leaves a demo (it couldn't say DEMO).
+  if (isDemoUser(user)) return NextResponse.json({ code: DEMO_NOT_ALLOWED }, { status: 403 });
   if ((await isProfessionalRole(supabase, user.id)) !== true) return NextResponse.json({ code: "not_doctor" }, { status: 403 });
 
   const requested = request.nextUrl.searchParams.get("locale") ?? "";
