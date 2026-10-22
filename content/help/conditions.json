@@ -290,5 +290,9 @@
   "app-1-9-1-live": {
     "met": true,
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
+  },
+  "app-demo-live": {
+    "met": false,
+    "what": "The Android app's demo is live (mobile #535): the entry \"Explore the demo\" on the sign-in screen, its DemoGate / DemoBar / tour, shipped as an OTA to production after the web demo is live and stable. Flip when that OTA is out (01). Gates Help K1's app line and the App Map's app sentence."
   }
 }
