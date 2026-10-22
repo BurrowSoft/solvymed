@@ -77,23 +77,33 @@ export async function POST(request: NextRequest) {
   if (test && !(await previewWindowOpen(admin))) return fail("demo_preview_closed", 403);
   const ip = request.headers.get("x-real-ip")?.trim() ?? "";
 
+  // Server-Timing (durations only; #604, 0e's split): siteverify, ticket, start.
+  const timing: string[] = [];
+  const timed = async <T,>(name: string, run: () => Promise<T>): Promise<T> => {
+    const t0 = performance.now();
+    try { return await run(); } finally { timing.push(`${name};dur=${Math.round(performance.now() - t0)}`); }
+  };
+  const withTiming = (res: NextResponse) => { if (timing.length) res.headers.set("Server-Timing", timing.join(", ")); return res; };
   let success = false;
   try {
     const form = new URLSearchParams({ secret, response: token });
     if (ip) form.set("remoteip", ip);
-    const res = await fetch(SITEVERIFY, { method: "POST", body: form, signal: AbortSignal.timeout(8000) });
-    success = res.ok && demoTurnstileAnswerOk((await res.json()) as { success?: boolean; action?: string; hostname?: string }, test);
+    success = await timed("siteverify", async () => {
+      const res = await fetch(SITEVERIFY, { method: "POST", body: form, signal: AbortSignal.timeout(8000) });
+      return res.ok && demoTurnstileAnswerOk((await res.json()) as { success?: boolean; action?: string; hostname?: string }, test);
+    });
   } catch {
     return fail("verify_unreachable", 503);
   }
-  if (!success) return fail("turnstile_failed", 403);
+  if (!success) return withTiming(fail("turnstile_failed", 403));
 
-  const { error } = await admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null });
+  const { error } = await timed("ticket", async () => admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null }));
   if (error) return (error.message ?? "").includes("not_anonymous") ? fail("not_anonymous", 403) : fail("ticket_failed", 503);
-  if (typeof body?.country !== "string" || !who) return NextResponse.json({ status: "issued" });
+  if (typeof body?.country !== "string" || !who) return withTiming(NextResponse.json({ status: "issued" }));
   const locale = typeof body.locale === "string" ? body.locale.slice(0, 10) : "en";
-  const { error: startError } = await who.db.rpc("start_demo", { p_country: body.country.slice(0, 2), p_locale: locale });
-  if (!startError) return NextResponse.json({ status: "ready" });
+  const db = who.db;
+  const { error: startError } = await timed("start", async () => db.rpc("start_demo", { p_country: (body.country as string).slice(0, 2), p_locale: locale }));
+  if (!startError) return withTiming(NextResponse.json({ status: "ready" }));
   const refused = START_REFUSALS.find((c) => (startError.message ?? "").includes(c));
-  return refused ? NextResponse.json({ code: refused }, { status: 409 }) : fail("start_failed", 503);
+  return withTiming(refused ? NextResponse.json({ code: refused }, { status: 409 }) : fail("start_failed", 503));
 }

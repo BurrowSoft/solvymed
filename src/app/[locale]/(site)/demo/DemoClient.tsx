@@ -23,7 +23,9 @@ type State = "loading" | "unavailable" | "signedIn" | "busy" | "error";
 
 // testAllowed: ?demo_test=1 counts only off Production (page.tsx, the server).
 // siteKey: the demo's Turnstile key (lib/demoTurnstile, from the server).
-export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; siteKey: string }) {
+// serverOn: the switch as the server read it (#604; null = unknown, so the
+// browser reads it).
+export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllowed: boolean; siteKey: string; serverOn?: boolean | null }) {
   const t = useTranslations("demo");
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
@@ -81,14 +83,19 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
     };
     // The dashboard's code, fetched while the server works (#604, D).
     const warm = () => { try { router.current.prefetch(`${prefix}/dashboard`); } catch { /* best-effort */ } };
+    // Timing marks for the testers (performance.getEntriesByType("mark")):
+    // nothing is sent anywhere (#604, 0e's split).
+    const mark = (n: string) => { try { performance.mark(`demo:${n}`); } catch { /* not supported */ } };
+    mark("start");
     void (async () => {
       try {
         // In parallel (#604): the switch and the session; the widget only
         // once the demo is known to be on.
         const [on, { data: { user } }] = await Promise.all([
-          demoTestOn(location.search, testAllowed) ? Promise.resolve(true) : publicFlag(supabase, "demo_mode"),
+          serverOn !== null ? Promise.resolve(serverOn) : demoTestOn(location.search, testAllowed) ? Promise.resolve(true) : publicFlag(supabase, "demo_mode"),
           supabase.auth.getUser(),
         ]);
+        mark("switch-and-session");
         if (!live) return;
         if (!on) {
           setState("unavailable");
@@ -105,13 +112,14 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
           // cleanup and a refusal's end_demo remove it), then one call that
           // mints the ticket AND starts the demo on the server.
           const [t] = await Promise.all([
-            token(),
-            supabase.auth.signInAnonymously().then(({ error }) => { if (error) throw error; fresh = true; }),
+            token().then((tok) => { mark("token"); return tok; }),
+            supabase.auth.signInAnonymously().then(({ error }) => { if (error) throw error; fresh = true; mark("signed-in"); }),
           ]);
           if (!live) return;
           warm();
           setStep("create");
           startError = await verifyAndStart(t);
+          mark("verified-and-started");
         } else {
           // A returning session: an open sandbox answers "ready" with no
           // ticket; the check only when 234 asks (demo_unverified).
@@ -124,6 +132,7 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
             if (!live) return;
             setStep("create");
             startError = await verifyAndStart(t);
+          mark("verified-and-started");
           }
         }
         const refused = refusal(startError);
@@ -143,6 +152,7 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
         if (startError) throw startError;
         track("demo_start", { platform: "web", c: country });
         if (!live) return;
+        mark("open-dashboard");
         setStep("open");
         // In-app navigation to the prefetched dashboard (no full reload).
         router.current.replace(`${prefix}/dashboard`);
@@ -152,7 +162,7 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
       }
     })();
     return () => { live = false; };
-  }, [attempt, country, locale, prefix, testAllowed, siteKey]);
+  }, [attempt, country, locale, prefix, testAllowed, siteKey, serverOn]);
 
   return (
     <AuthPageShell>

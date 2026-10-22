@@ -93,6 +93,11 @@ describe("/api/demo/verify", () => {
     ]);
   });
 
+  it("#604: Server-Timing carries the durations (siteverify, ticket, start), never values", async () => {
+    const res = await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }));
+    expect(res.headers.get("Server-Timing")).toMatch(/^siteverify;dur=\d+, ticket;dur=\d+, start;dur=\d+$/);
+  });
+
   it.each(["demo_busy", "demo_off", "unsupported_country", "demo_unverified"])("#604: start_demo refuses with %s → 409 with that code", async (code) => {
     h.startError = { message: code };
     const res = await POST(req({ token: "tok", country: "BR", locale: "pt-BR" }));

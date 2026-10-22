@@ -33,6 +33,10 @@ vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
 }));
 vi.mock("@/lib/track", () => ({ track: h.track }));
+// The server page reads the switch (#604).
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: async () => ({ rpc: async (fn: string) => { h.calls.push(`server:${fn}`); return { data: fn === "get_public_flags" ? h.flags : null, error: null }; } }),
+}));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     rpc: async (fn: string, args?: Record<string, unknown>) => {
@@ -218,10 +222,29 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(<DemoPage />));
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
       expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
       expect(h.calls).not.toContain("signInAnonymously");
       expect(h.calls.some((c) => c.startsWith("start_demo"))).toBe(false);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("#604: the server reads the switch; Cloudflare is contacted only when the demo is on (cf)", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    try {
+      const cf = () => document.head.querySelector('link[rel="preconnect"][href="https://challenges.cloudflare.com"]');
+      const { unmount } = render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
+      expect(h.calls).toContain("server:get_public_flags");
+      expect(h.calls).not.toContain("get_public_flags");
+      expect(cf()).toBeNull();
+      unmount();
+      h.flags = [{ key: "demo_mode", enabled: true }];
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      await waitFor(() => expect(cf()).not.toBeNull());
+      expect(h.calls.filter((c) => c === "get_public_flags")).toHaveLength(0);
     } finally {
       vi.unstubAllEnvs();
     }
@@ -231,7 +254,7 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "preview");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(<DemoPage />));
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
       await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
     } finally {
       vi.unstubAllEnvs();
