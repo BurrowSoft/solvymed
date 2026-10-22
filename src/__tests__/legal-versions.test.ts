@@ -189,8 +189,8 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
     expect(pt).toContain("<strong>Modo demonstração</strong>: os dados fictícios");
     // What 234 and the web enforce: the 5-message SolvyAI quota (demo_quota),
     // the salted IP hash, the 24 h cleanup and end_demo on leaving or signing up.
-    for (const s of ["up to 5 messages", "salted hash", "deleted 24 hours after it starts", "Nothing from the demo is copied into a real account", "can’t upload files"]) expect(en).toContain(s);
-    for (const s of ["até 5 mensagens", "hash com sal", "apagados 24 horas depois do início", "Nada da demonstração é copiado para uma conta real", "não permite enviar arquivos"]) expect(pt).toContain(s);
+    for (const s of ["up to 5 messages", "salted hash", "deleted within 24 hours of the start, or right away when you leave the demo or create an account", "Nothing from the demo is copied into a real account", "can’t upload files"]) expect(en).toContain(s);
+    for (const s of ["até 5 mensagens", "hash com sal", "apagados em até 24 horas depois do início, ou na hora, quando você sai da demonstração ou cria uma conta", "Nada da demonstração é copiado para uma conta real", "não permite enviar arquivos"]) expect(pt).toContain(s);
   });
 
   it("the demo's Cloudflare (Turnstile) check: its own §5 row and §6h line, only with demo-mode-live; the sign-up row stays dormant", async () => {
