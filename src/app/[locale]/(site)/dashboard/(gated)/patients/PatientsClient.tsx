@@ -383,7 +383,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
   return (
     // A new invited patient with the same e-mail as another record opens
     // straight on the merge with that record (UX, 145).
-    <Link href={`${prefix}/dashboard/patients/${patient.id}${patient.newInvited && patient.sameEmailAs ? `?mergeWith=${patient.sameEmailAs.id}` : ""}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
+    <Link data-demo-target="patient-row" href={`${prefix}/dashboard/patients/${patient.id}${patient.newInvited && patient.sameEmailAs ? `?mergeWith=${patient.sameEmailAs.id}` : ""}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-bold text-teal-700">
         {initials}
       </div>

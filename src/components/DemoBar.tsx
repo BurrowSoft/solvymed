@@ -6,7 +6,8 @@ import { createClient } from "@/lib/supabase/client";
 import { demoTitle, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
-import { DemoBlockedSheet } from "./DemoGate";
+import { DemoAndroidChip, DemoBlockedSheet, DemoValueSheet } from "./DemoGate";
+import { DEMO_TOUR_OPEN_EVENT, DemoTour } from "./DemoTour";
 
 // The demo's bar (specs/demo-mode.md, Vitor's two musts): fixed at the top of
 // every dashboard page, amber, "DEMO" + what it is, and the solid teal
@@ -65,6 +66,9 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
   return (
     <>
     <DemoBlockedSheet locale={locale} country={country} />
+    <DemoValueSheet locale={locale} country={country} />
+    <DemoTour locale={locale} country={country} />
+    <DemoAndroidChip />
     <div
       data-testid="demo-bar"
       role="region"
@@ -96,6 +100,10 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
         <span className="hidden sm:inline">{t("barText")}</span>
         <span className="sm:hidden">{t("barTextShort")}</span>
       </span>
+      <button type="button" aria-label={t("tourOpen")} data-testid="demo-tour-open" onClick={() => window.dispatchEvent(new Event(DEMO_TOUR_OPEN_EVENT))}
+        className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#1F2937]/10 text-sm font-extrabold hover:bg-[#1F2937]/20">
+        ?
+      </button>
       <button type="button" onClick={exit} disabled={leaving}
         className="hidden shrink-0 text-xs font-semibold underline decoration-[#1F2937]/40 underline-offset-2 hover:decoration-[#1F2937] disabled:opacity-60 md:inline">
         {t("exit")}

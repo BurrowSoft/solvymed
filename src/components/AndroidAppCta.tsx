@@ -1,8 +1,7 @@
 "use client";
 
-import { playStoreUrl, playStoreUrlForVisit, type VisitUtm } from "@/lib/appStores";
-import { ATTRIBUTION_COOKIE, parseAttribution } from "@/lib/attribution";
-import { currentConsent, readCookie } from "@/lib/consentClient";
+import { playStoreUrl, playStoreUrlForVisit } from "@/lib/appStores";
+import { consentedVisit } from "@/lib/consentedVisit";
 import { COUNTRY_STEP } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { SignupCta } from "./SignupCta";
@@ -13,16 +12,7 @@ import { SignupCta } from "./SignupCta";
 // .android-only), so other devices, and pages without JS, keep the
 // signup CTA (wrapped in .android-hide) as before.
 
-// The visit's campaign for the Play referrer, read at the click: the first
-// touch (the marketing cookie), else this page's utm; only with marketing
-// consent (privacy §3.6).
-function consentedVisit(): VisitUtm | null {
-  if (!currentConsent()?.marketing) return null;
-  const first = parseAttribution(readCookie(ATTRIBUTION_COOKIE));
-  if (first?.utm_source || first?.utm_campaign) return first;
-  const q = new URLSearchParams(location.search);
-  return { utm_source: q.get("utm_source"), utm_medium: q.get("utm_medium"), utm_campaign: q.get("utm_campaign") };
-}
+// The visit's campaign for the Play referrer: lib/consentedVisit.
 
 export function AndroidAppCta({
   locale,

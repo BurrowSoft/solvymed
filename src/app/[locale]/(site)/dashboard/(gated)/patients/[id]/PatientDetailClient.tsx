@@ -179,6 +179,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         {TABS.map(tab_item => (
           <button
             key={tab_item.key}
+            data-demo-target={tab_item.key === "prescriptions" ? "rx-tab" : undefined}
             onClick={() => setTab(tab_item.key)}
             className={`shrink-0 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
               tab === tab_item.key
@@ -1048,6 +1049,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const t = useTranslations("patientDetail");
   const td = useTranslations("documents");
   const tpd = useTranslations("prescriptionDoc");
+  const tDemo = useTranslations("demo");
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
   const tdocs = useTranslations("docs");
   // 1.8.0 B2: the patient's copy is made after the save; a failure only
@@ -1158,7 +1160,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setListError("");
     setPdfBusy(doc.id);
     try {
-      const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
+      const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null, demoFooter: tDemo("pdfFooter") });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
       // The special control prescription is print-only (ad, as the app):
       // the print dialog opens on its two copies; the others download, named
@@ -1385,7 +1387,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         <p className="text-sm text-slate-500">{t("prescriptions", { n: originals.length })}</p>
         {!isArchived && (medicalDocs ? (
           <div className="flex gap-2">
-            <button onClick={() => open({ mode: "new" })} className="rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">{td("addPrescription")}</button>
+            <button data-demo-target="new-prescription" onClick={() => open({ mode: "new" })} className="rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">{td("addPrescription")}</button>
             <button onClick={() => setDocDialog({ mode: "new", type: null })} className="rounded-xl border border-teal-600 px-3 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50 transition">{td("addDocument")}</button>
           </div>
         ) : <button onClick={() => open({ mode: "new" })} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
