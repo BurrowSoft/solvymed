@@ -139,7 +139,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   />
                 </div>
                 {/* "Ver demonstração" (specs/demo-mode.md; only with demo_mode on). */}
-                <DemoCta className="inline-flex items-center gap-2 rounded-xl border-2 border-[#F59E0B] bg-[#F59E0B]/10 px-6 py-4 text-lg font-bold text-amber-100 transition hover:bg-[#F59E0B]/20 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-teal-900" />
+                <DemoCta testAllowed={process.env.VERCEL_ENV !== "production"} className="inline-flex items-center gap-2 rounded-xl border-2 border-[#F59E0B] bg-[#F59E0B]/10 px-6 py-4 text-lg font-bold text-amber-100 transition hover:bg-[#F59E0B]/20 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-teal-900" />
                 {hero.tourUrl && (
                   <a
                     href={hero.tourUrl}
