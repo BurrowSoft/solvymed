@@ -23,8 +23,11 @@ export function isDemoUser(user: { is_anonymous?: boolean | null } | null | unde
   return user?.is_anonymous === true;
 }
 
-export function demoTestOn(search: string): boolean {
-  return new URLSearchParams(search).get(DEMO_TEST_PARAM) === "1";
+// ?demo_test=1, the testers' window before the switch: only where the
+// server says so (allowed = VERCEL_ENV !== "production"; 01, 10-22), so
+// www never opens the demo ahead of demo_mode.
+export function demoTestOn(search: string, allowed: boolean): boolean {
+  return allowed && new URLSearchParams(search).get(DEMO_TEST_PARAM) === "1";
 }
 
 // The tab title's prefix in the demo (Vitor: "it's a DEMO" everywhere).
