@@ -47,6 +47,7 @@ import { demoCountry, demoTitle, isDemoUser, leaveDemo } from "@/lib/demo";
 import { DemoBar } from "@/components/DemoBar";
 import { DemoCta } from "@/components/DemoCta";
 import DemoPage from "@/app/[locale]/(site)/demo/page";
+import { DemoClient } from "@/app/[locale]/(site)/demo/DemoClient";
 
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
 
@@ -117,7 +118,7 @@ describe("DemoBar", () => {
 });
 
 describe("/demo", () => {
-  const show = () => render(wrap(<DemoPage />));
+  const show = () => render(wrap(<DemoClient testAllowed />));
 
   it("the switch off: the sign-up card, no session created", async () => {
     show();
@@ -142,6 +143,30 @@ describe("/demo", () => {
     show();
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
     expect(h.calls).not.toContain("signInAnonymously");
+  });
+
+  it("on Production (www), ?demo_test=1 does nothing: only the switch opens the demo (01)", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    try {
+      Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
+      render(wrap(<DemoPage />));
+      expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
+      expect(h.calls).not.toContain("signInAnonymously");
+      expect(h.calls.some((c) => c.startsWith("start_demo"))).toBe(false);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("on a preview, the server page lets ?demo_test=1 through", async () => {
+    vi.stubEnv("VERCEL_ENV", "preview");
+    try {
+      Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
+      render(wrap(<DemoPage />));
+      await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 
   it("a real account signed in: never touched, offered its dashboard", async () => {
@@ -172,14 +197,24 @@ describe("/demo", () => {
 
 describe("DemoCta (landing)", () => {
   it("hidden while off; shown when on, to /demo", async () => {
-    const { container, unmount } = render(wrap(<DemoCta className="x" />));
+    const { container, unmount } = render(wrap(<DemoCta className="x" testAllowed />));
     await new Promise((r) => setTimeout(r, 20));
     expect(container.innerHTML).toBe("");
     unmount();
     h.flags = [{ key: "demo_mode", enabled: true }];
-    render(wrap(<DemoCta className="x" />));
+    render(wrap(<DemoCta className="x" testAllowed />));
     const a = await screen.findByTestId("landing-demo-cta");
     expect(a).toHaveTextContent(pt.demo.landingCta);
     expect(a).toHaveAttribute("href", "/demo");
+  });
+
+  it("?demo_test=1 shows it off Production only (testAllowed comes from the server)", async () => {
+    Object.defineProperty(window, "location", { configurable: true, value: { ...window.location, search: "?demo_test=1" } });
+    const { container, unmount } = render(wrap(<DemoCta className="x" testAllowed={false} />));
+    await new Promise((r) => setTimeout(r, 20));
+    expect(container.innerHTML).toBe("");
+    unmount();
+    render(wrap(<DemoCta className="x" testAllowed />));
+    expect(await screen.findByTestId("landing-demo-cta")).toHaveAttribute("href", "/demo?demo_test=1");
   });
 });
