@@ -1,7 +1,7 @@
 ﻿{
   "demo": {
     "barLabel": "Chế độ demo",
-    "barText": "Chế độ demo · dữ liệu giả, xóa sau 24 giờ",
+    "barText": "Chế độ demo · dữ liệu giả, xóa trong vòng 24 giờ",
     "barTextShort": "Dữ liệu giả",
     "signup": "Tạo tài khoản miễn phí",
     "signupShort": "Tạo tài khoản miễn phí",

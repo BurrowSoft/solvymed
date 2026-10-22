@@ -1,7 +1,7 @@
 ﻿{
   "demo": {
     "barLabel": "示範模式",
-    "barText": "示範模式 · 虛構資料，24 小時後刪除",
+    "barText": "示範模式 · 虛構資料，24 小時內刪除",
     "barTextShort": "虛構資料",
     "signup": "建立我的免費帳戶",
     "signupShort": "建立免費帳戶",
