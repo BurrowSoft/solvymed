@@ -10,6 +10,7 @@ import {
 } from "@/lib/patientFiles";
 import { deletePatientFile, hidePatientFile, listPatientFiles, openPatientFile } from "../files-actions";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { DemoGate } from "@/components/DemoGate";
 
 // Exams / Files tab (Help P7): photos or PDFs, private. Upload goes from the
 // browser to storage under the doctor's own folder; a name already taken
@@ -112,9 +113,12 @@ export function FilesTab({ patientId, doctorId, kind, isArchived, locale }: {
         {!isArchived && (
           <>
             <input ref={input} type="file" accept={ACCEPT} className="hidden" aria-label={t("filesUpload")} onChange={(e) => { const f = e.target.files?.[0]; if (f) void upload(f); }} />
-            <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
-              {busy ? t("filesUploading") : t("filesUpload")}
-            </button>
+            {/* Demo (234 §5.5): uploads are refused; said up front. */}
+            <DemoGate>
+              <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+                {busy ? t("filesUploading") : t("filesUpload")}
+              </button>
+            </DemoGate>
           </>
         )}
       </div>

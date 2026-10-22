@@ -5,11 +5,14 @@ import Stripe from "stripe";
 import { stripe, retrieveStoredStripeSubscription, isLive, needsCardFix, stripeLocale } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
 import { lookupPracticeCountry } from "@/lib/practiceCountry";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // A demo (anonymous) session never reaches Stripe / closes / uploads (234 §5.7).
+  if (isDemoUser(user)) return NextResponse.json({ error: "Not available in the demo", code: DEMO_NOT_ALLOWED }, { status: 403 });
 
   // This route only checked authentication, not role — a patient or
   // secretary could initiate a real Stripe charge under their own identity

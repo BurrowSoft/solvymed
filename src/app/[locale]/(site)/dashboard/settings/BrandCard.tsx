@@ -13,6 +13,7 @@ import { withBrandTitle } from "@/lib/doctorName";
 import { BrandCropDialog } from "./BrandCropDialog";
 import { useLeaveGuard } from "@/components/DiscardGuard";
 import { brandAccent, brandInitials, DEFAULT_ACCENT, isAccentHex, readableAccent } from "@/lib/readableAccent";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // Configurações → Minha marca / My brand (1.5.0, behind liveFeatures.myBrand):
 // the name, title, specialty and registration line patients see, a brand
@@ -28,7 +29,7 @@ export const ACCENT_PRESETS = ["#116e99", "#0d9488", "#7c3aed", "#db2777", "#dc2
 const LIGHT_BG = "#ffffff";
 const DARK_BG = "#0f172b";
 
-export function BrandCard({ uid, brand, values = null, valuesFailed = false, fallback, country, studioHref = null }: {
+function BrandCardInner({ uid, brand, values = null, valuesFailed = false, fallback, country, studioHref = null }: {
   uid: string;
   // Images, URLs and the preview (get_practice_brand).
   brand: Brand | null;
@@ -303,5 +304,16 @@ function ImageField({ label, url, own, round, wide, busy, disabled, onFile, onRe
         </div>
       )}
     </div>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function BrandCard(props: Parameters<typeof BrandCardInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <BrandCardInner {...props} />
+    </DemoGate>
   );
 }

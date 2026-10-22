@@ -15,6 +15,7 @@ import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
 import { leaveGuarded } from "@/components/DiscardGuard";
+import { notifyDemoBlocked, notifyDemoValue } from "@/components/DemoGate";
 
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
@@ -66,6 +67,7 @@ export function SolvyAi(props: { locale: string; prefix: string; dailyLimit: num
 
 function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
+  const tDemo = useTranslations("demo");
   const router = useRouter();
   const pathname = usePathname();
   const lang = helpLang(locale);
@@ -181,6 +183,11 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
           if (e.code === "quota_exhausted") {
             // The limit message replaces the input; the bar from the route.
             if (e.usage) { gotUsage = true; setUsage(e.usage); }
+          } else if (e.code === "demo_quota") {
+            // The demo's 5 messages (234 §5.6): the sign-up sheet, and the
+            // same line in the chat.
+            notifyDemoBlocked("aiQuota");
+            blocks = [...blocks, { type: "text", text: tDemo("aiQuotaTitle") }];
           } else if (e.code === "rate_limited") {
             lastSent.current = Date.now() + Math.max(0, (e.retryAfterS ?? MIN_SECONDS_BETWEEN) - MIN_SECONDS_BETWEEN) * 1000;
             setTooFast(true);
@@ -197,6 +204,8 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
     }
     if (signal.aborted) return;
     setTurns([...history, { role: "assistant", blocks, streaming: false, failed }]);
+    // Demo: an answer is a moment of value (and the tour's step 4).
+    if (!failed && blocks.length > 0) notifyDemoValue("solvyai");
     setBusy(false);
     if (!gotUsage) {
       const u = await backend.usage();

@@ -297,7 +297,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
         data-tour="nav-menu"
         aria-label={mobileOpen ? t("closeMenu") : t("openMenu")}
         aria-expanded={mobileOpen}
-        className="fixed top-4 left-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md border border-slate-100 lg:hidden"
+        className="fixed top-[calc(1rem+var(--demo-bar-h,0px))] left-4 z-50 flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md border border-slate-100 lg:hidden"
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5 text-slate-600">
           {mobileOpen
@@ -313,7 +313,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
+      <aside className={`fixed bottom-0 left-0 top-[var(--demo-bar-h,0px)] z-40 flex w-64 flex-col border-r border-slate-100 bg-white transition-transform duration-300 lg:static lg:translate-x-0 ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Logo */}
         {/* Phones: past the fixed ☰/✕ button, which sits over this corner. */}
         <div className="flex items-center gap-2.5 border-b border-slate-100 py-4 pl-16 pr-5 lg:px-5">

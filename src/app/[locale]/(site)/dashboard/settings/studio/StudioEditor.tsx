@@ -10,6 +10,7 @@ import { useLeaveGuard } from "@/components/DiscardGuard";
 import { StudioPreview, type PreviewInput } from "./StudioPreview";
 import { StudioPosters, type PosterDay } from "./StudioPosters";
 import { StudioSignature } from "./StudioSignature";
+import { useDemo } from "@/components/DemoGate";
 import { removeSignature } from "@/lib/studio/signature";
 import { createClient } from "@/lib/supabase/client";
 import { saveMyDesign } from "../studio-actions";
@@ -88,6 +89,8 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
   const tDocType = useTranslations("documents.type");
   const tSettings = useTranslations("settings");
   const tBrand = useTranslations("brand");
+  const tDemo = useTranslations("demo");
+  const { demo } = useDemo();
   const tReload = useTranslations("versionGate");
   const tDocsPdf = useTranslations("documents");
   const locale = useLocale();
@@ -181,6 +184,8 @@ export function StudioEditor({ initial, saved: initialSaved, version: initialVer
       const bytes = await renderInBrowser({
         design: cleaned, locale, practice, logoUrls: logos,
         doc: { ...letterheadContent({ title: lhTitle, body: lhBody }), headerText: lt?.header ?? null, footerText: lt?.footer ?? null },
+        // Demo: the DEMO stamp, as on every document a demo makes.
+        demoFooter: demo ? tDemo("pdfFooter") : null,
       });
       printPdf(bytes, `${t("letterhead")}.pdf`);
       setLhState("idle");

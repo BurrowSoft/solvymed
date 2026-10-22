@@ -16,6 +16,7 @@ import { failOpenRules, missingRequired, ruleOf, type FieldKey, type PatientFiel
 import { dateLocale, formatShortDate } from "@/lib/dateLabels";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
+import { DemoRealDataNote } from "@/components/DemoGate";
 
 type Patient = {
   id: string; full_name: string; email?: string; phone?: string;
@@ -172,6 +173,7 @@ function PatientForm({ onSubmit, pending, error, id, idKind, addressLive = false
       )}
       {missing && <p role="alert" data-testid="missing-fields" className="text-sm text-red-600">{missing}</p>}
       {error && <p className="text-sm text-red-600">{error}</p>}
+      <DemoRealDataNote />
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={pending} className="w-full rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
           {pending ? t("saving") : t("savePatient")}
@@ -383,7 +385,7 @@ export function PatientCard({ patient, locale }: { patient: Patient; locale: str
   return (
     // A new invited patient with the same e-mail as another record opens
     // straight on the merge with that record (UX, 145).
-    <Link href={`${prefix}/dashboard/patients/${patient.id}${patient.newInvited && patient.sameEmailAs ? `?mergeWith=${patient.sameEmailAs.id}` : ""}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
+    <Link data-demo-target="patient-row" href={`${prefix}/dashboard/patients/${patient.id}${patient.newInvited && patient.sameEmailAs ? `?mergeWith=${patient.sameEmailAs.id}` : ""}`} className="group flex items-center gap-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:border-teal-200 hover:shadow-md transition-all">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-sm font-bold text-teal-700">
         {initials}
       </div>

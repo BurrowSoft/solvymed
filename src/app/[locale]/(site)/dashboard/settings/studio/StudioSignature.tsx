@@ -6,6 +6,7 @@ import { Card } from "../SettingsClient";
 import { createClient } from "@/lib/supabase/client";
 import { SignatureUploadError, signatureBytes, uploadSignature } from "@/lib/studio/signature";
 import type { Design } from "@/lib/studio/design";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // Document Studio: the doctor's signature image (02, 10-13). Shown only
 // while studio_signature_image is on for the practice (the caller doesn't
@@ -16,7 +17,7 @@ import type { Design } from "@/lib/studio/design";
 
 type Sig = Design["signature"];
 
-export function StudioSignature({ uid, signature, onChange }: { uid: string; signature: Sig; onChange: (next: Sig, removeFileAfterSave: boolean) => void }) {
+function StudioSignatureInner({ uid, signature, onChange }: { uid: string; signature: Sig; onChange: (next: Sig, removeFileAfterSave: boolean) => void }) {
   const t = useTranslations("studio");
   const tb = useTranslations("brand");
   const [busy, setBusy] = useState(false);
@@ -87,5 +88,16 @@ export function StudioSignature({ uid, signature, onChange }: { uid: string; sig
         </ul>
       </div>
     </Card>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function StudioSignature(props: Parameters<typeof StudioSignatureInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <StudioSignatureInner {...props} />
+    </DemoGate>
   );
 }

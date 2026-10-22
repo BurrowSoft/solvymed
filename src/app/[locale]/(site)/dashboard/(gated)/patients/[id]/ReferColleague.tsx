@@ -6,6 +6,7 @@ import { listColleagues } from "../../../colleague-actions";
 import { colleagueLink, colleagueName, firstName, type ColleagueRow } from "@/lib/colleagues";
 import { whatsappLink } from "@/lib/whatsappLink";
 import { safeCall,  } from "@/lib/netError";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // The patient page's "Indicar colega" (167; doctors only, behind
 // liveFeatures.colleagues): pick one of your colleagues, and the message with
@@ -13,7 +14,7 @@ import { safeCall,  } from "@/lib/netError";
 // WhatsApp and the patient has a phone) to open in your WhatsApp. Nothing is
 // stored and no patient data is shared: the colleague only gets a patient if
 // the patient chooses to connect.
-export function ReferColleague({ patientName, patientPhone, practiceCountry, whatsapp }: {
+function ReferColleagueInner({ patientName, patientPhone, practiceCountry, whatsapp }: {
   patientName: string;
   patientPhone: string | null;
   practiceCountry: string;
@@ -103,5 +104,16 @@ export function ReferColleague({ patientName, patientPhone, practiceCountry, wha
         </div>
       )}
     </>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function ReferColleague(props: Parameters<typeof ReferColleagueInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <ReferColleagueInner {...props} />
+    </DemoGate>
   );
 }

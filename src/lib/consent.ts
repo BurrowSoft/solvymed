@@ -28,7 +28,8 @@ export function parseConsent(raw: string | null | undefined, nowMs = Date.now())
 
 // Pages that only complete an action from an email link (or hand off to the
 // app) get no banner: it would cover the one thing the page is for.
-const TRANSACTIONAL = ["/auth/confirm", "/auth/verify", "/auth/reset-password", "/api/"];
+// /demo/verify-app: the app's WebView bot check (no analytics there).
+const TRANSACTIONAL = ["/auth/confirm", "/auth/verify", "/auth/reset-password", "/api/", "/demo/verify-app"];
 
 export function isTransactionalPath(pathname: string, locales: readonly string[]): boolean {
   const [, first] = pathname.split("/");

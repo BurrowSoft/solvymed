@@ -7,12 +7,13 @@ import { toLocalDateString } from "@/lib/slots";
 import { addColleague, removeColleague } from "../colleague-actions";
 import { colleagueLogoUrl, colleagueName, type ColleagueError, type ColleagueRow } from "@/lib/colleagues";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // Settings → "Meus colegas" (167; doctors only, behind liveFeatures.colleagues):
 // add by a colleague's exact public code, remove; only the doctor sees the
 // list. An unavailable colleague (closed, or no longer published) shows no
 // name (cf): "Colega indisponível", "Adicionado em {date}" and Remove only.
-export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[]; loadFailed: boolean }) {
+function ColleaguesCardInner({ initial, loadFailed }: { initial: ColleagueRow[]; loadFailed: boolean }) {
   const t = useTranslations("colleagues");
   const locale = useLocale();
   const [rows, setRows] = useState(initial);
@@ -101,5 +102,16 @@ export function ColleaguesCard({ initial, loadFailed }: { initial: ColleagueRow[
         </ul>
       )}
     </section>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function ColleaguesCard(props: Parameters<typeof ColleaguesCardInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <ColleaguesCardInner {...props} />
+    </DemoGate>
   );
 }

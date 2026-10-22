@@ -9,6 +9,9 @@ import type { FontId } from "@/lib/studio/design";
 
 export type BrowserDesignInput = Omit<DesignedInput, "logos"> & {
   logoUrls: { square: string | null; wide: string | null; reversed: string | null };
+  // Demo mode: the footer line of the DEMO stamp (lib/pdf/demoStamp); absent
+  // for real accounts.
+  demoFooter?: string | null;
 };
 
 const bytesCache = new Map<string, Promise<Uint8Array | null>>();
@@ -34,7 +37,10 @@ export async function renderInBrowser(input: BrowserDesignInput): Promise<Uint8A
   }
   const [f, square, wide, reversed] = await Promise.all([fonts, bytesOf(input.logoUrls.square), bytesOf(input.logoUrls.wide), bytesOf(input.logoUrls.reversed)]);
   const { design, locale, practice, doc } = input;
-  return renderDesignedDocument({ design, locale, practice, doc, logos: { square, wide, reversed } }, f);
+  const pdf = await renderDesignedDocument({ design, locale, practice, doc, logos: { square, wide, reversed } }, f);
+  if (!input.demoFooter) return pdf;
+  const { stampDemo } = await import("@/lib/pdf/demoStamp");
+  return stampDemo(pdf, input.demoFooter, f.regular);
 }
 
 // Each page as a canvas `cssWidth` CSS pixels wide (drawn off-screen first,
