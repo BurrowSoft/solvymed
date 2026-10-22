@@ -87,7 +87,7 @@ export async function shareRxSnapshot(opts: {
 // own PDF in its own language, with the unsigned-copy line in that language,
 // in its folder by type (ad), titled as printed + its date.
 export async function shareDocumentSnapshot(opts: {
-  doctorId: string; patientId: string; doc: MedDoc; correctsId: string | null; footer: string;
+  doctorId: string; patientId: string; doc: MedDoc; correctsId: string | null; footer: string; demoFooter: string;
   // A new document or a correction (issued now): the copy may carry the
   // signature image; an edit's re-share never does (02).
   issued: boolean;
@@ -95,7 +95,7 @@ export async function shareDocumentSnapshot(opts: {
   const { doc } = opts;
   if (!sharesSnapshot(doc.doc_type)) return "notShared";
   try {
-    const r = await makeDocumentPdf(opts.patientId, doc, { footer: opts.footer, unsignedCopy: snapshotUnsignedLine(doc.language), imageCopy: snapshotImageCopyLine(doc.language) }, { withSignature: opts.issued });
+    const r = await makeDocumentPdf(opts.patientId, doc, { footer: opts.footer, unsignedCopy: snapshotUnsignedLine(doc.language), imageCopy: snapshotImageCopyLine(doc.language), demoFooter: opts.demoFooter }, { withSignature: opts.issued });
     if (!r.ok) return r.code === "access_log_failed" ? "accessLog" : "failed";
     return await shareSnapshot({
       doctorId: opts.doctorId, patientId: opts.patientId, bytes: r.bytes, source: "medical_document", sourceId: doc.id,

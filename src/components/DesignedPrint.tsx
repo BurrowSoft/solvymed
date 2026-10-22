@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { BrowserDesignInput } from "@/lib/pdf/browser";
+import { notifyDemoValue, useDemo } from "@/components/DemoGate";
 
 // A print page in the practice's saved design (Document Studio PR4; 02,
 // 10-12: web Print = the designed PDF): the PDF is made on the device, its
@@ -11,8 +12,12 @@ import type { BrowserDesignInput } from "@/lib/pdf/browser";
 // to print or save). Without a saved design the page keeps today's HTML
 // print view; if the PDF can't be made here, that view is shown instead
 // (fallback), so the document can always be printed (ec, #543).
-export function DesignedPrint({ input, fileName, backHref, backLabel, fallback }: { input: BrowserDesignInput; fileName: string; backHref: string; backLabel?: string; fallback: ReactNode }) {
+// demoValue: in the demo, this page is a "moment of value" (the first
+// prescription PDF, specs/demo-mode.md): the sign-up sheet once the PDF shows.
+export function DesignedPrint({ input, fileName, backHref, backLabel, fallback, demoValue }: { input: BrowserDesignInput; fileName: string; backHref: string; backLabel?: string; fallback: ReactNode; demoValue?: "prescription" }) {
   const t = useTranslations("prescriptionDoc");
+  const tDemo = useTranslations("demo");
+  const { demo } = useDemo();
   const box = useRef<HTMLDivElement>(null);
   const pages = useRef<HTMLDivElement>(null);
   const [bytes, setBytes] = useState<Uint8Array | null>(null);
@@ -24,7 +29,8 @@ export function DesignedPrint({ input, fileName, backHref, backLabel, fallback }
     (async () => {
       try {
         const { renderInBrowser, drawPages } = await import("@/lib/pdf/browser");
-        const pdf = await renderInBrowser(input);
+        // Demo: the DEMO stamp on every page (lib/pdf/demoStamp).
+        const pdf = await renderInBrowser(demo ? { ...input, demoFooter: tDemo("pdfFooter") } : input);
         const canvases = await drawPages(pdf, box.current?.clientWidth || 680);
         if (!alive || !pages.current) return;
         pages.current.replaceChildren(...canvases.map((cv) => {
@@ -34,6 +40,7 @@ export function DesignedPrint({ input, fileName, backHref, backLabel, fallback }
         }));
         setBytes(pdf);
         setState("ready");
+        if (demo && demoValue) notifyDemoValue(demoValue);
       } catch {
         if (alive) setState("failed");
       }

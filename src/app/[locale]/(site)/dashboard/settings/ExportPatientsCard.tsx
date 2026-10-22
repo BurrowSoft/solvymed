@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "./SettingsClient";
+import { DemoGate } from "@/components/DemoGate";
 
 // Settings → "Exportar pacientes (CSV)" (Help P10, doctor only). The file
 // comes from /api/patients/export, which logs every exported patient first
@@ -39,9 +40,12 @@ export function ExportPatientsCard({ locale }: { locale: string }) {
 
   return (
     <Card title={t("exportTitle")} description={t("exportHint")}>
-      <button data-server type="button" disabled={busy} onClick={() => void exportCsv()} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
-        {busy ? "…" : t("exportButton")}
-      </button>
+      {/* Demo (01, 10-22): the export is refused (/api/patients/export 403); said up front. */}
+      <DemoGate>
+        <button data-server type="button" disabled={busy} onClick={() => void exportCsv()} className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+          {busy ? "…" : t("exportButton")}
+        </button>
+      </DemoGate>
       {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
     </Card>
   );

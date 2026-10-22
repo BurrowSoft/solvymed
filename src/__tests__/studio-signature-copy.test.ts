@@ -72,7 +72,7 @@ describe("legal layouts never take the image", () => {
   it("the special control prescription, issued with the flag on and an image saved: no image read", async () => {
     sigBytes.mockClear();
     const { makeDocumentPdf } = await import("@/app/[locale]/(site)/dashboard/(gated)/patients/[id]/MedicalDocuments");
-    const r = await makeDocumentPdf("p", { id: "d", doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [] }, body: null, created_at: "2026-10-12T12:00:00Z" } as never, { footer: "F", unsignedCopy: "U", imageCopy: "I" }, { withSignature: true });
+    const r = await makeDocumentPdf("p", { id: "d", doc_type: "controlled_prescription", language: "pt-BR", fields: { items: [] }, body: null, created_at: "2026-10-12T12:00:00Z" } as never, { footer: "F", unsignedCopy: "U", imageCopy: "I", demoFooter: "DEMO" }, { withSignature: true });
     expect(r.ok).toBe(true);
     expect(controlled).toHaveBeenCalledTimes(1);
     expect(sigBytes).not.toHaveBeenCalled();

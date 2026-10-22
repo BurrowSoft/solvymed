@@ -15,7 +15,7 @@ import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
 import { leaveGuarded } from "@/components/DiscardGuard";
-import { notifyDemoBlocked } from "@/components/DemoGate";
+import { notifyDemoBlocked, notifyDemoValue } from "@/components/DemoGate";
 
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
@@ -204,6 +204,8 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
     }
     if (signal.aborted) return;
     setTurns([...history, { role: "assistant", blocks, streaming: false, failed }]);
+    // Demo: an answer is a moment of value (and the tour's step 4).
+    if (!failed && blocks.length > 0) notifyDemoValue("solvyai");
     setBusy(false);
     if (!gotUsage) {
       const u = await backend.usage();

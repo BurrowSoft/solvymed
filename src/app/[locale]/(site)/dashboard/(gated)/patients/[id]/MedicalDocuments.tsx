@@ -19,6 +19,7 @@ import { safeCall, NETWORK_FAILURE, timeLimit } from "@/lib/netError";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { renderDesignedDocument } from "@/lib/pdf/designed";
 import { createClient } from "@/lib/supabase/client";
+import { isDemoUser } from "@/lib/demo";
 import { signatureBytes } from "@/lib/studio/signature";
 import { medicalDocumentContent } from "@/lib/studio/content";
 import { signalShareCheck } from "@/lib/shareSignal";
@@ -465,7 +466,22 @@ async function fetchBytes(url: string | null): Promise<Uint8Array | null> {
 // printed (YYYY-MM-DD), or an error code.
 // withSignature: only the patient's copy made when the document is issued
 // (02, 10-13); downloads and prints show the typed stamp only.
-export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
+// Demo mode (specs/demo-mode.md): a document made in a demo session (the
+// session itself says, never a prop) gets the DEMO stamp (lib/pdf/demoStamp),
+// in Sarabun (Thai + Latin). Real accounts are untouched. demoFooter is
+// required (cf): every caller passes the line, the session decides.
+export async function makeDocumentPdf(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null; demoFooter: string }, opts: { withSignature?: boolean } = {}):
+  Promise<{ ok: true; bytes: Uint8Array; issued: string } | { ok: false; code: string }> {
+  const r = await makeDocumentPdfRaw(patientId, doc, words, opts);
+  if (!r.ok) return r;
+  let demo = false;
+  try { demo = isDemoUser((await createClient().auth.getUser()).data.user); } catch { /* no session read: a real account's path */ }
+  if (!demo) return r;
+  const [{ stampDemo }, fonts] = await Promise.all([import("@/lib/pdf/demoStamp"), loadDesignFontBytes("sarabun")]);
+  return { ...r, bytes: await stampDemo(r.bytes, words.demoFooter, fonts.regular) };
+}
+
+async function makeDocumentPdfRaw(patientId: string, doc: MedDoc, words: { footer: string; unsignedCopy: string | null; imageCopy?: string | null }, opts: { withSignature?: boolean } = {}):
   Promise<{ ok: true; bytes: Uint8Array; issued: string } | { ok: false; code: string }> {
   const r = await documentPrintData(patientId, doc.id);
   if (!r.ok) return r;
