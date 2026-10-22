@@ -303,7 +303,8 @@ export default function SignupPage() {
       setSentTo(email);
       setExisting(true);
     } else {
-      track("signup_submitted", { role });
+      // ?via=demo (specs/demo-mode.md): this sign-up came from the demo's CTA.
+      track("signup_submitted", searchParams.get("via") === "demo" ? { role, from: "demo" } : { role });
       setSentTo(email);
       setDraft({ name: fullName, code: isJoinFlow ? "" : inviteCode });
       setSuccess(true);

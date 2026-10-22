@@ -35,6 +35,8 @@ import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
 import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
+import { DemoGate } from "@/components/DemoGate";
+import { DemoRealDataNote, notifyDemoBlocked } from "@/components/DemoGate";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -177,6 +179,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         {TABS.map(tab_item => (
           <button
             key={tab_item.key}
+            data-demo-target={tab_item.key === "prescriptions" ? "rx-tab" : undefined}
             onClick={() => setTab(tab_item.key)}
             className={`shrink-0 px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
               tab === tab_item.key
@@ -512,6 +515,8 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
         )}
         {!isArchived && <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t("inviteCode")}</p>
+          {/* Demo (234 §5.4): invite codes are refused; said up front. */}
+          <DemoGate>
           {inviteCode ? (
             <div className="flex flex-wrap items-center gap-3">
               <span className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-base font-bold tracking-widest text-slate-900">
@@ -534,7 +539,8 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
               {codePending ? "…" : t("generateCode")}
             </button>
           )}
-          {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
+          </DemoGate>
+          {codeError &&<p className="mt-2 text-xs text-red-600">{codeError}</p>}
         </div>}
         {addressLive && addressLine(patient, idKind) && (
           <div className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -675,6 +681,7 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
         <p data-testid="missing-note" className="rounded-xl bg-amber-50 px-3.5 py-2.5 text-sm text-amber-800">{tf("missingNote", { fields: missingNow.map(fieldLabels.missing).join(", ") })}</p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
+      <DemoRealDataNote />
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => setEditing(false)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
         <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -720,6 +727,8 @@ function groupCorrections<T extends ClinicalMeta & { id: string }>(rows: T[]) {
 function useClinicalErrorText() {
   const t = useTranslations("patientDetail");
   return (e: string) => {
+    // A demo refusal (234): the "Disponível na sua conta" sheet says it.
+    if (e === "demo_not_allowed") notifyDemoBlocked();
     switch (e) {
       case "patient_archived": return t("archivedNoNew");
       case "clinical_record_locked": return t("lockedError");
@@ -1010,6 +1019,7 @@ function RecordsTab({ patientId, records, isArchived, currentUserId, locale, tem
           )}
           {dialog?.mode === "correct" && <ReasonField />}
           {error && <p className="text-sm text-red-600">{error}</p>}
+          <DemoRealDataNote />
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
@@ -1041,6 +1051,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
   const t = useTranslations("patientDetail");
   const td = useTranslations("documents");
   const tpd = useTranslations("prescriptionDoc");
+  const tDemo = useTranslations("demo");
   const [docDialog, setDocDialog] = useState<DocDialogState | null>(null);
   const tdocs = useTranslations("docs");
   // 1.8.0 B2: the patient's copy is made after the save; a failure only
@@ -1130,7 +1141,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     }));
   }
   function shareDoc(doc: MedDoc, correctsId: string | null, issued: boolean) {
-    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), issued }));
+    void runShare(() => shareDocumentSnapshot({ doctorId: currentUserId, patientId, doc, correctsId, footer: tpd("footer"), demoFooter: tDemo("pdfFooter"), issued }));
   }
   // Unsaved changes in the document dialog: closing asks first (ad).
   const docDirty = useRef(false);
@@ -1151,7 +1162,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
     setListError("");
     setPdfBusy(doc.id);
     try {
-      const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null });
+      const r = await makeDocumentPdf(patientId, doc, { footer: tpd("footer"), unsignedCopy: null, demoFooter: tDemo("pdfFooter") });
       if (!r.ok) { setListError(r.code === "access_log_failed" ? t("filesAccessLogFailed") : td("pdfFailed")); return; }
       // The special control prescription is print-only (ad, as the app):
       // the print dialog opens on its two copies; the others download, named
@@ -1378,7 +1389,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
         <p className="text-sm text-slate-500">{t("prescriptions", { n: originals.length })}</p>
         {!isArchived && (medicalDocs ? (
           <div className="flex gap-2">
-            <button onClick={() => open({ mode: "new" })} className="rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">{td("addPrescription")}</button>
+            <button data-demo-target="new-prescription" onClick={() => open({ mode: "new" })} className="rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">{td("addPrescription")}</button>
             <button onClick={() => setDocDialog({ mode: "new", type: null })} className="rounded-xl border border-teal-600 px-3 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50 transition">{td("addDocument")}</button>
           </div>
         ) : <button onClick={() => open({ mode: "new" })} className="flex items-center gap-1.5 rounded-xl bg-teal-600 px-3 py-2 text-sm font-bold text-white hover:bg-teal-700 transition">
@@ -1492,6 +1503,7 @@ function PrescriptionsTab({ patientId, patientName, prescriptions, isArchived, c
             </div>
           )}
           {error && <p className="text-sm text-red-600">{error}</p>}
+          <DemoRealDataNote />
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={() => setDialog(null)} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
             <button type="submit" disabled={pending || shareRxWaits} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">

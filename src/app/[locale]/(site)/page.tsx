@@ -7,6 +7,7 @@ import { AppDownloadButtons } from "@/components/AppDownloadButtons";
 import { HeroClip } from "@/components/HeroClip";
 import { SignupCta } from "@/components/SignupCta";
 import { AndroidAppCta } from "@/components/AndroidAppCta";
+import { DemoCta } from "@/components/DemoCta";
 import { SiteFooter, SiteHeader } from "@/components/SiteChrome";
 import { ThaiLandingSection } from "@/components/ThaiLandingSection";
 import { Link } from "@/i18n/navigation";
@@ -137,6 +138,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     className="inline-block rounded-xl bg-teal-500 px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300 focus:ring-offset-2 focus:ring-offset-teal-900"
                   />
                 </div>
+                {/* "Ver demonstração" (specs/demo-mode.md; only with demo_mode on). */}
+                <DemoCta testAllowed={process.env.VERCEL_ENV !== "production"} className="inline-flex items-center gap-2 rounded-xl border-2 border-[#F59E0B] bg-[#F59E0B]/10 px-6 py-4 text-lg font-bold text-amber-100 transition hover:bg-[#F59E0B]/20 focus:outline-none focus:ring-2 focus:ring-amber-300 focus:ring-offset-2 focus:ring-offset-teal-900" />
                 {hero.tourUrl && (
                   <a
                     href={hero.tourUrl}

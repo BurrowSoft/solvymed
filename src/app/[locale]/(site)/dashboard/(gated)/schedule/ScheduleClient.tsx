@@ -27,6 +27,7 @@ import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
+import { notifyDemoBlocked, notifyDemoValue } from "@/components/DemoGate";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -244,6 +245,8 @@ const ACTION_ERROR_KEY: Record<string, string> = {
 function actionErrorMessage(t: (key: string) => string, code: string | undefined, tDate?: (key: string) => string): string {
   // A Buddhist-era year (the date field blocks it first; server backstop).
   if (code === "date_buddhist_era" && tDate) return tDate("buddhistYear");
+  // A demo refusal (234): the "Disponível na sua conta" sheet says it.
+  if (code === "demo_not_allowed") notifyDemoBlocked();
   return t(ACTION_ERROR_KEY[code ?? ""] ?? "genericError");
 }
 
@@ -578,6 +581,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
       if (result?.error) { setError(actionErrorMessage(t, result.code, tDate)); return; }
       setOpen(false);
       saveOnce.current = { id: "", tries: 0 };
+      // Demo: a booked appointment is a moment of value (the sign-up sheet,
+      // once; no listener outside the demo).
+      notifyDemoValue("appointment");
       // Saved before the last changes: the agenda shows the saved one.
       if (result && "alreadySavedChanged" in result && result.alreadySavedChanged) { alert(tsave("alreadySavedChanged")); return; }
       if (result && "undo" in result) offerUndo(result.undo);

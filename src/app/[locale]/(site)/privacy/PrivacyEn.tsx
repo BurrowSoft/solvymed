@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false }: { turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false }: { turnstile: boolean; demo?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -100,6 +100,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protects sign-up, sign-in and password reset against automated abuse by checking technical signals from your browser", "Global"]]
               : []),
+            // The demo's bot check (Vitor's "OK privacy Cloudflare"): its own row
+            // while the sign-up row above stays dormant.
+            ...(demo ? [["Cloudflare (Turnstile)", "Checks that a person, not a bot, is starting the demo", "Global"]] : []),
             ...(solvyai
               ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
               : []),
@@ -201,6 +204,21 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         </ul>
       </Section>
 
+      {demo && (
+        <Section title="6h. Demo mode">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>You can try SolvyMed without an account at solvymed.com/demo. We create a temporary, anonymous session (a random identifier, with no name, e-mail or password) and a demo clinic filled with fictional patients and appointments.</li>
+            <li>Before the demo starts, Cloudflare Turnstile checks that you&rsquo;re a person, not a bot. Cloudflare receives your IP address and technical information from your browser for this check (see section 5). We keep only the scrambled form of your IP address described below.</li>
+            <li><strong>Please don&rsquo;t enter real patient data in the demo.</strong> Anything you type stays in that temporary session, visible only to you.</li>
+            <li>The demo contacts no one: it sends no notifications, e-mails or WhatsApp/LINE messages, takes no payments, can&rsquo;t upload files, and can&rsquo;t connect to or book with real professionals or patients.</li>
+            <li>SolvyAI works in the demo for up to 5 messages, under the same rules as section 6b: what you type is sent to Anthropic to get the answer (see section 5), and SolvyMed doesn&rsquo;t store it. We keep only an anonymous count of SolvyAI use, with no text.</li>
+            <li>To prevent abuse, we keep a scrambled (salted hash) form of your IP address with the demo session, never the address itself.</li>
+            <li>The demo session and everything in it are deleted within 24 hours of the start, or right away when you leave the demo or create an account. Nothing from the demo is copied into a real account.</li>
+            <li>Website usage statistics in the demo follow section 3.6 and the cookie banner: only with your consent.</li>
+          </ul>
+        </Section>
+      )}
+
       <Section title="7. Who can see data inside a clinic">
         <ul>
           <li><strong>The professional</strong> sees all data of their own patients, including medical records.</li>
@@ -272,6 +290,11 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <strong>Other data</strong>: account data while the account is active. Error reports: up to 90 days.
             Usage statistics: up to 12 months. Billing records: as long as tax law requires (kept by Stripe).
           </li>
+          {demo && (
+            <li>
+              <strong>Demo mode</strong>: the demo&rsquo;s fictional data, and anything typed into it, is not a medical record and is deleted within 24 hours (see section 6h).
+            </li>
+          )}
         </ul>
       </Section>
 

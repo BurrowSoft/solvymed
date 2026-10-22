@@ -6,6 +6,7 @@ import { clearAuthCookies } from "@/lib/authCookies";
 import { stripe, retrieveSubscriptionOrNull } from "@/lib/stripeBilling";
 import { knownDbError } from "@/lib/dbErrors";
 import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow } from "@/lib/accountClose";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 // Closes or deletes the caller's own account (migration 102), for the web
 // settings page and the mobile app alike:
@@ -25,6 +26,7 @@ import { closeFailureCode, planClosureNotices, stripeCloseStep, type ClosureRow 
 
 type Code =
   | "unauthorized"
+  | "demo_not_allowed"
   | "check_failed"
   | "stripe_cancel_failed"
   | "subscription_active"
@@ -43,7 +45,7 @@ function adminClient() {
 // access token as a Bearer header; the web uses the cookie session. The
 // token is passed to getUser() explicitly (a header-only client has no
 // stored session), which verifies it with Supabase Auth.
-async function caller(request: NextRequest): Promise<{ supabase: SupabaseClient; userId: string | null }> {
+async function caller(request: NextRequest): Promise<{ supabase: SupabaseClient; userId: string | null; demo: boolean }> {
   const token = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1];
   if (token) {
     const supabase = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
@@ -51,11 +53,11 @@ async function caller(request: NextRequest): Promise<{ supabase: SupabaseClient;
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const { data: { user } } = await supabase.auth.getUser(token);
-    return { supabase, userId: user?.id ?? null };
+    return { supabase, userId: user?.id ?? null, demo: isDemoUser(user) };
   }
   const supabase = (await createClient()) as unknown as SupabaseClient;
   const { data: { user } } = await supabase.auth.getUser();
-  return { supabase, userId: user?.id ?? null };
+  return { supabase, userId: user?.id ?? null, demo: isDemoUser(user) };
 }
 
 // brand-assets + brand-staging: the 1.5.0 brand (38: purge both prefixes).
@@ -92,8 +94,10 @@ function errorCode(err: unknown): string {
 }
 
 export async function POST(request: NextRequest) {
-  const { supabase, userId } = await caller(request);
+  const { supabase, userId, demo } = await caller(request);
   if (!userId) return fail("unauthorized", 401);
+  // A demo ends with end_demo, never with closing an account (234 §5.7).
+  if (demo) return fail(DEMO_NOT_ALLOWED, 403);
 
   // 0. Dry run: the whole close, rolled back inside the database, before
   // anything irreversible happens (Stripe can't be un-cancelled). It skips

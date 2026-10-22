@@ -14,6 +14,7 @@ import { BR_STATES, councilRegistration, parseCouncilRegistration, type CouncilF
 import { cardLinkInput } from "@/lib/cardLink";
 import { savedOk } from "@/lib/savedOk";
 import { useFormDirty } from "@/components/DiscardGuard";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 /* ─── shared UI primitives ─────────────────────────────────────── */
 function Label({ children }: { children: React.ReactNode }) {
@@ -174,7 +175,7 @@ function CouncilRegistrationFields({ saved }: { saved: string }) {
 }
 
 /* ─── Invite code card ──────────────────────────────────────────── */
-export function InviteCodeCard({ code: initialCode, country = null }: { code?: string; country?: string | null }) {
+function InviteCodeCardInner({ code: initialCode, country = null }: { code?: string; country?: string | null }) {
   const t = useTranslations("settings");
   const [code, setCode] = useState(initialCode ?? null);
   const [pending, start] = useTransition();
@@ -742,5 +743,16 @@ function ProcedureRow({ proc, currency }: { proc: Procedure; currency: Currency 
         </button>
       </div>
     </div>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function InviteCodeCard(props: Parameters<typeof InviteCodeCardInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <InviteCodeCardInner {...props} />
+    </DemoGate>
   );
 }

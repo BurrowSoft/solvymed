@@ -32,6 +32,10 @@ import { OfflineGuard } from "@/components/OfflineGuard";
 import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { NavigationGuard } from "@/components/DiscardGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
+import { DemoBar } from "@/components/DemoBar";
+import { DemoProvider } from "@/components/DemoGate";
+import { isDemoUser } from "@/lib/demo";
+import { parseCountryChoice } from "@/lib/signupCountry";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -152,7 +156,11 @@ export default async function DashboardLayout({
   const daysLeft = trialDaysRemaining(sub);
   // The one trial indicator, for the whole trial (first-run spec §4). A
   // doctor only: its link is Subscribe, which a secretary can't use.
-  const showTrialChip = !isSecretary && daysLeft !== null && daysLeft >= 1;
+  // Demo mode (specs/demo-mode.md): an anonymous session on a sandbox
+  // practice. The amber DEMO bar + sign-up button sit on top of every page;
+  // its trial and the product tour are hidden (the demo has its own).
+  const isDemo = isDemoUser(user);
+  const showTrialChip = !isDemo && !isSecretary && daysLeft !== null && daysLeft >= 1;
   // ──────────────────────────────────────────────────────────────────────────
 
   const { data: professional } = await supabase
@@ -194,6 +202,7 @@ export default async function DashboardLayout({
   // the flag), else her primary.
   const actingId = isSecretary ? ((await actingPracticeFor(roleRow.invited_by_professional_id!, user.id)) ?? roleRow.invited_by_professional_id!) : user.id;
   const practice = countryProfile(await getPracticeCountry(supabase, user.id, actingId));
+  const demoCountryCode = parseCountryChoice(practice.kind) ?? "BR";
   // A language the practice country doesn't offer: no dashboard in it, the
   // same page in the country's language (ad, after b3's lost SolvyAI answer).
   if (practice.languages.length && !(practice.languages as readonly string[]).includes(locale)) return <LocaleRedirect to={practice.languages[0]} />;
@@ -219,7 +228,11 @@ export default async function DashboardLayout({
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   return (
-    <div data-theme={theme} data-theme-root className="contents">
+    // --demo-bar-h: the demo bar's height (3rem); the page and the sidebar's
+    // fixed parts sit below it. 0 outside the demo, so nothing moves.
+    <div data-theme={theme} data-theme-root className="contents" style={isDemo ? ({ "--demo-bar-h": "3rem" } as React.CSSProperties) : undefined}>
+    {isDemo && <DemoBar locale={locale} country={demoCountryCode} />}
+    <DemoProvider value={{ demo: isDemo, locale, country: demoCountryCode }}>
     <OfflineGuard />
     <ClockSkewGuard />
     {/* Leaving a page with unsaved settings asks first (1.9.0, 02). */}
@@ -228,13 +241,15 @@ export default async function DashboardLayout({
       role={isSecretary ? "secretary" : "professional"}
       paymentQr={paymentQr}
       prefix={locale === "en" ? "" : `/${locale}`}
-      entry={!isSecretary && sub && !isAccessAllowed(sub) ? null : tourEntry(tourState)}
+      entry={isDemo || (!isSecretary && sub && !isAccessAllowed(sub)) ? null : tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
-      newsPending={newsPending}
-      introPending={introPending}
-      introTestable={panelOn && process.env.VERCEL_ENV !== "production"}
+      // The demo has its own tour (DemoTour): no "what's new" or SolvyAI
+      // intro sheet over the DEMO bar and its sign-up (83, iPhone SE /th).
+      newsPending={!isDemo && newsPending}
+      introPending={!isDemo && introPending}
+      introTestable={!isDemo && panelOn && process.env.VERCEL_ENV !== "production"}
     >
-      <div className="flex h-screen overflow-hidden bg-slate-50">
+      <div className="mt-[var(--demo-bar-h,0px)] flex h-[calc(100vh-var(--demo-bar-h,0px))] overflow-hidden bg-slate-50">
         <DashboardSidebar
           locale={locale}
           firstName={firstName}
@@ -295,6 +310,7 @@ export default async function DashboardLayout({
         <SaveMyLocale locale={locale} />
       </div>
     </TourProvider>
+    </DemoProvider>
     </div>
   );
 }

@@ -23,6 +23,8 @@ import { shortDoctorName } from "@/lib/doctorName";
 import { BrandHeader } from "@/components/BrandHeader";
 import type { PublicBrand } from "@/lib/brand";
 import { addressLine, publicLocationForDate, type PublicLocation } from "@/lib/locations";
+import { DemoGate, useDemoSession } from "@/components/DemoGate";
+import { leaveDemo } from "@/lib/demo";
 
 type Procedure = { id: string; name: string; durationMinutes: number; price?: number; paymentType: string };
 
@@ -140,7 +142,7 @@ async function fetchSlots(
   return filterPastSlots(slots, date, toMinutes(clinicTime(now, tz)), clinicDate(now, tz));
 }
 
-export function BookingClient({
+function BookingClientInner({
   professionalId,
   professionalName,
   specialty,
@@ -833,5 +835,31 @@ export function BookingClient({
         )}
       </div>
     </div>
+  );
+}
+
+// Demo mode (234: a demo session can't book at a real doctor): in a demo
+// session the page says so in one line, with "Sair da demonstração" (ends the
+// demo, then the page again as a visitor), and the booking form is inert
+// with "Disponível na sua conta".
+export function BookingClient(props: Parameters<typeof BookingClientInner>[0]) {
+  const demo = useDemoSession();
+  const t = useTranslations("demo");
+  const [leaving, setLeaving] = useState(false);
+  if (!demo) return <BookingClientInner {...props} />;
+  return (
+    <>
+      <div data-testid="demo-public-notice" role="status" className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[#F59E0B] px-4 py-3 text-sm font-bold text-[#1F2937]">
+        <span>{t("publicNotice")}</span>
+        <button type="button" data-testid="demo-exit" disabled={leaving}
+          onClick={async () => { setLeaving(true); await leaveDemo(createClient()); window.location.reload(); }}
+          className="rounded-full bg-[#1F2937] px-3.5 py-1.5 text-xs font-bold text-[#F59E0B] disabled:opacity-60">
+          {t("exit")}
+        </button>
+      </div>
+      <DemoGate demo>
+        <BookingClientInner {...props} />
+      </DemoGate>
+    </>
   );
 }

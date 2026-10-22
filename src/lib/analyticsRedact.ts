@@ -31,6 +31,9 @@ const SAFE_VALUES: Record<string, ReadonlySet<string>> = {
   role: new Set(["professional", "patient"]),
   step: new Set(["country"]),
   lr: new Set(["1"]),
+  // The demo (specs/demo-mode.md): the sign-up's origin and the tester's hook.
+  via: new Set(["demo"]),
+  demo_test: new Set(["1"]),
 };
 
 export function redactAnalyticsUrl(raw: string): string | null {

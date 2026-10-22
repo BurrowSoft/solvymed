@@ -9,6 +9,7 @@ import { conditionMet } from "@/lib/conditions";
 import { dateLocale } from "@/lib/dateLabels";
 import { withCountryHint } from "@/lib/signupCountry";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 export type TeamRow = {
   kind: "secretary" | "invite";
@@ -43,7 +44,7 @@ type Created = { code: string; email: string };
 // emailed on create, and "Reenviar convite" emails a fresh one (once an hour).
 // whatsapp: the share button only where the practice uses WhatsApp (not
 // in Thailand, item 12).
-export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean; country?: string | null }) {
+function TeamPanelInner({ rows, loadFailed, whatsapp = true, country = null }: { rows: TeamRow[]; loadFailed: boolean; whatsapp?: boolean; country?: string | null }) {
   const t = useTranslations("secretary");
   const router = useRouter();
   const { locale } = useParams<{ locale: string }>();
@@ -316,5 +317,16 @@ export function TeamPanel({ rows, loadFailed, whatsapp = true, country = null }:
       </form>
       {full && <p className="mt-2 text-xs text-slate-500">{t("teamFull", { n: TEAM_LIMIT })}</p>}
     </Card>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function TeamPanel(props: Parameters<typeof TeamPanelInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <TeamPanelInner {...props} />
+    </DemoGate>
   );
 }

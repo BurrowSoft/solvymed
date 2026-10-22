@@ -81,6 +81,7 @@ export default async function PrescriptionPrintPage({
   const designedView = studio
     ? (fallback: ReactNode) => (
       <DesignedPrint
+        demoValue="prescription"
         fallback={fallback}
         backHref={`${prefix}/dashboard/patients/${patient.id}`}
         fileName={`${t("title")} ${rx.date}.pdf`}

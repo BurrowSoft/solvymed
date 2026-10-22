@@ -72,13 +72,22 @@ export function practiceLine(country: string | undefined): string {
 
 // What a model failure may log: the HTTP status and the API's error type
 // (e.g. 400 invalid_request_error, 401 authentication_error, 404
-// not_found_error), else the error's class name. Never its message.
-export function modelErrorSummary(err: unknown): { status: number | null; type: string } {
-  const e = err as { status?: unknown; error?: { error?: { type?: unknown } }; name?: unknown } | null;
+// not_found_error), else the error's class name, and the API's own
+// validation message (10-22: a 400 with no reason took hours to place; 01).
+// That message is Anthropic's text about the request, never the
+// conversation or the key; quoted values are cut anyway, and it's capped.
+export function modelErrorSummary(err: unknown): { status: number | null; type: string; message?: string } {
+  const e = err as { status?: unknown; error?: { error?: { type?: unknown; message?: unknown } }; name?: unknown } | null;
   const status = typeof e?.status === "number" ? e.status : null;
   const apiType = e?.error?.error?.type;
   const type = typeof apiType === "string" ? apiType : typeof e?.name === "string" ? e.name : "unknown";
-  return { status, type };
+  const apiMessage = e?.error?.error?.message;
+  if (typeof apiMessage !== "string" || !apiMessage) return { status, type };
+  const message = apiMessage
+    .replace(/"[^"]*"|'[^']*'|`[^`]*`/g, "…")
+    .replace(/sk-ant-[A-Za-z0-9_-]+/g, "…")
+    .slice(0, 300);
+  return { status, type, message };
 }
 
 // The clinic's "now" and the tool context for one request.
@@ -251,6 +260,8 @@ async function confirmFailed(body: Body, deps: Deps, userId: string): Promise<Ou
     if (c.reason === "not_doctor") return fail(403, "not_doctor");
     if (c.reason === "inactive") return fail(403, "inactive");
     if (c.reason === "rate_limited") return fail(429, "rate_limited", { retryAfterS: c.retry_after_s ?? 3 });
+    // The demo's 5 messages are used (234 §5.6): the client offers sign-up.
+    if (c.reason === "demo_quota") return fail(429, "demo_quota");
     // Out of messages today: this one was free anyway, so it's still answered.
     if (c.reason !== "quota_exhausted") return fail(503, "model_unavailable");
   } else {
@@ -298,6 +309,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
     if (c.reason === "not_doctor") return fail(403, "not_doctor");
     if (c.reason === "inactive") return fail(403, "inactive");
     if (c.reason === "quota_exhausted") return fail(429, "quota_exhausted", { usage: { used: c.used, limit: c.limit, extra: 0, resetsAt: c.resets_at } });
+    // The demo's 5 messages are used (234 §5.6): the client offers sign-up.
+    if (c.reason === "demo_quota") return fail(429, "demo_quota");
     if (c.reason === "rate_limited") return fail(429, "rate_limited", { retryAfterS: c.retry_after_s ?? 3 });
     return fail(503, "model_unavailable");
   }

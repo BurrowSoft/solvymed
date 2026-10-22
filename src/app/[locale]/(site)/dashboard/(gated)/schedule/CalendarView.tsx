@@ -419,7 +419,7 @@ export function CalendarView({
   const headerLabel = calendarHeaderLabel(locale, view, currentDate, getWeekDays(currentDate), usePracticeCalendar());
 
   return (
-    <div>
+    <div data-demo-target="agenda">
       {/* Calendar nav */}
       <div className="mb-3 flex items-center gap-2">
         <button onClick={navPrev} aria-label={t(`prev${view === "day" ? "Day" : view === "week" ? "Week" : "Month"}`)} className="rounded-xl border border-slate-200 p-2 hover:bg-slate-50 transition">

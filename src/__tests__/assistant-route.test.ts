@@ -94,6 +94,9 @@ describe("/api/assistant: the checks, in the contract's order", () => {
       .toEqual({ status: 429, json: { error: "quota_exhausted", usage: { used: 20, limit: 20, extra: 0, resetsAt: "R" } } });
     expect(await handleAssistant(ask("oi"), deps({ consume: { allowed: false, reason: "rate_limited", retry_after_s: 2 } }).d))
       .toEqual({ status: 429, json: { error: "rate_limited", retryAfterS: 2 } });
+    // The demo's 5 messages (234 §5.6): the client offers sign-up.
+    expect(await handleAssistant(ask("oi"), deps({ consume: { allowed: false, reason: "demo_quota", used: 5, limit: 5 } }).d))
+      .toEqual({ status: 429, json: { error: "demo_quota" } });
   });
 });
 

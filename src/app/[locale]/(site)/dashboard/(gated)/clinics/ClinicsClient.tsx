@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { addClinic, deleteClinic, locateClinicCity, makePrimaryClinic, updateClinic, updateClinicLocation } from "./actions";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
+import { notifyDemoBlocked } from "@/components/DemoGate";
 
 // Leaflet needs the browser, and the tiles should load only when a doctor
 // opens the pin dialog: loaded on demand, never on the server.
@@ -35,6 +36,8 @@ const ERROR_CODE_KEY: Record<string, string> = {
 };
 
 function errorMessage(t: (key: string) => string, code: string | undefined): string {
+  // A demo refusal (234): the "Disponível na sua conta" sheet says it.
+  if (code === "demo_not_allowed") notifyDemoBlocked();
   return t(ERROR_CODE_KEY[code ?? ""] ?? "genericError");
 }
 

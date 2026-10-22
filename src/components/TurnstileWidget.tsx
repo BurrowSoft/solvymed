@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { TURNSTILE_SITE_KEY, turnstileEnabled } from "@/lib/turnstile";
+import { TURNSTILE_SCRIPT_SRC } from "@/lib/turnstileScript";
 
 // Cloudflare Turnstile (bot protection on sign-up, sign-in and password
 // reset). DORMANT unless NEXT_PUBLIC_TURNSTILE_SITE_KEY is set: without a
@@ -22,10 +23,11 @@ declare global {
   }
 }
 
-const SCRIPT_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+const SCRIPT_SRC = TURNSTILE_SCRIPT_SRC;
 let scriptPromise: Promise<void> | null = null;
 
-function loadScript(): Promise<void> {
+// Shared with the demo's own widget (DemoTurnstile).
+export function loadTurnstileScript(): Promise<void> {
   if (window.turnstile) return Promise.resolve();
   if (!scriptPromise) {
     scriptPromise = new Promise((resolve, reject) => {
@@ -56,7 +58,7 @@ export function TurnstileWidget({ onToken, locale, resetKey = 0 }: {
   useEffect(() => {
     if (!turnstileEnabled) return;
     let cancelled = false;
-    loadScript()
+    loadTurnstileScript()
       .then(() => {
         if (cancelled || !container.current || !window.turnstile) return;
         widgetId.current = window.turnstile.render(container.current, {

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { FOUNDER_BUCKET, FOUNDER_MAX_BYTES, FOUNDER_MAX_FILES, contentTypeFor, type FounderUploadError } from "@/lib/foundersUpload";
 import { track } from "@/lib/track";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // Settings → Programa Fundadores (founders stage 2, migration 132; UX copy
 // "Stage 2"): the accepted founder's instructions, the call link and the
@@ -13,7 +14,7 @@ import { track } from "@/lib/track";
 
 const STEPS = ["step1", "step2", "step3", "step4", "step5"] as const;
 
-export function FoundersCard({ uploadsLeft: initialLeft, bookingUrl }: { uploadsLeft: number; bookingUrl?: string }) {
+function FoundersCardInner({ uploadsLeft: initialLeft, bookingUrl }: { uploadsLeft: number; bookingUrl?: string }) {
   const t = useTranslations("foundersCard");
   const [left, setLeft] = useState(initialLeft);
   // The instructions stay open until the first upload.
@@ -100,5 +101,16 @@ export function FoundersCard({ uploadsLeft: initialLeft, bookingUrl }: { uploads
         <p className="text-xs text-slate-500">{t("retention")}</p>
       </div>
     </div>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function FoundersCard(props: Parameters<typeof FoundersCardInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <FoundersCardInner {...props} />
+    </DemoGate>
   );
 }
