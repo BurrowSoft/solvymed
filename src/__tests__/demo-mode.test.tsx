@@ -75,7 +75,8 @@ beforeEach(() => {
   h.verifyStatus = 200;
   // /api/demo/verify as the route behaves (#604): the ticket, then start_demo
   // on the server with the caller's session → ready, or 409 with its refusal.
-  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string }) => {
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string; method?: string }) => {
+    if (init?.method === "GET") { h.calls.push(`warm ${url}`); return new Response(null, { status: 204 }); }
     h.calls.push(`verify ${init?.body}`);
     if (url !== "/api/demo/verify") return new Response("{}", { status: 404 });
     if (h.verifyStatus !== 200) return new Response(JSON.stringify({ code: "turnstile_failed" }), { status: h.verifyStatus });
@@ -156,6 +157,9 @@ describe("/demo", () => {
     expect(h.calls.filter((c) => c.startsWith("start_demo"))).toHaveLength(1);
     expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeGreaterThan(h.calls.indexOf("signInAnonymously"));
     expect(h.calls.indexOf("prefetch /pt-BR/dashboard")).toBeLessThan(verify);
+    // F: the verify function is woken before the POST.
+    expect(h.calls.indexOf("warm /api/demo/verify")).toBeGreaterThan(-1);
+    expect(h.calls.indexOf("warm /api/demo/verify")).toBeLessThan(verify);
   });
 
   it("the loading card shows the real steps (#604, E)", async () => {

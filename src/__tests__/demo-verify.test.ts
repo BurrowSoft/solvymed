@@ -31,7 +31,7 @@ vi.mock("@supabase/supabase-js", () => ({
   }),
 }));
 
-import { POST } from "@/app/api/demo/verify/route";
+import { GET, POST } from "@/app/api/demo/verify/route";
 
 const req = (body: unknown, headers: Record<string, string> = {}) =>
   new NextRequest(new URL("/api/demo/verify", "https://www.solvymed.com"), {
@@ -118,6 +118,13 @@ describe("/api/demo/verify", () => {
     const res = await POST(req({ token: "tok" }));
     expect(await res.json()).toEqual({ status: "issued" });
     expect(h.rpc.map((r) => r.fn)).toEqual(["issue_demo_ticket"]);
+  });
+
+  it("#604 F: GET is a no-op warm-up: 204, no session read, nothing called", async () => {
+    const res = GET();
+    expect(res.status).toBe(204);
+    expect(h.rpc).toEqual([]);
+    expect(h.verifyBodies).toEqual([]);
   });
 
   it("no token: 400", async () => {

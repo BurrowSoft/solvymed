@@ -107,3 +107,9 @@ export async function POST(request: NextRequest) {
   const refused = START_REFUSALS.find((c) => (startError.message ?? "").includes(c));
   return withTiming(refused ? NextResponse.json({ code: refused }, { status: 409 }) : fail("start_failed", 503));
 }
+
+// GET: a no-op that wakes this function while /demo loads (#604, F), so the
+// POST finds it warm. No session, no body, nothing read or written.
+export function GET() {
+  return new NextResponse(null, { status: 204 });
+}

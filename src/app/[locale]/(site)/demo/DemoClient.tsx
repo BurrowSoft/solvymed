@@ -105,6 +105,8 @@ export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllo
           setState("signedIn");
           return;
         }
+        // Wake the verify function while the visitor waits (#604, F; a no-op GET).
+        void fetch("/api/demo/verify", { method: "GET" }).catch(() => undefined);
         let startError: { message?: string } | null;
         if (!user) {
           // A new visitor: the Turnstile solve and the anonymous sign-in run
