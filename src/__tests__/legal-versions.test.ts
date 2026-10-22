@@ -1,4 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+// The cookie button needs the intl provider; §6h's render test only reads the text.
+vi.mock("@/components/CookieSettingsButton", () => ({ CookieSettingsButton: () => null }));
 import { consentMetadata, legalDateLabel, PRIVACY_PUBLISHED, PRIVACY_VERSION, TERMS_PUBLISHED, TERMS_VERSION } from "@/lib/legalVersions";
 
 describe("legal versions (TH-3 consent)", () => {
@@ -162,5 +165,60 @@ describe("privacy 2026-10-22: §3.1 Sign in with Google (232; text = enforcement
     };
     walk("src");
     expect(hits).toEqual([]);
+  });
+});
+
+describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcement)", () => {
+  it("the version is 2026-10-23 or later (mobile 234 accepting it applied first)", () => {
+    expect(PRIVACY_VERSION >= "2026-10-23").toBe(true);
+  });
+
+  it("§6h and its §9 line show only with demo-mode-live, in both languages", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { createElement } = await import("react");
+    const { PrivacyEn } = await import("@/app/[locale]/(site)/privacy/PrivacyEn");
+    const { PrivacyPtBR } = await import("@/app/[locale]/(site)/privacy/PrivacyPtBR");
+    const html = (C: typeof PrivacyEn, demo: boolean) => renderToStaticMarkup(createElement(C, { turnstile: false, demo }));
+    expect(html(PrivacyEn, false)).not.toContain("6h. Demo mode");
+    expect(html(PrivacyPtBR, false)).not.toContain("6h. Modo demonstração");
+    const en = html(PrivacyEn, true);
+    const pt = html(PrivacyPtBR, true);
+    expect(en).toContain("6h. Demo mode");
+    expect(pt).toContain("6h. Modo demonstração");
+    expect(en).toContain("<strong>Demo mode</strong>: the demo");
+    expect(pt).toContain("<strong>Modo demonstração</strong>: os dados fictícios");
+    // What 234 and the web enforce: the 5-message SolvyAI quota (demo_quota),
+    // the salted IP hash, the 24 h cleanup and end_demo on leaving or signing up.
+    for (const s of ["up to 5 messages", "salted hash", "deleted within 24 hours of the start, or right away when you leave the demo or create an account", "Nothing from the demo is copied into a real account", "can’t upload files"]) expect(en).toContain(s);
+    for (const s of ["até 5 mensagens", "hash com sal", "apagados em até 24 horas depois do início, ou na hora, quando você sai da demonstração ou cria uma conta", "Nada da demonstração é copiado para uma conta real", "não permite enviar arquivos"]) expect(pt).toContain(s);
+  });
+
+  it("the demo's Cloudflare (Turnstile) check: its own §5 row and §6h line, only with demo-mode-live; the sign-up row stays dormant", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { createElement } = await import("react");
+    const { PrivacyEn } = await import("@/app/[locale]/(site)/privacy/PrivacyEn");
+    const { PrivacyPtBR } = await import("@/app/[locale]/(site)/privacy/PrivacyPtBR");
+    const html = (C: typeof PrivacyEn, demo: boolean) => renderToStaticMarkup(createElement(C, { turnstile: false, demo }));
+    const en = html(PrivacyEn, true);
+    const pt = html(PrivacyPtBR, true);
+    const cells = (s: string) => [...s.matchAll(/<td[^>]*>([^<]*)<\/td>/g)].map((m) => m[1]);
+    const row = (s: string) => { const c = cells(s); const i = c.indexOf("Cloudflare (Turnstile)"); return i < 0 ? null : c.slice(i, i + 3); };
+    expect(row(en)).toEqual(["Cloudflare (Turnstile)", "Checks that a person, not a bot, is starting the demo", "Global"]);
+    expect(row(pt)).toEqual(["Cloudflare (Turnstile)", "Verifica que é uma pessoa, e não um robô, que está iniciando a demonstração", "Global"]);
+    expect(en).toContain("Before the demo starts, Cloudflare Turnstile checks that you’re a person, not a bot.");
+    expect(pt).toContain("Antes de a demonstração começar, o Cloudflare Turnstile verifica que você é uma pessoa, e não um robô.");
+    // The sign-up / sign-in row is still the dormant one (turnstile off).
+    expect(en).not.toContain("Protects sign-up, sign-in and password reset");
+    expect(pt).not.toContain("Protege cadastro, login");
+    for (const off of [html(PrivacyEn, false), html(PrivacyPtBR, false)]) expect(off).not.toContain("Cloudflare (Turnstile)");
+  });
+
+  it("the page passes demo-mode-live (a known condition)", async () => {
+    const fs = await import("node:fs");
+    const page = fs.readFileSync("src/app/[locale]/(site)/privacy/page.tsx", "utf8");
+    expect(page).toContain('conditionMet("demo-mode-live")');
+    expect(page.match(/demo=\{demo\}/g)).toHaveLength(2);
+    const conditions = JSON.parse(fs.readFileSync("content/help/conditions.json", "utf8"));
+    expect(conditions["demo-mode-live"]).toBeDefined();
   });
 });
