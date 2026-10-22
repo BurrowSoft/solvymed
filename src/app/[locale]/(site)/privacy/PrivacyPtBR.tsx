@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false }: { clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false }: { demo?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -201,6 +201,20 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         </ul>
       </Section>
 
+      {demo && (
+        <Section title="6h. Modo demonstração">
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Você pode experimentar o SolvyMed sem conta em solvymed.com/demo. Criamos uma sessão temporária e anônima (um identificador aleatório, sem nome, e-mail ou senha) e uma clínica de demonstração com pacientes e consultas fictícios.</li>
+            <li><strong>Não digite dados reais de pacientes na demonstração.</strong> O que você digitar fica nessa sessão temporária, visível só para você.</li>
+            <li>A demonstração não contata ninguém: ela não envia notificações, e-mails nem mensagens de WhatsApp/LINE, não recebe pagamentos, não permite enviar arquivos e não se conecta nem agenda com profissionais ou pacientes reais.</li>
+            <li>A SolvyAI funciona na demonstração por até 5 mensagens, com as mesmas regras da seção 6b: o que você digita é enviado à Anthropic para gerar a resposta (veja a seção 5), e o SolvyMed não guarda esse texto. Guardamos só uma contagem anônima do uso da SolvyAI, sem nenhum texto.</li>
+            <li>Para evitar abusos, guardamos uma forma embaralhada (hash com sal) do seu endereço IP junto com a sessão de demonstração, nunca o endereço em si.</li>
+            <li>A sessão de demonstração e tudo o que estiver nela são apagados 24 horas depois do início, ou na hora, quando você sai da demonstração ou cria uma conta. Nada da demonstração é copiado para uma conta real.</li>
+            <li>As estatísticas de uso do site na demonstração seguem a seção 3.6 e o banner de cookies: só com o seu consentimento.</li>
+          </ul>
+        </Section>
+      )}
+
       <Section title="7. Quem vê os dados dentro de uma clínica">
         <ul>
           <li><strong>O profissional</strong> vê todos os dados dos seus próprios pacientes, incluindo os prontuários.</li>
@@ -274,6 +288,11 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             dias. Estatísticas de uso: até 12 meses. Registros de cobrança: pelo prazo exigido pela legislação
             tributária (guardados pela Stripe).
           </li>
+          {demo && (
+            <li>
+              <strong>Modo demonstração</strong>: os dados fictícios da demonstração, e o que for digitado nela, não são prontuário e são apagados em até 24 horas (veja a seção 6h).
+            </li>
+          )}
         </ul>
       </Section>
 
