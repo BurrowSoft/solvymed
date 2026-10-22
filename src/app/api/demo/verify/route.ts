@@ -85,17 +85,30 @@ export async function POST(request: NextRequest) {
   };
   const withTiming = (res: NextResponse) => { if (timing.length) res.headers.set("Server-Timing", timing.join(", ")); return res; };
   let success = false;
+  // Cloudflare's own reason codes on a refusal (01: "invalid-input-response"
+  // proves the secret is accepted, "invalid-input-secret" means it isn't).
+  // Only its fixed codes, never the secret or the token.
+  let reasons: string[] = [];
   try {
     const form = new URLSearchParams({ secret, response: token });
     if (ip) form.set("remoteip", ip);
-    success = await timed("siteverify", async () => {
+    const answer = await timed("siteverify", async () => {
       const res = await fetch(SITEVERIFY, { method: "POST", body: form, signal: AbortSignal.timeout(8000) });
-      return res.ok && demoTurnstileAnswerOk((await res.json()) as { success?: boolean; action?: string; hostname?: string }, test);
+      return { ok: res.ok, body: (await res.json()) as { success?: boolean; action?: string; hostname?: string; "error-codes"?: unknown } };
     });
+    success = answer.ok && demoTurnstileAnswerOk(answer.body, test);
+    reasons = Array.isArray(answer.body["error-codes"])
+      ? answer.body["error-codes"].filter((c): c is string => typeof c === "string" && /^[a-z0-9-]{1,40}$/.test(c)).slice(0, 5)
+      : [];
+    // A pass with the wrong widget or site (demoTurnstileAnswerOk).
+    if (!success && answer.body.success === true) reasons = ["action-or-hostname"];
   } catch {
     return fail("verify_unreachable", 503);
   }
-  if (!success) return withTiming(fail("turnstile_failed", 403));
+  if (!success) {
+    console.warn(`[demo/verify] turnstile refused: ${reasons.join(",") || "no-reason"}`);
+    return withTiming(NextResponse.json({ code: "turnstile_failed", errors: reasons }, { status: 403 }));
+  }
 
   const { error } = await timed("ticket", async () => admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null }));
   if (error) return (error.message ?? "").includes("not_anonymous") ? fail("not_anonymous", 403) : fail("ticket_failed", 503);

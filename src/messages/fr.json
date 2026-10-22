@@ -1,7 +1,7 @@
 ﻿{
   "demo": {
     "barLabel": "Demo mode",
-    "barText": "Demo mode · fictional data, deleted after 24 h",
+    "barText": "Demo mode · fictional data, deleted within 24 h",
     "barTextShort": "Fictional data",
     "signup": "Create my free account",
     "signupShort": "Create free account",

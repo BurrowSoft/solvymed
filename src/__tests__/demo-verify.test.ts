@@ -70,8 +70,34 @@ describe("/api/demo/verify", () => {
     h.siteverify = { success: false };
     const res = await POST(req({ token: "tok" }));
     expect(res.status).toBe(403);
-    expect(await res.json()).toEqual({ code: "turnstile_failed" });
+    expect(await res.json()).toEqual({ code: "turnstile_failed", errors: [] });
     expect(h.rpc).toEqual([]);
+  });
+
+  it("a refusal says Cloudflare's reason codes (01: proving the secret), never the secret or the token; the log line too", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    vi.stubEnv("DEMO_TURNSTILE_SECRET_KEY", "real-secret");
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    for (const [codes, expected] of [
+      [["invalid-input-response"], ["invalid-input-response"]],
+      [["invalid-input-secret"], ["invalid-input-secret"]],
+      [["timeout-or-duplicate", "x".repeat(60), 7, "<script>"], ["timeout-or-duplicate"]],
+    ] as const) {
+      h.siteverify = { success: false, "error-codes": codes };
+      const res = await POST(req({ token: "the-token" }));
+      expect(res.status).toBe(403);
+      const body = await res.json();
+      expect(body).toEqual({ code: "turnstile_failed", errors: expected });
+      expect(JSON.stringify(body)).not.toMatch(/real-secret|the-token/);
+    }
+    // A pass from another widget or site.
+    h.siteverify = { success: true, action: "login", hostname: "www.solvymed.com" };
+    expect(await (await POST(req({ token: "the-token" }))).json()).toEqual({ code: "turnstile_failed", errors: ["action-or-hostname"] });
+    const logged = warn.mock.calls.map((c) => String(c[0])).join("\n");
+    expect(logged).toContain("[demo/verify] turnstile refused: invalid-input-secret");
+    expect(logged).not.toMatch(/real-secret|the-token/);
+    expect(h.rpc).toEqual([]);
+    warn.mockRestore();
   });
 
   it("a real account or no session: refused before Cloudflare", async () => {

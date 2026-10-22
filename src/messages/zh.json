@@ -1,7 +1,7 @@
 ﻿{
   "demo": {
     "barLabel": "演示模式",
-    "barText": "演示模式 · 虚构数据，24 小时后删除",
+    "barText": "演示模式 · 虚构数据，24 小时内删除",
     "barTextShort": "虚构数据",
     "signup": "创建我的免费账户",
     "signupShort": "创建免费账户",

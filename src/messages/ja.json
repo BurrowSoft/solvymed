@@ -1,7 +1,7 @@
 ﻿{
   "demo": {
     "barLabel": "デモモード",
-    "barText": "デモモード · 架空のデータ（24時間後に削除）",
+    "barText": "デモモード · 架空のデータ（24時間以内に削除）",
     "barTextShort": "架空のデータ",
     "signup": "無料アカウントを作成",
     "signupShort": "無料で作成",

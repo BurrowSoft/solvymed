@@ -77,7 +77,17 @@
 // password only for e-mail sign-ups. No §5 row (the user's own choice;
 // Google acts as its own controller). Mobile's accepting migration 233
 // (#532) applied FIRST; the app's PRIVACY_VERSION twin follows (3e).
-export const PRIVACY_VERSION = "2026-10-22";
+// 2026-10-23: §6h Demo mode + its §9 line (demo-mode-live; Vitor's "OK
+// privacy demo", via 01, 10-22): the anonymous temporary session, fictional
+// data, no real patient data, no side effects (234's guards + #597), SolvyAI
+// for 5 messages with no text kept (an anonymous count only), the salted
+// IP hash, deletion within 24 h or at once on leaving / signing up, nothing
+// copied into a real account; statistics only with consent. Cloudflare
+// (Turnstile) checks that a person starts the demo: its own §5 row + a §6h
+// line (Vitor's "OK privacy Cloudflare"); the dormant sign-up row is
+// untouched. Mobile's 234 (accepting 2026-10-23) applied FIRST; merged
+// with the demo_mode flip; the app's PRIVACY_VERSION twin follows (0e).
+export const PRIVACY_VERSION = "2026-10-23";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -89,7 +99,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-20"; // 2026-10-22 (Google sign-in §3.1) went live on its merge day, 2026-10-20 UTC; re-set it if the merge slips past that day
+export const PRIVACY_PUBLISHED = "2026-10-22"; // 2026-10-23 (demo mode §6h + Cloudflare) goes live when #599 merges, 2026-10-22 UTC (demo-mode-live flips in the same PR); re-set it if the merge slips past that day
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only
