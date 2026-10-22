@@ -100,6 +100,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protects sign-up, sign-in and password reset against automated abuse by checking technical signals from your browser", "Global"]]
               : []),
+            // The demo's bot check (Vitor's "OK privacy Cloudflare"): its own row
+            // while the sign-up row above stays dormant.
+            ...(demo ? [["Cloudflare (Turnstile)", "Checks that a person, not a bot, is starting the demo", "Global"]] : []),
             ...(solvyai
               ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
               : []),
@@ -205,6 +208,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         <Section title="6h. Demo mode">
           <ul className="list-disc space-y-1 pl-5">
             <li>You can try SolvyMed without an account at solvymed.com/demo. We create a temporary, anonymous session (a random identifier, with no name, e-mail or password) and a demo clinic filled with fictional patients and appointments.</li>
+            <li>Before the demo starts, Cloudflare Turnstile checks that you&rsquo;re a person, not a bot. Cloudflare receives your IP address and technical information from your browser for this check (see section 5). We keep only the scrambled form of your IP address described below.</li>
             <li><strong>Please don&rsquo;t enter real patient data in the demo.</strong> Anything you type stays in that temporary session, visible only to you.</li>
             <li>The demo contacts no one: it sends no notifications, e-mails or WhatsApp/LINE messages, takes no payments, can&rsquo;t upload files, and can&rsquo;t connect to or book with real professionals or patients.</li>
             <li>SolvyAI works in the demo for up to 5 messages, under the same rules as section 6b: what you type is sent to Anthropic to get the answer (see section 5), and SolvyMed doesn&rsquo;t store it. We keep only an anonymous count of SolvyAI use, with no text.</li>

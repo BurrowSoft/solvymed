@@ -100,6 +100,8 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ...(turnstile
               ? [["Cloudflare Turnstile", "Protege cadastro, login e redefinição de senha contra abuso automatizado, verificando sinais técnicos do seu navegador", "Global"]]
               : []),
+            // A verificação contra robôs da demonstração (OK do Vitor): linha própria.
+            ...(demo ? [["Cloudflare (Turnstile)", "Verifica que é uma pessoa, e não um robô, que está iniciando a demonstração", "Global"]] : []),
             ...(solvyai
               ? [["Anthropic (SolvyAI, só profissionais, quando usado)", "Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido", "EUA"]]
               : []),
@@ -205,6 +207,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         <Section title="6h. Modo demonstração">
           <ul className="list-disc space-y-1 pl-5">
             <li>Você pode experimentar o SolvyMed sem conta em solvymed.com/demo. Criamos uma sessão temporária e anônima (um identificador aleatório, sem nome, e-mail ou senha) e uma clínica de demonstração com pacientes e consultas fictícios.</li>
+            <li>Antes de a demonstração começar, o Cloudflare Turnstile verifica que você é uma pessoa, e não um robô. O Cloudflare recebe seu endereço IP e informações técnicas do seu navegador para essa verificação (veja a seção 5). Guardamos apenas a forma embaralhada do seu endereço IP descrita abaixo.</li>
             <li><strong>Não digite dados reais de pacientes na demonstração.</strong> O que você digitar fica nessa sessão temporária, visível só para você.</li>
             <li>A demonstração não contata ninguém: ela não envia notificações, e-mails nem mensagens de WhatsApp/LINE, não recebe pagamentos, não permite enviar arquivos e não se conecta nem agenda com profissionais ou pacientes reais.</li>
             <li>A SolvyAI funciona na demonstração por até 5 mensagens, com as mesmas regras da seção 6b: o que você digita é enviado à Anthropic para gerar a resposta (veja a seção 5), e o SolvyMed não guarda esse texto. Guardamos só uma contagem anônima do uso da SolvyAI, sem nenhum texto.</li>

@@ -82,8 +82,10 @@
 // data, no real patient data, no side effects (234's guards + #597), SolvyAI
 // for 5 messages with no text kept (an anonymous count only), the salted
 // IP hash, deletion within 24 h or at once on leaving / signing up, nothing
-// copied into a real account; statistics only with consent. No §5 row (the
-// same providers). Mobile's 234 (accepting 2026-10-23) applied FIRST; merged
+// copied into a real account; statistics only with consent. Cloudflare
+// (Turnstile) checks that a person starts the demo: its own §5 row + a §6h
+// line (Vitor's "OK privacy Cloudflare"); the dormant sign-up row is
+// untouched. Mobile's 234 (accepting 2026-10-23) applied FIRST; merged
 // with the demo_mode flip; the app's PRIVACY_VERSION twin follows (0e).
 export const PRIVACY_VERSION = "2026-10-23";
 export const TERMS_VERSION = "2026-10-01";

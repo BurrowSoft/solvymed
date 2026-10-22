@@ -193,6 +193,26 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
     for (const s of ["até 5 mensagens", "hash com sal", "apagados 24 horas depois do início", "Nada da demonstração é copiado para uma conta real", "não permite enviar arquivos"]) expect(pt).toContain(s);
   });
 
+  it("the demo's Cloudflare (Turnstile) check: its own §5 row and §6h line, only with demo-mode-live; the sign-up row stays dormant", async () => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { createElement } = await import("react");
+    const { PrivacyEn } = await import("@/app/[locale]/(site)/privacy/PrivacyEn");
+    const { PrivacyPtBR } = await import("@/app/[locale]/(site)/privacy/PrivacyPtBR");
+    const html = (C: typeof PrivacyEn, demo: boolean) => renderToStaticMarkup(createElement(C, { turnstile: false, demo }));
+    const en = html(PrivacyEn, true);
+    const pt = html(PrivacyPtBR, true);
+    const cells = (s: string) => [...s.matchAll(/<td[^>]*>([^<]*)<\/td>/g)].map((m) => m[1]);
+    const row = (s: string) => { const c = cells(s); const i = c.indexOf("Cloudflare (Turnstile)"); return i < 0 ? null : c.slice(i, i + 3); };
+    expect(row(en)).toEqual(["Cloudflare (Turnstile)", "Checks that a person, not a bot, is starting the demo", "Global"]);
+    expect(row(pt)).toEqual(["Cloudflare (Turnstile)", "Verifica que é uma pessoa, e não um robô, que está iniciando a demonstração", "Global"]);
+    expect(en).toContain("Before the demo starts, Cloudflare Turnstile checks that you’re a person, not a bot.");
+    expect(pt).toContain("Antes de a demonstração começar, o Cloudflare Turnstile verifica que você é uma pessoa, e não um robô.");
+    // The sign-up / sign-in row is still the dormant one (turnstile off).
+    expect(en).not.toContain("Protects sign-up, sign-in and password reset");
+    expect(pt).not.toContain("Protege cadastro, login");
+    for (const off of [html(PrivacyEn, false), html(PrivacyPtBR, false)]) expect(off).not.toContain("Cloudflare (Turnstile)");
+  });
+
   it("the page passes demo-mode-live (a known condition)", async () => {
     const fs = await import("node:fs");
     const page = fs.readFileSync("src/app/[locale]/(site)/privacy/page.tsx", "utf8");
