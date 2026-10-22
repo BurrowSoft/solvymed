@@ -11,7 +11,11 @@ const TEST_SECRET = "1x0000000000000000000000000000000AA";
 // test: the always-pass keys, whose answers carry no real action or hostname.
 export function demoTurnstileKeys(): { siteKey: string; secret: string; test: boolean } {
   if (process.env.VERCEL_ENV === "production") {
-    return { siteKey: process.env.DEMO_TURNSTILE_SITE_KEY ?? "", secret: process.env.DEMO_TURNSTILE_SECRET_KEY ?? "", test: false };
+    // Never the test keys on Production, even if someone pastes them (01).
+    const siteKey = process.env.DEMO_TURNSTILE_SITE_KEY ?? "";
+    const secret = process.env.DEMO_TURNSTILE_SECRET_KEY ?? "";
+    const real = secret !== "" && !secret.startsWith("1x0000") && !secret.startsWith("2x0000") && !secret.startsWith("3x0000");
+    return { siteKey, secret: real ? secret : "", test: false };
   }
   return { siteKey: TEST_SITE_KEY, secret: TEST_SECRET, test: true };
 }

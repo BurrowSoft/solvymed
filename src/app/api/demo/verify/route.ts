@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { isDemoUser } from "@/lib/demo";
 import { demoTurnstileAnswerOk, demoTurnstileKeys } from "@/lib/demoTurnstile";
@@ -14,7 +14,7 @@ import { demoTurnstileAnswerOk, demoTurnstileKeys } from "@/lib/demoTurnstile";
 
 const SITEVERIFY = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-type Code = "bad_token" | "unauthorized" | "not_anonymous" | "not_configured" | "verify_unreachable" | "turnstile_failed" | "ticket_failed";
+type Code = "bad_token" | "unauthorized" | "not_anonymous" | "not_configured" | "verify_unreachable" | "turnstile_failed" | "ticket_failed" | "demo_preview_closed";
 
 function fail(code: Code, status: number) {
   return NextResponse.json({ code }, { status });
@@ -31,6 +31,17 @@ async function callerUser(request: NextRequest) {
   return (await (await createClient()).auth.getUser()).data.user;
 }
 
+async function previewWindowOpen(admin: SupabaseClient): Promise<boolean> {
+  try {
+    const { data, error } = await admin.from("server_flags").select("key, enabled").in("key", ["demo_mode", "demo_test_window"]);
+    if (error || !Array.isArray(data)) return false;
+    const on = (key: string) => data.some((r: { key: string; enabled: boolean }) => r.key === key && r.enabled === true);
+    return on("demo_test_window") && !on("demo_mode");
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(request: NextRequest) {
   const body = (await request.json().catch(() => null)) as { token?: unknown } | null;
   const token = typeof body?.token === "string" ? body.token : "";
@@ -43,6 +54,15 @@ export async function POST(request: NextRequest) {
 
   const { secret, test } = demoTurnstileKeys();
   if (!secret) return fail("not_configured", 503);
+  const admin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  // Off Production the check is Cloudflare's always-pass test keys, while
+  // previews share Production's database (cf's #600 block): a preview mints
+  // a ticket ONLY during the testers' window (demo_test_window on) and
+  // never once the demo is public (demo_mode off), both read here with the
+  // service role (01). Anything else, or a failed read: no ticket.
+  if (test && !(await previewWindowOpen(admin))) return fail("demo_preview_closed", 403);
   const ip = request.headers.get("x-real-ip")?.trim() ?? "";
 
   let success = false;
@@ -56,9 +76,6 @@ export async function POST(request: NextRequest) {
   }
   if (!success) return fail("turnstile_failed", 403);
 
-  const admin = createSupabaseClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
   const { error } = await admin.rpc("issue_demo_ticket", { p_user: user.id, p_ip: ip || null });
   if (error) return (error.message ?? "").includes("not_anonymous") ? fail("not_anonymous", 403) : fail("ticket_failed", 503);
   return NextResponse.json({ status: "issued" });
