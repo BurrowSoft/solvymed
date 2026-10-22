@@ -2385,6 +2385,10 @@
             },
             {
               "type": "p",
+              "text": "No app para Android, a tela de entrada também tem **Continuar com Google**, com a mesma tela **Complete sua conta** na primeira vez."
+            },
+            {
+              "type": "p",
               "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (abre o app de e-mail do celular), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
             },
             {
@@ -2416,6 +2420,10 @@
             {
               "type": "p",
               "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it."
+            },
+            {
+              "type": "p",
+              "text": "In the Android app, the sign-in screen also has **Continue with Google**, with the same **Complete your account** screen the first time."
             },
             {
               "type": "p",
