@@ -154,7 +154,7 @@ export function DemoTour({ locale, country }: { locale: string; country: Country
 
   return (
     <aside data-testid="demo-tour" aria-label={t("tourTitle")}
-      className="fixed bottom-[calc(1rem+var(--consent-h,0px))] left-4 right-4 z-[56] rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:left-auto sm:w-80">
+      className="demo-tour-card fixed bottom-[calc(1rem+var(--consent-h,0px))] left-4 right-4 z-[56] rounded-2xl border border-slate-200 bg-white p-4 shadow-xl sm:left-auto sm:w-80">
       <div className="mb-2 flex items-center gap-3">
         {ring}
         <strong className="flex-1 text-sm text-slate-900">{allDone ? t("tourDoneTitle") : t("tourTitle")}</strong>

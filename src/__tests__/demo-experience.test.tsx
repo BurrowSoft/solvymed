@@ -126,6 +126,13 @@ describe("the 2-minute tour", () => {
     }
   });
 
+  it("the open card moves left of SolvyAI's panel at lg+ instead of covering its input (83, #610)", async () => {
+    render(wrap(<DemoTour locale="pt-BR" country="BR" />));
+    expect(await screen.findByTestId("demo-tour")).toHaveClass("demo-tour-card");
+    const css = readFileSync(resolve(__dirname, "../app/globals.css"), "utf8");
+    expect(css).toMatch(/@media \(min-width: 1024px\) \{\s*html\[data-solvyai-open\] \.demo-tour-card \{ right: calc\(400px \+ 1rem\); \}/);
+  });
+
   it("\"Mostrar\" takes the visitor to the step's page", () => {
     render(wrap(<DemoTour locale="pt-BR" country="BR" />));
     fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
@@ -178,6 +185,13 @@ describe("don't enter real patient data (the spec's guardrail; cf's #598 block)"
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/PatientsClient.tsx")).toBe(1);
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient.tsx")).toBe(3);
     expect(src("components/DemoBar.tsx")).toContain("data-testid=\"demo-bar-hint\"");
+  });
+
+  it("phones: the line under the bar keeps clear of the dashboard's ☰ (83, #610)", () => {
+    const bar = readFileSync(resolve(__dirname, "../components/DemoBar.tsx"), "utf8");
+    const stack = bar.split("\n").find((l) => l.includes("data-testid=\"demo-under-bar\""));
+    expect(stack).toMatch(/\bpl-16\b/);
+    expect(stack).not.toMatch(/\bpx-/);
   });
 });
 

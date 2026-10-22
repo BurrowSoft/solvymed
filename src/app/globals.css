@@ -121,3 +121,9 @@ html[data-platform="android"] .android-hide { display: none; }
 @media (max-width: 1023.98px) {
   html[data-solvyai-open] [data-tour="nav-menu"] { display: none; }
 }
+
+/* At lg+ the panel is a 400px column on the right: the demo's open tour card
+   (components/DemoTour) moves left of it instead of covering its input (83, #610). */
+@media (min-width: 1024px) {
+  html[data-solvyai-open] .demo-tour-card { right: calc(400px + 1rem); }
+}
