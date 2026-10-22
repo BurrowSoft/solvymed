@@ -65,6 +65,7 @@ afterEach(async () => {
 });
 
 import { SolvyAi, cardIsSafe, screenOf } from "@/components/solvyai/SolvyAi";
+import { DemoProvider } from "@/components/DemoGate";
 
 // The mock streams word by word with real delays; under a full parallel run
 // 5 s is too tight for the longer answers.
@@ -84,14 +85,28 @@ function openPanel(props: Partial<Parameters<typeof SolvyAi>[0]> = {}) {
 }
 
 describe("SolvyAI panel (specs/assistant.md §2)", () => {
-  it("phones: the panel starts below the DEMO bar and above the demo's overlays, so its ✕ is never covered (Vitor, 10-23)", () => {
+  it("a real account on a phone: below the (absent) DEMO bar, the same z-40 layer as before, so page dialogs and the consent banner stay above it (cf)", () => {
     openPanel();
-    const panel = screen.getByTestId("solvyai-panel");
-    const cls = panel.className.split(" ");
+    const cls = screen.getByTestId("solvyai-panel").className.split(" ");
     expect(cls).toContain("top-[var(--demo-bar-h,0px)]");
-    expect(cls).toContain("z-[58]");
+    expect(cls).toContain("z-40");
+    expect(cls).not.toContain("z-[58]");
     expect(cls).not.toContain("inset-0");
     expect(cls).toContain("lg:h-full");
+    expect(screen.getByLabelText("assistant.close")).toBeInTheDocument();
+  });
+
+  it("a demo on a phone: below the DEMO bar and above the demo's hint/chip/tour pill (z-[58]), so its ✕ is never covered (Vitor, 10-23)", () => {
+    render(
+      <DemoProvider value={{ demo: true, locale: "pt-BR", country: "BR" }}>
+        <SolvyAi locale="pt-BR" prefix="/pt-BR" dailyLimit={20} />
+      </DemoProvider>,
+    );
+    fireEvent.click(screen.getByLabelText("assistant.open"));
+    const cls = screen.getByTestId("solvyai-panel").className.split(" ");
+    expect(cls).toContain("top-[var(--demo-bar-h,0px)]");
+    expect(cls).toContain("z-[58]");
+    expect(cls).not.toContain("z-40");
     expect(screen.getByLabelText("assistant.close")).toBeInTheDocument();
   });
 

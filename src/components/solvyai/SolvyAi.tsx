@@ -15,7 +15,7 @@ import { helpLang, inlineSegments } from "@/lib/help";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { track } from "@/lib/track";
 import { leaveGuarded } from "@/components/DiscardGuard";
-import { notifyDemoBlocked, notifyDemoValue } from "@/components/DemoGate";
+import { notifyDemoBlocked, notifyDemoValue, useDemo } from "@/components/DemoGate";
 
 // SolvyAI on the web (specs/assistant.md §2): doctors only, on every
 // dashboard page. A floating ✦ button bottom-right opens a 400 px panel on
@@ -68,6 +68,7 @@ export function SolvyAi(props: { locale: string; prefix: string; dailyLimit: num
 function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = null }: { locale: string; prefix: string; dailyLimit: number; remote?: boolean; paymentQr?: "pix" | "promptpay" | null }) {
   const t = useTranslations("assistant");
   const tDemo = useTranslations("demo");
+  const { demo } = useDemo();
   const router = useRouter();
   const pathname = usePathname();
   const lang = helpLang(locale);
@@ -325,16 +326,18 @@ function SolvyAiPanel({ locale, prefix, dailyLimit, remote = false, paymentQr = 
     <>
       {/* The panel: beside the content on wide screens (it pushes it), a
           full-height sheet on narrow ones. On phones it starts below the
-          DEMO bar (--demo-bar-h, 0 outside a demo) and sits above the menu
-          button, the demo's hint/chip and tour pill (z-50..56) but below the
-          DEMO bar (60) and the demo's sheets (70): its ✕ is never covered
-          (Vitor, 10-23). Wide screens: the dashboard row's height, which
-          is already short of the DEMO bar. */}
+          DEMO bar (--demo-bar-h, 0 outside a demo), so its ✕ is never
+          covered (Vitor, 10-23). Its layer: z-40 as before for real accounts
+          (page dialogs, the consent banner, ☰ and the tour stay above it;
+          cf); in a demo z-[58], above the demo's hint/chip and tour pill
+          (55, 56) but below the DEMO bar (60) and the demo's sheets (70).
+          Wide screens: the dashboard row's height, already short of the
+          DEMO bar. */}
       {open && !minimized && (
         <aside
           aria-label="SolvyAI"
           data-testid="solvyai-panel"
-          className="fixed inset-x-0 bottom-0 top-[var(--demo-bar-h,0px)] z-[58] flex flex-col bg-white lg:static lg:inset-auto lg:z-auto lg:h-full lg:w-[400px] lg:shrink-0 lg:border-l lg:border-slate-100"
+          className={`fixed inset-x-0 bottom-0 top-[var(--demo-bar-h,0px)] ${demo ? "z-[58]" : "z-40"} flex flex-col bg-white lg:static lg:inset-auto lg:z-auto lg:h-full lg:w-[400px] lg:shrink-0 lg:border-l lg:border-slate-100`}
         >
           <header className="flex items-center gap-2 border-b border-slate-100 px-4 py-3">
             <span className="text-lg text-teal-600" aria-hidden="true">✦</span>
