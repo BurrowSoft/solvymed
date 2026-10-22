@@ -10,7 +10,7 @@ import { isLandingPath, landingDestination, secretaryWithoutTeam } from "./lib/l
 import { ACTING_COOKIE, ALL_PRACTICES, type MyPractice } from "./lib/actingPractice";
 import { liveFeatures } from "./lib/liveFeatures";
 import { BROWSER_LANGUAGES_HEADER, LOCALE_REDIRECT_PARAM } from "./lib/signupCountry";
-import { androidStoreLink, appShortlinkPlayTarget, isAndroidPhone, isAppShortlink } from "./lib/appStores";
+import { appShortlinkPlayTarget, isAndroidPhone, isAppShortlink, storeLinkForAgent } from "./lib/appStores";
 import { CONSENT_COOKIE, parseConsent } from "./lib/consent";
 import { onboardingPending } from "./lib/googleSignIn";
 
@@ -36,8 +36,9 @@ export async function middleware(req: NextRequest) {
       const visit = marketing
         ? { utm_source: searchParams.get("utm_source"), utm_medium: searchParams.get("utm_medium"), utm_campaign: searchParams.get("utm_campaign") }
         : null;
-      // The Play Store app, not its website (androidStoreLink; 01).
-      return NextResponse.redirect(androidStoreLink(appShortlinkPlayTarget(visit)), { status: 302 });
+      // The Play Store app, not its website (androidStoreLink; 01); a plain
+      // WebView keeps the https link (storeLinkForAgent; cf).
+      return NextResponse.redirect(storeLinkForAgent(req.headers.get("user-agent"), appShortlinkPlayTarget(visit)), { status: 302 });
     }
     // A plain URL, not a nextUrl clone (that keeps the trailing slash of /th/app/).
     const url = new URL(pathname.replace(/\/app\/?$/i, "") || "/", req.url);

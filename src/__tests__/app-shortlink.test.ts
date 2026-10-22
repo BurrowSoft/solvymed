@@ -43,6 +43,13 @@ describe("solvymed.com/app on an Android phone", () => {
     expect(auth.calls).toBe(0);
   });
 
+  it("a plain Android WebView (Instagram, Facebook: \"; wv)\") keeps the https listing (cf)", async () => {
+    const WV = "Mozilla/5.0 (Linux; Android 14; Pixel 7 Build/AP2A; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/129.0 Mobile Safari/537.36 Instagram 350.0";
+    const res = await get("/app", { "user-agent": WV });
+    expect(res.status).toBe(302);
+    expect(res.headers.get("location")).toBe(PLAY);
+  });
+
   it("without marketing consent the visitor's query never reaches the store", async () => {
     for (const cookie of ["", marketing(false)]) {
       const res = await get("/app?utm_source=x&utm_campaign=ep07&gclid=abc", { "user-agent": ANDROID, cookie });

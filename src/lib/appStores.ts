@@ -67,6 +67,18 @@ export function androidStoreLink(playUrl: string): string {
   return `intent://details?${query}#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=${encodeURIComponent(playUrl)};end`;
 }
 
+// A plain Android WebView ("; wv)" in the user agent: Instagram, Facebook
+// and other in-app browsers) may show a scheme error on intent:// and has
+// no S.browser_fallback_url (cf): it keeps the https Play link. Chrome, its
+// Custom Tabs and Samsung Internet get the intent.
+export function isAndroidWebView(userAgent: string | null | undefined): boolean {
+  return /; wv\)/.test(userAgent ?? "");
+}
+
+export function storeLinkForAgent(userAgent: string | null | undefined, playUrl: string): string {
+  return isAndroidWebView(userAgent) ? playUrl : androidStoreLink(playUrl);
+}
+
 // An Android phone (Android tablets omit "Mobile").
 export function isAndroidPhone(userAgent: string | null | undefined): boolean {
   return /Android.+Mobile/i.test(userAgent ?? "");

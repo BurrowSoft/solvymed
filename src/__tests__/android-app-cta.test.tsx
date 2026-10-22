@@ -103,6 +103,18 @@ describe("AndroidAppCta", () => {
     expect(play.href.startsWith("intent://details?id=com.burrowsoft.solvymed&")).toBe(true);
     expect(play.href).toContain("#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2F");
     expect(play.target).toBe("_self");
+  });
+
+  it("in a plain Android WebView (\"; wv)\"): the https listing in a new tab, as before (cf)", () => {
+    consent(false);
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue("Mozilla/5.0 (Linux; Android 14; Pixel 7; wv) AppleWebKit/537.36 Version/4.0 Chrome/129.0 Mobile Safari/537.36 Instagram 350.0");
+    render(cta());
+    const play = screen.getByTestId("android-app-cta-play") as HTMLAnchorElement;
+    play.addEventListener("click", (e) => e.preventDefault());
+    fireEvent.click(play);
+    expect(play.href.startsWith("https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed&referrer=")).toBe(true);
+    expect(play.target).toBe("_blank");
+    ua.mockRestore();
     expect(h.track).toHaveBeenCalledWith("app_store_click", { platform: "android", c: "BR" });
   });
 });
