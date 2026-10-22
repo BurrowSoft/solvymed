@@ -9,7 +9,7 @@ import { AuthPageShell } from "@/components/AuthPageShell";
 import { AuthCard } from "@/components/AuthCard";
 import { BrandMark } from "@/components/BrandMark";
 import { publicFlag } from "@/lib/publicFlags";
-import { demoCountry, demoTestOn, isDemoUser } from "@/lib/demo";
+import { demoCountry, demoTestOn, isDemoUser, leaveDemo } from "@/lib/demo";
 import { track } from "@/lib/track";
 
 // /demo: the ads' landing (specs/demo-mode.md). Straight into the demo
@@ -33,6 +33,22 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
   useEffect(() => {
     let live = true;
     const supabase = createClient();
+    // A refused or failed start leaves no orphan (01, 10-22): end_demo (it
+    // deletes any anonymous caller, sandbox or not; 0e) then sign-out,
+    // best-effort. 234's refusals mean no sandbox exists (an existing one
+    // answers "ready" first), so they always clean up; any other failure
+    // only cleans up the anonymous session made here, so a reload's
+    // network blip never ends a running demo. A real account (not_anonymous;
+    // never reached, it's sent to its dashboard above) is never signed out.
+    let fresh = false;
+    let cleaned = false;
+    const cleanUp = async (refused: boolean) => {
+      if (cleaned || !(refused || fresh)) return;
+      cleaned = true;
+      await leaveDemo(supabase);
+    };
+    const refusal = (e: { message?: string } | null) =>
+      ["demo_off", "demo_busy", "unsupported_country"].find((c) => (e?.message ?? "").includes(c)) ?? null;
     void (async () => {
       try {
         const on = demoTestOn(location.search, testAllowed) || (await publicFlag(supabase, "demo_mode"));
@@ -50,18 +66,19 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
         if (!user) {
           const { error } = await supabase.auth.signInAnonymously();
           if (error) throw error;
+          fresh = true;
         }
         const { error: startError } = await supabase.rpc("start_demo", { p_country: country, p_locale: locale });
+        const refused = refusal(startError);
+        if (refused) await cleanUp(true);
         // 234: demo_busy = over the abuse caps (per IP / in total): a moment.
-        if (startError && (startError.message ?? "").includes("demo_busy")) {
+        if (refused === "demo_busy") {
           if (live) setState("busy");
           return;
         }
         // 234: demo_off = the switch (and the testers' window) is off on the
-        // server, whatever this page thought: the sign-up card, and the
-        // anonymous session just made goes (01, 10-22).
-        if (startError && (startError.message ?? "").includes("demo_off")) {
-          await supabase.auth.signOut().catch(() => undefined);
+        // server, whatever this page thought: the sign-up card.
+        if (refused === "demo_off") {
           if (live) setState("unavailable");
           return;
         }
@@ -69,11 +86,12 @@ export function DemoClient({ testAllowed }: { testAllowed: boolean }) {
         track("demo_start", { platform: "web", c: country });
         window.location.replace(`${prefix}/dashboard`);
       } catch {
+        await cleanUp(false);
         if (live) setState("error");
       }
     })();
     return () => { live = false; };
-  }, [attempt, country, locale, prefix]);
+  }, [attempt, country, locale, prefix, testAllowed]);
 
   return (
     <AuthPageShell>
