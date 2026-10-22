@@ -3,7 +3,6 @@ import { DemoClient } from "./DemoClient";
 import { demoTurnstileKeys } from "@/lib/demoTurnstile";
 import { TURNSTILE_SCRIPT_SRC } from "@/lib/turnstileScript";
 import { DEMO_TEST_PARAM } from "@/lib/demo";
-import { publicFlag } from "@/lib/publicFlags";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -22,8 +21,11 @@ export default async function DemoPage({ searchParams }: { searchParams: Promise
   // null: unknown (the read failed): the browser asks again.
   let on: boolean | null = test || null;
   if (!test) {
+    // The RPC itself (not publicFlag, which says false on a failed read):
+    // a failed read stays null, and the browser asks again (cf).
     try {
-      on = await publicFlag(await createClient(), "demo_mode");
+      const { data, error } = await (await createClient()).rpc("get_public_flags");
+      on = error || !Array.isArray(data) ? null : data.some((r: { key?: unknown; enabled?: unknown }) => r?.key === "demo_mode" && r.enabled === true);
     } catch {
       on = null;
     }

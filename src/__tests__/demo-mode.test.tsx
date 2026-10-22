@@ -17,6 +17,7 @@ const h = vi.hoisted(() => ({
   track: vi.fn(),
   locale: "pt-BR",
   verifyStatus: 200,
+  serverFlagsFail: false,
 }));
 // The bot check: the widget hands a token at once; /api/demo/verify answers verifyStatus.
 vi.mock("@/components/DemoTurnstile", async () => {
@@ -35,7 +36,7 @@ vi.mock("@/i18n/navigation", () => ({
 vi.mock("@/lib/track", () => ({ track: h.track }));
 // The server page reads the switch (#604).
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: async () => ({ rpc: async (fn: string) => { h.calls.push(`server:${fn}`); return { data: fn === "get_public_flags" ? h.flags : null, error: null }; } }),
+  createClient: async () => ({ rpc: async (fn: string) => { h.calls.push(`server:${fn}`); return h.serverFlagsFail ? { data: null, error: { message: "down" } } : { data: fn === "get_public_flags" ? h.flags : null, error: null }; } }),
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
@@ -73,6 +74,7 @@ beforeEach(() => {
   h.track.mockReset();
   h.locale = "pt-BR";
   h.verifyStatus = 200;
+  h.serverFlagsFail = false;
   // /api/demo/verify as the route behaves (#604): the ticket, then start_demo
   // on the server with the caller's session → ready, or 409 with its refusal.
   vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string; method?: string }) => {
@@ -249,6 +251,19 @@ describe("/demo", () => {
       render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
       await waitFor(() => expect(cf()).not.toBeNull());
       expect(h.calls.filter((c) => c === "get_public_flags")).toHaveLength(0);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("#604: a failed server read is unknown, not \"off\": the browser asks again (cf)", async () => {
+    vi.stubEnv("VERCEL_ENV", "production");
+    try {
+      h.serverFlagsFail = true;
+      h.flags = [{ key: "demo_mode", enabled: true }];
+      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      await waitFor(() => expect(h.calls).toContain("get_public_flags"));
+      expect(screen.queryByTestId("demo-unavailable")).toBeNull();
     } finally {
       vi.unstubAllEnvs();
     }
