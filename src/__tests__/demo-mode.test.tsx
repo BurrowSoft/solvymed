@@ -192,8 +192,35 @@ describe("/demo", () => {
     show();
     expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
     await waitFor(() => expect(h.calls).toContain("signOut"));
+    expect(h.calls.indexOf("end_demo")).toBeGreaterThan(-1);
+    expect(h.calls.indexOf("end_demo")).toBeLessThan(h.calls.indexOf("signOut"));
     expect(screen.queryByTestId("demo-error")).toBeNull();
     expect(replace).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["demo_busy", "demo-busy"],
+    ["unsupported_country", "demo-error"],
+    ["network down", "demo-error"],
+  ])("%s on a fresh session: end_demo, then sign-out (no orphan; 01)", async (message, testId) => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    h.startError = { message };
+    show();
+    expect(await screen.findByTestId(testId)).toBeInTheDocument();
+    await waitFor(() => expect(h.calls).toContain("signOut"));
+    expect(h.calls.filter((c) => c === "end_demo")).toHaveLength(1);
+    expect(h.calls.indexOf("end_demo")).toBeLessThan(h.calls.indexOf("signOut"));
+  });
+
+  it("a reload's network error never ends a running demo (the session wasn't made here)", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    h.user = { id: "anon-1", is_anonymous: true };
+    h.startError = { message: "network down" };
+    show();
+    expect(await screen.findByTestId("demo-error")).toBeInTheDocument();
+    await new Promise((r) => setTimeout(r, 20));
+    expect(h.calls).not.toContain("end_demo");
+    expect(h.calls).not.toContain("signOut");
   });
 
   it("start_demo fails: the error with retry and sign-up", async () => {
