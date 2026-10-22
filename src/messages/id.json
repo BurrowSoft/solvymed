@@ -14,6 +14,7 @@
     "openDashboard": "Buka dasbor saya",
     "error": "Tidak dapat membuka demo. Coba lagi.",
     "retry": "Coba lagi",
+    "busy": "Banyak orang sedang mencoba demo saat ini. Coba lagi sebentar lagi.",
     "landingCta": "Coba demo"
   },
   "getApp": "Unduh Aplikasi",

@@ -14,6 +14,7 @@
     "openDashboard": "Mở bảng điều khiển",
     "error": "Không mở được bản demo. Vui lòng thử lại.",
     "retry": "Thử lại",
+    "busy": "Hiện có nhiều người đang dùng thử bản demo. Vui lòng thử lại sau giây lát.",
     "landingCta": "Dùng thử demo"
   },
   "getApp": "Tải ứng dụng",

@@ -18,7 +18,7 @@ import { track } from "@/lib/track";
 // sandbox), then the dashboard, where the DEMO bar takes over. While the
 // switch demo_mode is off (and without ?demo_test=1): a short card to the
 // sign-up. A real account that's already signed in is never touched.
-type State = "loading" | "unavailable" | "signedIn" | "error";
+type State = "loading" | "unavailable" | "signedIn" | "busy" | "error";
 
 export default function DemoPage() {
   const t = useTranslations("demo");
@@ -51,6 +51,11 @@ export default function DemoPage() {
           if (error) throw error;
         }
         const { error: startError } = await supabase.rpc("start_demo", { p_country: country, p_locale: locale });
+        // 234: demo_busy = over the abuse caps (per IP / in total): a moment.
+        if (startError && (startError.message ?? "").includes("demo_busy")) {
+          if (live) setState("busy");
+          return;
+        }
         if (startError) throw startError;
         track("demo_start", { platform: "web", c: country });
         window.location.replace(`${prefix}/dashboard`);
@@ -82,6 +87,16 @@ export default function DemoPage() {
           <div className="flex flex-col items-center gap-3 py-2 text-center">
             <h1 className="text-lg font-bold text-slate-900">{t("signedInTitle")}</h1>
             <Link href={`${prefix}/dashboard`} className="mt-2 rounded-full bg-teal-600 px-5 py-2.5 text-sm font-bold text-white">{t("openDashboard")}</Link>
+          </div>
+        )}
+        {state === "busy" && (
+          <div data-testid="demo-busy" role="status" className="flex flex-col items-center gap-3 py-2 text-center">
+            <p className="text-sm text-slate-700">{t("busy")}</p>
+            <div className="flex flex-wrap justify-center gap-2">
+              <button type="button" onClick={() => { setState("loading"); setAttempt((n) => n + 1); }}
+                className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">{t("retry")}</button>
+              <a href={`${prefix}/auth/signup?c=${country}`} className="rounded-full bg-[#0D9488] px-4 py-2 text-sm font-bold text-white">{t("signup")}</a>
+            </div>
           </div>
         )}
         {state === "error" && (

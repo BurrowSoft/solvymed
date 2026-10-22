@@ -71,6 +71,7 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
       <div ref={menuRef} className="relative">
         <button
           type="button"
+          data-testid="demo-menu"
           aria-haspopup="menu"
           aria-expanded={menu}
           aria-label={t("menu")}

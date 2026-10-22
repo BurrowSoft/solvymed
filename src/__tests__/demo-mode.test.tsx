@@ -151,6 +151,14 @@ describe("/demo", () => {
     expect(h.calls).not.toContain("signInAnonymously");
   });
 
+  it("demo_busy (234's caps): \"try again in a moment\", not an error", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    h.startError = { message: "demo_busy", code: "P0001" };
+    show();
+    expect(await screen.findByTestId("demo-busy")).toHaveTextContent(pt.demo.busy);
+    expect(screen.queryByTestId("demo-error")).toBeNull();
+  });
+
   it("start_demo fails: the error with retry and sign-up", async () => {
     h.flags = [{ key: "demo_mode", enabled: true }];
     h.startError = { message: "rate_limited" };

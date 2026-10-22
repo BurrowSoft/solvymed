@@ -14,6 +14,7 @@
     "openDashboard": "Open my dashboard",
     "error": "Couldn't open the demo. Please try again.",
     "retry": "Try again",
+    "busy": "Lots of people are trying the demo right now. Please try again in a moment.",
     "landingCta": "Try the demo"
   },
   "getApp": "Descargar la app",

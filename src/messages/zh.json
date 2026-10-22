@@ -14,6 +14,7 @@
     "openDashboard": "打开我的控制台",
     "error": "无法打开演示，请重试。",
     "retry": "重试",
+    "busy": "目前试用演示的人很多，请稍后再试。",
     "landingCta": "试用演示"
   },
   "getApp": "下载应用",

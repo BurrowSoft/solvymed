@@ -14,6 +14,7 @@
     "openDashboard": "Abrir meu painel",
     "error": "Não foi possível abrir a demonstração. Tente novamente.",
     "retry": "Tentar novamente",
+    "busy": "Muita gente está testando a demonstração agora. Tente de novo em instantes.",
     "landingCta": "Ver demonstração"
   },
   "getApp": "Baixar o app",
