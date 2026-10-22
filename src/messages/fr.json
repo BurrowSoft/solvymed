@@ -1,4 +1,21 @@
 ﻿{
+  "demo": {
+    "barLabel": "Demo mode",
+    "barText": "Demo mode · fictional data, deleted after 24 h",
+    "barTextShort": "Fictional data",
+    "signup": "Create my free account",
+    "signupShort": "Create free account",
+    "exit": "Leave the demo",
+    "menu": "Demo options",
+    "loading": "Preparing your demo clinic…",
+    "unavailableTitle": "The demo isn't available right now",
+    "unavailableBody": "Create your free account in 1 minute.",
+    "signedInTitle": "You're already signed in",
+    "openDashboard": "Open my dashboard",
+    "error": "Couldn't open the demo. Please try again.",
+    "retry": "Try again",
+    "landingCta": "Try the demo"
+  },
   "getApp": "Télécharger l'app",
   "hero": {
     "badge": "App disponible maintenant",

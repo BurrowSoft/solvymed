@@ -1,4 +1,21 @@
 ﻿{
+  "demo": {
+    "barLabel": "Chế độ demo",
+    "barText": "Chế độ demo · dữ liệu giả, xóa sau 24 giờ",
+    "barTextShort": "Dữ liệu giả",
+    "signup": "Tạo tài khoản miễn phí",
+    "signupShort": "Tạo tài khoản miễn phí",
+    "exit": "Thoát demo",
+    "menu": "Tùy chọn demo",
+    "loading": "Đang chuẩn bị phòng khám demo của bạn…",
+    "unavailableTitle": "Hiện chưa dùng được bản demo",
+    "unavailableBody": "Tạo tài khoản miễn phí trong 1 phút.",
+    "signedInTitle": "Bạn đã đăng nhập",
+    "openDashboard": "Mở bảng điều khiển",
+    "error": "Không mở được bản demo. Vui lòng thử lại.",
+    "retry": "Thử lại",
+    "landingCta": "Dùng thử demo"
+  },
   "getApp": "Tải ứng dụng",
   "hero": {
     "badge": "Ứng dụng đã sẵn sàng",

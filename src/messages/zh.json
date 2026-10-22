@@ -1,4 +1,21 @@
 ﻿{
+  "demo": {
+    "barLabel": "演示模式",
+    "barText": "演示模式 · 虚构数据，24 小时后删除",
+    "barTextShort": "虚构数据",
+    "signup": "创建我的免费账户",
+    "signupShort": "创建免费账户",
+    "exit": "退出演示",
+    "menu": "演示选项",
+    "loading": "正在准备您的演示诊所…",
+    "unavailableTitle": "演示暂不可用",
+    "unavailableBody": "1 分钟即可创建免费账户。",
+    "signedInTitle": "您已登录",
+    "openDashboard": "打开我的控制台",
+    "error": "无法打开演示，请重试。",
+    "retry": "重试",
+    "landingCta": "试用演示"
+  },
   "getApp": "下载应用",
   "hero": {
     "badge": "应用已上线",

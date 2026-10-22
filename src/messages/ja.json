@@ -1,4 +1,21 @@
 ﻿{
+  "demo": {
+    "barLabel": "デモモード",
+    "barText": "デモモード · 架空のデータ（24時間後に削除）",
+    "barTextShort": "架空のデータ",
+    "signup": "無料アカウントを作成",
+    "signupShort": "無料で作成",
+    "exit": "デモを終了",
+    "menu": "デモのオプション",
+    "loading": "デモ用クリニックを準備しています…",
+    "unavailableTitle": "現在デモはご利用いただけません",
+    "unavailableBody": "1分で無料アカウントを作成できます。",
+    "signedInTitle": "すでにログインしています",
+    "openDashboard": "ダッシュボードを開く",
+    "error": "デモを開けませんでした。もう一度お試しください。",
+    "retry": "再試行",
+    "landingCta": "デモを試す"
+  },
   "getApp": "アプリを入手",
   "hero": {
     "badge": "アプリ公開中",

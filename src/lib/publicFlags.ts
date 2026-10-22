@@ -5,7 +5,8 @@
 type FlagReader = { rpc: (fn: "get_public_flags") => PromiseLike<{ data: unknown; error: unknown }> };
 
 // google_signin: the Google button on the web and in the app (232).
-export type PublicFlag = "confirm_by_code" | "google_signin";
+// demo_mode: the demo (234), the web and the app.
+export type PublicFlag = "confirm_by_code" | "google_signin" | "demo_mode";
 
 export async function publicFlag(supabase: unknown, key: PublicFlag): Promise<boolean> {
   try {
