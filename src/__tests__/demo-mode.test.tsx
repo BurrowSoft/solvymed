@@ -16,7 +16,13 @@ const h = vi.hoisted(() => ({
   anonError: null as unknown,
   track: vi.fn(),
   locale: "pt-BR",
+  verifyStatus: 200,
 }));
+// The bot check: the widget hands a token at once; /api/demo/verify answers verifyStatus.
+vi.mock("@/components/DemoTurnstile", async () => {
+  const { useEffect } = await import("react");
+  return { DemoTurnstile: ({ onToken }: { onToken: (t: string) => void }) => { useEffect(() => { h.calls.push("turnstile"); onToken("tok"); }, []); return null; } }; // eslint-disable-line react-hooks/exhaustive-deps
+});
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
   useParams: () => ({ locale: h.locale }),
@@ -62,11 +68,13 @@ beforeEach(() => {
   h.anonError = null;
   h.track.mockReset();
   h.locale = "pt-BR";
+  h.verifyStatus = 200;
+  vi.stubGlobal("fetch", vi.fn(async (url: string, init?: { body?: string }) => { h.calls.push(`verify ${init?.body}`); return new Response(JSON.stringify({}), { status: url === "/api/demo/verify" ? h.verifyStatus : 404 }); }));
   assign.mockClear();
   replace.mockClear();
   Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "" } });
 });
-afterEach(() => Object.defineProperty(window, "location", { configurable: true, value: original }));
+afterEach(() => { Object.defineProperty(window, "location", { configurable: true, value: original }); vi.unstubAllGlobals(); });
 
 describe("lib/demo", () => {
   it("the country from the path (data), BR as the explicit default", () => {
@@ -118,7 +126,43 @@ describe("DemoBar", () => {
 });
 
 describe("/demo", () => {
-  const show = () => render(wrap(<DemoClient testAllowed />));
+  const show = () => render(wrap(<DemoClient testAllowed siteKey="site" />));
+
+  it("the bot check (01 + 0e): a new visitor passes Turnstile BEFORE any session, then the ticket, then start_demo", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    show();
+    await waitFor(() => expect(replace).toHaveBeenCalled());
+    const order = ["turnstile", "signInAnonymously", `verify ${JSON.stringify({ token: "tok" })}`];
+    expect(h.calls.filter((c) => order.includes(c))).toEqual(order);
+    expect(h.calls.findIndex((c) => c.startsWith("start_demo"))).toBeGreaterThan(h.calls.indexOf(order[2]));
+  });
+
+  it("the check fails (verify refused): end_demo, sign-out, the retry; start_demo never called", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    h.verifyStatus = 403;
+    show();
+    expect(await screen.findByTestId("demo-error")).toBeInTheDocument();
+    await waitFor(() => expect(h.calls).toContain("signOut"));
+    expect(h.calls.indexOf("end_demo")).toBeLessThan(h.calls.indexOf("signOut"));
+    expect(h.calls.some((c) => c.startsWith("start_demo"))).toBe(false);
+  });
+
+  it("a returning demo session: start_demo first (an open sandbox needs no check); demo_unverified → the check, then start_demo again", async () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    h.user = { id: "anon-1", is_anonymous: true };
+    h.startError = { message: "demo_unverified", code: "P0001" };
+    show();
+    await waitFor(() => expect(h.calls.filter((c) => c.startsWith("start_demo")).length).toBe(2));
+    const i = h.calls.indexOf("turnstile");
+    expect(i).toBeGreaterThan(h.calls.findIndex((c) => c.startsWith("start_demo")));
+    expect(h.calls).not.toContain("signInAnonymously");
+  });
+
+  it("the loading screen says not to enter real patient data", () => {
+    h.flags = [{ key: "demo_mode", enabled: true }];
+    show();
+    expect(screen.getByTestId("demo-loading-hint")).toHaveTextContent(pt.demo.realDataHint);
+  });
 
   it("the switch off: the sign-up card, no session created", async () => {
     show();
