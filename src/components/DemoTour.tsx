@@ -36,13 +36,23 @@ function save(v: Saved) {
 }
 
 // A pulsing ring on the step's button for a few seconds (waits for the page
-// after a navigation).
+// after a navigation). One pending search at a time: a new "Mostrar" or the
+// tour leaving the page cancels it (cf, #610: an uncancelled retry fired
+// after teardown).
+let spotTimer: number | undefined;
+function cancelSpotlight() {
+  if (typeof window !== "undefined") window.clearTimeout(spotTimer);
+  spotTimer = undefined;
+}
 function spotlight(selector: string) {
+  cancelSpotlight();
   let tries = 0;
   const find = () => {
+    spotTimer = undefined;
+    if (typeof document === "undefined") return;
     const el = document.querySelector<HTMLElement>(selector);
     if (!el) {
-      if (++tries < 30) window.setTimeout(find, 100);
+      if (++tries < 30) spotTimer = window.setTimeout(find, 100);
       return;
     }
     el.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -65,6 +75,8 @@ export function DemoTour({ locale, country }: { locale: string; country: Country
     setState(s);
     // Expanded on computers, a pill on phones (never covering the page).
     setOpen(typeof window.matchMedia === "function" ? window.matchMedia("(min-width: 1024px)").matches : true);
+    // Leaving the page: no spotlight search left running.
+    return cancelSpotlight;
   }, []);
 
   const complete = (n: number) => setState((s) => {

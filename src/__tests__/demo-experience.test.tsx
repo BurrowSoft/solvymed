@@ -110,6 +110,22 @@ describe("the 2-minute tour", () => {
     expect(h.track).toHaveBeenCalledWith("demo_tour_done");
   });
 
+  it("\"Mostrar\" leaves no spotlight search running once the tour is gone (cf, #610)", () => {
+    vi.useFakeTimers();
+    try {
+      const qs = vi.spyOn(document, "querySelector");
+      const { unmount } = render(wrap(<DemoTour locale="pt-BR" country="BR" />));
+      fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
+      const before = qs.mock.calls.length;
+      unmount();
+      vi.advanceTimersByTime(5000);
+      expect(qs.mock.calls.length).toBe(before);
+      qs.mockRestore();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("\"Mostrar\" takes the visitor to the step's page", () => {
     render(wrap(<DemoTour locale="pt-BR" country="BR" />));
     fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
