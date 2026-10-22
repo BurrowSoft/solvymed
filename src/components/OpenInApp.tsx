@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { appOpenUrl, playStoreUrl } from "@/lib/appStores";
+import { fallBackIfStillVisible } from "@/lib/storeFallback";
 
 // "Abrir no app SolvyMed" (Vitor: an email's button opened the website inside
 // Gmail's browser, which ignores App Links). On an Android phone only: it
@@ -32,22 +33,9 @@ export function OpenInApp({ onlyWithParam = false, onShown }: { onlyWithParam?: 
   }, [onlyWithParam]);
   useEffect(() => { onShown?.(show); }, [show, onShown]);
 
+  // The shared tap fallback (lib/storeFallback).
   function fallBackToPlay() {
-    const timer = window.setTimeout(() => {
-      cleanup();
-      if (document.visibilityState === "visible") openInAppNav.go(playStoreUrl("invite"));
-    }, PLAY_FALLBACK_MS);
-    const left = () => { if (document.visibilityState === "hidden") { window.clearTimeout(timer); cleanup(); } };
-    const gone = () => { window.clearTimeout(timer); cleanup(); };
-    function cleanup() {
-      document.removeEventListener("visibilitychange", left);
-      window.removeEventListener("pagehide", gone);
-      window.removeEventListener("blur", gone);
-    }
-    document.addEventListener("visibilitychange", left);
-    window.addEventListener("pagehide", gone);
-    // The app's chooser/launch takes focus from the page.
-    window.addEventListener("blur", gone);
+    fallBackIfStillVisible(playStoreUrl("invite"), PLAY_FALLBACK_MS, (url) => openInAppNav.go(url));
   }
 
   if (!show) return null;
