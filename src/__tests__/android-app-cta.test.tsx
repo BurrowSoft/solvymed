@@ -118,3 +118,48 @@ describe("AndroidAppCta", () => {
     expect(h.track).toHaveBeenCalledWith("app_store_click", { platform: "android", c: "BR" });
   });
 });
+
+describe("the CTA's tap fallback (01: Play disabled or stubbed)", () => {
+  it("Android Chrome: if the page is still showing 1.5 s after the tap, the https listing with the same referrer", async () => {
+    const { storeNav, STORE_FALLBACK_MS } = await import("@/lib/storeFallback");
+    vi.useFakeTimers();
+    const go = vi.spyOn(storeNav, "go").mockImplementation(() => {});
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue("Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 Chrome/129.0 Mobile Safari/537.36");
+    try {
+      render(cta());
+      const play = screen.getByTestId("android-app-cta-play") as HTMLAnchorElement;
+      play.addEventListener("click", (e) => e.preventDefault());
+      fireEvent.click(play);
+      expect(play.href.startsWith("intent://")).toBe(true);
+      vi.advanceTimersByTime(STORE_FALLBACK_MS);
+      expect(go).toHaveBeenCalledTimes(1);
+      const url = new URL(go.mock.calls[0][0]);
+      expect(url.hostname).toBe("play.google.com");
+      expect(url.searchParams.get("referrer")).toBe(new URL(play.href).searchParams.get("referrer"));
+    } finally {
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers();
+      ua.mockRestore();
+      go.mockRestore();
+    }
+  });
+
+  it("a plain WebView: no fallback timer (it already has the https link)", async () => {
+    const { storeNav, STORE_FALLBACK_MS } = await import("@/lib/storeFallback");
+    vi.useFakeTimers();
+    const go = vi.spyOn(storeNav, "go").mockImplementation(() => {});
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue("Mozilla/5.0 (Linux; Android 14; Pixel 7; wv) AppleWebKit/537.36 Version/4.0 Chrome/129.0 Mobile Safari/537.36");
+    try {
+      render(cta());
+      const play = screen.getByTestId("android-app-cta-play") as HTMLAnchorElement;
+      play.addEventListener("click", (e) => e.preventDefault());
+      fireEvent.click(play);
+      vi.advanceTimersByTime(STORE_FALLBACK_MS * 2);
+      expect(go).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+      ua.mockRestore();
+      go.mockRestore();
+    }
+  });
+});

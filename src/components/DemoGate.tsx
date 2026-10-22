@@ -7,6 +7,7 @@ import { isDemoUser, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { isAndroidWebView, playStoreUrlForVisit, storeLinkForAgent } from "@/lib/appStores";
+import { fallBackIfStillVisible, STORE_FALLBACK_MS } from "@/lib/storeFallback";
 import { consentedVisit } from "@/lib/consentedVisit";
 
 // Demo guards on the web (specs/demo-mode.md; 234's contract §5). The server
@@ -275,8 +276,13 @@ export function DemoAndroidChip() {
             // Set before the browser follows the link (F5: the consented campaign):
             // the Play Store app (an intent, the website as its fallback) in
             // this tab; a plain WebView keeps the https link (#601).
-            e.currentTarget.href = storeLinkForAgent(navigator.userAgent, playStoreUrlForVisit("landing", consentedVisit()));
-            if (!isAndroidWebView(navigator.userAgent)) e.currentTarget.target = "_self";
+            const web = playStoreUrlForVisit("landing", consentedVisit());
+            e.currentTarget.href = storeLinkForAgent(navigator.userAgent, web);
+            if (!isAndroidWebView(navigator.userAgent)) {
+              e.currentTarget.target = "_self";
+              // Play disabled or stubbed: the intent does nothing, so the web listing.
+              fallBackIfStillVisible(web, STORE_FALLBACK_MS);
+            }
             track("app_store_click", { platform: "android", from: "demo" });
           }}
           className="underline-offset-2 hover:underline">
