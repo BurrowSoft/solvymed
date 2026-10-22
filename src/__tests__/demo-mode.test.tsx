@@ -184,6 +184,16 @@ describe("/demo", () => {
     expect(screen.queryByTestId("demo-error")).toBeNull();
   });
 
+  it("demo_off (234: the server's switch is off, even with ?demo_test=1 here): the sign-up card, signed out", async () => {
+    Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
+    h.startError = { message: "demo_off", code: "P0001" };
+    show();
+    expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
+    await waitFor(() => expect(h.calls).toContain("signOut"));
+    expect(screen.queryByTestId("demo-error")).toBeNull();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
   it("start_demo fails: the error with retry and sign-up", async () => {
     h.flags = [{ key: "demo_mode", enabled: true }];
     h.startError = { message: "rate_limited" };
