@@ -21,6 +21,12 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
+      // The app's demo bot check hands out a Turnstile token: never framed by
+      // another page (frame-ancestors on top of the site-wide DENY; cf).
+      ...["/demo/verify-app", "/:locale/demo/verify-app"].map((source) => ({
+        source,
+        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'none'" }],
+      })),
       // iOS Universal Links: Apple reads this extension-less file only as
       // application/json (public/.well-known; no redirect, the middleware
       // skips paths with a dot).

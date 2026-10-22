@@ -38,7 +38,8 @@
     "tourStep2": "カルテを開く",
     "tourStep3": "処方箋をPDFで作成",
     "tourStep4": "SolvyAI に質問",
-    "realDataHint": "デモには実際の患者データを入力しないでください。"
+    "realDataHint": "デモには実際の患者データを入力しないでください。",
+    "verifying": "確認しています…"
   },
   "getApp": "アプリを入手",
   "hero": {
