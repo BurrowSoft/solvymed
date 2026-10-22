@@ -14,6 +14,7 @@ import {
   renameDocument, setDocumentShared,
 } from "../documents-actions";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
+import { DemoGate } from "@/components/DemoGate";
 
 // The patient's Documents (1.8.0 A; flag 'patient_documents'): replaces
 // Exams + Files while the flag is on (the app's PatientDocuments). Every
@@ -162,9 +163,12 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
         {!isArchived && folders && folders.length > 0 && (
           <>
             <input ref={input} type="file" accept={DOC_ACCEPT} className="hidden" aria-label={tp("filesUpload")} onChange={(e) => { const f = e.target.files?.[0]; if (f) pick(f); }} />
-            <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
-              {busy ? tp("filesUploading") : tp("filesUpload")}
-            </button>
+            {/* Demo (234 §5.5): uploads are refused; said up front. */}
+            <DemoGate>
+              <button data-server type="button" disabled={busy} onClick={() => input.current?.click()} className="rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-60">
+                {busy ? tp("filesUploading") : tp("filesUpload")}
+              </button>
+            </DemoGate>
           </>
         )}
       </div>

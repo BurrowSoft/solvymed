@@ -35,6 +35,8 @@ import { composeRecordContent } from "@/lib/recordPresets";
 import { switchTemplate, type RecordSection, type RecordTemplate } from "@/lib/recordTemplates";
 import { recordTypeKey, recordTypeLabelKey } from "@/lib/recordTypes";
 import { safeCall, NETWORK_ERROR, NETWORK_FAILURE, timeLimit, untilDone } from "@/lib/netError";
+import { DemoGate } from "@/components/DemoGate";
+import { notifyDemoBlocked } from "@/components/DemoGate";
 
 // Clinical entries (migration 097): the author and correction fields are
 // set by the server. A correction is its own row pointing at the original
@@ -512,6 +514,8 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
         )}
         {!isArchived && <div className="mb-5 rounded-xl border border-slate-100 bg-slate-50 p-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">{t("inviteCode")}</p>
+          {/* Demo (234 §5.4): invite codes are refused; said up front. */}
+          <DemoGate>
           {inviteCode ? (
             <div className="flex flex-wrap items-center gap-3">
               <span className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-base font-bold tracking-widest text-slate-900">
@@ -534,7 +538,8 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
               {codePending ? "…" : t("generateCode")}
             </button>
           )}
-          {codeError && <p className="mt-2 text-xs text-red-600">{codeError}</p>}
+          </DemoGate>
+          {codeError &&<p className="mt-2 text-xs text-red-600">{codeError}</p>}
         </div>}
         {addressLive && addressLine(patient, idKind) && (
           <div className="mb-3 flex items-start justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 p-4">
@@ -720,6 +725,8 @@ function groupCorrections<T extends ClinicalMeta & { id: string }>(rows: T[]) {
 function useClinicalErrorText() {
   const t = useTranslations("patientDetail");
   return (e: string) => {
+    // A demo refusal (234): the "Disponível na sua conta" sheet says it.
+    if (e === "demo_not_allowed") notifyDemoBlocked();
     switch (e) {
       case "patient_archived": return t("archivedNoNew");
       case "clinical_record_locked": return t("lockedError");

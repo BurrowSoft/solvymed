@@ -33,6 +33,7 @@ import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 import { NavigationGuard } from "@/components/DiscardGuard";
 import { teamAccessKey } from "@/lib/teamAccess";
 import { DemoBar } from "@/components/DemoBar";
+import { DemoProvider } from "@/components/DemoGate";
 import { isDemoUser } from "@/lib/demo";
 import { parseCountryChoice } from "@/lib/signupCountry";
 
@@ -201,6 +202,7 @@ export default async function DashboardLayout({
   // the flag), else her primary.
   const actingId = isSecretary ? ((await actingPracticeFor(roleRow.invited_by_professional_id!, user.id)) ?? roleRow.invited_by_professional_id!) : user.id;
   const practice = countryProfile(await getPracticeCountry(supabase, user.id, actingId));
+  const demoCountryCode = parseCountryChoice(practice.kind) ?? "BR";
   // A language the practice country doesn't offer: no dashboard in it, the
   // same page in the country's language (ad, after b3's lost SolvyAI answer).
   if (practice.languages.length && !(practice.languages as readonly string[]).includes(locale)) return <LocaleRedirect to={practice.languages[0]} />;
@@ -229,7 +231,8 @@ export default async function DashboardLayout({
     // --demo-bar-h: the demo bar's height (3rem); the page and the sidebar's
     // fixed parts sit below it. 0 outside the demo, so nothing moves.
     <div data-theme={theme} data-theme-root className="contents" style={isDemo ? ({ "--demo-bar-h": "3rem" } as React.CSSProperties) : undefined}>
-    {isDemo && <DemoBar locale={locale} country={parseCountryChoice(practice.kind) ?? "BR"} />}
+    {isDemo && <DemoBar locale={locale} country={demoCountryCode} />}
+    <DemoProvider value={{ demo: isDemo, locale, country: demoCountryCode }}>
     <OfflineGuard />
     <ClockSkewGuard />
     {/* Leaving a page with unsaved settings asks first (1.9.0, 02). */}
@@ -305,6 +308,7 @@ export default async function DashboardLayout({
         <SaveMyLocale locale={locale} />
       </div>
     </TourProvider>
+    </DemoProvider>
     </div>
   );
 }

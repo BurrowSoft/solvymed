@@ -27,6 +27,7 @@ import { PLAIN_CONSULTATION } from "@/lib/consultType";
 import { usePracticeCalendar } from "@/components/PracticeCalendar";
 import { safeCall, NETWORK_ERROR } from "@/lib/netError";
 import { useDialogDiscard, useFormDirty } from "@/components/DiscardGuard";
+import { notifyDemoBlocked } from "@/components/DemoGate";
 
 type Procedure = { id: string; name: string; duration_minutes: number; price?: number; payment_type: string };
 type Appointment = {
@@ -244,6 +245,8 @@ const ACTION_ERROR_KEY: Record<string, string> = {
 function actionErrorMessage(t: (key: string) => string, code: string | undefined, tDate?: (key: string) => string): string {
   // A Buddhist-era year (the date field blocks it first; server backstop).
   if (code === "date_buddhist_era" && tDate) return tDate("buddhistYear");
+  // A demo refusal (234): the "Disponível na sua conta" sheet says it.
+  if (code === "demo_not_allowed") notifyDemoBlocked();
   return t(ACTION_ERROR_KEY[code ?? ""] ?? "genericError");
 }
 

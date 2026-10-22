@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { conditionMet } from "@/lib/conditions";
 import { FOUNDER_BUCKET, FOUNDER_DAILY_URLS, FOUNDER_MAX_BYTES, contentTypeFor, safeFileName } from "@/lib/foundersUpload";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 // Founders stage 2 (migration 132): a signed upload URL for one test export.
 // As the signed-in doctor: founder_upload_check says whether they're an
@@ -27,6 +28,8 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ code: "not_allowed" }, { status: 401 });
+  // A demo (anonymous) session never uploads (234 §5.5/§5.7).
+  if (isDemoUser(user)) return NextResponse.json({ error: "Not available in the demo", code: DEMO_NOT_ALLOWED }, { status: 403 });
   const { data, error } = await supabase.rpc("founder_upload_check");
   const check = (Array.isArray(data) ? data[0] : data) as { allowed?: boolean; folder?: string; uploads_left?: number } | null;
   if (error || !check) return NextResponse.json({ code: "generic" }, { status: 500 });

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { DemoGate, useDemo } from "@/components/DemoGate";
 
 // get_account_closure_preview() (migration 102).
 export type ClosurePreview = {
@@ -24,7 +25,7 @@ type CloseCode =
 
 // Closing (a professional with clinical history) or deleting (everyone
 // else) the signed-in account, through /api/account/close.
-export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview; locale: string }) {
+function CloseAccountPanelInner({ preview, locale }: { preview: ClosurePreview; locale: string }) {
   const t = useTranslations("accountClose");
   const [understood, setUnderstood] = useState(false);
   const [pending, setPending] = useState(false);
@@ -120,5 +121,16 @@ export function CloseAccountPanel({ preview, locale }: { preview: ClosurePreview
         {pending ? t("working") : closes ? t("closeButton") : t("deleteButton")}
       </button>
     </section>
+  );
+}
+
+// Demo mode (specs/demo-mode.md, 234 §5): in a demo this is shown inert with
+// "Disponível na sua conta" + the sign-up CTA; the server refuses it anyway.
+export function CloseAccountPanel(props: Parameters<typeof CloseAccountPanelInner>[0]) {
+  const { demo } = useDemo();
+  return (
+    <DemoGate demo={demo}>
+      <CloseAccountPanelInner {...props} />
+    </DemoGate>
   );
 }

@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { demoTitle, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
+import { DemoBlockedSheet } from "./DemoGate";
 
 // The demo's bar (specs/demo-mode.md, Vitor's two musts): fixed at the top of
 // every dashboard page, amber, "DEMO" + what it is, and the solid teal
@@ -62,6 +63,8 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
   }
 
   return (
+    <>
+    <DemoBlockedSheet locale={locale} country={country} />
     <div
       data-testid="demo-bar"
       role="region"
@@ -108,5 +111,6 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
         <span className="min-[380px]:hidden">{t("signupShort")}</span>
       </button>
     </div>
+    </>
   );
 }

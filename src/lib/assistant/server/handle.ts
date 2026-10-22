@@ -251,6 +251,8 @@ async function confirmFailed(body: Body, deps: Deps, userId: string): Promise<Ou
     if (c.reason === "not_doctor") return fail(403, "not_doctor");
     if (c.reason === "inactive") return fail(403, "inactive");
     if (c.reason === "rate_limited") return fail(429, "rate_limited", { retryAfterS: c.retry_after_s ?? 3 });
+    // The demo's 5 messages are used (234 §5.6): the client offers sign-up.
+    if (c.reason === "demo_quota") return fail(429, "demo_quota");
     // Out of messages today: this one was free anyway, so it's still answered.
     if (c.reason !== "quota_exhausted") return fail(503, "model_unavailable");
   } else {
@@ -298,6 +300,8 @@ export async function handleAssistant(body: Body, deps: Deps): Promise<Outcome> 
     if (c.reason === "not_doctor") return fail(403, "not_doctor");
     if (c.reason === "inactive") return fail(403, "inactive");
     if (c.reason === "quota_exhausted") return fail(429, "quota_exhausted", { usage: { used: c.used, limit: c.limit, extra: 0, resetsAt: c.resets_at } });
+    // The demo's 5 messages are used (234 §5.6): the client offers sign-up.
+    if (c.reason === "demo_quota") return fail(429, "demo_quota");
     if (c.reason === "rate_limited") return fail(429, "rate_limited", { retryAfterS: c.retry_after_s ?? 3 });
     return fail(503, "model_unavailable");
   }

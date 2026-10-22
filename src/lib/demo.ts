@@ -54,3 +54,15 @@ export async function leaveDemo(supabase: unknown): Promise<void> {
     // Nothing to sign out of.
   }
 }
+
+// Server side (234's contract §5.7): the web's own routes that reach the
+// real world (Stripe checkout and portal, closing an account, the Founders
+// uploads) refuse a demo (anonymous) session outright, as 403
+// { code: "demo_not_allowed" }; the UI already shows "Disponível na sua
+// conta" instead of those buttons.
+export const DEMO_NOT_ALLOWED = "demo_not_allowed";
+export function isDemoRefusal(error: { message?: string | null; code?: string | null } | string | null | undefined): boolean {
+  if (!error) return false;
+  const text = typeof error === "string" ? error : `${error.message ?? ""} ${error.code ?? ""}`;
+  return text.includes(DEMO_NOT_ALLOWED);
+}

@@ -15,7 +15,12 @@
     "error": "無法開啟示範，請再試一次。",
     "retry": "再試一次",
     "busy": "目前試用示範的人很多，請稍後再試。",
-    "landingCta": "試用示範"
+    "landingCta": "試用示範",
+    "blocked": "在您的帳戶中可用",
+    "blockedBody": "建立免費帳戶，即可用於您的真實患者。",
+    "publicNotice": "您正在示範中。離開後即可真實預約。",
+    "aiQuotaTitle": "建立帳戶以繼續與 SolvyAI 對話",
+    "aiQuotaBody": "示範包含 5 則訊息。在您的帳戶中，SolvyAI 每天都可使用。"
   },
   "getApp": "下載應用程式",
   "hero": {

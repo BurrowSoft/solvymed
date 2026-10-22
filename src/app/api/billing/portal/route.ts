@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { stripe, retrieveSubscriptionOrNull, stripeLocale } from "@/lib/stripeBilling";
 import { routing } from "@/i18n/routing";
+import { DEMO_NOT_ALLOWED, isDemoUser } from "@/lib/demo";
 
 // Opens the Stripe Customer Portal so a professional can update the card on
 // their own subscription (e.g. after a failed renewal). Stripe then retries
@@ -10,6 +11,8 @@ export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized", code: "generic" }, { status: 401 });
+  // A demo (anonymous) session never reaches Stripe / closes / uploads (234 §5.7).
+  if (isDemoUser(user)) return NextResponse.json({ error: "Not available in the demo", code: DEMO_NOT_ALLOWED }, { status: 403 });
 
   // Only the paying professional manages billing. A secretary resolves to
   // their doctor's subscription elsewhere, but must never get a portal

@@ -14,7 +14,8 @@ export type KnownDbError =
   | "invalid_th_id"
   | "invalid_birth_date"
   | "invalid_cns"
-  | "id_conflict";
+  | "id_conflict"
+  | "demo_not_allowed";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -34,6 +35,8 @@ const KNOWN: KnownDbError[] = [
   // A save's id already belongs to something else (216, saving once): the
   // form takes a new id; shown as the generic error.
   "id_conflict",
+  // A demo can't do this (234 §5): the page shows "Disponível na sua conta".
+  "demo_not_allowed",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.

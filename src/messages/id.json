@@ -15,7 +15,12 @@
     "error": "Tidak dapat membuka demo. Coba lagi.",
     "retry": "Coba lagi",
     "busy": "Banyak orang sedang mencoba demo saat ini. Coba lagi sebentar lagi.",
-    "landingCta": "Coba demo"
+    "landingCta": "Coba demo",
+    "blocked": "Tersedia di akun Anda",
+    "blockedBody": "Buat akun gratis untuk memakai ini dengan pasien Anda yang sebenarnya.",
+    "publicNotice": "Anda sedang di demo. Keluar untuk membuat janji sungguhan.",
+    "aiQuotaTitle": "Buat akun untuk terus mengobrol dengan SolvyAI",
+    "aiQuotaBody": "Demo mencakup 5 pesan. Di akun Anda, SolvyAI tersedia setiap hari."
   },
   "getApp": "Unduh Aplikasi",
   "hero": {
