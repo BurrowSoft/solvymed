@@ -66,10 +66,10 @@ export function SetupChecklist({ progress, locale, inviteCode, expanded: initial
           type="button"
           onClick={() => setExpanded((e) => !e)}
           aria-expanded={expanded}
-          className="flex flex-1 items-center gap-3 text-left"
+          className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-1 text-left"
         >
-          <span className="text-base font-bold text-slate-900">{t("title")}</span>
-          <span className="text-sm text-slate-500">{t("progress", { done })}</span>
+          <span className="basis-full text-base font-bold text-slate-900 sm:basis-auto">{t("title")}</span>
+          <span className="whitespace-nowrap text-sm text-slate-500">{t("progress", { done })}</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`h-4 w-4 text-slate-400 transition ${expanded ? "rotate-180" : ""}`}>
             <polyline points="6 9 12 15 18 9" />
           </svg>

@@ -171,11 +171,11 @@ export default async function DashboardPage({
   const privacyNotice = privacyNoticeDue(await readAcceptedPrivacy(supabase));
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl">
       {privacyNotice && <PrivacyNoticeCard locale={locale} />}
       {/* Greeting */}
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div data-tour="home">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div data-tour="home" className="min-w-0">
           <h1 className="text-2xl font-extrabold text-slate-900 md:text-3xl">
             {firstName ? `${greeting}, ${firstName}` : `${greeting}!`} 👋
           </h1>
@@ -183,7 +183,7 @@ export default async function DashboardPage({
             {todayFormatted}{professional?.specialty ? ` · ${professional.specialty}` : ""}
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
           {/* The doctor's broadcast (1.6.0, behind the flag); never a secretary. */}
           {!isSecretary && liveFeatures.broadcast && <MassMessageButton />}
           <Link href={`${prefix}/dashboard/schedule`} data-tour="new-appointment" className="shrink-0 rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition hidden sm:block">
@@ -257,10 +257,10 @@ export default async function DashboardPage({
       </div>
 
       {/* Today's Schedule + Upcoming */}
-      <div className="grid gap-6 lg:grid-cols-2 mb-8">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 mb-8">
         {/* Today */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
+        <div className="min-w-0 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-bold text-slate-900">{t("todaySchedule")}</h2>
             <Link href={`${prefix}/dashboard/schedule`} className="text-xs font-semibold text-teal-600 hover:text-teal-700">{t("viewAll")}</Link>
           </div>
@@ -275,12 +275,12 @@ export default async function DashboardPage({
           ) : (
             <div className="space-y-2">
               {todayAppts.map((appt, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5 hover:border-slate-200 transition">
+                <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-slate-100 p-3.5 hover:border-slate-200 transition">
                   <div className="shrink-0 text-right min-w-[44px]">
                     <p className="text-sm font-bold text-slate-900">{appt.start_time?.slice(0, 5)}</p>
                     <p className="text-xs text-slate-400">{appt.end_time?.slice(0, 5)}</p>
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-[7rem] flex-1">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
                     <p className="text-xs text-slate-500 truncate"><ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
@@ -292,8 +292,8 @@ export default async function DashboardPage({
         </div>
 
         {/* Upcoming */}
-        <div className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
+        <div className="min-w-0 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-lg font-bold text-slate-900">{t("next7Days")}</h2>
             <Link href={`${prefix}/dashboard/schedule`} className="text-xs font-semibold text-teal-600 hover:text-teal-700">{t("viewAll")}</Link>
           </div>
@@ -307,12 +307,12 @@ export default async function DashboardPage({
           ) : (
             <div className="space-y-2">
               {upcomingAppts.map((appt, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-slate-100 p-3.5">
+                <div key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-slate-100 p-3.5">
                   <div className="shrink-0 rounded-lg bg-teal-50 p-2 text-center min-w-[48px]">
                     <p className="text-xs font-bold text-teal-600 uppercase">{new Date(appt.date + "T12:00:00").toLocaleDateString(dateLocale(locale), { month: "short" })}</p>
                     <p className="text-lg font-extrabold text-slate-900 leading-tight">{new Date(appt.date + "T12:00:00").getDate()}</p>
                   </div>
-                  <div className="flex-1 min-w-0">
+                  <div className="min-w-[7rem] flex-1">
                     <p className="truncate font-semibold text-slate-900 text-sm">{appt.patient_name}</p>
                     <p className="text-xs text-slate-500">{appt.start_time?.slice(0, 5)} · <ConsultTypeLabel value={appt.consultation_type} /></p>
                   </div>
@@ -326,13 +326,13 @@ export default async function DashboardPage({
 
       {/* Pending payments summary */}
       {pendingPayments.length > 0 && (
-        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-6">
-          <div className="flex items-start justify-between gap-4">
-            <div>
+        <div className="rounded-2xl border border-orange-100 bg-orange-50 p-4 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+            <div className="min-w-0">
               <h3 className="font-bold text-orange-900">{t("unpaidSessions", { n: pendingPayments.length })}</h3>
               <p className="mt-1 text-sm text-orange-700">{t("pendingCollection", { amount: formatAmount(totalPending) })}</p>
             </div>
-            <Link href={`${prefix}/dashboard/payments`} className="shrink-0 rounded-xl bg-orange-600 px-4 py-2 text-sm font-bold text-white hover:bg-orange-700 transition">
+            <Link href={`${prefix}/dashboard/payments`} className="shrink-0 rounded-xl bg-orange-600 px-4 py-2 text-center text-sm font-bold text-white hover:bg-orange-700 transition sm:w-auto">
               {t("managePayments")}
             </Link>
           </div>
