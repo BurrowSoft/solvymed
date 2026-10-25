@@ -40,6 +40,31 @@ describe("Studio editor rules", () => {
     }
   });
 
+  // 01, post-1.9.0 (65's #490 row): a typeface the doctor picked survives a
+  // layout switch; the layout-specific parts are reset; a typeface that came
+  // with the previous layout follows the new one.
+  it("a layout switch keeps a picked typeface and the colours, and resets only the layout's own parts", () => {
+    const start = withLayout(forEditing(structuredClone(DEFAULT_DESIGN)), "classic");
+    const mine: Design = { ...start, font: "prompt", palette: { primary: "#112233", accent: "#445566", light: "#F0F0F0", preset: null } };
+    for (const l of LAYOUTS) {
+      const d = withLayout(mine, l as KnownLayout);
+      expect(validateDesign(d).ok).toBe(true);
+      expect(d.font).toBe("prompt");
+      expect(d.palette).toEqual(mine.palette);
+      const s = LAYOUT_STARTERS[l as KnownLayout];
+      expect([d.sectionBar, d.field, d.band, d.watermark]).toEqual([s.sectionBar, s.field, s.band, s.watermark]);
+    }
+    // The starter's own typeface follows the layout: classic (sarabun) →
+    // elegant (trirong) → modern (prompt) → minimal (sarabun).
+    let d = start;
+    for (const l of ["elegant", "modern", "minimal"] as const) {
+      d = withLayout(d, l);
+      expect(d.font).toBe(LAYOUT_STARTERS[l].font);
+    }
+    // An unknown (newer) layout's font is treated as a choice: kept.
+    expect(withLayout({ ...start, layout: "future" as never, font: "trirong" }, "classic").font).toBe("trirong");
+  });
+
   it("every band style and section fill stays valid; two-tone takes two different colours", () => {
     const base = withLayout(forEditing(structuredClone(DEFAULT_DESIGN)), "elegant");
     for (const s of ["none", "flat", "twoTone", "rounded", "angled"] as const) {

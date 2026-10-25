@@ -5,6 +5,10 @@ import type { Design, DocType, KnownLayout } from "./design";
 // typeface and watermark each layout was shown with); the doctor's palette,
 // logo, name, footer, contacts and texts stay as they are. A starting point
 // only: every part can be changed afterwards. Mirrored by the app's editor.
+// The typeface (01, post-1.9.0, from 65's #490 row): one the doctor picked
+// stays; only a typeface that came with the previous layout (its starter's,
+// or "system") follows the new layout. No flag is stored: a font that isn't
+// the current layout's starter font was a choice.
 type Starter = Pick<Design, "font" | "sectionBar" | "field" | "band" | "watermark">;
 
 export const LAYOUT_STARTERS: Record<KnownLayout, Starter> = {
@@ -38,9 +42,17 @@ export const LAYOUT_STARTERS: Record<KnownLayout, Starter> = {
   },
 };
 
+// True when the design's typeface came with its layout (not a choice).
+export function fontFromLayout(d: Design): boolean {
+  return d.font === "system" || d.font === (LAYOUT_STARTERS as Partial<Record<string, Starter>>)[d.layout]?.font;
+}
+
 export function withLayout(d: Design, layout: KnownLayout): Design {
   const s = LAYOUT_STARTERS[layout];
-  return { ...d, layout, font: s.font, sectionBar: { ...s.sectionBar }, field: { ...s.field }, band: { ...s.band, colors: [...s.band.colors] }, watermark: { ...s.watermark } };
+  return {
+    ...d, layout, font: fontFromLayout(d) ? s.font : d.font,
+    sectionBar: { ...s.sectionBar }, field: { ...s.field }, band: { ...s.band, colors: [...s.band.colors] }, watermark: { ...s.watermark },
+  };
 }
 
 // The band's colours follow its style: two for two-tone, one otherwise
