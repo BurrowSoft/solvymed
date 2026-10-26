@@ -104,7 +104,8 @@ export default async function PatientChannelInboxPage({
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold text-slate-900">{r.patientName}</p>
-                <p className="truncate text-sm text-slate-500">{r.reasonTitle}{r.text ? ` · ${r.text}` : ""}</p>
+                {/* The reason only: the message text is in the (access-logged) detail. */}
+                <p className="truncate text-sm text-slate-500">{r.reasonTitle}</p>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-500 sm:flex-col sm:items-end">
                 <span>{formatWhen(r.createdAt)}</span>

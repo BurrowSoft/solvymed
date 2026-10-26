@@ -29,8 +29,10 @@ export type InboxCounts = {
   faqResolved7d: number; autoResolved7d: number;
 };
 
-// The columns the list reads (with the practice's patient row, also under RLS).
-export const INBOX_COLUMNS = "id, patient_id, destination, band, score_total, status, text, created_at, reason_snapshot, patients(full_name)";
+// The columns the list reads (with the practice's patient row, also under RLS). Never the
+// patient's message text: it shows only in the detail, whose opening is access-logged (241;
+// cf's privacy review F2, 01, 10-26).
+export const INBOX_COLUMNS = "id, patient_id, destination, band, score_total, status, created_at, reason_snapshot, patients(full_name)";
 
 type Raw = Record<string, unknown>;
 const str = (v: unknown) => (typeof v === "string" ? v : "");

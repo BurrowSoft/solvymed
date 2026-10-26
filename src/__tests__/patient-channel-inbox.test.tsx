@@ -8,7 +8,7 @@ import cases from "./fixtures/patient-channel-score-cases.json";
 import type { ChannelConfig, ScoreLine } from "@/lib/patientChannel/score";
 import { scoreRequest } from "@/lib/patientChannel/score";
 import {
-  detailHighlights, detailLineLabel, detailNames, filterInbox, highlightParts, sortInbox, toCounts, toDetailAnswers, toInboxRow, warningFloorCause,
+  INBOX_COLUMNS, detailHighlights, detailLineLabel, detailNames, filterInbox, highlightParts, sortInbox, toCounts, toDetailAnswers, toInboxRow, warningFloorCause,
   type InboxRow,
 } from "@/lib/patientChannel/inbox";
 
@@ -82,6 +82,18 @@ const row = (p: Partial<InboxRow>): InboxRow => ({
 });
 
 describe("the inbox list", () => {
+  // cf's privacy review F2 (01, 10-26): the patient's message text never in the list (it isn't
+  // access-logged); only the detail shows it, and opening the detail is logged (241).
+  it("never reads or shows the patient's message text", async () => {
+    expect(INBOX_COLUMNS.split(",").map((c) => c.trim())).not.toContain("text");
+    const { readFileSync } = await import("node:fs");
+    const { resolve } = await import("node:path");
+    const list = readFileSync(resolve(__dirname, "../app/[locale]/(site)/dashboard/(gated)/patient-channel/page.tsx"), "utf8");
+    expect(list).not.toContain("r.text");
+    const detail = readFileSync(resolve(__dirname, "../app/[locale]/(site)/dashboard/(gated)/patient-channel/[requestId]/page.tsx"), "utf8");
+    expect(detail.match(/HISTORY_COLUMNS = "([^"]+)"/)?.[1].split(",").map((c) => c.trim())).not.toContain("text");
+  });
+
   it("open first by score (highest), the longest waiting first on a tie; closed after, newest first", () => {
     const rows = [
       row({ id: "closed-old", status: "answered", score: 99, createdAt: "2026-10-20T00:00:00Z" }),
