@@ -114,7 +114,7 @@ describe("the Patient Channel rules editor", () => {
 
 describe("the page never scrolls the whole window (83, #620)", () => {
   it("its root is a containing block, so sr-only bits stay inside the dashboard's <main>", () => {
-    const { container } = render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={1} emergencyNumber="192" />));
+    const { container } = render(wrap(<PatientChannelSettings {...EXTRA} initialRules={sample} initialVersion={1} emergencyNumber="192" />));
     expect(container.firstElementChild).toHaveClass("relative");
     expect(container.querySelectorAll(".sr-only").length).toBeGreaterThan(0);
   });
