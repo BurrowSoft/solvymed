@@ -2787,7 +2787,8 @@
       "earlier": "较早的消息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "诊所目前不在此接收新消息。",
-      "viewMessages": "查看我的消息"
+      "viewMessages": "查看我的消息",
+      "earlierWith": "查看与 {doctor} 的早前消息"
     },
     "channel": {
       "title": "您的频道",

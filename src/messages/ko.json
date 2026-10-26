@@ -2787,7 +2787,8 @@
       "earlier": "이전 메시지 ({n})",
       "statusReceived": "접수됨",
       "notTaking": "현재 병원에서 이곳으로 새 메시지를 받지 않습니다.",
-      "viewMessages": "내 메시지 보기"
+      "viewMessages": "내 메시지 보기",
+      "earlierWith": "{doctor}와(과)의 이전 메시지 보기"
     },
     "channel": {
       "title": "내 채널",

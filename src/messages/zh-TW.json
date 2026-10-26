@@ -2787,7 +2787,8 @@
       "earlier": "較早的訊息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "診所目前不在此接收新訊息。",
-      "viewMessages": "查看我的訊息"
+      "viewMessages": "查看我的訊息",
+      "earlierWith": "查看與 {doctor} 的先前訊息"
     },
     "channel": {
       "title": "您的頻道",
