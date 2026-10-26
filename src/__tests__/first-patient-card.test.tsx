@@ -36,7 +36,10 @@ describe("Adicione seu primeiro paciente", () => {
 
   it("the home shows it to doctors only, with 0 patients and a count it could read", () => {
     const page = readFileSync(resolve(__dirname, "../app/[locale]/(site)/dashboard/(gated)/page.tsx"), "utf8");
-    expect(page).toContain("{!isSecretary && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}");
+    expect(page).toContain("{!isSecretary && !isDemo && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}");
+    // Not in the demo (01, B1), with no feature flag (it works with every flag off).
+    const cardLine = page.split("\n").find((l) => l.includes("<FirstPatientCard")) ?? "";
+    expect(cardLine).not.toContain("liveFeatures");
   });
 
   it("every locale has the card's strings", () => {

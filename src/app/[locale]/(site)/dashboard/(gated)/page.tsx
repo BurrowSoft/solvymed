@@ -199,7 +199,8 @@ export default async function DashboardPage({
       </div>
 
       {/* Activation B1: no patient yet → one clear next step, until the first one exists. */}
-      {!isSecretary && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}
+      {/* Not in the demo (01, B1): its sample practice is for looking around, not setting up. */}
+      {!isSecretary && !isDemo && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}
 
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {!isDemo && setupProgress && showChecklist(setupProgress) && (
