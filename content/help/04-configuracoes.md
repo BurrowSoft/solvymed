@@ -90,6 +90,11 @@ Thai title: "เชิญเลขานุการ"
 ทีมของคุณมีได้สูงสุด 3 คน รวมคำเชิญที่รออยู่ ทีมดูแลตารางนัด ผู้ป่วย และการชำระเงิน แต่จะไม่เห็นเวชระเบียน ใบสั่งยา ผลตรวจ หรือไฟล์ หากต้องการนำออก: **ทีม → นำออก**
 ในเว็บไซต์ ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็น "ขณะนี้คุณไม่ได้อยู่ในทีมใด" เมื่อกลับมาที่แดชบอร์ด พร้อม **เข้าร่วมด้วยรหัสเชิญ** และ **ออกจากระบบ**
 {pending:app-1.8.0} ในแอปก็เช่นกัน: ภายใน 2 นาที หรือเมื่อกลับมาที่แอป ผู้ที่ถูกนำออกจากทีมสุดท้ายจะเห็นหน้าจอเดียวกัน ส่วนผู้ที่ยังทำงานให้แพทย์คนอื่นจะย้ายไปที่ทีมของแพทย์คนนั้น
+**ส่งคำเชิญอีกครั้ง** จะส่งคำเชิญใหม่ทางอีเมล (ไม่เกินชั่วโมงละครั้ง และไม่เกิน 10 ครั้งต่อวัน รหัสเดิมจะใช้ไม่ได้อีก)
+{pending:multi-practice-live} เลขานุการหนึ่งคนทำงานให้แพทย์หลายคนได้: แพทย์แต่ละคนเชิญจาก **ทีม** ของตนเอง ที่ด้านบนของแดชบอร์ด **ตารางของ** ใช้เลือกแพทย์ แล้วตารางนัด ผู้ป่วย การชำระเงิน และการตั้งค่า จะเป็นของแพทย์คนนั้น แพทย์แต่ละคนนำออกได้เฉพาะความเชื่อมโยงของตนเองกับเลขานุการ ใน **ตารางนัด** **ตารางของ → ทั้งหมด** จะแสดงนัดหมายของแพทย์ทุกคน แต่ละนัดมีชื่อและสีของแพทย์ (แพทย์แต่ละคนมีสีประจำ ใช้สีเดียวกันทุกที่) และมีตัวกรองแยกตามแพทย์ **ทั้งหมด** มี **รายการ** **วัน** (หนึ่งคอลัมน์ต่อแพทย์หนึ่งคน) **สัปดาห์** และ **เดือน** ปฏิทินจะแสดงเฉพาะเมื่อแพทย์ที่แสดงอยู่ในเขตเวลาเดียวกัน (มิฉะนั้นให้ใช้รายการ หรือเลือกแพทย์หนึ่งคน) เมื่อเขตเวลาต่างกัน รายการจะเรียงตามเวลาจริง โดยแต่ละเวลาเป็นเวลาของแพทย์คนนั้นพร้อมชื่อเมืองของเขตเวลา เช่น "17:30 (Manaus)" สิ่งที่เลขานุการทำกับนัดหมาย (สถานะ เลื่อนนัด จำนวนเงิน คำขอ) จะมีผลกับแพทย์ของนัดหมายนั้น ใน **ทั้งหมด** **นัดหมายใหม่** และ **ปิดช่วงเวลา** จะถาม **แพทย์** ก่อน แล้วใช้หัตถการ ราคา และเวลาทำการของแพทย์คนนั้น ใน **การตั้งค่า → การแจ้งเตือนแยกตามแพทย์** เลขานุการเลือกได้ว่าจะรับการแจ้งเตือนในแอปจากแพทย์คนใด (ปิดทั้งหมดได้) การแจ้งเตือนของแพทย์เองไม่เปลี่ยน
+{pending:multi-practice-live} หากการสมัครใช้งานของแพทย์คนใดหมดอายุ แพทย์คนนั้นจะแสดงใน **ตารางของ** พร้อม " · หมดอายุ" และไม่แสดงใน **ทั้งหมด** (มีข้อความบอกว่าไม่แสดงกี่ท่าน) เมื่อเปิด SolvyMed หากแพทย์ที่เลือกไว้การสมัครใช้งานหมดอายุ ระบบจะเปิดแพทย์ที่การสมัครใช้งานยังใช้ได้แทน หากเลือกแพทย์คนนั้นอีก จะเห็น "การสมัครใช้งานของ {แพทย์} หมดอายุแล้ว {แพทย์} ต้องต่ออายุเพื่อให้คุณทำงานต่อได้" พร้อม **เปลี่ยนแพทย์** และ **ออกจากระบบ** มีเพียงแพทย์เท่านั้นที่ต่ออายุได้
+{pending:multi-practice-live,app-365-secretary-join} ในแอป เลขานุการเข้าร่วมทีมของแพทย์อีกคนได้ที่ **การตั้งค่า → เข้าร่วมทีมของแพทย์ท่านอื่น**: กรอก **รหัสเชิญ** ที่แพทย์ส่งให้ แล้วแตะ **เข้าร่วม** ทั้งในแอปและในเว็บไซต์ เลขานุการเข้าร่วมได้เฉพาะทีมแพทย์ในประเทศเดียวกับคลินิกของตน มิฉะนั้นจะเห็น "คุณเข้าร่วมได้เฉพาะทีมแพทย์ที่อยู่ในประเทศเดียวกับคลินิกของคุณ"
+{pending:multi-practice-live} ในเว็บไซต์ เลขานุการเข้าร่วมทีมของแพทย์อีกคนได้ที่ **การตั้งค่า → เข้าร่วมทีมของแพทย์ท่านอื่น**: กรอก **รหัสเชิญ** แล้วคลิก **เข้าร่วม** หรือเปิดลิงก์คำเชิญที่แพทย์ส่งให้ แล้วคลิก **ยอมรับ** จากนั้นเลือกแพทย์ใน **ตารางของ**
 **ในเว็บไซต์:** **การตั้งค่า → ทีม**: พิมพ์อีเมลของอีกฝ่าย แล้วคลิก **เชิญ** คำเชิญจะส่งทางอีเมล และลิงก์กับรหัสจะแสดงทันทีเพื่อส่งให้อีกฝ่าย (แสดงเพียงครั้งเดียว ใช้ได้ 7 วัน และเฉพาะอีเมลนั้น) หากต้องการนำออก: **นำออก** หากต้องการยกเลิกคำเชิญที่รออยู่: **ยกเลิก**
 `open:settings-team`
 
@@ -202,6 +207,13 @@ Thai title: "ภาษาและธีม"
 {pending:app-1.4.0} After saving through SolvyAI, **Undo** shows for 10 seconds only when nothing reached the patient; if the patient may have been told, **Open** lets you adjust the item instead.
 **No site:** Em **Configurações → SolvyAI** estão as mesmas duas opções; no site, **Mostrar botão do assistente** vale para este navegador. Depois de salvar pelo SolvyAI, **Desfazer** aparece por 10 segundos só quando nada chegou ao paciente (um paciente novo, um pagamento, um bloqueio, ou uma consulta de paciente sem conta no SolvyMed); se o paciente pode ter sido avisado, aparece **Abrir** para você ajustar o item. No tour guiado, o passo do SolvyAI tem **Experimentar agora**: abre o SolvyAI com a pergunta "O que o SolvyAI pode fazer?", e ao fechar o SolvyAI o site oferece continuar o tour do passo seguinte.
 **On the website:** **Settings → SolvyAI** has the same two options; on the website, **Show the assistant button** applies to this browser. After saving through SolvyAI, **Undo** shows for 10 seconds only when nothing reached the patient (a new patient, a payment, a block, or an appointment of a patient without a SolvyMed account); if the patient may have been told, **Open** lets you adjust the item instead. In the guided tour, the SolvyAI step has **Try it now**: it opens SolvyAI with the question "What can SolvyAI do?", and when you close SolvyAI the website offers to continue the tour from the next step.
+Thai title: "SolvyAI"
+**th**
+**การตั้งค่า → SolvyAI** (เฉพาะแพทย์) มีสองตัวเลือก:
+**แสดงปุ่มผู้ช่วย** (ในโทรศัพท์เครื่องนี้ เปิดไว้เป็นค่าเริ่มต้น): แสดงหรือซ่อนปุ่ม ✦ การปิดจะซ่อนปุ่มเท่านั้น เปิดอีกครั้งได้ทุกเมื่อ
+**อนุญาตให้ SolvyAI ดำเนินการ** (ใช้กับทั้งคลินิก ปิดไว้เป็นค่าเริ่มต้น): เมื่อเปิด SolvyAI จะนัด เลื่อน และยกเลิกนัดหมาย ปิดช่วงเวลา เพิ่มผู้ป่วย และบันทึกการชำระเงินได้ โดยต้องได้รับการยืนยันจากคุณทุกครั้ง ในการทำเช่นนี้ ชื่อและวันเกิดของผู้ป่วยและรายละเอียดนัดหมายจะถูกส่งไปยัง Anthropic (สหรัฐอเมริกา) เพื่อประมวลผลคำขอ SolvyAI ไม่อ่านเวชระเบียน ใบสั่งยา หรือผลตรวจ สิ่งที่คุณพิมพ์ในแชตจะถูกส่งตามที่คุณเขียน จึงควรหลีกเลี่ยงการพิมพ์ข้อมูลทางคลินิก เมื่อปิดตัวเลือกนี้ SolvyAI จะตอบเฉพาะคำถามเกี่ยวกับวิธีใช้ SolvyMed
+{pending:app-1.4.0} หลังจากบันทึกผ่าน SolvyAI ปุ่ม **เลิกทำ** จะแสดงอยู่ 10 วินาทีเฉพาะเมื่อยังไม่มีอะไรถึงผู้ป่วย หากผู้ป่วยอาจได้รับแจ้งแล้ว จะแสดง **เปิด** ให้คุณแก้ไขรายการนั้นแทน
+**ในเว็บไซต์:** ใน **การตั้งค่า → SolvyAI** มีสองตัวเลือกเดียวกัน ในเว็บไซต์ **แสดงปุ่มผู้ช่วย** ใช้กับเบราว์เซอร์นี้ หลังจากบันทึกผ่าน SolvyAI ปุ่มเลิกทำ จะแสดงอยู่ 10 วินาทีเฉพาะเมื่อยังไม่มีอะไรถึงผู้ป่วย (ผู้ป่วยใหม่ การชำระเงิน การปิดช่วงเวลา หรือนัดหมายของผู้ป่วยที่ไม่มีบัญชี SolvyMed) หากผู้ป่วยอาจได้รับแจ้งแล้ว จะแสดง **เปิด** ให้คุณแก้ไขรายการนั้นแทน ในทัวร์แนะนำ ขั้นตอนของ SolvyAI มี **ลองใช้เลย**: จะเปิด SolvyAI พร้อมคำถาม "SolvyAI ทำอะไรได้บ้าง" และเมื่อปิด SolvyAI เว็บไซต์จะเสนอให้ทำทัวร์ต่อจากขั้นตอนถัดไป
 `open:settings`
 `requires:solvyai-live`
 
@@ -214,6 +226,10 @@ Envie CSV, XLSX, XLS ou ZIP, até 20 MB por arquivo e até 20 arquivos. Antes de
 **en**
 For accepted founders (doctors only), on the website: **Settings → Founders Program** shows the steps to create a **test export** in the system you use today, with only test patients you created (obviously fake data, never real patients), the link to book the 30-minute call, and the file upload.
 Upload CSV, XLSX, XLS or ZIP, up to 20 MB per file and up to 20 files. Before each upload, tick the confirmation that the file contains only test patients. Files are kept in a private place only the SolvyMed team can see and are deleted after 180 days, or sooner: when your system’s importer ships, if you leave the program, or if you delete your account.
+Thai title: "โครงการผู้ร่วมก่อตั้ง"
+**th**
+สำหรับผู้ร่วมก่อตั้งที่ได้รับการคัดเลือก (เฉพาะแพทย์) ในเว็บไซต์: **การตั้งค่า → โครงการผู้ร่วมก่อตั้ง** จะแสดงขั้นตอนการสร้าง **ไฟล์ส่งออกข้อมูลทดสอบ** จากระบบที่คุณใช้อยู่ในปัจจุบัน โดยมีเฉพาะผู้ป่วยทดสอบที่คุณสร้างขึ้นเอง (ข้อมูลสมมติที่เห็นได้ชัด ห้ามใช้ข้อมูลผู้ป่วยจริง) ลิงก์สำหรับนัดวิดีโอคอล 30 นาที และการอัปโหลดไฟล์
+อัปโหลดไฟล์ CSV, XLSX, XLS หรือ ZIP ได้ไฟล์ละไม่เกิน 20 MB และไม่เกิน 20 ไฟล์ ก่อนอัปโหลดแต่ละครั้ง ให้ทำเครื่องหมายยืนยันว่าไฟล์มีเฉพาะผู้ป่วยทดสอบ ไฟล์จะเก็บไว้ในที่ส่วนตัวที่มีเพียงทีม SolvyMed เห็น และจะถูกลบหลังจาก 180 วัน หรือเร็วกว่านั้น: เมื่อการนำเข้าจากระบบของคุณพร้อมใช้งาน เมื่อคุณออกจากโครงการ หรือเมื่อคุณลบบัญชี
 `open:settings`
 `requires:founders-upload-live`
 
@@ -258,6 +274,11 @@ In **Settings → My colleagues**, add colleagues by their public code (the code
 On a patient's page, **Refer a colleague** shows your colleagues: pick one and the message with the colleague's link is ready to copy or send. No patient data is shared: the patient decides whether to connect to the colleague. Only doctors (not secretaries) use this.
 **No site:** Em **Configurações → Meus colegas** digite o **Código público do colega** e clique em **Adicionar**. Na página do paciente, **Indicar colega** mostra a mensagem com **Copiar mensagem** e, quando o paciente tem telefone e a clínica usa WhatsApp, **Enviar por WhatsApp** (abre o seu WhatsApp; nada sai até você enviar).
 **On the website:** In **Settings → My colleagues**, type the **Colleague's public code** and click **Add**. On the patient's page, **Refer a colleague** shows the message with **Copy message** and, when the patient has a phone and the clinic uses WhatsApp, **Send on WhatsApp** (opens your WhatsApp; nothing goes out until you send it).
+Thai title: "แนะนำเพื่อนแพทย์"
+**th**
+ใน **การตั้งค่า → เพื่อนแพทย์ของฉัน** เพิ่มเพื่อนแพทย์ด้วยรหัสสาธารณะ (รหัสในลิงก์คำเชิญของเพื่อนแพทย์): **+ เพิ่มเพื่อนแพทย์** มีเพียงคุณที่เห็นรายการนี้ และเพื่อนแพทย์จะไม่ได้รับแจ้ง เพิ่มได้เฉพาะเพื่อนแพทย์ที่เผยแพร่แบรนด์ใน **แบรนด์ของฉัน** แล้ว มิฉะนั้นจะเห็น "ไม่พบรหัสนี้ หากรหัสถูกต้อง โปรดขอให้เพื่อนแพทย์เผยแพร่แบรนด์ใน แบรนด์ของฉัน" คุณมีเพื่อนแพทย์ได้สูงสุด 50 คน **นำออกจากรายชื่อ** จะนำออกจากรายการหลังจากยืนยัน หากต้องการเพิ่มอีกครั้ง คุณจะต้องใช้รหัสสาธารณะของเพื่อนแพทย์
+ในหน้าของผู้ป่วย **แนะนำเพื่อนแพทย์** จะแสดงรายชื่อเพื่อนแพทย์ของคุณ: เลือกหนึ่งคน แล้วข้อความพร้อมลิงก์ของเพื่อนแพทย์จะพร้อมให้คัดลอกหรือส่ง ไม่มีการแชร์ข้อมูลของผู้ป่วย ผู้ป่วยเป็นผู้ตัดสินใจเองว่าจะเชื่อมต่อกับเพื่อนแพทย์หรือไม่ ฟังก์ชันนี้ใช้ได้เฉพาะแพทย์ (ไม่รวมเลขานุการ)
+**ในเว็บไซต์:** ใน **การตั้งค่า → เพื่อนแพทย์ของฉัน** พิมพ์ **รหัสสาธารณะของเพื่อนแพทย์** แล้วคลิก **เพิ่ม** ในหน้าของผู้ป่วย **แนะนำเพื่อนแพทย์** จะแสดงข้อความพร้อม **คัดลอกข้อความ** และเมื่อผู้ป่วยมีเบอร์โทรศัพท์และคลินิกใช้ WhatsApp จะมี **ส่งทาง WhatsApp** (เปิด WhatsApp ของคุณ จะยังไม่มีอะไรถูกส่งจนกว่าคุณจะกดส่ง)
 `open:settings`
 `requires:referrals-live`
 
@@ -271,6 +292,11 @@ In **Settings → Record templates**, create templates with the sections you fil
 When you write a record, pick the **Template** (or **No template** to write free text as before; it shows once you have a template) and fill in the sections; empty ones are left out of the record. Switching templates never erases what you've written: free text goes into the template's first section, sections with the same title keep their text and anything else goes into the first section (a message says where it went); going back to **No template** joins the sections into free text. If you switch and go straight back without editing anything, your text returns exactly as it was. Records already written keep their sections: changing or deleting a template doesn't change anything already written. Only you see your templates and records.
 **No site:** Em **Configurações → Modelos de prontuário**, clique em **Começar por uma especialidade** (e escolha a especialidade) ou em **Criar do zero**, ajuste o **Nome do modelo** e as seções (↑ ↓ para reordenar, ✕ para remover, **Adicionar seção**) e clique em **Salvar modelo**. No paciente, aba **Registros** → **Novo Registro**, escolha o **Modelo** e clique em **Salvar Registro**.
 **On the website:** In **Settings → Record templates**, click **Start from a specialty** (and pick one) or **Create from scratch**, adjust the **Template name** and the sections (↑ ↓ to reorder, ✕ to remove, **Add section**) and click **Save template**. On the patient, **Records** tab → **New Record**, pick the **Template** and click **Save Record**.
+Thai title: "แบบฟอร์มเวชระเบียน"
+**th**
+ใน **การตั้งค่า → แบบฟอร์มเวชระเบียน** สร้างแบบฟอร์มที่มีหัวข้อที่คุณกรอกเมื่อเขียนเวชระเบียน (เช่น อาการสำคัญ ประวัติการเจ็บป่วยปัจจุบัน แผนการรักษา) ใช้ **สร้างจากแบบฟอร์มเปล่า** หรือ **เริ่มจากสาขาเฉพาะทาง** เพื่อคัดลอกแบบฟอร์มสำเร็จรูป (จิตเวช เวชปฏิบัติทั่วไป อายุรศาสตร์โรคหัวใจ จิตวิทยา ทันตกรรม โภชนาการ กายภาพบำบัด หรือกุมารเวชศาสตร์) แล้วปรับแก้ แต่ละหัวข้อมีชื่อและ **คำแนะนำ (ไม่บังคับ)** ซึ่งแสดงเป็นตัวอย่างในช่อง คุณมีแบบฟอร์มได้สูงสุด 50 แบบ แต่ละแบบมีได้สูงสุด 30 หัวข้อ
+เมื่อเขียนเวชระเบียน ให้เลือก **แบบฟอร์ม** (หรือ **ไม่ใช้แบบฟอร์ม** เพื่อเขียนเป็นข้อความอิสระเหมือนเดิม ตัวเลือกนี้จะแสดงเมื่อคุณมีแบบฟอร์มแล้ว) แล้วกรอกหัวข้อต่างๆ หัวข้อที่ว่างจะไม่แสดงในเวชระเบียน การเปลี่ยนแบบฟอร์มจะไม่ลบสิ่งที่คุณเขียนไว้: ข้อความอิสระจะไปอยู่ในหัวข้อแรกของแบบฟอร์ม หัวข้อที่มีชื่อเดียวกันจะคงข้อความไว้ และส่วนที่เหลือจะไปอยู่ในหัวข้อแรก (มีข้อความบอกว่าย้ายไปที่ใด) การกลับไปที่ **ไม่ใช้แบบฟอร์ม** จะรวมหัวข้อทั้งหมดเป็นข้อความอิสระ หากคุณเปลี่ยนแล้วเปลี่ยนกลับทันทีโดยไม่ได้แก้ไขอะไร ข้อความจะกลับมาเหมือนเดิมทุกประการ เวชระเบียนที่เขียนไว้แล้วจะคงหัวข้อเดิม การเปลี่ยนหรือลบแบบฟอร์มจะไม่เปลี่ยนสิ่งที่เขียนไว้แล้ว มีเพียงคุณที่เห็นแบบฟอร์มและเวชระเบียนของคุณ
+**ในเว็บไซต์:** ใน **การตั้งค่า → แบบฟอร์มเวชระเบียน** คลิก **เริ่มจากสาขาเฉพาะทาง** (แล้วเลือกสาขา) หรือ **สร้างจากแบบฟอร์มเปล่า** ปรับ **ชื่อแบบฟอร์ม** และหัวข้อ (↑ ↓ เพื่อจัดลำดับ ✕ เพื่อลบ **เพิ่มหัวข้อ**) แล้วคลิก **บันทึกแบบฟอร์ม** ในหน้าของผู้ป่วย แท็บ **เวชระเบียน** → **บันทึกใหม่** เลือก **แบบฟอร์ม** แล้วคลิก **บันทึก**
 `open:settings`
 `requires:record-templates-live`
 ---
@@ -283,6 +309,11 @@ In **Settings → Document folders**, organise the folders of the Documents tab;
 You can **Rename** and reorder any folder, **Add folder** (up to 30) and **Delete folder** for one you created, if it is empty; the default folders can't be deleted. Each doctor has 5 GB for documents; near the limit, a notice shows how much is used.
 **No site:** Em **Configurações → Pastas de documentos**, as mesmas opções; as setas ↑ ↓ reordenam.
 **On the website:** In **Settings → Document folders**, the same options; the ↑ ↓ arrows reorder.
+Thai title: "โฟลเดอร์เอกสาร"
+**th**
+ใน **การตั้งค่า → โฟลเดอร์เอกสาร** จัดการโฟลเดอร์ของแท็บเอกสาร ซึ่งใช้กับผู้ป่วยทุกคนของคุณ แต่ละโฟลเดอร์มี **ผู้ป่วยมองเห็นได้** และ **ผู้ป่วยส่งเอกสารมาที่นี่ได้** การปิด **ผู้ป่วยมองเห็นได้** จะหยุดแสดงเอกสารที่แชร์ไว้แล้วในโฟลเดอร์นั้นให้ผู้ป่วยเห็น (คุณจะยืนยันก่อน พร้อมจำนวนเอกสาร) การเปิดอีกครั้งจะแสดงเอกสารชุดเดิมอีกครั้งโดยไม่มีการแจ้งเตือน **เอกสารภายใน** จะไม่ถูกแชร์เลย
+คุณ **เปลี่ยนชื่อ** และจัดลำดับโฟลเดอร์ใดก็ได้ **เพิ่มโฟลเดอร์** (สูงสุด 30) และ **ลบโฟลเดอร์** ที่คุณสร้างเองได้หากโฟลเดอร์ว่าง โฟลเดอร์เริ่มต้นจะลบไม่ได้ แพทย์แต่ละคนมีพื้นที่ 5 GB สำหรับเอกสาร เมื่อใกล้เต็ม จะมีข้อความแสดงว่าใช้ไปแล้วเท่าไร
+**ในเว็บไซต์:** ใน **การตั้งค่า → โฟลเดอร์เอกสาร** มีตัวเลือกเดียวกัน ใช้ลูกศร ↑ ↓ เพื่อจัดลำดับ
 `open:settings`
 `requires:patient-documents-live`
 

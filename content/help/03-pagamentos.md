@@ -53,6 +53,15 @@ From then on, each appointment with a value shows the Pix QR code and the Pix Co
 **On the website:** {unless:card-payment-live} **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save.
 **No site:** {pending:card-payment-live} **Configurações → Clínica**: preencha a **Chave Pix** e salve. O **Link de pagamento (cartão)** fica logo abaixo (clínicas no Brasil e na Tailândia). Um link que não comece com https:// não é salvo: aparece "Informe um link que comece com https://".
 **On the website:** {pending:card-payment-live} **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save. The **Card payment link** is just below (clinics in Brazil and Thailand). A link that doesn't start with https:// isn't saved: "Enter a link that starts with https://" shows.
+Thai title: "ตั้งค่าพร้อมเพย์"
+**th**
+Pix ใช้กับคลินิกในประเทศบราซิลเท่านั้น สำหรับคลินิกในประเทศไทย ให้ตั้งค่าพร้อมเพย์แทน:
+1. **การตั้งค่า → การเงิน**
+2. ใส่ **พร้อมเพย์** ของคุณ (เบอร์มือถือหรือเลขประจำตัวประชาชน / เลขผู้เสียภาษี 13 หลักที่ผูกกับพร้อมเพย์) แล้วบันทึก
+หลังจากนั้น นัดหมายทุกรายการที่มีจำนวนเงินจะแสดง QR พร้อมเพย์ตามจำนวนเงินที่ถูกต้อง
+{pending:card-payment-live,app-1.8.0} ใน **การตั้งค่า → การเงิน** ยังมี **ลิงก์ชำระด้วยบัตร**: หน้าที่ผู้ป่วยใช้ชำระด้วยบัตรจากผู้ให้บริการรับชำระเงินของคุณ ลิงก์ต้องขึ้นต้นด้วย https://
+**ในเว็บไซต์:** {unless:card-payment-live} **การตั้งค่า → คลินิก**: ใส่ **พร้อมเพย์** แล้วบันทึก
+**ในเว็บไซต์:** {pending:card-payment-live} **การตั้งค่า → คลินิก**: ใส่ **พร้อมเพย์** แล้วบันทึก **ลิงก์ชำระด้วยบัตร** อยู่ด้านล่าง ลิงก์ที่ไม่ได้ขึ้นต้นด้วย https:// จะบันทึกไม่ได้ และจะแสดง "กรุณาใส่ลิงก์ที่ขึ้นต้นด้วย https://"
 `open:settings-financial`
 
 ---
@@ -103,6 +112,7 @@ Thai title: "ใบเสร็จรับเงิน"
 **th**
 สำหรับคลินิกในประเทศไทย ใบเสร็จรับเงินแบบมีเลขที่ออกได้ในแอป: เปิดนัดหมายที่ชำระแล้ว แล้วแตะ **ออกใบเสร็จรับเงิน** เมื่อออกแล้ว ปุ่มจะเปลี่ยนเป็น **ดูใบเสร็จรับเงิน**
 {pending:receipt-amount-app-live} หากนัดหมายยังไม่มีจำนวนเงิน แอปจะขอว่า "กรุณากำหนดจำนวนเงินก่อนออกใบเสร็จ" พร้อมปุ่ม **ระบุจำนวนเงิน** การดูใบเสร็จที่ออกแล้วทำได้เสมอ
+{pending:app-1.7.0} PDF ใช้กระดาษขนาด A4
 **ในเว็บไซต์:** คลินิกในประเทศไทยออกใบเสร็จรับเงินแบบมีเลขที่ได้ในแอปเท่านั้น
 `open:payments`
 
