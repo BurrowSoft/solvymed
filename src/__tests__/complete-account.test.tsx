@@ -13,6 +13,8 @@ const h = vi.hoisted(() => ({
   params: new URLSearchParams(),
   user: { id: "g1", user_metadata: { full_name: "Dra Google" } } as { id: string; user_metadata: Record<string, unknown> } | null,
   pending: true,
+  // B4: the opening check fails ("error": the RPC answers an error; "throw": no connection).
+  pendingFail: null as null | "error" | "throw",
   rpc: vi.fn(),
   refresh: vi.fn(async () => ({ data: {}, error: null })),
   track: vi.fn(),
@@ -25,8 +27,11 @@ vi.mock("next/navigation", async (orig) => ({
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     auth: { getUser: async () => ({ data: { user: h.user } }), refreshSession: h.refresh },
-    rpc: async (fn: string, args?: unknown) =>
-      fn === "signup_onboarding_is_pending" ? { data: h.pending, error: null } : h.rpc(fn, args),
+    rpc: async (fn: string, args?: unknown) => {
+      if (fn !== "signup_onboarding_is_pending") return h.rpc(fn, args);
+      if (h.pendingFail === "throw") throw new TypeError("Failed to fetch");
+      return h.pendingFail === "error" ? { data: null, error: { message: "upstream" } } : { data: h.pending, error: null };
+    },
   }),
 }));
 vi.mock("@/lib/track", () => ({ track: h.track }));
@@ -49,6 +54,7 @@ describe("Complete your account", () => {
   beforeEach(() => {
     h.user = { id: "g1", user_metadata: { full_name: "Dra Google" } };
     h.pending = true;
+    h.pendingFail = null;
     h.rpc.mockReset();
     h.rpc.mockResolvedValue({ data: { status: "done" }, error: null });
     h.track.mockReset();
@@ -126,5 +132,37 @@ describe("Complete your account", () => {
     await waitFor(() => expect(h.rpc).toHaveBeenCalled());
     expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
     expect(assign).not.toHaveBeenCalled();
+  });
+  it.each(["error", "throw"] as const)("B4: the opening check fails (%s) → says so with Try again, never a dead spinner nor the dashboard", async (fail) => {
+    h.pendingFail = fail;
+    show();
+    expect(await screen.findByTestId("complete-load-failed")).toHaveTextContent(pt.auth.completeAccount.loadError);
+    expect(screen.queryByTestId("complete-submit")).toBeNull();
+    expect(replace).not.toHaveBeenCalled();
+    expect(h.track).toHaveBeenCalledWith("complete_account_error", { code: "load_failed" });
+    h.pendingFail = null;
+    fireEvent.click(screen.getByTestId("complete-retry"));
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+    expect(h.track).toHaveBeenCalledWith("complete_account_view");
+  });
+
+  it("B4: already completed elsewhere (not_pending) → the dashboard, not an error", async () => {
+    h.rpc.mockResolvedValue({ data: null, error: { message: "not_pending" } });
+    show("c=BR");
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/dashboard"));
+    expect(screen.queryByTestId("complete-error")).toBeNull();
+  });
+
+  it("B4: a refusal is counted by its code", async () => {
+    h.rpc.mockResolvedValue({ data: null, error: { message: "invite_code_required" } });
+    show("role=patient");
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+    fireEvent.change(screen.getByTestId("complete-invite-code"), { target: { value: "X" } });
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    await waitFor(() => expect(h.track).toHaveBeenCalledWith("complete_account_error", { code: "invite_code_required" }));
   });
 });

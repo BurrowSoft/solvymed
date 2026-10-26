@@ -799,7 +799,10 @@
       "countryLabel": "Di mana praktik Anda?",
       "countryRequired": "Pilih negara praktik Anda.",
       "consentRequired": "Harap setujui Ketentuan Penggunaan dan Kebijakan Privasi.",
-      "submit": "Lanjutkan"
+      "submit": "Lanjutkan",
+      "loadError": "Langkah ini tidak dapat dibuka. Periksa koneksi Anda lalu coba lagi.",
+      "retry": "Coba lagi",
+      "working": "Menyimpan…"
     },
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {

@@ -799,7 +799,10 @@
       "countryLabel": "Onde fica seu consultório?",
       "countryRequired": "Escolha o país do seu consultório.",
       "consentRequired": "Aceite os Termos de Uso e a Política de Privacidade.",
-      "submit": "Continuar"
+      "submit": "Continuar",
+      "loadError": "Não conseguimos abrir esta etapa. Verifique a conexão e tente de novo.",
+      "retry": "Tentar de novo",
+      "working": "Salvando…"
     },
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
