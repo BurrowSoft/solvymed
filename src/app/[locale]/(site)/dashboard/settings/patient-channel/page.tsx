@@ -40,7 +40,8 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
     serverFlag(supabase, "pc_cover_upload"),
     // "Testar como paciente" shows the page as patients see it (01): the saved look.
     supabase.from("professionals").select("full_name, clinic_name, specialty").eq("id", user.id).maybeSingle(),
-    liveFeatures.myBrand ? loadPracticeBrand(supabase, user.id) : Promise.resolve(null),
+    // The brand row always (its colour is the patient page's fallback too); the logo only with My brand.
+    loadPracticeBrand(supabase, user.id),
   ]);
   // A failed read must not open an empty editor (Save would replace the stored rules).
   if (saved.error || settings.error || reasons.error || faq.error) {
@@ -55,12 +56,12 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
   const row = saved.data as { rules?: unknown; rulesVersion?: number } | null;
   const initialRules = row?.rules ? fromStoredRules(row.rules, country) : { ...EMPTY_RULES, country };
   const prof = me.data as { full_name?: string | null; clinic_name?: string | null; specialty?: string | null } | null;
-  const brand = publicFromPractice(brandRow, { name: prof?.full_name ?? "", specialty: prof?.specialty ?? "" });
+  const brand = liveFeatures.myBrand ? publicFromPractice(brandRow, { name: prof?.full_name ?? "", specialty: prof?.specialty ?? "" }) : null;
   const look = settings.data as { page_bg?: string | null; cover_path?: string | null } | null;
   const patientView = {
     doctorName: brand?.name || prof?.full_name?.trim() || "",
     practiceLine: [prof?.clinic_name, brand?.specialty || prof?.specialty].filter(Boolean).join(" · "),
-    look: pageLook(look?.page_bg, { color: brand?.accentColor, logoUrl: brand?.logoUrl ?? null, coverUrl: coverUrl(supabase, look?.cover_path), coverAlt: prof?.clinic_name?.trim() || brand?.name || "" }),
+    look: pageLook(look?.page_bg, { color: brand?.accentColor ?? brandRow?.accentColor, logoUrl: brand?.logoUrl ?? null, coverUrl: coverUrl(supabase, look?.cover_path), coverAlt: prof?.clinic_name?.trim() || brand?.name || "" }),
   };
 
   return (
