@@ -2785,7 +2785,9 @@
       "youWrote": "Você escreveu",
       "youChose": "Você escolheu: {option}",
       "earlier": "Mensagens anteriores ({n})",
-      "statusReceived": "Recebida"
+      "statusReceived": "Recebida",
+      "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
+      "viewMessages": "Ver minhas mensagens"
     },
     "channel": {
       "title": "Seu canal",

@@ -2815,7 +2815,9 @@
       "youWrote": "You wrote",
       "youChose": "You chose: {option}",
       "earlier": "Earlier messages ({n})",
-      "statusReceived": "Received"
+      "statusReceived": "Received",
+      "notTaking": "The practice isn't taking new messages here right now.",
+      "viewMessages": "View my messages"
     },
     "channel": {
       "title": "Your channel",

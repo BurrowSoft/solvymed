@@ -92,6 +92,11 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
             {tChannel("entryButton")}
           </a>
         )}
+        {doctor.channelView && (
+          <a href={`${prefix}/my-appointments/channel/${doctor.id}`} data-testid="pc-view" className="rounded-xl px-4 py-1.5 text-center text-sm font-bold underline" style={{ color: accent }}>
+            {tChannel("viewMessages")}
+          </a>
+        )}
         {!confirming && (
           <button type="button" onClick={() => { setBlocked(false); setConfirming(true); }} className="rounded-xl px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-slate-50">
             {t("disconnect")}

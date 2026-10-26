@@ -2785,7 +2785,9 @@
       "youWrote": "Bạn đã viết",
       "youChose": "Bạn đã chọn: {option}",
       "earlier": "Tin nhắn trước đó ({n})",
-      "statusReceived": "Đã nhận"
+      "statusReceived": "Đã nhận",
+      "notTaking": "Hiện phòng khám không nhận tin nhắn mới tại đây.",
+      "viewMessages": "Xem tin nhắn của tôi"
     },
     "channel": {
       "title": "Kênh của bạn",

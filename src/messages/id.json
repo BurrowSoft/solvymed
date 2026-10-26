@@ -2785,7 +2785,9 @@
       "youWrote": "Anda menulis",
       "youChose": "Anda memilih: {option}",
       "earlier": "Pesan sebelumnya ({n})",
-      "statusReceived": "Diterima"
+      "statusReceived": "Diterima",
+      "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",
+      "viewMessages": "Lihat pesan saya"
     },
     "channel": {
       "title": "Kanal Anda",

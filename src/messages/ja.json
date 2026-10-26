@@ -2785,7 +2785,9 @@
       "youWrote": "あなたの記入内容",
       "youChose": "選択：{option}",
       "earlier": "以前のメッセージ（{n}）",
-      "statusReceived": "受付済み"
+      "statusReceived": "受付済み",
+      "notTaking": "現在、クリニックはここで新しいメッセージを受け付けていません。",
+      "viewMessages": "メッセージを見る"
     },
     "channel": {
       "title": "あなたのチャネル",

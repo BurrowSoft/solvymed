@@ -34,6 +34,8 @@ export type MyDoctor = {
   acceptsBookings: boolean;
   // The Patient Channel is open to this patient with this doctor (M4b; set by the page).
   channel?: boolean;
+  // The channel is off for new messages here, but the patient has requests: "Ver minhas mensagens".
+  channelView?: boolean;
 };
 
 export function toMyDoctor(supabase: Pick<SupabaseClient, "storage">, r: MyDoctorRow): MyDoctor {

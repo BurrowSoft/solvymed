@@ -2,19 +2,22 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { countryProfile } from "@/lib/country";
 import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientChannel/live";
-import { UUID, patientPage } from "@/lib/patientChannel/practice";
+import { UUID, myRequestsWith, patientPage } from "@/lib/patientChannel/practice";
 import { pcAdmin } from "@/lib/patientChannel/server";
 import type { PcPatientPage } from "@/lib/patientChannel/patientPage";
 import { SampleChannel } from "./SampleChannel";
 import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
+import { ReadOnlyChannel } from "./ReadOnlyChannel";
 
 // The patient's Patient Channel with one doctor (specs/patient-contact-tech.md §6; 01's
 // route), from the doctor card's "Fale com o Médico". Dark: 404 unless the channel is on
 // for the caller (the public flag or 237's testers). 237's pc_patient_page, run as the
 // patient, is the access check: not connected, or the doctor's channel off → 404; the
 // practice closed or the patient archived → "this channel isn't available" with the
-// emergency notice (01). ?pc_test=1 (never Production) keeps the M4a sample practice.
+// emergency notice (01). The doctor's channel off, or no longer connected, with requests
+// there → read-only "Suas mensagens" (01, 10-26; the platform-wide switch is the emergency
+// stop: still 404). ?pc_test=1 (never Production) keeps the M4a sample practice.
 export default async function PatientChannelPage({
   params,
   searchParams,
@@ -31,6 +34,26 @@ export default async function PatientChannelPage({
   if (!UUID.test(professionalId) || !(await patientChannelEnabled(supabase, user.id))) notFound();
 
   const access = await patientPage(supabase, professionalId);
+  if (!access.ok && (access.code === "channel_off" || access.code === "not_connected")) {
+    const requests = await myRequestsWith(supabase, professionalId);
+    if (requests.length === 0) notFound();
+    const [{ data: info }, { data: prof }] = await Promise.all([
+      supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle(),
+      pcAdmin().from("professionals").select("country").eq("id", professionalId).maybeSingle(),
+    ]);
+    const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null; time_zone?: string | null } | null;
+    const country = (prof as { country?: string | null } | null)?.country ?? null;
+    return (
+      <ReadOnlyChannel
+        doctorName={pub?.full_name?.trim() || ""}
+        practiceLine={[pub?.clinic_name, pub?.specialty].filter(Boolean).join(" · ")}
+        emergencyNumber={countryProfile(country).emergencyNumber}
+        requests={requests}
+        timeZone={pub?.time_zone || countryProfile(country).defaultTimeZone}
+        country={country}
+      />
+    );
+  }
   if (!access.ok) {
     if (access.code !== "pc_practice_closed" && access.code !== "pc_patient_archived") notFound();
     // The practice's country (the right emergency number) without the patient page.

@@ -2785,7 +2785,9 @@
       "youWrote": "كتبت",
       "youChose": "اخترت: {option}",
       "earlier": "رسائل سابقة ({n})",
-      "statusReceived": "تم الاستلام"
+      "statusReceived": "تم الاستلام",
+      "notTaking": "لا تستقبل العيادة رسائل جديدة من هنا حاليًا.",
+      "viewMessages": "عرض رسائلي"
     },
     "channel": {
       "title": "قناتك",

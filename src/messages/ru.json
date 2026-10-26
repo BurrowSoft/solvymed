@@ -2785,7 +2785,9 @@
       "youWrote": "Вы написали",
       "youChose": "Вы выбрали: {option}",
       "earlier": "Предыдущие сообщения ({n})",
-      "statusReceived": "Получено"
+      "statusReceived": "Получено",
+      "notTaking": "Сейчас клиника не принимает здесь новые сообщения.",
+      "viewMessages": "Мои сообщения"
     },
     "channel": {
       "title": "Ваш канал",
