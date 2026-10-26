@@ -39,6 +39,21 @@ export async function logPatientOpen(db: unknown, patientId: string): Promise<vo
   }
 }
 
+// Logs the opening of a Patient Channel request (241, kind 'pc_request', the request id
+// as object_ref): the doctor or a secretary, in the request's detail page after the
+// RLS read. The database records it only when the caller may read that request (else
+// it returns quietly) and dedupes within 60 s. Never blocks the page, as above.
+export async function logChannelRequestOpen(db: unknown, patientId: string, requestId: string): Promise<void> {
+  try {
+    const { error } = await (db as Rpc).rpc("log_record_access", { p_patient_id: patientId, p_kind: "pc_request", p_object_ref: requestId });
+    if (error && !isMissingFunction(error)) {
+      Sentry.captureMessage("access_log_failed", { level: "error", tags: { code: error.code ?? "unknown", kind: "pc_request" } });
+    }
+  } catch {
+    Sentry.captureMessage("access_log_failed", { level: "error", tags: { code: "exception", kind: "pc_request" } });
+  }
+}
+
 export type AccessLogRow = {
   // Formatted on the server, in the practice's time zone.
   when: string;
@@ -66,6 +81,8 @@ const KIND_LABELS = {
   patient_upload: "accessKindPatientUpload",
   patient_upload_removed: "accessKindUploadRemoved",
   file_deleted: "accessKindFileDeleted",
+  // 241: a Patient Channel request opened (M5)
+  pc_request: "accessKindPcRequest",
 } as const;
 export function accessKindLabelKey(kind: string): (typeof KIND_LABELS)[keyof typeof KIND_LABELS] | "accessKindPatient" {
   return (KIND_LABELS as Record<string, (typeof KIND_LABELS)[keyof typeof KIND_LABELS]>)[kind] ?? "accessKindPatient";

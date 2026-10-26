@@ -223,3 +223,16 @@ describe("the sidebar entry", () => {
     expect(screen.queryByRole("link", { name: /Mensagens/ })).toBeNull();
   });
 });
+
+describe("the Access tab (241): opening a request is logged", () => {
+  it("log_record_access with kind pc_request and the request id; never throws; its own label", async () => {
+    const { accessKindLabelKey, logChannelRequestOpen } = await import("@/lib/accessLog");
+    const calls: unknown[] = [];
+    await logChannelRequestOpen({ rpc: async (fn: string, args: unknown) => { calls.push([fn, args]); return { data: null, error: null }; } }, "pat1", ID);
+    expect(calls).toEqual([["log_record_access", { p_patient_id: "pat1", p_kind: "pc_request", p_object_ref: ID }]]);
+    await expect(logChannelRequestOpen({ rpc: async () => { throw new Error("offline"); } }, "pat1", ID)).resolves.toBeUndefined();
+    await expect(logChannelRequestOpen({ rpc: async () => ({ data: null, error: { code: "P0001" } }) }, "pat1", ID)).resolves.toBeUndefined();
+    expect(accessKindLabelKey("pc_request")).toBe("accessKindPcRequest");
+    expect(pt.patientDetail.accessKindPcRequest).toBe("Abriu uma mensagem do Canal do Paciente");
+  });
+});

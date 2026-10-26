@@ -562,7 +562,8 @@
     "accessKindMerged": "已與「{name}」合併",
     "accessColWhen": "時間",
     "accessColWho": "人員",
-    "accessColWhat": "內容"
+    "accessColWhat": "內容",
+    "accessKindPcRequest": "開啟了病患頻道訊息"
   },
   "settings": {
     "profileTitle": "個人資料",

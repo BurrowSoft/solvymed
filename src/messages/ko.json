@@ -562,7 +562,8 @@
     "accessKindMerged": "“{name}”와(과) 병합함",
     "accessColWhen": "일시",
     "accessColWho": "누가",
-    "accessColWhat": "내용"
+    "accessColWhat": "내용",
+    "accessKindPcRequest": "환자 채널 메시지를 열었음"
   },
   "settings": {
     "profileTitle": "프로필",

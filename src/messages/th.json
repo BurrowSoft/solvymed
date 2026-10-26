@@ -562,7 +562,8 @@
     "accessKindMerged": "รวมกับ «{name}»",
     "accessColWhen": "เมื่อไร",
     "accessColWho": "ใคร",
-    "accessColWhat": "อะไร"
+    "accessColWhat": "อะไร",
+    "accessKindPcRequest": "เปิดข้อความจากช่องทางผู้ป่วย"
   },
   "settings": {
     "profileTitle": "โปรไฟล์",

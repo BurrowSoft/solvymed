@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { staffContext } from "@/lib/patientChannel/staff";
+import { logChannelRequestOpen } from "@/lib/accessLog";
 import { pcAdmin } from "@/lib/patientChannel/server";
 import { fromStoredRules } from "@/lib/patientChannel/rules";
 import {
@@ -22,6 +23,7 @@ const HISTORY_COLUMNS = "id, patient_id, destination, band, score_total, status,
 // succeeded, and only the names and positions reach the page (never the weights: a
 // secretary can't read the rules, cf's M0 point 4). A secretary reads a doctor-destination
 // request (when the doctor allows) but can't answer it (01's call 10; pc_reply refuses too).
+// Opening it is logged in the patient's Access tab (241).
 export default async function PatientChannelRequestPage({
   params,
 }: {
@@ -42,7 +44,9 @@ export default async function PatientChannelRequestPage({
   const row = toInboxRow(q);
   const patient = (Array.isArray(q.patients) ? q.patients[0] : q.patients) as { phone?: string | null } | null;
 
-  const [history, settings] = await Promise.all([
+  const [, history, settings] = await Promise.all([
+    // The patient's Access tab (241; 01, 10-26): who opened this request, and when. Never throws.
+    logChannelRequestOpen(supabase, row.patientId, row.id).then(() => null),
     supabase.from("pc_requests").select(HISTORY_COLUMNS).eq("professional_id", profId).eq("patient_id", row.patientId)
       .neq("id", row.id).order("created_at", { ascending: false }).limit(20),
     pcAdmin().from("pc_settings").select("rules, ai_mapping").eq("professional_id", profId).maybeSingle(),

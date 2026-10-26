@@ -562,7 +562,8 @@
     "accessKindMerged": "Đã gộp với “{name}”",
     "accessColWhen": "Khi nào",
     "accessColWho": "Ai",
-    "accessColWhat": "Nội dung"
+    "accessColWhat": "Nội dung",
+    "accessKindPcRequest": "Đã mở tin nhắn Kênh Bệnh nhân"
   },
   "settings": {
     "profileTitle": "Hồ sơ",

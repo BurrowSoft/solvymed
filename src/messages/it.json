@@ -562,7 +562,8 @@
     "accessKindMerged": "Unito con «{name}»",
     "accessColWhen": "Quando",
     "accessColWho": "Chi",
-    "accessColWhat": "Cosa"
+    "accessColWhat": "Cosa",
+    "accessKindPcRequest": "Opened a Patient Channel message"
   },
   "settings": {
     "profileTitle": "Profilo",

@@ -562,7 +562,8 @@
     "accessKindMerged": "Digabung dengan “{name}”",
     "accessColWhen": "Kapan",
     "accessColWho": "Siapa",
-    "accessColWhat": "Apa"
+    "accessColWhat": "Apa",
+    "accessKindPcRequest": "Membuka pesan Kanal Pasien"
   },
   "settings": {
     "profileTitle": "Profil",

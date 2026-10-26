@@ -562,7 +562,8 @@
     "accessKindMerged": "已与“{name}”合并",
     "accessColWhen": "时间",
     "accessColWho": "人员",
-    "accessColWhat": "内容"
+    "accessColWhat": "内容",
+    "accessKindPcRequest": "打开了患者通道消息"
   },
   "settings": {
     "profileTitle": "个人资料",
