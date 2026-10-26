@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 
 // specs/patient-contact-tech.md §4.1: the mobile repo vendors a byte-identical copy of
 // score.ts, and both repos pin its SHA-256 (line endings as LF), so a one-sided edit fails.
-const PINNED = "b157ff659dadc689bbc926e40897b77d539a5ae41320a5d0af497ef65b97e2f0";
+const PINNED = "dff5eee23520a3557f9b4c3638cc5b10d26beb064ea6ccf1e8b64d4887c88203";
 
 const sha = (p: string) =>
   createHash("sha256").update(readFileSync(resolve(__dirname, p), "utf8").replace(/\r\n/g, "\n")).digest("hex");

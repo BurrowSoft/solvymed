@@ -799,7 +799,10 @@
       "countryLabel": "Phòng khám của bạn ở đâu?",
       "countryRequired": "Chọn quốc gia của phòng khám.",
       "consentRequired": "Vui lòng đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư.",
-      "submit": "Tiếp tục"
+      "submit": "Tiếp tục",
+      "loadError": "Không mở được bước này. Hãy kiểm tra kết nối và thử lại.",
+      "retry": "Thử lại",
+      "working": "Đang lưu…"
     },
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {

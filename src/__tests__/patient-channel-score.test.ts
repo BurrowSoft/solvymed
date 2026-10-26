@@ -167,6 +167,8 @@ describe("the Patient Channel matcher", () => {
   it("suggestions: Latin from 2 letters, the last words longest first, up to 6", () => {
     expect(suggestTerms(vocab, "estou com f")).toEqual([]);
     expect(suggestTerms(vocab, "estou com fa").map((s) => s.ref)).toEqual(["s6"]);
+    // Order (01, 10-26): terms starting with the tail first ("Febre"), then a later word ("garganta fechando").
+    expect(suggestTerms(vocab, "estou com fe").map((s) => s.term)).toEqual(["Febre", "garganta fechando", "Sangue na urina ou nas fezes"]);
     const s = suggestTerms(vocab, "tenho falta de")[0];
     expect(s).toMatchObject({ kind: "symptom", ref: "s6", term: "Falta de ar ou inchaço no rosto", replaceFrom: 6 });
     expect(suggestTerms(vocab, "rosto inch")[0]).toMatchObject({ ref: "s6", term: "rosto inchado", display: "Falta de ar ou inchaço no rosto" });

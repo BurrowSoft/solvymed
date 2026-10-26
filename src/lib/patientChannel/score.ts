@@ -393,7 +393,9 @@ export function suggestTerms(vocab: Vocabulary, textBeforeCaret: string, max = 6
   }
 
   // Latin: the last 1–3 words before the caret, longest first; nothing right after a
-  // space or punctuation (the word is finished).
+  // space or punctuation (the word is finished). For each tail, terms that START with it
+  // come first ("fe" → Febre), then terms with a later word starting with it ("garganta
+  // fechando"), each group in the doctor's order (01, 10-26).
   if (!WORD_CHAR.test(lastCodePoint(textBeforeCaret, textBeforeCaret.length))) return out;
   const words: { start: number }[] = [];
   const wordRe = new RegExp("[\\p{L}\\p{N}\\p{M}]+", "gu");
@@ -402,10 +404,10 @@ export function suggestTerms(vocab: Vocabulary, textBeforeCaret: string, max = 6
     const replaceFrom = words[words.length - n].start;
     const tail = normalize(textBeforeCaret.slice(replaceFrom)).replace(/\s+/g, " ");
     if (tail.length < 2) continue;
-    for (const t of terms) {
-      if (isThaiTerm(t.norm)) continue;
-      const wordHit = n === 1 && t.norm.split(/\s+/).some((w) => w.startsWith(tail));
-      if (t.norm.startsWith(tail) || wordHit) push(t, replaceFrom);
+    const latin = terms.filter((t) => !isThaiTerm(t.norm));
+    for (const t of latin) if (t.norm.startsWith(tail)) push(t, replaceFrom);
+    if (n === 1) {
+      for (const t of latin) if (t.norm.split(/\s+/).slice(1).some((w) => w.startsWith(tail))) push(t, replaceFrom);
     }
   }
   return out;
