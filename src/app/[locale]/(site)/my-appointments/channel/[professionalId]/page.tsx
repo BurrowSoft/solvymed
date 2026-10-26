@@ -6,6 +6,9 @@ import { UUID, myRequestsWith, patientPage } from "@/lib/patientChannel/practice
 import { pcAdmin } from "@/lib/patientChannel/server";
 import type { PcPatientPage } from "@/lib/patientChannel/patientPage";
 import { coverUrl } from "@/lib/patientChannel/cover";
+import { pageLook } from "@/lib/patientChannel/pageLook";
+import { liveFeatures } from "@/lib/liveFeatures";
+import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
 import { SampleChannel } from "./SampleChannel";
 import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
@@ -69,6 +72,9 @@ export default async function PatientChannelPage({
   const p = access.page;
   const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle();
   const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null; time_zone?: string | null } | null;
+  const brand = liveFeatures.myBrand
+    ? publicFromPractice(await loadPracticeBrand(supabase, professionalId), { name: pub?.full_name ?? "", specialty: pub?.specialty ?? "" })
+    : null;
   const page: PcPatientPage = {
     doctorName: p.brand?.displayName?.trim() || pub?.full_name?.trim() || "",
     practiceLine: [pub?.clinic_name, p.brand?.title?.trim() || pub?.specialty].filter(Boolean).join(" · "),
@@ -81,10 +87,15 @@ export default async function PatientChannelPage({
     // The dates in "Suas mensagens" (P-14): the practice's zone and calendar.
     timeZone: pub?.time_zone || countryProfile(p.country).defaultTimeZone,
     country: p.country ?? null,
-    // The cover banner (246; 01): with pageBg "cover" or "both"; none → today's look.
-    cover: (p.pageBg === "cover" || p.pageBg === "both") && p.coverPath
-      ? { url: coverUrl(supabase, p.coverPath)!, alt: pub?.clinic_name?.trim() || p.brand?.displayName?.trim() || pub?.full_name?.trim() || "" }
-      : null,
+    // The doctor's page look (prototype v17; 01): the band (the cover image or the brand
+    // colour), the logo watermark, the brand colour. The logo: the doctor's own square
+    // logo from My brand (as on the booking page), none without it.
+    look: pageLook(p.pageBg, {
+      color: brand?.accentColor ?? p.brand?.accentColor,
+      logoUrl: brand?.logoUrl ?? null,
+      coverUrl: coverUrl(supabase, p.coverPath),
+      coverAlt: pub?.clinic_name?.trim() || p.brand?.displayName?.trim() || pub?.full_name?.trim() || "",
+    }),
   };
   return <RealChannel page={page} profId={professionalId} />;
 }

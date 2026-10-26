@@ -25,6 +25,7 @@ vi.mock("@/lib/supabase/client", () => ({
 import * as cover from "@/lib/patientChannel/cover";
 import { CoverCard } from "@/app/[locale]/(site)/dashboard/settings/patient-channel/CoverCard";
 import { PatientChannelFlow } from "@/components/patientChannel/PatientChannelFlow";
+import { inkFor, pageLook } from "@/lib/patientChannel/pageLook";
 
 describe("the 3:1 crop", () => {
   it("a wide picture keeps its middle third-by-one, scaled down to 1800×600", () => {
@@ -156,16 +157,68 @@ describe("the patient's channel page", () => {
       </NextIntlClientProvider>,
     );
 
-  it("a cover shows as the banner, with the practice name as its text", () => {
-    show({ cover: { url: "https://cdn.test/pc-covers/doc-1/c.jpg", alt: "Clínica Sol" } });
+  const LOGO = "https://cdn.test/brand-assets/doc-1/logo.png";
+  const COVER = "https://cdn.test/pc-covers/doc-1/c.jpg";
+  const look = (bg: string, o: { logo?: boolean; cover?: boolean; color?: string } = {}) =>
+    pageLook(bg, { color: o.color ?? "#7C3AED", logoUrl: o.logo ? LOGO : null, coverUrl: o.cover ? COVER : null, coverAlt: "Clínica Sol" });
+
+  it("'cover' with an image: the 3:1 band on top, the practice name as its text, the logo over its edge", () => {
+    show({ look: look("cover", { cover: true, logo: true }) });
     const img = screen.getByTestId("pc-cover");
     expect(img.getAttribute("alt")).toBe("Clínica Sol");
-    expect(img.className).toContain("aspect-[3/1]");
+    expect(screen.getByTestId("pc-band").className).toContain("aspect-[3/1]");
+    expect(screen.queryByTestId("pc-watermark")).toBeNull();
   });
 
-  it("no cover: today's page", () => {
-    show({});
+  it("'cover' with no image: a shorter strip in the brand colour", () => {
+    show({ look: look("cover") });
     expect(screen.queryByTestId("pc-cover")).toBeNull();
+    expect(screen.getByTestId("pc-band").className).toContain("h-[86px]");
+  });
+
+  it("'both': band + the logo watermark; 'watermark': the watermark alone; neither without a logo", () => {
+    const { unmount } = show({ look: look("both", { logo: true, cover: true }) });
+    expect(screen.getByTestId("pc-band")).toBeTruthy();
+    expect(screen.getByTestId("pc-watermark").getAttribute("style")).toContain("logo.png");
+    unmount();
+    const w = show({ look: look("watermark", { logo: true, cover: true }) });
+    expect(screen.queryByTestId("pc-band")).toBeNull();
+    expect(screen.queryByTestId("pc-cover")).toBeNull();
+    expect(screen.getByTestId("pc-watermark")).toBeTruthy();
+    w.unmount();
+    show({ look: look("watermark") });
+    expect(screen.queryByTestId("pc-watermark")).toBeNull();
+  });
+
+  it("'plain' and no look: today's page, no band, no watermark", () => {
+    const { unmount } = show({ look: look("plain", { logo: true, cover: true }) });
+    expect(screen.queryByTestId("pc-band")).toBeNull();
+    expect(screen.queryByTestId("pc-watermark")).toBeNull();
+    unmount();
+    show({});
+    expect(screen.queryByTestId("pc-band")).toBeNull();
+  });
+
+  it("the brand colour fills the main button, with readable ink", () => {
+    show({ look: look("plain", { color: "#FDE68A" }) });
+    const vars = screen.getByTestId("pc-page").getAttribute("style") ?? "";
+    expect(vars).toContain("--pc-brand: #FDE68A");
+    expect(vars).toContain("--pc-ink: #13232E");
+    expect(screen.getByTestId("pc-start").className).toContain("bg-[var(--pc-brand)]");
+  });
+});
+
+describe("pageLook", () => {
+  it("the prototype's ink: dark on light colours, white on dark ones", () => {
+    expect(inkFor("#FFFFFF")).toBe("#13232E");
+    expect(inkFor("#FDE68A")).toBe("#13232E");
+    expect(inkFor("#116E99")).toBe("#FFFFFF");
+    expect(inkFor("#1F2937")).toBe("#FFFFFF");
+  });
+  it("no valid brand colour → SolvyMed blue; an unknown background → 'both' (the default)", () => {
+    expect(pageLook("cover", { color: "red" }).color).toBe("#116e99");
+    expect(pageLook("nonsense", { logoUrl: "x" })).toMatchObject({ band: true, watermark: true });
+    expect(pageLook("watermark", { coverUrl: "c" }).coverUrl).toBeNull();
   });
 });
 

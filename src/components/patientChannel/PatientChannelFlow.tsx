@@ -117,7 +117,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("privateTitle")}</b>{t("privateLabel")}</li>
         </ul>
         {requests && requests.length > 0 && <MyRequests requests={requests} timeZone={page.timeZone} country={page.country} />}
-        <button type="button" data-testid="pc-start" onClick={() => setStep(page.faq.length > 0 ? "faq" : "reason")} className="mt-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("start")}</button>
+        <button type="button" data-testid="pc-start" onClick={() => setStep(page.faq.length > 0 ? "faq" : "reason")} className="mt-2 rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)]">{t("start")}</button>
       </>
     );
   } else if (step === "faq") {
@@ -132,7 +132,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           </details>
         ))}
         <button type="button" data-testid="pc-faq-solved" onClick={() => { onSelfServe?.("faq_resolved"); setStep("resolved"); }} className="mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700">{t("faqSolved")}</button>
-        <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("faqContinue")}</button>
+        <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)]">{t("faqContinue")}</button>
       </>
     );
   } else if (step === "reason") {
@@ -217,7 +217,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           </fieldset>
         )}
         {failed && <p role="alert" className="text-sm font-semibold text-red-600">{t("sendFailed")}</p>}
-        <button type="submit" data-testid="pc-send" disabled={sending} className="mt-1 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white disabled:opacity-60">
+        <button type="submit" data-testid="pc-send" disabled={sending} className="mt-1 rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)] disabled:opacity-60">
           {sending ? t("sending") : t("send", { who })}
         </button>
       </form>
@@ -227,7 +227,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
       <div className="flex flex-col gap-3 rounded-xl border border-amber-400 bg-amber-50 p-4" data-testid="pc-replace">
         <h2 className="text-base font-bold text-slate-900">{t("openTitle")}</h2>
         <p className="text-sm text-slate-700">{t("openText", { who })}</p>
-        <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">{t("replace")}</button>
+        <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("replace")}</button>
         <button type="button" onClick={() => setStep("form")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("keep")}</button>
       </div>
     );
@@ -264,17 +264,37 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     );
   }
 
+  // The doctor's page look (prototype v17): the band on top (the 3:1 cover, or a shorter strip
+  // in the brand colour), the round logo overlapping its edge with all text below it on the
+  // normal surface (contrast), the logo watermark behind the content, the brand colour on
+  // the main buttons. No look: the plain page in SolvyMed blue.
+  const look = page.look ?? null;
+  const vars = { "--pc-brand": look?.color ?? "#116e99", "--pc-ink": look?.ink ?? "#FFFFFF" } as React.CSSProperties;
+  const logo = look?.logoUrl ?? null;
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-3 p-4 sm:p-6">
-      {banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
-      {/* The practice's cover (246): a 3:1 banner on top, full width on a phone (01). */}
-      {page.cover && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={page.cover.url} alt={page.cover.alt} data-testid="pc-cover" className="aspect-[3/1] w-full rounded-xl object-cover" />
+    <div className="relative isolate mx-auto flex w-full max-w-xl flex-col gap-3 overflow-hidden p-4 sm:p-6" style={vars} data-testid="pc-page">
+      {look?.watermark && logo && (
+        <div aria-hidden="true" data-testid="pc-watermark" className="pointer-events-none absolute inset-0 -z-10 bg-no-repeat opacity-[0.07]"
+          style={{ backgroundImage: `url("${logo}")`, backgroundPosition: "center 62%", backgroundSize: "70%" }} />
       )}
-      <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-        <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{initials(page.doctorName)}</span>
-        <div className="min-w-0"><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>
+      {look?.band && (
+        look.coverUrl ? (
+          <div data-testid="pc-band" className="relative -mx-4 -mt-4 aspect-[3/1] max-h-[400px] bg-[var(--pc-brand)] sm:-mx-6 sm:-mt-6">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={look.coverUrl} alt={look.coverAlt} data-testid="pc-cover" className="h-full w-full object-cover" />
+            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-transparent from-45% to-black/30" />
+          </div>
+        ) : (
+          <div aria-hidden="true" data-testid="pc-band" className="-mx-4 -mt-4 h-[86px] bg-[var(--pc-brand)] sm:-mx-6 sm:-mt-6" />
+        )
+      )}
+      {banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
+      <div className={look?.band ? "relative z-10 -mt-12 flex items-start gap-3 pb-3" : "flex items-center gap-3 border-b border-slate-100 pb-3"}>
+        <span aria-hidden="true" className={`grid shrink-0 place-items-center overflow-hidden rounded-full font-bold text-[var(--pc-brand)] ${look?.band ? "h-16 w-16 border-[3px] border-white bg-white text-xl shadow-sm" : "h-10 w-10 bg-teal-50"}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {logo ? <img src={logo} alt="" className="h-full w-full rounded-full object-contain" /> : initials(page.doctorName)}
+        </span>
+        <div className={look?.band ? "min-w-0 pt-12" : "min-w-0"}><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>
       </div>
       {body}
     </div>
