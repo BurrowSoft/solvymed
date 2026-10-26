@@ -1,37 +1,46 @@
 import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
-import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientChannel/live";
-import { EMPTY_RULES } from "@/lib/patientChannel/rules";
+import { patientChannelEnabled } from "@/lib/patientChannel/live";
+import { EMPTY_RULES, fromStoredRules } from "@/lib/patientChannel/rules";
 import { PatientChannelSettings } from "./PatientChannelSettings";
 
-// Patient Channel (specs/patient-contact-tech.md §6), M3a: the doctor's rules editor
-// and "Test as a patient" (the prototype v17's tab 3). Doctors only; dark (404) while
-// the patient_channel flag is off for the caller, except ?pc_test=1 on previews.
-// Saving arrives with migration 237's PUT /api/patient-channel/config (M3b); until
-// then the editor starts empty and nothing is stored.
-export default async function PatientChannelSettingsPage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ locale: string }>;
-  searchParams: Promise<{ pc_test?: string | string[] }>;
-}) {
+// Patient Channel (specs/patient-contact-tech.md §6): the doctor's rules editor and "Test
+// as a patient". Doctors only; dark (404) unless the patient_channel flag is on or the
+// doctor is on 237's testers allowlist. The rules load with their version; Save goes
+// through PUT /api/patient-channel/config (validated, versioned, open requests rescored).
+export default async function PatientChannelSettingsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const { pc_test } = await searchParams;
   const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient({ acting: false });
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`${prefix}/auth/login`);
-  if (!patientChannelPreviewTest(pc_test) && !(await patientChannelEnabled(supabase))) notFound();
+  if (!(await patientChannelEnabled(supabase, user.id))) notFound();
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/settings`);
-  const country = await getPracticeCountry(supabase, user.id, user.id);
+  const [country, saved] = await Promise.all([
+    getPracticeCountry(supabase, user.id, user.id),
+    supabase.rpc("pc_get_rules"),
+  ]);
+  // A failed read must not open an empty editor (Save would replace the stored rules).
+  if (saved.error) {
+    const [t, tSettings] = await Promise.all([getTranslations({ locale, namespace: "patientChannel" }), getTranslations({ locale, namespace: "settings" })]);
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 max-w-3xl">
+        <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
+        <div className="error-banner mt-6">{tSettings("loadError")}</div>
+      </div>
+    );
+  }
+  const row = saved.data as { rules?: unknown; rulesVersion?: number } | null;
+  const initialRules = row?.rules ? fromStoredRules(row.rules, country) : { ...EMPTY_RULES, country };
 
   return (
     <PatientChannelSettings
-      initialRules={{ ...EMPTY_RULES, country }}
+      initialRules={initialRules}
+      initialVersion={row?.rulesVersion ?? 0}
       emergencyNumber={countryProfile(country).emergencyNumber}
     />
   );

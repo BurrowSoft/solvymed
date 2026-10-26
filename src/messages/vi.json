@@ -2548,10 +2548,17 @@
     "entryOpen": "Thiết lập",
     "settings": {
       "intro": "Mọi thứ ở đây do bạn quyết định: điểm, từ ngữ và tin nhắn. Giá trị âm sẽ trừ điểm.",
-      "saveSoon": "Tính năng lưu sẽ có trong bản cập nhật sắp tới. Hiện tại, bạn có thể tạo và thử quy tắc tại đây: chưa có gì được lưu.",
       "testTitle": "Thử quy tắc của bạn",
       "testText": "Mở biểu mẫu của bệnh nhân với quy tắc hiện tại. Bạn sẽ thấy điểm từng dòng, cảnh báo cấp cứu và tin nhắn tự động. Không có gì được gửi.",
-      "testButton": "Thử với vai trò bệnh nhân"
+      "testButton": "Thử với vai trò bệnh nhân",
+      "save": "Lưu quy tắc",
+      "saving": "Đang lưu…",
+      "saved": "Đã lưu quy tắc. Các yêu cầu đang mở đã được tính lại theo quy tắc này.",
+      "unsaved": "Có thay đổi chưa lưu",
+      "conflict": "Các quy tắc này đã được thay đổi ở nơi khác. Hãy tải lại trang để xem phiên bản hiện tại.",
+      "reload": "Tải lại",
+      "invalid": "Kiểm tra quy tắc: có điểm cần sửa trước khi lưu.",
+      "error": "Không thể lưu. Hãy kiểm tra kết nối và thử lại."
     },
     "symptoms": {
       "title": "Triệu chứng: điểm và từ ngữ của bệnh nhân",
@@ -2562,13 +2569,17 @@
       "removeNamed": "Xóa {name}",
       "words": "Từ ngữ của bệnh nhân",
       "wordsPlaceholder": "vd: hụt hơi, khó thở",
-      "thaiShort": "Từ tiếng Thái cần có từ 2 chữ cái trở lên.",
       "points": "Điểm",
       "pointsFor": "Điểm cho {name}",
       "immediate": "Cảnh báo cấp cứu ngay lập tức",
       "new": "Triệu chứng mới",
       "add": "Thêm",
-      "wordsHelp": "\"Từ ngữ của bệnh nhân\": cách bệnh nhân thường viết, phân cách bằng dấu phẩy. Tên triệu chứng cũng được tính. \"Cảnh báo cấp cứu ngay lập tức\" hiển thị số cấp cứu ngay khi triệu chứng xuất hiện (ô hoặc văn bản), bất kể điểm số. Dùng cho các dấu hiệu nguy hiểm."
+      "wordsHelp": "\"Từ ngữ của bệnh nhân\": cách bệnh nhân thường viết, phân cách bằng dấu phẩy. Tên triệu chứng cũng được tính. \"Cảnh báo cấp cứu ngay lập tức\" hiển thị số cấp cứu ngay khi triệu chứng xuất hiện (ô hoặc văn bản), bất kể điểm số. Dùng cho các dấu hiệu nguy hiểm.",
+      "termShort": "Thuật ngữ cần có ít nhất 2 chữ cái.",
+      "exists": "Đã có triệu chứng mang tên này.",
+      "rename": "Đổi tên",
+      "renameLabel": "Tên mới cho {name}",
+      "renameSave": "Lưu tên"
     },
     "combos": {
       "title": "Tổ hợp",
@@ -2645,7 +2656,8 @@
       "editing": "Đang sửa…",
       "pickTerm": "Chọn ít nhất 1 điều kiện.",
       "writeMessage": "Hãy viết tin nhắn.",
-      "full": "Bạn đã đạt giới hạn số tin nhắn."
+      "full": "Bạn đã đạt giới hạn số tin nhắn.",
+      "tooManyTerms": "Chọn tối đa 10 thuật ngữ."
     },
     "meds": {
       "title": "Thuốc được nhận diện trong văn bản",

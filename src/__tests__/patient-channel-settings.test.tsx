@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { NextIntlClientProvider } from "next-intl";
@@ -18,9 +18,11 @@ const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" m
 const P = pt.patientChannel;
 
 describe("the Patient Channel rules editor", () => {
-  it("starts empty, says nothing is saved yet, and adds a symptom", () => {
-    render(wrap(<PatientChannelSettings initialRules={EMPTY_RULES} emergencyNumber="192" />));
-    expect(screen.getByTestId("pc-save-soon")).toHaveTextContent(P.settings.saveSoon);
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("starts empty with nothing to save, and adds a symptom", () => {
+    render(wrap(<PatientChannelSettings initialRules={EMPTY_RULES} initialVersion={0} emergencyNumber="192" />));
+    expect(screen.getByTestId("pc-save")).toBeDisabled();
     expect(screen.getByText(P.symptoms.none)).toBeInTheDocument();
     fireEvent.change(screen.getByRole("textbox", { name: P.symptoms.new }), { target: { value: "Tontura" } });
     fireEvent.click(within(screen.getByRole("region", { name: P.symptoms.title })).getByRole("button", { name: P.symptoms.add }));
@@ -28,27 +30,79 @@ describe("the Patient Channel rules editor", () => {
     expect(screen.getByRole("spinbutton", { name: "Pontos para Tontura" })).toHaveValue(2);
   });
 
-  it("refuses a 1-letter Thai symptom", () => {
-    render(wrap(<PatientChannelSettings initialRules={EMPTY_RULES} emergencyNumber="1669" />));
-    fireEvent.change(screen.getByRole("textbox", { name: P.symptoms.new }), { target: { value: "ไ" } });
-    expect(screen.getByRole("alert")).toHaveTextContent(P.symptoms.thaiShort);
+  it.each(["ไ", "X"])("refuses a 1-letter symptom in any script (237): %s", (name) => {
+    render(wrap(<PatientChannelSettings initialRules={EMPTY_RULES} initialVersion={0} emergencyNumber="1669" />));
+    fireEvent.change(screen.getByRole("textbox", { name: P.symptoms.new }), { target: { value: name } });
     fireEvent.click(within(screen.getByRole("region", { name: P.symptoms.title })).getByRole("button", { name: P.symptoms.add }));
+    expect(screen.getByRole("alert")).toHaveTextContent(P.symptoms.termShort);
     expect(screen.getByText(P.symptoms.none)).toBeInTheDocument();
   });
 
+  it("a refused 1-letter word is cleared from the patient-words field (01, #614 row)", () => {
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={3} emergencyNumber="1669" />));
+    const field = screen.getAllByRole("textbox", { name: P.symptoms.words })[0] as HTMLInputElement;
+    fireEvent.change(field, { target: { value: "ก, x, มึนหัว" } });
+    fireEvent.blur(field);
+    expect(field.value).toBe("มึนหัว");
+    expect(screen.getByRole("alert")).toHaveTextContent(P.symptoms.termShort);
+  });
+
+  it("Save: PUT /config with the version read; then saved, and nothing left to save", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ version: 4, rescored: 1 }) }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={3} emergencyNumber="192" />));
+    expect(screen.getByTestId("pc-save")).toBeDisabled();
+    fireEvent.click(screen.getAllByRole("checkbox", { name: P.symptoms.immediate, checked: false })[0]);
+    expect(screen.getByRole("status")).toHaveTextContent(P.settings.unsaved);
+    fireEvent.click(screen.getByTestId("pc-save"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(P.settings.saved));
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect([url, init.method]).toEqual(["/api/patient-channel/config", "PUT"]);
+    const sent = JSON.parse(init.body as string);
+    expect(sent.expectedVersion).toBe(3);
+    expect(Object.keys(sent.rules).sort()).toEqual(["autoMessages", "combinations", "medicines", "minBandForTextOnly", "symptoms", "thresholds"]);
+    expect(screen.getByTestId("pc-save")).toBeDisabled();
+  });
+
+  it("a newer save elsewhere (409) asks to reload instead of writing over it", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: false, status: 409, json: async () => ({ code: "version_conflict" }) })));
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={3} emergencyNumber="192" />));
+    fireEvent.click(screen.getAllByRole("checkbox", { name: P.symptoms.immediate, checked: false })[0]);
+    fireEvent.click(screen.getByTestId("pc-save"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(P.settings.conflict));
+    expect(screen.getByRole("button", { name: P.settings.reload })).toBeInTheDocument();
+    expect(screen.getByTestId("pc-save")).toBeDisabled();
+  });
+
+  it("renaming a symptom keeps its messages (cf, #614); a duplicate name is refused", () => {
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={3} emergencyNumber="192" />));
+    fireEvent.click(screen.getByRole("button", { name: P.symptoms.renameLabel.replace("{name}", "Tontura") }));
+    const input = screen.getByRole("textbox", { name: P.symptoms.renameLabel.replace("{name}", "Tontura") });
+    fireEvent.change(input, { target: { value: "Febre" } });
+    fireEvent.click(screen.getByRole("button", { name: P.symptoms.renameSave }));
+    expect(screen.getByRole("alert")).toHaveTextContent(P.symptoms.exists);
+    fireEvent.change(input, { target: { value: "Vertigem" } });
+    fireEvent.click(screen.getByRole("button", { name: P.symptoms.renameSave }));
+    const auto = within(screen.getByRole("region", { name: P.auto.title }));
+    expect(auto.getAllByText(/Vertigem/).length).toBeGreaterThan(0);
+    // The terms line follows the rename (the message's own text is the doctor's and stays).
+    expect(auto.queryByText(/^Tontura ·/)).toBeNull();
+    expect(auto.getByText(/^Vertigem ·/)).toBeInTheDocument();
+  });
+
   it("the warn-on-urgent line names the practice country's number", () => {
-    render(wrap(<PatientChannelSettings initialRules={sample} emergencyNumber="1669" />));
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={0} emergencyNumber="1669" />));
     expect(screen.getByText(P.bands.warnOnUrgent.replace("{number}", "1669"))).toBeInTheDocument();
   });
 
   it("bands: urgent must stay above attention", () => {
-    render(wrap(<PatientChannelSettings initialRules={sample} emergencyNumber="192" />));
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={0} emergencyNumber="192" />));
     fireEvent.change(screen.getByRole("spinbutton", { name: `${P.bands.red} ${P.bands.from}` }), { target: { value: "5" } });
     expect(screen.getByText(P.bands.invalid)).toBeInTheDocument();
   });
 
   it("an automatic message needs a term", () => {
-    render(wrap(<PatientChannelSettings initialRules={sample} emergencyNumber="192" />));
+    render(wrap(<PatientChannelSettings initialRules={sample} initialVersion={0} emergencyNumber="192" />));
     fireEvent.change(screen.getByRole("textbox", { name: P.auto.message }), { target: { value: "Beba água." } });
     fireEvent.click(screen.getByRole("button", { name: P.auto.add }));
     expect(screen.getByText(P.auto.pickTerm)).toBeInTheDocument();
@@ -57,7 +111,7 @@ describe("the Patient Channel rules editor", () => {
 
 describe("Testar como paciente", () => {
   const openTest = (rules: ChannelConfig, number = "192") => {
-    render(wrap(<PatientChannelSettings initialRules={rules} emergencyNumber={number} />));
+    render(wrap(<PatientChannelSettings initialRules={rules} initialVersion={0} emergencyNumber={number} />));
     fireEvent.click(screen.getByRole("button", { name: P.settings.testButton }));
     expect(screen.getByText(P.test.bar)).toBeInTheDocument();
   };

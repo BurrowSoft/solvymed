@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { AnswerKey, Band, ChannelConfig } from "@/lib/patientChannel/score";
 import {
@@ -14,20 +14,28 @@ import {
   removeCombination,
   removeMedicine,
   removeSymptom,
+  renameSymptom,
   saveAutoMessage,
   setAdjust,
   setMinBand,
   setThresholds,
+  termLengthOk,
+  toStoredRules,
   updateCombination,
   updateSymptom,
+  validateRules,
   type AutoDraft,
 } from "@/lib/patientChannel/rules";
 import { termAllowed } from "@/lib/patientChannel/score";
+import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
-// one card per section, no tables. Saving arrives with migration 237 (M3b).
+// one card per section, no tables. Saved through PUT /api/patient-channel/config (M3b-1).
+
+// A term the database accepts: 2+ characters in any script (237), and the engine's guard.
+const termOk = (term: string, max?: number) => termLengthOk(term, max) && termAllowed(term);
 
 const CARD = "min-w-0 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6";
 const H2 = "text-base font-bold text-slate-900";
@@ -42,11 +50,49 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
   { key: "stillTaking", n: 2 },
 ];
 
-export function PatientChannelSettings({ initialRules, emergencyNumber }: { initialRules: ChannelConfig; emergencyNumber: string | null }) {
+type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
+
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber }: {
+  initialRules: ChannelConfig;
+  // pc_settings.rules_version; 0 = never saved (the first save creates the row).
+  initialVersion: number;
+  emergencyNumber: string | null;
+}) {
   const t = useTranslations("patientChannel");
   const [rules, setRules] = useState(initialRules);
+  const [version, setVersion] = useState(initialVersion);
+  const [savedJson, setSavedJson] = useState(() => JSON.stringify(toStoredRules(initialRules)));
+  const [state, setState] = useState<SaveState>("idle");
   const [testing, setTesting] = useState(false);
   const number = emergencyNumber ?? t("test.localNumber");
+  const dirty = JSON.stringify(toStoredRules(rules)) !== savedJson;
+  const problems = useMemo(() => validateRules(rules), [rules]);
+  useLeaveGuard(dirty);
+
+  // PUT /api/patient-channel/config with the version read: a newer save elsewhere → 409,
+  // and the page asks to reload instead of writing over it.
+  const save = async () => {
+    if (!dirty || problems.length > 0 || state === "saving") return;
+    setState("saving");
+    const sent = toStoredRules(rules);
+    try {
+      const res = await fetch("/api/patient-channel/config", {
+        method: "PUT",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ rules: sent, expectedVersion: version }),
+      });
+      if (res.ok) {
+        const { version: next } = (await res.json()) as { version: number };
+        setVersion(next);
+        setSavedJson(JSON.stringify(sent));
+        setState("saved");
+      } else {
+        setState(res.status === 409 ? "conflict" : res.status === 422 ? "invalid" : "error");
+      }
+    } catch {
+      setState("error");
+    }
+  };
 
   if (testing) {
     return (
@@ -56,11 +102,21 @@ export function PatientChannelSettings({ initialRules, emergencyNumber }: { init
     );
   }
 
+  const status =
+    state === "conflict" ? t("settings.conflict")
+      : state === "invalid" || (dirty && problems.length > 0) ? t("settings.invalid")
+      : state === "error" ? t("settings.error")
+      : state === "saving" ? t("settings.saving")
+      : dirty ? t("settings.unsaved")
+      : state === "saved" ? t("settings.saved")
+      : "";
+  const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-6xl">
       <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
       <p className="mt-1 max-w-prose text-sm text-slate-500">{t("settings.intro")}</p>
-      <p data-testid="pc-save-soon" className="mt-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900">{t("settings.saveSoon")}</p>
+
 
       <section className={`${CARD} mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
         <div className="min-w-0">
@@ -82,6 +138,21 @@ export function PatientChannelSettings({ initialRules, emergencyNumber }: { init
         <Adjustments rules={rules} setRules={setRules} />
         <AutoMessages rules={rules} setRules={setRules} />
       </div>
+      {/* The save bar: stuck to the bottom of the page while scrolling, clear of SolvyAI's opener. */}
+      <div data-testid="pc-save-bar" className="sticky bottom-0 z-20 -mx-4 mt-6 border-t border-slate-200 bg-white/95 px-4 py-3 pr-20 backdrop-blur sm:-mx-6 sm:px-6 sm:pr-20 lg:-mx-8 lg:px-8 lg:pr-20">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
+          <p role="status" aria-live="polite" className={`min-w-0 text-sm ${bad ? "font-semibold text-red-700" : "text-slate-600"}`}>{status}</p>
+          <div className="flex shrink-0 gap-2">
+            {state === "conflict" && (
+              <button type="button" onClick={() => window.location.reload()} className="rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold text-teal-700">{t("settings.reload")}</button>
+            )}
+            <button type="button" data-testid="pc-save" onClick={() => void save()} disabled={!dirty || problems.length > 0 || state === "saving" || state === "conflict"}
+              className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50">
+              {t("settings.save")}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -91,11 +162,24 @@ type SectionProps = { rules: ChannelConfig; setRules: (r: ChannelConfig) => void
 function Symptoms({ rules, setRules }: SectionProps) {
   const t = useTranslations("patientChannel");
   const [name, setName] = useState("");
+  const [addError, setAddError] = useState<string | null>(null);
   const [badWords, setBadWords] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState<{ id: string; value: string; error: string | null } | null>(null);
   const add = () => {
-    if (!termAllowed(name)) return;
-    setRules(addSymptom(rules, name));
+    if (!termOk(name, LIMITS.nameLength)) { setAddError(t("symptoms.termShort")); return; }
+    const next = addSymptom(rules, name);
+    if (next === rules) { setAddError(t("symptoms.exists")); return; }
+    setRules(next);
     setName("");
+    setAddError(null);
+  };
+  const rename = () => {
+    if (!renaming) return;
+    const r = renameSymptom(rules, renaming.id, renaming.value);
+    if (r === "short") { setRenaming({ ...renaming, error: t("symptoms.termShort") }); return; }
+    if (r === "exists") { setRenaming({ ...renaming, error: t("symptoms.exists") }); return; }
+    setRules(r);
+    setRenaming(null);
   };
   return (
     <section className={CARD} aria-labelledby="pc-symptoms">
@@ -106,12 +190,31 @@ function Symptoms({ rules, setRules }: SectionProps) {
         {rules.symptoms.length === 0 && <li className={SUB}>{t("symptoms.none")}</li>}
         {rules.symptoms.map((s) => (
           <li key={s.id} data-testid={`pc-symptom-${s.id}`} className="min-w-0 rounded-xl border border-slate-200 p-3">
-            <div className="flex items-start justify-between gap-2">
-              <span className="min-w-0 break-words text-sm font-bold text-slate-900">{s.name}</span>
-              <button type="button" className={MINI} aria-label={t("symptoms.removeNamed", { name: s.name })} onClick={() => setRules(removeSymptom(rules, s.id))}>
-                {t("symptoms.remove")}
-              </button>
-            </div>
+            {renaming?.id === s.id ? (
+              <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input className={INPUT} autoFocus value={renaming.value} maxLength={LIMITS.nameLength}
+                    aria-label={t("symptoms.renameLabel", { name: s.name })}
+                    onChange={(e) => setRenaming({ ...renaming, value: e.target.value, error: null })}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); rename(); } if (e.key === "Escape") setRenaming(null); }} />
+                  <button type="button" className={GHOST} onClick={rename}>{t("symptoms.renameSave")}</button>
+                  <button type="button" className={MINI} onClick={() => setRenaming(null)}>{t("auto.cancel")}</button>
+                </div>
+                {renaming.error && <p role="alert" className="text-xs font-semibold text-red-600">{renaming.error}</p>}
+              </div>
+            ) : (
+              <div className="flex items-start justify-between gap-2">
+                <span className="min-w-0 break-words text-sm font-bold text-slate-900">{s.name}</span>
+                <span className="flex shrink-0 gap-1.5">
+                  <button type="button" className={MINI} aria-label={t("symptoms.renameLabel", { name: s.name })} onClick={() => setRenaming({ id: s.id, value: s.name, error: null })}>
+                    {t("symptoms.rename")}
+                  </button>
+                  <button type="button" className={MINI} aria-label={t("symptoms.removeNamed", { name: s.name })} onClick={() => setRules(removeSymptom(rules, s.id))}>
+                    {t("symptoms.remove")}
+                  </button>
+                </span>
+              </div>
+            )}
             <label className={`${SUB} mt-2 block`} htmlFor={`pc-words-${s.id}`}>{t("symptoms.words")}</label>
             <input
               id={`pc-words-${s.id}`}
@@ -120,12 +223,14 @@ function Symptoms({ rules, setRules }: SectionProps) {
               placeholder={t("symptoms.wordsPlaceholder")}
               onBlur={(e) => {
                 const words = parseWords(e.target.value);
-                const allowed = words.filter(termAllowed);
+                const allowed = words.filter((w) => termOk(w));
                 setBadWords(allowed.length < words.length ? s.id : null);
+                // The field shows what the rule keeps: a refused word goes (01, #614 row).
+                e.target.value = allowed.join(", ");
                 setRules(updateSymptom(rules, s.id, { words: allowed }));
               }}
             />
-            {badWords === s.id && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{t("symptoms.thaiShort")}</p>}
+            {badWords === s.id && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{t("symptoms.termShort")}</p>}
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
               <label className="flex items-center gap-2">
                 {t("symptoms.points")}
@@ -146,12 +251,12 @@ function Symptoms({ rules, setRules }: SectionProps) {
           maxLength={LIMITS.nameLength}
           placeholder={t("symptoms.new")}
           aria-label={t("symptoms.new")}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => { setName(e.target.value); setAddError(null); }}
           onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
         />
         <button type="button" className={GHOST} disabled={!name.trim() || rules.symptoms.length >= LIMITS.symptoms} onClick={add}>{t("symptoms.add")}</button>
       </div>
-      {name.trim() && !termAllowed(name) && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{t("symptoms.thaiShort")}</p>}
+      {addError && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{addError}</p>}
       <p className={`${SUB} mt-3`}>{t("symptoms.wordsHelp")}</p>
     </section>
   );
@@ -333,6 +438,13 @@ function AutoMessages({ rules, setRules }: SectionProps) {
   const [editId, setEditId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [med, setMed] = useState("");
+  const [medError, setMedError] = useState<string | null>(null);
+  const addMed = () => {
+    if (!termOk(med)) { setMedError(t("symptoms.termShort")); return; }
+    setRules(addMedicine(rules, med));
+    setMed("");
+    setMedError(null);
+  };
   const terms = [
     ...rules.symptoms.map((s) => ({ term: s.name, kind: "symptom" as const })),
     ...rules.medicines.map((m) => ({ term: m, kind: "medicine" as const })),
@@ -388,6 +500,8 @@ function AutoMessages({ rules, setRules }: SectionProps) {
               <input
                 type="checkbox"
                 checked={draft.terms.includes(x.term)}
+                // At most LIMITS.autoTerms terms per message (237).
+                disabled={!draft.terms.includes(x.term) && draft.terms.length >= LIMITS.autoTerms}
                 onChange={(e) => setDraft({ ...draft, terms: e.target.checked ? [...draft.terms, x.term] : draft.terms.filter((y) => y !== x.term) })}
               />
               <span className="min-w-0 break-words">{x.term} <span className="text-xs text-slate-400">· {t(x.kind === "symptom" ? "auto.kindSymptom" : "auto.kindMedicine")}</span></span>
@@ -438,11 +552,12 @@ function AutoMessages({ rules, setRules }: SectionProps) {
           maxLength={LIMITS.termLength}
           placeholder={t("meds.placeholder")}
           aria-label={t("meds.placeholder")}
-          onChange={(e) => setMed(e.target.value)}
-          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); setRules(addMedicine(rules, med)); setMed(""); } }}
+          onChange={(e) => { setMed(e.target.value); setMedError(null); }}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMed(); } }}
         />
-        <button type="button" className={GHOST} disabled={!med.trim()} onClick={() => { setRules(addMedicine(rules, med)); setMed(""); }}>{t("meds.add")}</button>
+        <button type="button" className={GHOST} disabled={!med.trim()} onClick={addMed}>{t("meds.add")}</button>
       </div>
+      {medError && <p role="alert" className="mt-1 text-xs font-semibold text-red-600">{medError}</p>}
       <p className={`${SUB} mt-2`}>{t("meds.help")}</p>
     </section>
   );

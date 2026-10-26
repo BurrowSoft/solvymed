@@ -2548,10 +2548,17 @@
     "entryOpen": "Atur",
     "settings": {
       "intro": "Semua di sini milik Anda: poin, kata, dan pesan. Nilai negatif mengurangi poin.",
-      "saveSoon": "Fitur simpan hadir pada pembaruan berikutnya. Untuk saat ini, buat dan uji aturan Anda di sini: belum ada yang disimpan.",
       "testTitle": "Uji aturan Anda",
       "testText": "Membuka formulir pasien dengan aturan saat ini. Anda melihat skor baris demi baris, peringatan darurat, dan pesan otomatis. Tidak ada yang dikirim.",
-      "testButton": "Uji sebagai pasien"
+      "testButton": "Uji sebagai pasien",
+      "save": "Simpan aturan",
+      "saving": "Menyimpan…",
+      "saved": "Aturan disimpan. Permintaan terbuka telah dihitung ulang dengan aturan ini.",
+      "unsaved": "Perubahan belum disimpan",
+      "conflict": "Aturan ini telah diubah di tempat lain. Muat ulang halaman untuk melihat versi terbaru.",
+      "reload": "Muat ulang",
+      "invalid": "Periksa aturan: ada yang perlu diperbaiki sebelum menyimpan.",
+      "error": "Tidak dapat menyimpan. Periksa koneksi Anda dan coba lagi."
     },
     "symptoms": {
       "title": "Gejala: poin dan kata pasien",
@@ -2562,13 +2569,17 @@
       "removeNamed": "Hapus {name}",
       "words": "Kata pasien",
       "wordsPlaceholder": "mis. sesak napas, napas pendek",
-      "thaiShort": "Kata dalam bahasa Thai harus terdiri dari 2 huruf atau lebih.",
       "points": "Poin",
       "pointsFor": "Poin untuk {name}",
       "immediate": "Peringatan darurat langsung",
       "new": "Gejala baru",
       "add": "Tambah",
-      "wordsHelp": "\"Kata pasien\": cara pasien biasanya menuliskannya, dipisahkan dengan koma. Nama gejala juga dihitung. \"Peringatan darurat langsung\" menampilkan nomor darurat begitu gejala muncul (kotak atau teks), berapa pun skornya. Gunakan untuk tanda bahaya."
+      "wordsHelp": "\"Kata pasien\": cara pasien biasanya menuliskannya, dipisahkan dengan koma. Nama gejala juga dihitung. \"Peringatan darurat langsung\" menampilkan nomor darurat begitu gejala muncul (kotak atau teks), berapa pun skornya. Gunakan untuk tanda bahaya.",
+      "termShort": "Istilah harus terdiri dari 2 huruf atau lebih.",
+      "exists": "Sudah ada gejala dengan nama tersebut.",
+      "rename": "Ganti nama",
+      "renameLabel": "Nama baru untuk {name}",
+      "renameSave": "Simpan nama"
     },
     "combos": {
       "title": "Kombinasi",
@@ -2645,7 +2656,8 @@
       "editing": "Mengedit…",
       "pickTerm": "Centang minimal 1 istilah.",
       "writeMessage": "Tulis pesannya.",
-      "full": "Anda telah mencapai batas pesan."
+      "full": "Anda telah mencapai batas pesan.",
+      "tooManyTerms": "Pilih paling banyak 10 istilah."
     },
     "meds": {
       "title": "Obat yang dikenali dalam teks",

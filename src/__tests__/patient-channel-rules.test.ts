@@ -14,6 +14,10 @@ import {
   saveAutoMessage,
   setAdjust,
   validateRules,
+  fromStoredRules,
+  renameSymptom,
+  termLengthOk,
+  toStoredRules,
 } from "@/lib/patientChannel/rules";
 import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientChannel/live";
 import { countryProfile } from "@/lib/country";
@@ -96,7 +100,7 @@ describe("editing the Patient Channel rules", () => {
       autoMessages: [{ ...sample.autoMessages[0], terms: ["Unknown"], when: 3 }],
     };
     expect(validateRules(bad)).toEqual([
-      { path: "symptoms.0.words.0", code: "thai_short" },
+      { path: "symptoms.0.words.0", code: "short" },
       { path: "symptoms.0.points", code: "range" },
       { path: "combinations.0.symptomIds", code: "unknown_ref" },
       { path: "thresholds", code: "range" },
@@ -106,15 +110,53 @@ describe("editing the Patient Channel rules", () => {
   });
 });
 
+describe("the database's exact limits (237's _pc_rules_valid)", () => {
+  it("every term needs 2+ characters in ANY script; a message has at most 10 terms", () => {
+    expect([termLengthOk("x"), termLengthOk(" ab "), termLengthOk("ไอ"), termLengthOk("a".repeat(41))]).toEqual([false, true, true, false]);
+    const r = { ...sample, medicines: [...sample.medicines, "X"], symptoms: [{ ...sample.symptoms[0], words: ["v"] }, ...sample.symptoms.slice(1)] };
+    expect(validateRules(r)).toEqual([
+      { path: "symptoms.0.words.0", code: "short" },
+      { path: `medicines.${sample.medicines.length}`, code: "short" },
+    ]);
+    const eleven = Array.from({ length: 11 }, () => "Febre");
+    expect(validateRules({ ...sample, autoMessages: [{ ...sample.autoMessages[0], terms: eleven }] })).toContainEqual({ path: "autoMessages.0.terms", code: "too_many" });
+    expect(addSymptom(EMPTY_RULES, "X")).toBe(EMPTY_RULES);
+  });
+
+  it("the thresholds follow the database: 0 ≤ attention < urgent ≤ 1000", () => {
+    const at = (attention: number, urgent: number) => validateRules({ ...sample, thresholds: { attention, urgent, warnOnUrgent: true } }).length;
+    expect([at(0, 1), at(999, 1000), at(-1, 5), at(5, 5), at(5, 1001)]).toEqual([0, 0, 1, 1, 1]);
+  });
+
+  it("the stored document is exactly the six engine keys; loading adds the AI switch and the country", () => {
+    const stored = toStoredRules(sample);
+    expect(Object.keys(stored).sort()).toEqual(["autoMessages", "combinations", "medicines", "minBandForTextOnly", "symptoms", "thresholds"]);
+    expect(fromStoredRules(stored, "TH")).toMatchObject({ aiMapping: false, country: "TH", symptoms: sample.symptoms });
+    expect(fromStoredRules(null, "BR")).toMatchObject({ symptoms: [], thresholds: EMPTY_RULES.thresholds });
+  });
+
+  it("a rename keeps the id and renames the term in the messages; short or duplicate names are refused", () => {
+    const r = renameSymptom(sample, "s4", "Vertigem") as ChannelConfig;
+    expect(r.symptoms.find((s) => s.id === "s4")?.name).toBe("Vertigem");
+    expect(r.autoMessages.find((a) => a.id === "a5")?.terms).toEqual(["Vertigem"]);
+    expect(validateRules(r)).toEqual([]);
+    expect(renameSymptom(sample, "s4", "x")).toBe("short");
+    expect(renameSymptom(sample, "s4", "febre")).toBe("exists");
+  });
+});
+
 describe("the Patient Channel gate", () => {
   afterEach(() => vi.unstubAllEnvs());
 
-  it("on only with the patient_channel flag row; any error or no row is off", async () => {
+  it("on with the public patient_channel flag, or for a user on 237's testers allowlist; errors are off", async () => {
     const rpc = (data: unknown, error: unknown = null) => ({ rpc: () => Promise.resolve({ data, error }) });
-    expect(await patientChannelEnabled(rpc([{ key: "patient_channel", enabled: true }]))).toBe(true);
-    expect(await patientChannelEnabled(rpc([{ key: "patient_channel", enabled: false }]))).toBe(false);
-    expect(await patientChannelEnabled(rpc([{ key: "document_studio", enabled: true }]))).toBe(false);
-    expect(await patientChannelEnabled(rpc(null, { code: "PGRST202" }))).toBe(false);
+    const notTester = async () => false;
+    const tester = async (id: string) => id === "t1";
+    expect(await patientChannelEnabled(rpc([{ key: "patient_channel", enabled: true }]), "u1", notTester)).toBe(true);
+    expect(await patientChannelEnabled(rpc([{ key: "patient_channel", enabled: false }]), "u1", notTester)).toBe(false);
+    expect(await patientChannelEnabled(rpc([{ key: "patient_channel", enabled: false }]), "t1", tester)).toBe(true);
+    expect(await patientChannelEnabled(rpc([{ key: "document_studio", enabled: true }]), null, tester)).toBe(false);
+    expect(await patientChannelEnabled(rpc(null, { code: "PGRST202" }), "u1", notTester)).toBe(false);
   });
 
   it("?pc_test=1 counts only off Production", () => {

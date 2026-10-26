@@ -2548,10 +2548,17 @@
     "entryOpen": "Set up",
     "settings": {
       "intro": "Everything here is yours: the points, the words and the messages. Negative values take points away.",
-      "saveSoon": "Saving comes in an upcoming update. For now, build and test your rules here: nothing is saved yet.",
       "testTitle": "Test your rules",
       "testText": "Opens the patient's form with the current rules. You see the score line by line, the emergency warning and the automatic messages. Nothing is sent.",
-      "testButton": "Test as a patient"
+      "testButton": "Test as a patient",
+      "save": "Save rules",
+      "saving": "Saving…",
+      "saved": "Rules saved. Open requests were recalculated with them.",
+      "unsaved": "Unsaved changes",
+      "conflict": "These rules were changed somewhere else. Reload the page to see the current version.",
+      "reload": "Reload",
+      "invalid": "Check the rules: something needs fixing before saving.",
+      "error": "It couldn’t be saved. Check your connection and try again."
     },
     "symptoms": {
       "title": "Symptoms: points and patient words",
@@ -2562,13 +2569,17 @@
       "removeNamed": "Remove {name}",
       "words": "Patient words",
       "wordsPlaceholder": "e.g. out of breath, short of breath",
-      "thaiShort": "Thai words need 2 or more letters.",
       "points": "Points",
       "pointsFor": "Points for {name}",
       "immediate": "Immediate emergency warning",
       "new": "New symptom",
       "add": "Add",
-      "wordsHelp": "\"Patient words\": how patients usually write it, separated by commas. The symptom's name counts too. \"Immediate emergency warning\" shows the emergency number as soon as the symptom appears (box or text), whatever the score. Use it for warning signs."
+      "wordsHelp": "\"Patient words\": how patients usually write it, separated by commas. The symptom's name counts too. \"Immediate emergency warning\" shows the emergency number as soon as the symptom appears (box or text), whatever the score. Use it for warning signs.",
+      "termShort": "Terms need 2 or more letters.",
+      "exists": "There’s already a symptom with that name.",
+      "rename": "Rename",
+      "renameLabel": "New name for {name}",
+      "renameSave": "Save name"
     },
     "combos": {
       "title": "Combinations",
@@ -2645,7 +2656,8 @@
       "editing": "Editing…",
       "pickTerm": "Tick at least 1 term.",
       "writeMessage": "Write the message.",
-      "full": "You've reached the limit of messages."
+      "full": "You've reached the limit of messages.",
+      "tooManyTerms": "Pick at most 10 terms."
     },
     "meds": {
       "title": "Medicines recognised in the text",
