@@ -51,3 +51,13 @@ export async function inboxAvailable(supabase: Db, userId: string, profId: strin
   const { data, error } = await supabase.from("pc_requests").select("id").eq("professional_id", profId).limit(1);
   return !error && (data?.length ?? 0) > 0;
 }
+
+// The sidebar's "Mensagens" badge (01, 10-26): the open requests the caller can act on, from
+// 237's pc_inbox_counts: the doctor all open ones; a secretary the administrative ones.
+// 0 on any failure (the badge just doesn't show).
+export async function inboxOpenCount(supabase: Db, profId: string, isSecretary: boolean): Promise<number> {
+  const { data, error } = await supabase.rpc("pc_inbox_counts", { p_prof: profId });
+  if (error || !data || typeof data !== "object") return 0;
+  const n = (data as Record<string, unknown>)[isSecretary ? "openForSecretary" : "open"];
+  return typeof n === "number" && Number.isFinite(n) && n > 0 ? Math.trunc(n) : 0;
+}

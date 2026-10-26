@@ -2906,7 +2906,8 @@
         "answered": "답변 완료",
         "call_back": "전화 예정",
         "substituted": "대체됨"
-      }
+      },
+      "navOpen": "열린 메시지 {n}개"
     },
     "detail": {
       "back": "← 메시지",

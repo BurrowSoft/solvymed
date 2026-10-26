@@ -2906,7 +2906,8 @@
         "answered": "已回覆",
         "call_back": "將致電",
         "substituted": "已取代"
-      }
+      },
+      "navOpen": "{n} 則待處理訊息"
     },
     "detail": {
       "back": "← 訊息",

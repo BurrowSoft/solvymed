@@ -2906,7 +2906,8 @@
         "answered": "Đã trả lời",
         "call_back": "Sẽ gọi lại",
         "substituted": "Đã thay thế"
-      }
+      },
+      "navOpen": "{n} tin nhắn đang mở"
     },
     "detail": {
       "back": "← Tin nhắn",
