@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "正在搜索…",
+    "pickerFailed": "无法搜索。",
+    "pickerRetry": "重试",
+    "pickerNoMatch": "未找到档案：将不建档预约",
+    "pickerAnyway": "仍然不建档预约",
+    "pickerLinkHint": "点击列表中的患者以关联档案。"
   },
   "payments": {
     "thisWeek": "本周",

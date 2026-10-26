@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "搜尋中…",
+    "pickerFailed": "無法搜尋。",
+    "pickerRetry": "重試",
+    "pickerNoMatch": "找不到病歷：將不建檔預約",
+    "pickerAnyway": "仍然不建檔預約",
+    "pickerLinkHint": "點選清單中的病患以連結病歷。"
   },
   "payments": {
     "thisWeek": "本週",

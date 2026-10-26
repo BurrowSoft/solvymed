@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "검색 중…",
+    "pickerFailed": "검색할 수 없습니다.",
+    "pickerRetry": "다시 시도",
+    "pickerNoMatch": "등록된 환자가 없습니다: 등록 없이 예약됩니다",
+    "pickerAnyway": "그래도 등록 없이 예약",
+    "pickerLinkHint": "목록에서 환자를 눌러 등록 정보와 연결하세요."
   },
   "payments": {
     "thisWeek": "이번 주",

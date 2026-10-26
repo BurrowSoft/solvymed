@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "Поиск…",
+    "pickerFailed": "Не удалось выполнить поиск.",
+    "pickerRetry": "Повторить",
+    "pickerNoMatch": "Карта не найдена: запись будет создана без карты",
+    "pickerAnyway": "Всё равно записать без карты",
+    "pickerLinkHint": "Нажмите на пациента в списке, чтобы привязать карту."
   },
   "payments": {
     "thisWeek": "На этой неделе",
