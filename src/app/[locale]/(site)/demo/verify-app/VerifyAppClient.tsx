@@ -32,20 +32,30 @@ export function VerifyAppClient({ siteKey }: { siteKey: string }) {
   const locale = (params.locale as string) ?? "en";
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
+  // The return link to the app, once there is something to return (a token or an error).
+  const [back, setBack] = useState<string | null>(null);
+
+  // Chrome (the app's Custom Tab) blocks a navigation to solvymed:// that has no user
+  // gesture (the mobile developer, 10-26, measured on the emulator): the automatic
+  // redirect is still tried, and "Continuar" (01) links to the same address, so a tap
+  // takes the person back. A late tap may carry an expired token: the app then offers
+  // to try again.
+  function returnToApp(fragment: string) {
+    if (new URLSearchParams(location.search).get("return") !== APP_RETURN) return;
+    const url = `${APP_RETURN}#${fragment}`;
+    setBack(url);
+    location.replace(url);
+  }
 
   function onToken(token: string) {
     if (post({ type: "turnstile", token })) return;
-    if (new URLSearchParams(location.search).get("return") === APP_RETURN) {
-      location.replace(`${APP_RETURN}#token=${encodeURIComponent(token)}`);
-    }
+    returnToApp(`token=${encodeURIComponent(token)}`);
   }
 
   function onError(code: string) {
     setFailed(true);
     if (post({ type: "turnstile-error", code })) return;
-    if (new URLSearchParams(location.search).get("return") === APP_RETURN) {
-      location.replace(`${APP_RETURN}#error=${encodeURIComponent(code)}`);
-    }
+    returnToApp(`error=${encodeURIComponent(code)}`);
   }
 
   return (
@@ -56,8 +66,11 @@ export function VerifyAppClient({ siteKey }: { siteKey: string }) {
       ) : (
         <span data-testid="demo-verify-unconfigured" hidden />
       )}
+      {back && (
+        <a href={back} data-testid="demo-verify-back" className="rounded-full bg-[#0D9488] px-5 py-2.5 text-sm font-bold text-white">{t("verifyContinue")}</a>
+      )}
       {failed && (
-        <button type="button" onClick={() => { setFailed(false); setAttempt((n) => n + 1); }}
+        <button type="button" onClick={() => { setFailed(false); setBack(null); setAttempt((n) => n + 1); }}
           className="rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700">{t("retry")}</button>
       )}
     </main>

@@ -34,6 +34,15 @@ import { DemoTour } from "@/components/DemoTour";
 
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
 
+describe("the demo's home stays uncluttered (01, 10-26)", () => {
+  it("no setup checklist and no privacy-update card in a demo session", () => {
+    const page = readFileSync(resolve(__dirname, "../app/[locale]/(site)/dashboard/(gated)/page.tsx"), "utf8");
+    expect(page).toContain("const isDemo = isDemoUser(user);");
+    expect(page).toContain("const privacyNotice = !isDemo && privacyNoticeDue(");
+    expect(page).toContain("{!isDemo && setupProgress && showChecklist(setupProgress) && (");
+  });
+});
+
 describe("the PDF DEMO stamp", () => {
   it("every page keeps its size and gets the stamp; Thai renders in the document's font", async () => {
     const doc = await PDFDocument.create();

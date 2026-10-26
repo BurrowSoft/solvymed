@@ -41,7 +41,8 @@
     "realDataHint": "Não digite dados reais de pacientes na demonstração.",
     "verifying": "Verificando…",
     "stepCreate": "Criando sua clínica de demonstração…",
-    "stepOpen": "Abrindo sua agenda…"
+    "stepOpen": "Abrindo sua agenda…",
+    "verifyContinue": "Continuar"
   },
   "getApp": "Baixar o app",
   "hero": {
