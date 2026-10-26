@@ -6,6 +6,7 @@ import { localeFromAcceptLanguage, matchLocaleTag } from "@/lib/localeDetect";
 import { GOOGLE_RETURN_PARAM, onboardingPending, parseGoogleRole } from "@/lib/googleSignIn";
 import { parseCountryChoice } from "@/lib/signupCountry";
 import { OAUTH_SIGN_IN } from "@/lib/firstConfirmation";
+import { demoCountServer } from "@/lib/demoMetricsServer";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -99,6 +100,10 @@ export async function GET(request: NextRequest) {
       const role = parseGoogleRole(searchParams.get("role"));
       if (role) redirectUrl.searchParams.set("role", role);
       redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "new");
+      // A NEW account from the demo's Google button: 238's signup_from_demo (a daily
+      // total; nothing stored; a no-op while demo_metrics is off). E-mail sign-ups from
+      // the demo aren't counted (01, 10-26: no account marker without consent).
+      if (searchParams.get("via") === "demo") await demoCountServer("signup_from_demo", c ?? "??", locale);
     } else {
       // An existing account back from Google: a sign-in, never the welcome.
       redirectUrl = new URL(await routeAfterAuth(supabase, data.user, localePrefix, fromGoogle ? OAUTH_SIGN_IN : type), origin);

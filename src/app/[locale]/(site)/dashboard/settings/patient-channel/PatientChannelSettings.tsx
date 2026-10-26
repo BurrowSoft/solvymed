@@ -30,6 +30,8 @@ import { termAllowed } from "@/lib/patientChannel/score";
 import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
+import { ChannelSettings } from "./ChannelSettings";
+import type { PcFaqRow, PcReasonRow, PcSettings } from "@/lib/patientChannel/channel";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
 // one card per section, no tables. Saved through PUT /api/patient-channel/config (M3b-1).
@@ -52,11 +54,14 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
 
 type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
 
-export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber }: {
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref }: {
   initialRules: ChannelConfig;
-  // pc_settings.rules_version; 0 = never saved (the first save creates the row).
+  // pc_settings.rules_version; 0 = no row yet (the first save of either part creates it).
   initialVersion: number;
   emergencyNumber: string | null;
+  professionalId: string;
+  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[] };
+  brandHref: string;
 }) {
   const t = useTranslations("patientChannel");
   const [rules, setRules] = useState(initialRules);
@@ -94,13 +99,6 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
     }
   };
 
-  if (testing) {
-    return (
-      <div className="p-4 sm:p-6 lg:p-8 max-w-6xl">
-        <PatientChannelTest rules={rules} emergencyNumber={number} onBack={() => setTesting(false)} />
-      </div>
-    );
-  }
 
   const status =
     state === "conflict" ? t("settings.conflict")
@@ -113,9 +111,17 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
 
   return (
-    // relative: absolutely positioned bits (sr-only legends/labels) stay inside the
-    // dashboard's scrolling <main> instead of stretching the whole document (83, #620).
-    <div className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
+    <>
+    {/* The test hides the editor without unmounting it: unsaved edits and the channel
+        cards' state survive a round trip. relative: absolutely positioned bits (sr-only
+        legends/labels) stay inside the dashboard's scrolling <main> instead of stretching
+        the whole document (83, #620). */}
+    {testing && (
+      <div className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
+        <PatientChannelTest rules={rules} emergencyNumber={number} onBack={() => setTesting(false)} />
+      </div>
+    )}
+    <div hidden={testing} className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
       <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
       <p className="mt-1 max-w-prose text-sm text-slate-500">{t("settings.intro")}</p>
 
@@ -130,6 +136,18 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         </button>
       </section>
 
+      <ChannelSettings
+        professionalId={professionalId}
+        hasRow={version > 0}
+        onRowCreated={() => setVersion((v) => (v === 0 ? 1 : v))}
+        initial={channel.settings}
+        reasons={channel.reasons}
+        faq={channel.faq}
+        brandHref={brandHref}
+      />
+
+      <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
+      <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Symptoms rules={rules} setRules={setRules} />
         <div className="flex min-w-0 flex-col gap-4">
@@ -156,6 +174,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         </div>
       </div>
     </div>
+    </>
   );
 }
 

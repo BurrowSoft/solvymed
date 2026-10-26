@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
+import { demoCount, type DemoClientMetric } from "@/lib/demoMetrics";
 import { DemoAndroidQr, DemoSignUpButtons, onDemoValue } from "./DemoGate";
 
 // "Explore em 2 minutos" (specs/demo-mode.md): the demo's own tour, four
@@ -84,6 +85,7 @@ export function DemoTour({ locale, country }: { locale: string; country: Country
     const next = { ...s, done: [...s.done, n].sort() };
     save(next);
     track("demo_step", { n });
+    void demoCount(`tour_step_${n}` as DemoClientMetric);
     if (next.done.length === STEPS.length) {
       track("demo_tour_done");
       setOpen(true);

@@ -231,7 +231,7 @@ export default async function DashboardLayout({
     // --demo-bar-h: the demo bar's height (3rem); the page and the sidebar's
     // fixed parts sit below it. 0 outside the demo, so nothing moves.
     <div data-theme={theme} data-theme-root className="contents" style={isDemo ? ({ "--demo-bar-h": "3rem" } as React.CSSProperties) : undefined}>
-    {isDemo && <DemoBar locale={locale} country={demoCountryCode} />}
+    {isDemo && <DemoBar locale={locale} country={demoCountryCode} count={process.env.VERCEL_ENV === "production"} />}
     <DemoProvider value={{ demo: isDemo, locale, country: demoCountryCode }}>
     <OfflineGuard />
     <ClockSkewGuard />

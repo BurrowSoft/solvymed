@@ -126,4 +126,7 @@ html[data-platform="android"] .android-hide { display: none; }
    (components/DemoTour) moves left of it instead of covering its input (83, #610). */
 @media (min-width: 1024px) {
   html[data-solvyai-open] .demo-tour-card { right: calc(400px + 1rem); }
+  /* While the panel is closed, the card sits above SolvyAI's ✦ opener
+     (bottom-right) instead of covering it (83, #611; 01: with the next demo PR). */
+  html:not([data-solvyai-open]) .demo-tour-card { bottom: calc(5.5rem + var(--consent-h, 0px)); }
 }

@@ -54,6 +54,19 @@ describe("/demo/verify-app", () => {
     render(wrap(<VerifyAppClient siteKey="site" />));
     act(() => h.handlers!.onToken("a b"));
     expect(replace).toHaveBeenCalledWith("solvymed://demo-verify#token=a%20b");
+    // Chrome may block that without a gesture: "Continuar" is the same link, tapped.
+    expect(screen.getByTestId("demo-verify-back")).toHaveAttribute("href", "solvymed://demo-verify#token=a%20b");
+    expect(screen.getByTestId("demo-verify-back")).toHaveTextContent(pt.demo.verifyContinue);
+  });
+
+  it("a Custom Tab error: the automatic return, \"Continuar\" with the error, and a retry that clears it", () => {
+    at(`?return=${encodeURIComponent(APP_RETURN)}`);
+    render(wrap(<VerifyAppClient siteKey="site" />));
+    act(() => h.handlers!.onError("stalled"));
+    expect(replace).toHaveBeenCalledWith("solvymed://demo-verify#error=stalled");
+    expect(screen.getByTestId("demo-verify-back")).toHaveAttribute("href", "solvymed://demo-verify#error=stalled");
+    fireEvent.click(screen.getByText(pt.demo.retry));
+    expect(screen.queryByTestId("demo-verify-back")).toBeNull();
   });
 
   it.each(["https://evil.example/", "solvymed://demo-verify.evil", "solvymed://other", "javascript:alert(1)"])("any other return (%s): the token goes nowhere", (ret) => {
@@ -61,6 +74,7 @@ describe("/demo/verify-app", () => {
     render(wrap(<VerifyAppClient siteKey="site" />));
     act(() => h.handlers!.onToken("tok"));
     expect(replace).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("demo-verify-back")).toBeNull();
   });
 
   it("never framed: DENY site-wide plus frame-ancestors none on this page (cf)", async () => {

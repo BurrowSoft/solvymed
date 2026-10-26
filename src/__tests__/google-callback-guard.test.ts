@@ -14,7 +14,10 @@ const db = vi.hoisted(() => ({
   role: null as { role: string; invited_by_professional_id: string | null } | null,
   rpcs: [] as string[],
   linkTypes: [] as (string | null)[],
+  counts: [] as string[],
 }));
+// 238: a new account from the demo's Google button counts signup_from_demo.
+vi.mock("@/lib/demoMetricsServer", () => ({ demoCountServer: async (...a: string[]) => { db.counts.push(a.join(" ")); } }));
 vi.mock("@supabase/ssr", () => ({
   createServerClient: () => ({
     auth: {
@@ -55,6 +58,7 @@ beforeEach(() => {
   db.role = null;
   db.rpcs = [];
   db.linkTypes = [];
+  db.counts = [];
 });
 
 const call = (q: string) => GET(new NextRequest(new URL(`/api/auth/callback?code=abc&${q}`, "https://www.solvymed.com")));
@@ -66,6 +70,17 @@ describe("the callback after Google", () => {
     const to = loc(await call("locale=th&google=signup&c=TH&role=professional"));
     expect(to.pathname).toBe("/th/auth/complete-account");
     expect(Object.fromEntries(to.searchParams)).toEqual({ c: "TH", role: "professional", gr: "new" });
+  });
+
+  it("from the demo (via=demo): a NEW account counts signup_from_demo once; an existing one or no via doesn't", async () => {
+    db.pending = true;
+    await call("locale=th&google=signup&c=TH&role=professional&via=demo");
+    expect(db.counts).toEqual(["signup_from_demo TH th"]);
+    await call("locale=th&google=signup&c=TH&role=professional");
+    expect(db.counts).toHaveLength(1);
+    db.pending = false;
+    await call("locale=th&google=signup&c=TH&via=demo");
+    expect(db.counts).toHaveLength(1);
   });
 
   it("junk country / role are dropped", async () => {

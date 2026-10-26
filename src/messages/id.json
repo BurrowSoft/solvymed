@@ -41,7 +41,8 @@
     "realDataHint": "Jangan masukkan data pasien sungguhan di demo.",
     "verifying": "Memverifikasi…",
     "stepCreate": "Membuat klinik demo Anda…",
-    "stepOpen": "Membuka jadwal Anda…"
+    "stepOpen": "Membuka jadwal Anda…",
+    "verifyContinue": "Lanjutkan"
   },
   "getApp": "Unduh Aplikasi",
   "hero": {
@@ -2561,7 +2562,9 @@
       "conflict": "Aturan ini telah diubah di tempat lain. Muat ulang halaman untuk melihat versi terbaru.",
       "reload": "Muat ulang",
       "invalid": "Periksa aturan: ada yang perlu diperbaiki sebelum menyimpan.",
-      "error": "Tidak dapat menyimpan. Periksa koneksi Anda dan coba lagi."
+      "error": "Tidak dapat menyimpan. Periksa koneksi Anda dan coba lagi.",
+      "rulesTitle": "Aturan penilaian",
+      "rulesHelp": "Cara setiap pertanyaan pasien mendapatkan tingkat urgensinya. Simpan dengan tombol di bagian bawah."
     },
     "symptoms": {
       "title": "Gejala: poin dan kata pasien",
@@ -2756,6 +2759,102 @@
       "urgentCall": "Jika mendesak, hubungi {number}.",
       "openRequest": "Permintaan terbuka Anda",
       "sentAt": "Dikirim {when}"
+    },
+    "channel": {
+      "title": "Kanal Anda",
+      "enabled": "Aktifkan kanal untuk pasien saya",
+      "enabledHelp": "Selama nonaktif, pasien Anda tidak melihatnya. Atur alasan dan aturan terlebih dahulu, lalu aktifkan.",
+      "secretarySeesAll": "Resepsionis melihat semua permintaan",
+      "secretarySeesAllHelp": "Nonaktif: resepsionis hanya melihat permintaan yang dikirim kepada mereka (administratif) dan jumlah permintaan lainnya. Aktif: mereka juga dapat membaca permintaan klinis, tanpa membalasnya.",
+      "sla": "Waktu respons yang ditampilkan kepada pasien",
+      "slaDays": "{n, plural, other {# hari kerja}}",
+      "hours": "Kapan Anda membaca pesan",
+      "hoursHelp": "Ditampilkan kepada pasien. Mengikuti zona waktu praktik Anda.",
+      "hoursDays": "Hari",
+      "from": "dari",
+      "to": "sampai",
+      "remove": "Hapus",
+      "addHours": "Tambah jam",
+      "hoursInvalid": "Setiap baris memerlukan minimal satu hari, dan jam selesai harus setelah jam mulai.",
+      "readingNote": "Catatan tentang jam (opsional)",
+      "readingNotePlaceholder": "Mis. Tidak pada hari libur nasional.",
+      "welcome": "Pesan sambutan",
+      "background": "Latar belakang halaman",
+      "bg": {
+        "both": "Pita atas + logo di latar belakang",
+        "cover": "Pita atas (warna merek Anda)",
+        "watermark": "Logo di latar belakang",
+        "plain": "Polos"
+      },
+      "brandNote": "Warna dan logo diambil dari <link>Merek saya</link>.",
+      "alwaysShown": "Peringatan darurat, waktu respons, dan aturan selalu ditampilkan, sama untuk semua orang: merek Anda mengubah tampilan, bukan aturannya.",
+      "save": "Simpan kanal",
+      "saved": "Tersimpan.",
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi."
+    },
+    "reasons": {
+      "title": "Alasan menghubungi",
+      "help": "Pasien memilih satu; masing-masing dikirim ke Anda atau ke resepsionis. Alasan yang diarsipkan tetap ada di permintaan lama.",
+      "none": "Belum ada alasan.",
+      "kind": {
+        "options": "Pilih opsi",
+        "symptom_form": "Formulir gejala",
+        "exam": "Pemeriksaan"
+      },
+      "to": {
+        "doctor": "Ke Anda",
+        "secretary": "Ke resepsionis"
+      },
+      "up": "Pindahkan {title} ke atas",
+      "down": "Pindahkan {title} ke bawah",
+      "edit": "Edit",
+      "archive": "Arsipkan",
+      "newTitle": "Alasan baru",
+      "editTitle": "Edit alasan",
+      "titleLabel": "Judul",
+      "titlePlaceholder": "Mis. Pertanyaan tentang obat",
+      "subtitleLabel": "Deskripsi singkat",
+      "subtitlePlaceholder": "Mis. Dosis, waktu minum, dosis terlewat",
+      "kindLabel": "Jenis",
+      "destinationLabel": "Dikirim ke",
+      "optionsLabel": "Opsi (satu per baris)",
+      "optionsPlaceholder": "Saya melewatkan satu dosis\nPertanyaan tentang waktu minum",
+      "symptomFormHelp": "Pasien melihat daftar gejala Anda, tiga pertanyaan, dan teks bebas, lalu permintaan mendapatkan skornya.",
+      "add": "Tambah alasan",
+      "update": "Perbarui alasan",
+      "cancel": "Batal",
+      "saved": "Tersimpan.",
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "problem": {
+        "title": "Tulis judul (maksimal 80 karakter).",
+        "subtitle": "Deskripsi maksimal 120 karakter.",
+        "options": "Tulis 1 sampai 12 opsi, satu per baris.",
+        "optionLength": "Setiap opsi maksimal 80 karakter."
+      }
+    },
+    "faq": {
+      "title": "Pertanyaan umum",
+      "help": "Ditampilkan sebelum alasan: pasien mungkin menemukan jawabannya di sini dan tidak perlu menulis.",
+      "none": "Belum ada pertanyaan.",
+      "up": "Pindahkan \"{question}\" ke atas",
+      "down": "Pindahkan \"{question}\" ke bawah",
+      "edit": "Edit",
+      "archive": "Arsipkan",
+      "newTitle": "Pertanyaan baru",
+      "editTitle": "Edit pertanyaan",
+      "questionLabel": "Pertanyaan",
+      "questionPlaceholder": "Mis. Saya lupa minum obat. Apa yang harus saya lakukan?",
+      "answerLabel": "Jawaban",
+      "answerPlaceholder": "Jawaban Anda, dengan kata-kata sederhana.",
+      "add": "Tambah pertanyaan",
+      "update": "Perbarui pertanyaan",
+      "cancel": "Batal",
+      "saved": "Tersimpan.",
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "problem": {
+        "question": "Tulis pertanyaan (maksimal 160 karakter).",
+        "answer": "Tulis jawaban (maksimal 1.000 karakter)."
+      }
     }
   }
 }
