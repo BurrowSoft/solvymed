@@ -2535,5 +2535,11 @@
   "videoTutorials": {
     "title": "Video hướng dẫn",
     "subtitle": "Video ngắn giới thiệu từng phần của SolvyMed"
+  },
+  "firstPatient": {
+    "title": "Thêm bệnh nhân đầu tiên",
+    "body": "Bắt đầu với một bệnh nhân: sau đó bạn có thể đặt lịch khám, ghi hồ sơ và cấp giấy tờ cho họ.",
+    "add": "Thêm bệnh nhân",
+    "book": "Đặt lịch khám đầu tiên"
   }
 }

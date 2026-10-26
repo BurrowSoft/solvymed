@@ -2565,5 +2565,11 @@
   "videoTutorials": {
     "title": "Video tutorials",
     "subtitle": "Short videos showing each part of SolvyMed"
+  },
+  "firstPatient": {
+    "title": "Add your first patient",
+    "body": "Start with one patient: then you can book visits, write records and issue documents for them.",
+    "add": "Add patient",
+    "book": "Book the first appointment"
   }
 }

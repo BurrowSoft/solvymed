@@ -2535,5 +2535,11 @@
   "videoTutorials": {
     "title": "影片教學",
     "subtitle": "介紹 SolvyMed 各項功能的短片"
+  },
+  "firstPatient": {
+    "title": "新增您的第一位病人",
+    "body": "從一位病人開始：之後您就可以為其預約、記錄病歷並開立文件。",
+    "add": "新增病人",
+    "book": "安排第一次預約"
   }
 }
