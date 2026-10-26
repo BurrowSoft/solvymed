@@ -229,3 +229,20 @@ describe("account close", () => {
     expect(src).toMatch(/PROFESSIONAL_IMAGE_BUCKETS = \[[^\]]*"pc-covers"[^\]]*\]/);
   });
 });
+
+describe("Testar como paciente shows the page as patients see it (01)", () => {
+  it("the saved band, cover and logo frame the test form; the send button in the brand colour", async () => {
+    const { PatientChannelTest } = await import("@/app/[locale]/(site)/dashboard/settings/patient-channel/PatientChannelTest");
+    const { EMPTY_RULES } = await import("@/lib/patientChannel/rules");
+    const look = pageLook("both", { color: "#7C3AED", logoUrl: "https://cdn.test/logo.png", coverUrl: "https://cdn.test/pc-covers/c.jpg", coverAlt: "Clínica Sol" });
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <PatientChannelTest rules={{ ...EMPTY_RULES, country: "BR" }} emergencyNumber="192" onBack={vi.fn()} patientView={{ doctorName: "Dra. Ana", practiceLine: "Clínica Sol", look }} />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("pc-test-page").getAttribute("style")).toContain("--pc-brand: #7C3AED");
+    expect(screen.getByTestId("pc-cover").getAttribute("alt")).toBe("Clínica Sol");
+    expect(screen.getByTestId("pc-watermark")).toBeTruthy();
+    expect(screen.getByText("Dra. Ana")).toBeTruthy();
+  });
+});

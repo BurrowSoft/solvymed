@@ -7,6 +7,7 @@ import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage,
 import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
 import { MyRequests } from "./MyRequests";
+import { PcPageFrame } from "./PcPageFrame";
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
 // tab 1), phone first: entry (the rules, the response time, the practice country's
@@ -264,40 +265,18 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     );
   }
 
-  // The doctor's page look (prototype v17): the band on top (the 3:1 cover, or a shorter strip
-  // in the brand colour), the round logo overlapping its edge with all text below it on the
-  // normal surface (contrast), the logo watermark behind the content, the brand colour on
-  // the main buttons. No look: the plain page in SolvyMed blue.
-  const look = page.look ?? null;
-  const vars = { "--pc-brand": look?.color ?? "#116e99", "--pc-ink": look?.ink ?? "#FFFFFF" } as React.CSSProperties;
-  const logo = look?.logoUrl ?? null;
+  // The doctor's page look (prototype v17), shared with "Testar como paciente" (PcPageFrame).
   return (
-    <div className="relative isolate mx-auto flex w-full max-w-xl flex-col gap-3 overflow-hidden p-4 sm:p-6" style={vars} data-testid="pc-page">
-      {look?.watermark && logo && (
-        <div aria-hidden="true" data-testid="pc-watermark" className="pointer-events-none absolute inset-0 -z-10 bg-no-repeat opacity-[0.07]"
-          style={{ backgroundImage: `url("${logo}")`, backgroundPosition: "center 62%", backgroundSize: "70%" }} />
-      )}
-      {look?.band && (
-        look.coverUrl ? (
-          <div data-testid="pc-band" className="relative -mx-4 -mt-4 aspect-[3/1] max-h-[400px] bg-[var(--pc-brand)] sm:-mx-6 sm:-mt-6">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={look.coverUrl} alt={look.coverAlt} data-testid="pc-cover" className="h-full w-full object-cover" />
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-transparent from-45% to-black/30" />
-          </div>
-        ) : (
-          <div aria-hidden="true" data-testid="pc-band" className="-mx-4 -mt-4 h-[86px] bg-[var(--pc-brand)] sm:-mx-6 sm:-mt-6" />
-        )
-      )}
-      {banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
-      <div className={look?.band ? "relative z-10 -mt-12 flex items-start gap-3 pb-3" : "flex items-center gap-3 border-b border-slate-100 pb-3"}>
-        <span aria-hidden="true" className={`grid shrink-0 place-items-center overflow-hidden rounded-full font-bold text-[var(--pc-brand)] ${look?.band ? "h-16 w-16 border-[3px] border-white bg-white text-xl shadow-sm" : "h-10 w-10 bg-teal-50"}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {logo ? <img src={logo} alt="" className="h-full w-full rounded-full object-contain" /> : initials(page.doctorName)}
-        </span>
-        <div className={look?.band ? "min-w-0 pt-12" : "min-w-0"}><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>
-      </div>
+    <PcPageFrame
+      look={page.look}
+      doctorName={page.doctorName}
+      practiceLine={page.practiceLine}
+      banner={banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
+      className="mx-auto w-full max-w-xl"
+      testId="pc-page"
+    >
       {body}
-    </div>
+    </PcPageFrame>
   );
 }
 
@@ -318,6 +297,3 @@ function formatWhen(iso: string, locale: string): string {
   return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat(dateLocale(locale), { dateStyle: "short", timeStyle: "short" }).format(d);
 }
 
-function initials(name: string): string {
-  return name.replace(/^(dra?|dr|prof)\.?\s+/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
-}
