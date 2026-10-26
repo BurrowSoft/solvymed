@@ -1,8 +1,10 @@
 import { preload } from "react-dom";
+import { after } from "next/server";
 import { DemoClient } from "./DemoClient";
 import { demoTurnstileKeys } from "@/lib/demoTurnstile";
 import { TURNSTILE_SCRIPT_SRC } from "@/lib/turnstileScript";
-import { DEMO_TEST_PARAM } from "@/lib/demo";
+import { DEMO_TEST_PARAM, demoCountry } from "@/lib/demo";
+import { demoCountServer } from "@/lib/demoMetricsServer";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -15,7 +17,11 @@ export const dynamic = "force-dynamic";
 // loads: Supabase always; Cloudflare (preconnect + Turnstile's script) only
 // when the demo is on, so a closed demo never contacts Cloudflare (cf; §6h:
 // the check runs before a demo starts).
-export default async function DemoPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+export default async function DemoPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const { locale } = await params;
+  // The counters' denominator (238): every render, bots included, counted after the
+  // response so it never slows the page; a no-op while demo_metrics is off.
+  after(() => demoCountServer("page_load", demoCountry(locale), locale));
   const testAllowed = process.env.VERCEL_ENV !== "production";
   const test = testAllowed && (await searchParams)[DEMO_TEST_PARAM] === "1";
   // null: unknown (the read failed): the browser asks again.

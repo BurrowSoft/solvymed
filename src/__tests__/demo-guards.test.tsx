@@ -112,7 +112,7 @@ describe("DemoGate + the sheet", () => {
     expect(gate).toHaveTextContent(pt.demo.blockedBody);
     fireEvent.click(screen.getByText(pt.demo.signup));
     await waitFor(() => expect(assign).toHaveBeenCalled());
-    expect(h.calls).toEqual(["end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
+    expect(h.calls).toEqual(["demo_count", "end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
   });
 
   it("the safety net: a demo refusal and the SolvyAI quota open the sheet with their own text", () => {

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { demoTitle, leaveDemo } from "@/lib/demo";
+import { demoCount } from "@/lib/demoMetrics";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { DemoAndroidChip, DemoBlockedSheet, DemoRealDataHint, DemoValueSheet } from "./DemoGate";
@@ -57,6 +58,8 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
     if (leaving) return;
     setLeaving(true);
     track("demo_signup_click", { where: "bar" });
+    // Counted before the demo ends (the server counts only a live demo, 238).
+    await demoCount("signup_click_bar");
     await leaveDemo(createClient());
     window.location.assign(`${prefix}/auth/signup?c=${country}&via=demo`);
   }
@@ -65,6 +68,7 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
     if (leaving) return;
     setLeaving(true);
     track("demo_exit");
+    await demoCount("leave");
     await leaveDemo(createClient());
     window.location.assign(prefix || "/");
   }

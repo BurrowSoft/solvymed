@@ -79,7 +79,7 @@ describe("moments of value", () => {
     h.calls = [];
     fireEvent.click(screen.getByText(pt.auth.google.continue));
     await waitFor(() => expect(h.calls).toContain("oauth"));
-    expect(h.calls).toEqual(["end_demo", "signOut", "oauth"]);
+    expect(h.calls).toEqual(["demo_count", "end_demo", "signOut", "oauth"]);
   });
 });
 
