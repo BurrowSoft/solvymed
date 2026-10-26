@@ -255,6 +255,7 @@ export default async function DashboardLayout({
       newsPending={!isDemo && newsPending}
       introPending={!isDemo && introPending}
       introTestable={!isDemo && panelOn && process.env.VERCEL_ENV !== "production"}
+      userId={user.id}
     >
       <div className="mt-[var(--demo-bar-h,0px)] flex h-[calc(100vh-var(--demo-bar-h,0px))] overflow-hidden bg-slate-50">
         <DashboardSidebar

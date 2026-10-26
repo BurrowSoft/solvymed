@@ -15,7 +15,9 @@ import { SOLVYAI_INTRO_TOUR } from "@/lib/solvyaiIntro";
 
 beforeEach(() => {
   document.body.innerHTML = "";
-  save.mockClear();
+  save.mockReset();
+  save.mockResolvedValue(true);
+  try { localStorage.clear(); } catch { /* none */ }
 });
 
 function renderProvider(props: Partial<Parameters<typeof TourProvider>[0]> = {}) {
@@ -49,13 +51,50 @@ describe("Meet SolvyAI", () => {
     vi.useRealTimers();
   });
 
-  it("Later / Esc closes it (already saved as seen)", async () => {
+  it("Later / Esc closes it, saved as seen again (the first save may be lost to a navigation)", async () => {
     vi.useFakeTimers();
     renderProvider();
     await act(async () => { vi.advanceTimersByTime(1000); });
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByText("solvyaiIntro.title")).not.toBeInTheDocument();
+    expect(save.mock.calls).toEqual([["skipped", 0, "news:solvyai"], ["skipped", 0, "news:solvyai"]]);
+    vi.useRealTimers();
+  });
+
+  // 01 + web tester 1 (10-26): it reopened once on a reload of /dashboard?setup=1 because the
+  // save sent as it opened never reached the server. Now it never opens by itself again in
+  // this browser (a per-account marker), whatever the server answered.
+  it("seen here for this account: a reload with the server still saying pending doesn't reopen it", async () => {
+    vi.useFakeTimers();
+    const first = renderProvider({ userId: "doc-1" });
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(screen.getByText("solvyaiIntro.title")).toBeInTheDocument();
+    first.unmount();
+    renderProvider({ userId: "doc-1", introPending: true });
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(screen.queryByText("solvyaiIntro.title")).not.toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("another account in the same browser still gets it", async () => {
+    vi.useFakeTimers();
+    localStorage.setItem("solvymed.solvyaiIntroSeen.doc-1", "1");
+    renderProvider({ userId: "doc-2" });
+    await act(async () => { vi.advanceTimersByTime(1000); });
+    expect(screen.getByText("solvyaiIntro.title")).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
+  it("a save the database didn't take is tried once more", async () => {
+    vi.useFakeTimers();
+    save.mockResolvedValueOnce(false);
+    renderProvider({ userId: "doc-3" });
+    await act(async () => { vi.advanceTimersByTime(1000); });
     expect(save).toHaveBeenCalledTimes(1);
+    await act(async () => { vi.advanceTimersByTime(2100); });
+    expect(save).toHaveBeenCalledTimes(2);
+    await act(async () => { vi.advanceTimersByTime(5000); });
+    expect(save).toHaveBeenCalledTimes(2);
     vi.useRealTimers();
   });
 
