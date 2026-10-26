@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "Você já está conectado a {doctor}. Peça à clínica para juntar seus cadastros.",
       "alreadyConnectedSamePracticeNoName": "Você já está conectado a esta clínica. Peça à clínica para juntar seus cadastros.",
       "codeUnavailable": "Não foi possível conectar com este código. Fale com a clínica.",
-      "storedCodeNotFound": "Código de convite não encontrado. Peça o código à sua clínica."
+      "storedCodeNotFound": "Código de convite não encontrado. Peça o código à sua clínica.",
+      "deleteAccount": "Excluir minha conta",
+      "deleteConfirm": "Isso apaga sua conta. Você pode se cadastrar de novo quando quiser.",
+      "deletedNotice": "Conta excluída.",
+      "requestDeletion": "Pedir exclusão da conta"
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",

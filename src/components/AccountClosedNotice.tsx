@@ -6,12 +6,13 @@ import { useEffect, useState } from "react";
 // "/?deleted=1"), or after cancelling a pending Google sign-up ("/?signup_cancelled=1",
 // 242, B4 F3): a short note saying which happened (UX). Read in the browser,
 // after load, so the landing page stays static.
-export function AccountClosedNotice({ closed, deleted, cancelled }: { closed: string; deleted: string; cancelled?: string }) {
+// "/?account_deleted=1": a patient with no doctor deleted their account (B, 243).
+export function AccountClosedNotice({ closed, deleted, cancelled, selfDeleted }: { closed: string; deleted: string; cancelled?: string; selfDeleted?: string }) {
   const [text, setText] = useState<string | null>(null);
   useEffect(() => {
     const q = new URLSearchParams(location.search);
-    setText(q.get("deleted") === "1" ? deleted : q.get("closed") === "1" ? closed : q.get("signup_cancelled") === "1" && cancelled ? cancelled : null);
-  }, [closed, deleted, cancelled]);
+    setText(q.get("deleted") === "1" ? deleted : q.get("closed") === "1" ? closed : q.get("signup_cancelled") === "1" && cancelled ? cancelled : q.get("account_deleted") === "1" && selfDeleted ? selfDeleted : null);
+  }, [closed, deleted, cancelled, selfDeleted]);
   if (!text) return null;
   return (
     <div role="status" className="bg-slate-100 px-4 py-3 text-center text-sm font-medium text-slate-800">

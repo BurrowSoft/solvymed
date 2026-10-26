@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "Vous êtes déjà connecté à {doctor}. Demandez au cabinet de fusionner vos dossiers.",
       "alreadyConnectedSamePracticeNoName": "Vous êtes déjà connecté à ce cabinet. Demandez au cabinet de fusionner vos dossiers.",
       "codeUnavailable": "Impossible de se connecter avec ce code. Contactez le cabinet.",
-      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code."
+      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code.",
+      "deleteAccount": "Delete my account",
+      "deleteConfirm": "This deletes your account. You can sign up again anytime.",
+      "deletedNotice": "Account deleted.",
+      "requestDeletion": "Request account deletion"
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",

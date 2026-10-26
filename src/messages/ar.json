@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "أنت متصل بالفعل بـ {doctor}. اطلب من العيادة دمج سجلاتك.",
       "alreadyConnectedSamePracticeNoName": "أنت متصل بالفعل بهذه العيادة. اطلب من العيادة دمج سجلاتك.",
       "codeUnavailable": "تعذّر الاتصال بهذا الرمز. يرجى التواصل مع العيادة.",
-      "storedCodeNotFound": "لم يتم العثور على رمز الدعوة. اطلب الرمز من عيادتك."
+      "storedCodeNotFound": "لم يتم العثور على رمز الدعوة. اطلب الرمز من عيادتك.",
+      "deleteAccount": "حذف حسابي",
+      "deleteConfirm": "سيؤدي هذا إلى حذف حسابك. يمكنك التسجيل مجددًا في أي وقت.",
+      "deletedNotice": "تم حذف الحساب.",
+      "requestDeletion": "طلب حذف الحساب"
     },
     "pendingConfirmation": {
       "loading": "جارٍ التحقق من حالتك…",

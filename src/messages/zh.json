@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "您已与 {doctor} 连接。请让诊所合并您的档案。",
       "alreadyConnectedSamePracticeNoName": "您已与此诊所连接。请让诊所合并您的档案。",
       "codeUnavailable": "无法使用此代码连接。请联系诊所。",
-      "storedCodeNotFound": "未找到邀请码。请向您的诊所索取邀请码。"
+      "storedCodeNotFound": "未找到邀请码。请向您的诊所索取邀请码。",
+      "deleteAccount": "删除我的账号",
+      "deleteConfirm": "这将删除您的账号。您随时可以重新注册。",
+      "deletedNotice": "账号已删除。",
+      "requestDeletion": "申请删除账号"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

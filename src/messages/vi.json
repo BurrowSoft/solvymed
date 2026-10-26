@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "Bạn đã kết nối với {doctor}. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
       "alreadyConnectedSamePracticeNoName": "Bạn đã kết nối với phòng khám này. Hãy nhờ phòng khám gộp hồ sơ của bạn.",
       "codeUnavailable": "Không thể kết nối bằng mã này. Vui lòng liên hệ phòng khám.",
-      "storedCodeNotFound": "Không tìm thấy mã mời. Hãy hỏi phòng khám của bạn để lấy mã."
+      "storedCodeNotFound": "Không tìm thấy mã mời. Hãy hỏi phòng khám của bạn để lấy mã.",
+      "deleteAccount": "Xóa tài khoản của tôi",
+      "deleteConfirm": "Thao tác này xóa tài khoản của bạn. Bạn có thể đăng ký lại bất cứ lúc nào.",
+      "deletedNotice": "Đã xóa tài khoản.",
+      "requestDeletion": "Yêu cầu xóa tài khoản"
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

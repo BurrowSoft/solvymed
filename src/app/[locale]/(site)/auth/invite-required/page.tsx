@@ -11,6 +11,7 @@ import { conditionMet } from "@/lib/conditions";
 import { signOutHere } from "@/lib/signOut";
 import { BecomeProfessional } from "@/components/BecomeProfessional";
 import { LeftDoctorMessages } from "@/components/patientChannel/LeftDoctorMessages";
+import { AccountDeleteOption } from "@/components/AccountDeleteOption";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -277,6 +278,9 @@ export default function InviteRequiredPage() {
         >
           {t("inviteRequired.backToSignup")}
         </button>
+
+        {/* B (01, 243): delete this account, or ask for its deletion; discreet, below the rest. */}
+        <AccountDeleteOption />
       </AuthCard>
     </AuthPageShell>
   );

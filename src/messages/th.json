@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "คุณเชื่อมต่อกับ {doctor} แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ",
       "alreadyConnectedSamePracticeNoName": "คุณเชื่อมต่อกับคลินิกนี้แล้ว กรุณาขอให้คลินิกรวมประวัติของคุณ",
       "codeUnavailable": "ไม่สามารถเชื่อมต่อด้วยรหัสนี้ได้ กรุณาติดต่อคลินิก",
-      "storedCodeNotFound": "ไม่พบรหัสเชิญ โปรดขอรหัสจากคลินิกของคุณ"
+      "storedCodeNotFound": "ไม่พบรหัสเชิญ โปรดขอรหัสจากคลินิกของคุณ",
+      "deleteAccount": "ลบบัญชีของฉัน",
+      "deleteConfirm": "การดำเนินการนี้จะลบบัญชีของคุณ คุณสมัครใหม่ได้ทุกเมื่อ",
+      "deletedNotice": "ลบบัญชีแล้ว",
+      "requestDeletion": "ขอลบบัญชี"
     },
     "pendingConfirmation": {
       "loading": "กำลังตรวจสอบสถานะของคุณ…",

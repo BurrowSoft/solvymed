@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "이미 {doctor}에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
       "alreadyConnectedSamePracticeNoName": "이미 이 클리닉에 연결되어 있습니다. 클리닉에 기록 병합을 요청하세요.",
       "codeUnavailable": "이 코드로 연결할 수 없습니다. 클리닉에 문의하세요.",
-      "storedCodeNotFound": "초대 코드를 찾을 수 없습니다. 병원에 코드를 문의하세요."
+      "storedCodeNotFound": "초대 코드를 찾을 수 없습니다. 병원에 코드를 문의하세요.",
+      "deleteAccount": "내 계정 삭제",
+      "deleteConfirm": "계정이 삭제됩니다. 언제든지 다시 가입할 수 있습니다.",
+      "deletedNotice": "계정이 삭제되었습니다.",
+      "requestDeletion": "계정 삭제 요청"
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",

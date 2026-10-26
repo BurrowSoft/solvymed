@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "Anda sudah terhubung dengan {doctor}. Minta klinik untuk menggabungkan data Anda.",
       "alreadyConnectedSamePracticeNoName": "Anda sudah terhubung dengan klinik ini. Minta klinik untuk menggabungkan data Anda.",
       "codeUnavailable": "Tidak dapat terhubung dengan kode ini. Silakan hubungi klinik.",
-      "storedCodeNotFound": "Kode undangan tidak ditemukan. Minta kodenya ke klinik Anda."
+      "storedCodeNotFound": "Kode undangan tidak ditemukan. Minta kodenya ke klinik Anda.",
+      "deleteAccount": "Hapus akun saya",
+      "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
+      "deletedNotice": "Akun dihapus.",
+      "requestDeletion": "Minta penghapusan akun"
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
