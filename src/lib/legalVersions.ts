@@ -87,7 +87,13 @@
 // line (Vitor's "OK privacy Cloudflare"); the dormant sign-up row is
 // untouched. Mobile's 234 (accepting 2026-10-23) applied FIRST; merged
 // with the demo_mode flip; the app's PRIVACY_VERSION twin follows (0e).
-export const PRIVACY_VERSION = "2026-10-23";
+// 2026-10-27: §6h, the demo's cookie-free counters (Vitor's "OK privacy counting v2",
+// via 01, 10-26): daily totals per country and language of the demos opened and the
+// steps used, with no account, IP address or device identifier; a per-demo note (238's
+// demo_sandboxes.metrics_seen / demo_signin_marks) so each demo counts once, deleted with
+// the demo. Mobile's 238 (accepting 2026-10-27) applied FIRST; merged with (or right
+// before) #615, the web counters; then 01 flips server_flags.demo_metrics.
+export const PRIVACY_VERSION = "2026-10-27";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -99,7 +105,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-22"; // 2026-10-23 (demo mode §6h + Cloudflare) goes live when #599 merges, 2026-10-22 UTC (demo-mode-live flips in the same PR); re-set it if the merge slips past that day
+export const PRIVACY_PUBLISHED = "2026-10-26"; // 2026-10-27 (§6h demo counters) goes live when this PR merges; re-set it to the merge day (UTC) if the merge slips past 2026-10-26
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only

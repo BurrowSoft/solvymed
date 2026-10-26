@@ -213,6 +213,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <li>A SolvyAI funciona na demonstração por até 5 mensagens, com as mesmas regras da seção 6b: o que você digita é enviado à Anthropic para gerar a resposta (veja a seção 5), e o SolvyMed não guarda esse texto. Guardamos só uma contagem anônima do uso da SolvyAI, sem nenhum texto.</li>
             <li>Para evitar abusos, guardamos uma forma embaralhada (hash com sal) do seu endereço IP junto com a sessão de demonstração, nunca o endereço em si.</li>
             <li>A sessão de demonstração e tudo o que estiver nela são apagados em até 24 horas depois do início, ou na hora, quando você sai da demonstração ou cria uma conta. Nada da demonstração é copiado para uma conta real.</li>
+            <li>Contamos, sem identificar ninguém, quantas demonstrações são abertas e quais etapas são usadas. São totais por dia, por país e por idioma; nenhuma conta, endereço IP ou identificador do aparelho é guardado junto. Para contar cada demonstração uma única vez, guardamos uma anotação junto da demonstração, que é apagada com ela.</li>
             <li>As estatísticas de uso do site na demonstração seguem a seção 3.6 e o banner de cookies: só com o seu consentimento.</li>
           </ul>
         </Section>
