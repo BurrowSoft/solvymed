@@ -8,8 +8,8 @@ import pt from "@/messages/pt-BR.json";
 // Activation B1: a practice with no patient gets one clear next step on the home, hidden
 // while the guided tour is on screen.
 
-const h = vi.hoisted(() => ({ running: false, track: vi.fn() }));
-vi.mock("@/components/tour/TourProvider", () => ({ useTour: () => ({ running: h.running }) }));
+const h = vi.hoisted(() => ({ running: false, touring: false, track: vi.fn() }));
+vi.mock("@/components/tour/TourProvider", () => ({ useTour: () => ({ running: h.running, touring: h.touring }) }));
 vi.mock("@/lib/track", () => ({ track: h.track }));
 
 import { FirstPatientCard } from "@/components/FirstPatientCard";
@@ -19,6 +19,7 @@ const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" m
 describe("Adicione seu primeiro paciente", () => {
   it("adds a patient (the form) or books the first appointment, tracked", () => {
     h.running = false;
+    h.touring = false;
     render(wrap(<FirstPatientCard prefix="/pt-BR" />));
     expect(screen.getByRole("heading", { name: pt.firstPatient.title })).toBeInTheDocument();
     const add = screen.getByRole("link", { name: pt.firstPatient.add });
@@ -28,10 +29,20 @@ describe("Adicione seu primeiro paciente", () => {
     expect(h.track).toHaveBeenCalledWith("first_patient_card", { action: "add" });
   });
 
-  it("waits while the guided tour is on screen", () => {
+  it("waits while a tour's spotlight is on screen (the page must not move under it)", () => {
     h.running = true;
+    h.touring = true;
     render(wrap(<FirstPatientCard prefix="" />));
     expect(screen.queryByTestId("first-patient-card")).toBeNull();
+  });
+
+  // 01, 10-26: under the Novidades / Meet SolvyAI popups it is already there (web tester 1:
+  // at 1366 a new doctor saw no card behind the SolvyAI intro, desktop-only).
+  it("0 patients + a popup open (Novidades / Meet SolvyAI): the card is in the page", () => {
+    h.running = true;
+    h.touring = false;
+    render(wrap(<FirstPatientCard prefix="" />));
+    expect(screen.getByTestId("first-patient-card")).toBeInTheDocument();
   });
 
   it("the home shows it to doctors only, with 0 patients and a count it could read", () => {
