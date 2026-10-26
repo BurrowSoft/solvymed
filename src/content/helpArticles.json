@@ -2488,6 +2488,10 @@
             {
               "type": "p",
               "text": "Paciente sem nenhum médico: na tela **Conectar ao seu médico**, **Excluir minha conta** exclui a conta, depois de confirmar. Quem foi removido por uma clínica (ou já tem dados em uma clínica) vê **Pedir exclusão da conta**, que abre o formulário de pedido de exclusão."
+            },
+            {
+              "type": "p",
+              "text": "Um paciente removido por uma clínica não exclui a conta em **Configurações → Excluir conta**: o app mostra \"Para excluir esta conta, faça o pedido pelo formulário.\" e o link **Pedir exclusão da conta**. Assim a remoção continua valendo."
             }
           ],
           "en": [
@@ -2498,6 +2502,10 @@
             {
               "type": "p",
               "text": "A patient with no doctor: on the **Connect to your doctor** screen, **Delete my account** deletes the account after a confirm. Someone a clinic removed (or who already has data at a clinic) sees **Request account deletion** instead, which opens the deletion request form."
+            },
+            {
+              "type": "p",
+              "text": "A patient a clinic removed can't delete the account in **Settings → Delete account**: the app shows \"To delete this account, send a request through the form.\" and the **Request account deletion** link, so the removal still holds."
             }
           ]
         },
