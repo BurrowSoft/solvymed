@@ -2567,6 +2567,18 @@
     "book": "Đặt lịch khám đầu tiên"
   },
   "patientChannel": {
+    "cover": {
+      "title": "Ảnh bìa",
+      "hint": "Hiển thị ở đầu trang kênh của bạn. Ảnh sẽ công khai sau khi lưu (giống logo).",
+      "upload": "Tải ảnh lên",
+      "change": "Đổi ảnh",
+      "remove": "Xóa",
+      "removeConfirm": "Xóa ảnh bìa?",
+      "useThis": "Dùng ảnh này",
+      "errorSize": "Ảnh tối đa 3 MB.",
+      "errorType": "Hãy dùng tệp PNG, JPEG hoặc WebP.",
+      "errorNotSetUp": "Hãy lưu cài đặt kênh trước khi tải ảnh bìa lên."
+    },
     "title": "Kênh Bệnh nhân",
     "entryText": "Bệnh nhân của bạn gửi câu hỏi qua một kênh có tổ chức, được xếp theo mức độ khẩn cấp dựa trên thang điểm bạn thiết lập.",
     "entryOpen": "Thiết lập",

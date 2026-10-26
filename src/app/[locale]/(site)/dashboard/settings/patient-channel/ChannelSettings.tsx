@@ -18,12 +18,13 @@ import {
   type PcSettings,
   type ReasonKind,
 } from "@/lib/patientChannel/channel";
+import { CoverCard } from "./CoverCard";
 
 // The Patient Channel's practice settings (M3b-2; 237's pc_settings / pc_reasons /
 // pc_faq, the doctor's own rows under RLS): the channel switch, who reads what, the
 // response time and reading hours, the welcome and the page background; the reasons
 // (→ doctor or front desk) and the FAQ. Reasons and FAQ are archived, never deleted
-// (requests point at them). The cover image comes later (its bucket + privacy line).
+// (requests point at them). The cover image (246) has its own card, while pc_cover_upload is on.
 
 const CARD = "min-w-0 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6";
 const H2 = "text-base font-bold text-slate-900";
@@ -35,7 +36,7 @@ const GHOST = "rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold tex
 
 type Status = { kind: "ok" | "error"; text: string } | null;
 
-export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial, reasons: initialReasons, faq: initialFaq, brandHref }: {
+export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial, reasons: initialReasons, faq: initialFaq, brandHref, cover }: {
   professionalId: string;
   // A pc_settings row exists (the rules were saved, or these settings were).
   hasRow: boolean;
@@ -45,10 +46,15 @@ export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial,
   reasons: PcReasonRow[];
   faq: PcFaqRow[];
   brandHref: string;
+  // The cover card: null while pc_cover_upload is off (246).
+  cover?: { path: string | null } | null;
 }) {
   return (
     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
-      <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} />
+      <div className="flex min-w-0 flex-col gap-4">
+        <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} />
+        {cover && <CoverCard professionalId={professionalId} initialPath={cover.path} />}
+      </div>
       <div className="flex min-w-0 flex-col gap-4">
         <Reasons professionalId={professionalId} initial={initialReasons} />
         <Faq professionalId={professionalId} initial={initialFaq} />

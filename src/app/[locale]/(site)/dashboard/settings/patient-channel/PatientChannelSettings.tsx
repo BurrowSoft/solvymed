@@ -60,7 +60,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   initialVersion: number;
   emergencyNumber: string | null;
   professionalId: string;
-  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[] };
+  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null };
   brandHref: string;
 }) {
   const t = useTranslations("patientChannel");
@@ -144,6 +144,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         reasons={channel.reasons}
         faq={channel.faq}
         brandHref={brandHref}
+        cover={channel.cover}
       />
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>

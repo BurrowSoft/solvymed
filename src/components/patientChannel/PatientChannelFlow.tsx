@@ -267,6 +267,11 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   return (
     <div className="mx-auto flex w-full max-w-xl flex-col gap-3 p-4 sm:p-6">
       {banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
+      {/* The practice's cover (246): a 3:1 banner on top, full width on a phone (01). */}
+      {page.cover && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={page.cover.url} alt={page.cover.alt} data-testid="pc-cover" className="aspect-[3/1] w-full rounded-xl object-cover" />
+      )}
       <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
         <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{initials(page.doctorName)}</span>
         <div className="min-w-0"><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>

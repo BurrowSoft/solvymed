@@ -2567,6 +2567,18 @@
     "book": "Agendar a primeira consulta"
   },
   "patientChannel": {
+    "cover": {
+      "title": "Imagem de capa",
+      "hint": "Aparece no topo da página do seu canal. É pública depois de salva (como o logo).",
+      "upload": "Enviar imagem",
+      "change": "Trocar imagem",
+      "remove": "Remover",
+      "removeConfirm": "Remover a imagem de capa?",
+      "useThis": "Usar esta imagem",
+      "errorSize": "A imagem deve ter no máximo 3 MB.",
+      "errorType": "Use um arquivo PNG, JPEG ou WebP.",
+      "errorNotSetUp": "Salve as configurações do canal antes de enviar a capa."
+    },
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
     "entryOpen": "Configurar",

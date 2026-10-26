@@ -5,6 +5,7 @@ import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientC
 import { UUID, myRequestsWith, patientPage } from "@/lib/patientChannel/practice";
 import { pcAdmin } from "@/lib/patientChannel/server";
 import type { PcPatientPage } from "@/lib/patientChannel/patientPage";
+import { coverUrl } from "@/lib/patientChannel/cover";
 import { SampleChannel } from "./SampleChannel";
 import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
@@ -80,6 +81,10 @@ export default async function PatientChannelPage({
     // The dates in "Suas mensagens" (P-14): the practice's zone and calendar.
     timeZone: pub?.time_zone || countryProfile(p.country).defaultTimeZone,
     country: p.country ?? null,
+    // The cover banner (246; 01): with pageBg "cover" or "both"; none → today's look.
+    cover: (p.pageBg === "cover" || p.pageBg === "both") && p.coverPath
+      ? { url: coverUrl(supabase, p.coverPath)!, alt: pub?.clinic_name?.trim() || p.brand?.displayName?.trim() || pub?.full_name?.trim() || "" }
+      : null,
   };
   return <RealChannel page={page} profId={professionalId} />;
 }

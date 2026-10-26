@@ -32,6 +32,8 @@ export type PcPatientPage = {
   // doctor side, the practice's time and calendar). Missing: the browser's.
   timeZone?: string;
   country?: string | null;
+  // The practice's cover banner (246), when it has one and its page background shows it.
+  cover?: { url: string; alt: string } | null;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.

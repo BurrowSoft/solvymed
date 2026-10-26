@@ -2567,6 +2567,18 @@
     "book": "安排首次预约"
   },
   "patientChannel": {
+    "cover": {
+      "title": "封面图片",
+      "hint": "显示在您的频道页面顶部。保存后即公开（与标志相同）。",
+      "upload": "上传图片",
+      "change": "更换图片",
+      "remove": "移除",
+      "removeConfirm": "要移除封面图片吗？",
+      "useThis": "使用此图片",
+      "errorSize": "图片不能超过 3 MB。",
+      "errorType": "请使用 PNG、JPEG 或 WebP 文件。",
+      "errorNotSetUp": "上传封面前请先保存频道设置。"
+    },
     "title": "患者通道",
     "entryText": "患者通过有序的通道提问，并按照您设置的评分依紧急程度排序。",
     "entryOpen": "设置",
