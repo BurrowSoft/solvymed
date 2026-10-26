@@ -916,7 +916,7 @@
       "notPendingPatient": "Dieses Konto wurde nicht als Patientenregistrierung erstellt, daher kann hier kein Einladungscode zugeordnet werden.",
       "linkFailed": "Beim Verknüpfen Ihres Kontos ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
       "backToSignup": "Anderes Konto verwenden",
-      "tooManyAttempts": "Zu viele Versuche. Bitte warten Sie einen Moment, bevor Sie es erneut versuchen.",
+      "tooManyAttempts": "Too many attempts. Please wait an hour and try again.",
       "alreadyInvitedByAnother": "Ihr Konto ist bereits mit einer anderen Praxis verbunden.",
       "archived": "Diese Praxis nimmt für Ihr Konto keine neuen Buchungen an. Bitte wenden Sie sich an die Praxis.",
       "alreadyConnected": "Sie sind bereits mit {doctor} verbunden. Zum Wechseln wenden Sie sich an den Support.",

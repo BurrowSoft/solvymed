@@ -916,7 +916,7 @@
       "notPendingPatient": "Tài khoản này không được tạo dưới dạng đăng ký bệnh nhân, nên không thể liên kết mã mời tại đây.",
       "linkFailed": "Đã xảy ra lỗi khi liên kết tài khoản của bạn. Vui lòng thử lại.",
       "backToSignup": "Dùng tài khoản khác",
-      "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một chút rồi thử lại.",
+      "tooManyAttempts": "Quá nhiều lần thử. Vui lòng đợi một giờ rồi thử lại.",
       "alreadyInvitedByAnother": "Tài khoản của bạn đã được liên kết với một bác sĩ khác.",
       "archived": "Phòng khám này hiện không nhận lịch hẹn mới cho tài khoản của bạn. Vui lòng liên hệ phòng khám.",
       "alreadyConnected": "Bạn đã kết nối với {doctor}. Để đổi, hãy liên hệ bộ phận hỗ trợ.",

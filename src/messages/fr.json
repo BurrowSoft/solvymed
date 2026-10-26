@@ -916,7 +916,7 @@
       "notPendingPatient": "Ce compte n'a pas été créé comme une inscription patient, un code d'invitation ne peut donc pas y être associé.",
       "linkFailed": "Une erreur s'est produite lors de la liaison de votre compte. Veuillez réessayer.",
       "backToSignup": "Utiliser un autre compte",
-      "tooManyAttempts": "Trop de tentatives. Veuillez patienter avant de réessayer.",
+      "tooManyAttempts": "Too many attempts. Please wait an hour and try again.",
       "alreadyInvitedByAnother": "Votre compte est déjà rattaché à un autre cabinet.",
       "archived": "Ce cabinet n'accepte pas de nouvelles réservations pour votre compte. Veuillez contacter le cabinet.",
       "alreadyConnected": "Vous êtes déjà connecté à {doctor}. Pour changer, contactez le support.",

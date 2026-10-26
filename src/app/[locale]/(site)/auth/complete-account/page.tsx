@@ -33,6 +33,7 @@ import { clearAuthCookies } from "@/lib/signOut";
 // (cancel_pending_signup, only ever the caller), after an in-page confirm; then
 // sign-out and the landing with "Cadastro cancelado.".
 type Field = "country" | "code" | "consent";
+const MISS_STATUS = ["invite_not_found", "code_unavailable", "too_many_attempts"];
 
 export default function CompleteAccountPage() {
   const t = useTranslations("auth");
@@ -176,7 +177,7 @@ export default function CompleteAccountPage() {
     }
     setWorking(true);
     const supabase = createClient();
-    const { error: rpcError } = await supabase.rpc("complete_google_signup", {
+    const { data: result, error: rpcError } = await supabase.rpc("complete_google_signup", {
       p_role: role,
       p_country: role === "professional" ? country : null,
       p_time_zone: browserTimeZone(),
@@ -202,6 +203,20 @@ export default function CompleteAccountPage() {
       else if (m.includes("unsupported_country")) { setCountry(null); showFieldError("country", tc("countryRequired")); }
       else if (m.includes("consent_required")) showFieldError("consent", tc("consentRequired"));
       else setError(authErrorKey(rpcError) === "network" ? t("errors.network") : t("errors.generic"));
+      return;
+    }
+    // A patient's invite code can miss WITHOUT an error (243: the code is checked and linked
+    // in the same call): {status: invite_not_found | code_unavailable | too_many_attempts},
+    // nothing completed. Success is status "done" (232, today) or no status; any other
+    // status is the generic error, never a silent success (cf: this ships before 243).
+    const status = (result as { status?: unknown } | null)?.status;
+    if (status !== undefined && status !== null && status !== "done") {
+      setWorking(false);
+      track("complete_account_error", { code: typeof status === "string" && MISS_STATUS.includes(status) ? status : "unknown_status" });
+      if (status === "invite_not_found") showFieldError("code", t("inviteRequired.storedCodeNotFound"));
+      else if (status === "code_unavailable") showFieldError("code", t("inviteRequired.codeUnavailable"));
+      else if (status === "too_many_attempts") showFieldError("code", t("inviteRequired.tooManyAttempts"));
+      else setError(t("errors.generic"));
       return;
     }
     track("signup_complete_submitted", { role });
@@ -352,7 +367,6 @@ export default function CompleteAccountPage() {
               ) : (
                 <div role="alertdialog" aria-labelledby="complete-cancel-text" data-testid="complete-cancel-confirm" className="rounded-xl bg-slate-50 p-3 text-left">
                   <p id="complete-cancel-text" className="text-slate-700">{tc("cancelConfirm")}</p>
-                  {cancelError && <p role="alert" data-testid="complete-cancel-error" className="mt-2 text-red-600">{cancelError}</p>}
                   <div className="mt-3 flex flex-col gap-2 sm:flex-row">
                     <button type="button" data-testid="complete-cancel-yes" onClick={cancelSignup} disabled={cancelling}
                       className="rounded-xl border border-red-300 bg-white px-4 py-2 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60">
@@ -363,6 +377,9 @@ export default function CompleteAccountPage() {
                       {tc("cancelBack")}
                     </button>
                   </div>
+                  {/* Below the buttons, never above: a line appearing above them moved "Cancelar cadastro"
+                      under a tap aimed at "Voltar" (the app's #549 row; 01, cf). */}
+                  {cancelError && <p role="alert" data-testid="complete-cancel-error" className="mt-2 text-red-600">{cancelError}</p>}
                 </div>
               )}
             </div>
