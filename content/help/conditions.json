@@ -145,7 +145,7 @@
   },
   "whatsapp-auto-live": {
     "met": false,
-    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line, WITH a PRIVACY_VERSION bump and mobile's accepting migration applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
+    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with mobile 248 (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   },
   "help-th-live": {
     "met": false,
@@ -297,7 +297,23 @@
   },
   "app-demo-live": {
     "met": false,
-    "what": "The Android app's demo is live (mobile #535): the entry \"Explore the demo\" on the sign-in screen, its DemoGate / DemoBar / tour, shipped as an OTA to production after the web demo is live and stable. Flip when that OTA is out (01). Gates Help K1's app line and the App Map's app sentence."
+    "what": "The Android app's demo is live (mobile #535): the entry \"Explore the demo\" on the sign-in screen, its DemoGate / DemoBar / tour, shipped as an OTA to production after the web demo is live and stable. Flip when that OTA is out (01). Gates Help K1's app line and the App Map's app sentence, and (with demo-mode-live) privacy §6h's \"or in the Android app\" (Vitor's \"OK privacy app demo\", 10-27; needs PRIVACY_VERSION 2026-10-28)."
+  },
+  "pc-cover-live": {
+    "met": false,
+    "what": "The Patient Channel cover image upload is live (the mobile developer's storage migration with its public bucket policy + the web cover UI). Gates privacy §6i PC-9 (\"the cover image is public once saved\"). Flipping needs PRIVACY_VERSION 2026-10-28."
+  },
+  "pc-ai-live": {
+    "met": false,
+    "what": "Patient Channel M7 is live: SolvyAI reads a request only when the professional turns on the channel's AI option (pc_settings.ai_mapping, off by default), only to suggest symptoms from their own list, on their AI credits, with the 6b masking, upward only (score.ts rule 7), and the form tells the patient. Gates privacy §6i PC-10. Flipping needs PRIVACY_VERSION 2026-10-28."
+  },
+  "reminders-live": {
+    "met": false,
+    "what": "The one-time sign-up / practice-setup reminders are live (migration 247, F5 + B2: at most one per account, by e-mail and push, each with an opt-out link). Gates privacy §4's bullet, §5's Resend \"one-time account reminders\" and §6g's push line (Vitor's \"OK privacy reminders\", 10-27). Flipping needs PRIVACY_VERSION 2026-10-28."
+  },
+  "app-referrer-live": {
+    "met": false,
+    "what": "The Android app saves the Google Play install campaign (UTM tags) with the account at sign-up, only when the app's own optional checkbox is ticked (1.9.2 build + server flag app_referrer_capture). Gates privacy §3.6's Android sentence (Vitor's \"OK privacy app referrer\", 10-27). Flipping needs PRIVACY_VERSION 2026-10-28."
   },
   "app-unlinked-delete-live": {
     "met": true,
