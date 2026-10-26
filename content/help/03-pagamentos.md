@@ -49,8 +49,8 @@ A partir daí, cada consulta com valor mostra o QR Code Pix e o Pix Copia e Cola
 2. Enter your Pix key (CPF, CNPJ, email, phone or random key) and save.
 From then on, each appointment with a value shows the Pix QR code and the Pix Copia e Cola code with the right amount.
 {pending:card-payment-live,app-1.8.0} **Settings → Financial** also has the **Card payment link**: the page where patients pay by card, from your payment provider. It must start with https://.
-**No site:** **Configurações → Clínica**: preencha a **Chave Pix** e salve.
-**On the website:** **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save.
+**No site:** {unless:card-payment-live} **Configurações → Clínica**: preencha a **Chave Pix** e salve.
+**On the website:** {unless:card-payment-live} **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save.
 **No site:** {pending:card-payment-live} **Configurações → Clínica**: preencha a **Chave Pix** e salve. O **Link de pagamento (cartão)** fica logo abaixo (clínicas no Brasil e na Tailândia). Um link que não comece com https:// não é salvo: aparece "Informe um link que comece com https://".
 **On the website:** {pending:card-payment-live} **Settings → Clinic**: fill in the **Chave Pix** (Pix key) and save. The **Card payment link** is just below (clinics in Brazil and Thailand). A link that doesn't start with https:// isn't saved: "Enter a link that starts with https://" shows.
 `open:settings-financial`
