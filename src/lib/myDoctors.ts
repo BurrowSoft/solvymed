@@ -32,6 +32,8 @@ export type MyDoctor = {
   photoUrl: string | null;
   isPrimary: boolean;
   acceptsBookings: boolean;
+  // The Patient Channel is open to this patient with this doctor (M4b; set by the page).
+  channel?: boolean;
 };
 
 export function toMyDoctor(supabase: Pick<SupabaseClient, "storage">, r: MyDoctorRow): MyDoctor {

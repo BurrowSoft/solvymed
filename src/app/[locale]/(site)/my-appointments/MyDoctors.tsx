@@ -42,6 +42,7 @@ export function MyDoctors({ doctors, canAdd }: { doctors: MyDoctor[]; canAdd: bo
 function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: "ok" | "error"; text: string } | null) => void }) {
   const t = useTranslations("patientDoctors");
   const tMy = useTranslations("myAppointments");
+  const tChannel = useTranslations("patientChannel.patient");
   const tAuth = useTranslations("auth");
   // "Cancelar" / "Cancel" / "ยกเลิก" (an existing key).
   const tCommon = useTranslations("brand");
@@ -84,6 +85,11 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
         {doctor.acceptsBookings && (
           <a href={`${prefix}/book/${doctor.id}`} className="max-w-full line-clamp-2 [overflow-wrap:anywhere] rounded-xl px-4 py-2 text-center text-sm font-bold text-white" style={{ backgroundColor: accent }}>
             {tMy("bookWith", { doctor: shortDoctorName(doctor.name) })}
+          </a>
+        )}
+        {doctor.channel && (
+          <a href={`${prefix}/my-appointments/channel/${doctor.id}`} data-testid="pc-entry" className="rounded-xl border-2 px-4 py-1.5 text-center text-sm font-bold" style={{ borderColor: accent, color: accent }}>
+            {tChannel("entryButton")}
           </a>
         )}
         {!confirming && (

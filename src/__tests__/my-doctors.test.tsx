@@ -41,6 +41,14 @@ describe("Meus médicos", () => {
     expect(within(cards[1]).getByRole("link")).toHaveAttribute("href", "/pt-BR/book/d-2");
   });
 
+  it("Patient Channel (M4b): \"Fale com o Médico\" only where the channel is open to this patient", () => {
+    show([d("d-1", "Dra. Ana Souza", { channel: true }), PAULO]);
+    const cards = screen.getAllByTestId("doctor-card");
+    expect(within(cards[0]).getByTestId("pc-entry")).toHaveAttribute("href", "/pt-BR/my-appointments/channel/d-1");
+    expect(within(cards[0]).getByTestId("pc-entry")).toHaveTextContent(pt.patientChannel.patient.entryButton);
+    expect(within(cards[1]).queryByTestId("pc-entry")).toBeNull();
+  });
+
   it("no book link for a doctor not taking bookings", () => {
     show([d("d-3", "Dra. Bia", { acceptsBookings: false })]);
     expect(within(screen.getByTestId("doctor-card")).queryByRole("link")).toBeNull();

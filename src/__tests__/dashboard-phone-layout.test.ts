@@ -28,3 +28,10 @@ describe("the dashboard home on phones", () => {
     expect(setup).toContain(`<span className="whitespace-nowrap text-sm text-slate-500">{t("progress", { done })}</span>`);
   });
 });
+
+describe("the dashboard never scrolls the whole window (83 on #620; 01, 10-26)", () => {
+  it("the scrolling <main> is a containing block: absolutely positioned bits (sr-only) stay inside it", () => {
+    const layout = readFileSync(resolve(__dirname, "../app/[locale]/(site)/dashboard/layout.tsx"), "utf8");
+    expect(layout).toContain("<main className={`relative flex-1 overflow-auto");
+  });
+});
