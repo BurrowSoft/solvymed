@@ -217,7 +217,7 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
     const fs = await import("node:fs");
     const page = fs.readFileSync("src/app/[locale]/(site)/privacy/page.tsx", "utf8");
     expect(page).toContain('conditionMet("demo-mode-live")');
-    expect(page.match(/demo=\{demo\}/g)).toHaveLength(2);
+    expect(page.match(/demo=\{demo\}/g)).toHaveLength(3);
     const conditions = JSON.parse(fs.readFileSync("content/help/conditions.json", "utf8"));
     expect(conditions["demo-mode-live"]).toBeDefined();
   });
@@ -293,6 +293,6 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     const page = fs.readFileSync("src/app/[locale]/(site)/privacy/page.tsx", "utf8");
     for (const id of CONDITIONS) expect(page).toContain(`conditionMet("${id}")`);
     expect(page).toContain('demo && conditionMet("app-demo-live")');
-    expect(page.match(/\{\.\.\.v1028\}/g)).toHaveLength(2);
+    expect(page.match(/\{\.\.\.v1028\}/g)).toHaveLength(3);
   });
 });

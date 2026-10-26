@@ -4,12 +4,14 @@ import { BrandMarkTile } from "@/components/BrandLogo";
 
 // Shared layout for the Privacy Policy and Terms of Service. The texts exist
 // in English and Portuguese (Brazil), the authoritative languages; other
-// locales get the English text with a one-line note in their language.
+// locales get the English text with a one-line note in their language. The
+// Privacy Policy also has Thai, once privacy-th-live is met (the page passes it).
 
-export const LEGAL_LANGS = ["en", "pt-BR"] as const;
+export const LEGAL_LANGS = ["en", "pt-BR", "th"] as const;
 export type LegalLang = (typeof LEGAL_LANGS)[number];
 
-export function legalLangFor(locale: string): LegalLang {
+export function legalLangFor(locale: string, thai = false): LegalLang {
+  if (locale === "th" && thai) return "th";
   return locale === "pt-BR" ? "pt-BR" : "en";
 }
 
@@ -17,14 +19,17 @@ export function LegalDoc({
   locale,
   title,
   updated,
+  thai = false,
   children,
 }: {
   locale: string;
   title: string;
   updated: string;
+  // The Thai text exists (Privacy only, once privacy-th-live is met).
+  thai?: boolean;
   children: ReactNode;
 }) {
-  const lang = legalLangFor(locale);
+  const lang = legalLangFor(locale, thai);
   return (
     <div className="min-h-screen bg-white">
       <div className="mx-auto max-w-3xl px-6 py-16">
