@@ -61,6 +61,15 @@ describe("conditions: held text is left out of the build", () => {
     expect(JSON.stringify(after)).not.toContain("{pending");
   });
 
+  it("two web notes that apply for one language fail the build (one silently replaced the other: P1, 10-27)", () => {
+    const both = "**No site:** Um\n**On the website:** One\n**No site:** Dois\n**On the website:** Two\n`open:none`";
+    expect(() => parseBatch("05-conta", md(both), c(true))).toThrow(/two No site notes apply/);
+    const plainAndPending = "**No site:** Um\n**On the website:** One\n**No site:** {pending:x} Dois\n**On the website:** {pending:x} Two\n`open:none`";
+    expect(() => parseBatch("05-conta", md(plainAndPending), c(true))).toThrow(/two No site notes apply/);
+    // Before the flip only the plain one applies: fine.
+    expect(JSON.stringify(parseBatch("05-conta", md(plainAndPending), c(false)).articles[0])).toContain("One");
+  });
+
   it("a body paragraph swaps too ({unless:x} before, {pending:x} after), without the marker (1a/ad, #552)", () => {
     const para = "{unless:x} Antes\n{pending:x} Depois";
     const before = parseBatch("05-conta", md("", para), c(false)).articles[0];

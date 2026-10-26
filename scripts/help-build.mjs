@@ -91,18 +91,20 @@ export function parseBatch(file, text, conditions = {}) {
       if ((m = line.match(/^\*\*ในเว็บไซต์:\*\*\s+(.+)$/))) {
         lang = null;
         const held = m[1].match(/^\{(pending|unless):([\w#.,-]+)\}\s+(.+)$/);
-        if (!held) { th.web = m[1]; continue; }
-        const all = held[2].split(",").map(isMet).every(Boolean);
-        if (all === (held[1] === "pending")) th.web = held[3];
+        const note = !held ? m[1] : held[2].split(",").map(isMet).every(Boolean) === (held[1] === "pending") ? held[3] : null;
+        if (note && th.web) throw new Error(`${id}: two Thai web notes apply (one line per language; use {pending:}/{unless:} variants)`);
+        if (note) th.web = note;
         continue;
       }
       if ((m = line.match(/^\*\*(No site|On the website):\*\*\s+(.+)$/))) {
         lang = null;
         const key = m[1] === "No site" ? "pt" : "en";
         const held = m[2].match(/^\{(pending|unless):([\w#.,-]+)\}\s+(.+)$/);
-        if (!held) { web[key] = m[2]; continue; }
-        const all = held[2].split(",").map(isMet).every(Boolean);
-        if (all === (held[1] === "pending")) web[key] = held[3];
+        const note = !held ? m[2] : held[2].split(",").map(isMet).every(Boolean) === (held[1] === "pending") ? held[3] : null;
+        // One web note per language: a second one that applies used to replace
+        // the first silently (P1 lost its main note, 10-27).
+        if (note && web[key]) throw new Error(`${id}: two ${m[1]} notes apply (one line per language; use {pending:}/{unless:} variants)`);
+        if (note) web[key] = note;
         continue;
       }
       if ((m = line.match(/^`open:([\w-]+)`$/))) { a.open = m[1] === "none" ? null : m[1]; lang = null; continue; }
