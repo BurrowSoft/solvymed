@@ -39,8 +39,10 @@ const saveProgress = (...a: Parameters<typeof saveTourProgress>) => safeCall(() 
 
 // running: a tour or a popup is on screen (one overlay at a time, cf 6 Oct):
 // inline cards like the privacy notice wait for it.
-type TourCtx = { start: () => void; startNews: (release: string, replay?: boolean) => void; role: TourRole; running: boolean };
-const Ctx = createContext<TourCtx>({ start: () => {}, startNews: () => {}, role: "professional", running: false });
+// touring: only a spotlight overlay (the guided tour or the Novidades tour) is on screen; the
+// page must not move under it. The popups (Novidades, Meet SolvyAI) don't count (01, B1).
+type TourCtx = { start: () => void; startNews: (release: string, replay?: boolean) => void; role: TourRole; running: boolean; touring: boolean };
+const Ctx = createContext<TourCtx>({ start: () => {}, startNews: () => {}, role: "professional", running: false, touring: false });
 export const useTour = () => useContext(Ctx);
 
 export function TourProvider({
@@ -236,7 +238,8 @@ export function TourProvider({
   }, []);
 
   const running = !!active || !!newsTour || newsPopup || introPopup;
-  const ctx = useMemo<TourCtx>(() => ({ start: () => begin(0, true), startNews, role, running }), [begin, startNews, role, running]);
+  const touring = !!active || !!newsTour;
+  const ctx = useMemo<TourCtx>(() => ({ start: () => begin(0, true), startNews, role, running, touring }), [begin, startNews, role, running, touring]);
 
   return (
     <Ctx.Provider value={ctx}>

@@ -7,12 +7,13 @@ import { track } from "@/lib/track";
 
 // Activation B1 (specs/activation-and-demo-metrics.md): a new practice with no patient
 // yet gets ONE clear next step on the dashboard home, add the first patient (or book the
-// first appointment), until the first patient exists. Hidden while the guided tour is
-// on screen (it appears when the tour ends or is skipped). Doctors only (the page).
+// first appointment), until the first patient exists. Hidden only while a tour's spotlight
+// is on screen (the page must not move under it); under the Novidades and Meet SolvyAI
+// popups it's already there, ready the moment they close (01, 10-26). Doctors only.
 export function FirstPatientCard({ prefix }: { prefix: string }) {
   const t = useTranslations("firstPatient");
-  const { running } = useTour();
-  if (running) return null;
+  const { touring } = useTour();
+  if (touring) return null;
   return (
     <section data-testid="first-patient-card" aria-labelledby="first-patient-title" className="mb-6 rounded-2xl border border-teal-200 bg-teal-50 p-4 sm:p-6">
       <h2 id="first-patient-title" className="text-lg font-extrabold text-teal-950">{t("title")}</h2>
