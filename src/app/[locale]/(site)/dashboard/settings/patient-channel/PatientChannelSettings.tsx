@@ -76,6 +76,12 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   const dirty = JSON.stringify(toStoredRules(rules)) !== savedJson;
   const problems = useMemo(() => validateRules(rules), [rules]);
   useLeaveGuard(dirty);
+  // The starting template replaces the rules wholesale, so it's offered only on blank SAVED
+  // rules (no symptoms, medicines or automatic messages) with nothing unsaved (cf).
+  const blank = useMemo(() => {
+    const saved = JSON.parse(savedJson) as { symptoms?: unknown[]; medicines?: unknown[]; autoMessages?: unknown[] };
+    return !saved.symptoms?.length && !saved.medicines?.length && !saved.autoMessages?.length;
+  }, [savedJson]);
 
   // PUT /api/patient-channel/config with the version read: a newer save elsewhere → 409,
   // and the page asks to reload instead of writing over it.
@@ -152,7 +158,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
       {/* No symptoms yet: start from the ready-made template (01). */}
-      {templateId && rules.symptoms.length === 0 && <TemplateStart templateId={templateId} />}
+      {templateId && blank && !dirty && <TemplateStart templateId={templateId} />}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Symptoms rules={rules} setRules={setRules} />
         <div className="flex min-w-0 flex-col gap-4">

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 
@@ -11,6 +11,10 @@ const h = vi.hoisted(() => ({ rpc: vi.fn() }));
 vi.mock("@/lib/supabase/client", () => ({ createClient: () => ({ rpc: h.rpc }) }));
 
 import { TemplateStart } from "@/app/[locale]/(site)/dashboard/settings/patient-channel/TemplateStart";
+import { PatientChannelSettings } from "@/app/[locale]/(site)/dashboard/settings/patient-channel/PatientChannelSettings";
+import { EMPTY_RULES } from "@/lib/patientChannel/rules";
+import { DEFAULT_SETTINGS } from "@/lib/patientChannel/channel";
+import type { ChannelConfig } from "@/lib/patientChannel/score";
 
 describe("the starting template card", () => {
   const reload = vi.fn();
@@ -58,11 +62,44 @@ describe("the starting template card", () => {
     expect((await screen.findByRole("alert")).textContent).toBe(pt.patientChannel.channel.saveError);
   });
 
-  it("the settings page reads the template by the practice country and shows it only with no symptoms", async () => {
+  it("the settings page reads the template by the practice country", async () => {
     const fs = await import("node:fs");
     const page = fs.readFileSync("src/app/[locale]/(site)/dashboard/settings/patient-channel/page.tsx", "utf8");
     expect(page).toContain('.from("pc_templates").select("id").eq("country", country)');
-    const settings = fs.readFileSync("src/app/[locale]/(site)/dashboard/settings/patient-channel/PatientChannelSettings.tsx", "utf8");
-    expect(settings).toContain("templateId && rules.symptoms.length === 0 && <TemplateStart");
+  });
+});
+
+// cf: the template replaces the rules wholesale, so it's offered only on blank SAVED rules
+// (no symptoms, medicines or automatic messages) with nothing unsaved.
+describe("where the card shows", () => {
+  const P = pt.patientChannel;
+  const EXTRA = { professionalId: "doc1", channel: { settings: DEFAULT_SETTINGS, reasons: [], faq: [] }, brandHref: "/pt-BR/dashboard/settings#brand" };
+  const show = (rules: ChannelConfig, templateId: string | null = "general-side-effects-br") =>
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <PatientChannelSettings {...EXTRA} templateId={templateId} initialRules={rules} initialVersion={0} emergencyNumber="192" />
+      </NextIntlClientProvider>,
+    );
+
+  it("blank saved rules: shown", () => {
+    show(EMPTY_RULES);
+    expect(screen.getByTestId("pc-template-start")).toBeTruthy();
+  });
+
+  it("saved medicines but no symptoms: not shown (they'd be replaced)", () => {
+    show({ ...EMPTY_RULES, medicines: ["Dipirona"] });
+    expect(screen.queryByTestId("pc-template-start")).toBeNull();
+  });
+
+  it("blank, then an unsaved edit: hidden until it's saved or discarded", () => {
+    show(EMPTY_RULES);
+    fireEvent.change(screen.getByRole("textbox", { name: P.symptoms.new }), { target: { value: "Tontura" } });
+    fireEvent.click(within(screen.getByRole("region", { name: P.symptoms.title })).getByRole("button", { name: P.symptoms.add }));
+    expect(screen.queryByTestId("pc-template-start")).toBeNull();
+  });
+
+  it("no template for the practice country: not shown", () => {
+    show(EMPTY_RULES, null);
+    expect(screen.queryByTestId("pc-template-start")).toBeNull();
   });
 });
