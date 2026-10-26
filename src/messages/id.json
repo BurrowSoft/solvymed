@@ -2535,5 +2535,11 @@
   "videoTutorials": {
     "title": "Tutorial video",
     "subtitle": "Video singkat yang menunjukkan setiap bagian SolvyMed"
+  },
+  "firstPatient": {
+    "title": "Tambahkan pasien pertama Anda",
+    "body": "Mulai dengan satu pasien: setelah itu Anda bisa membuat janji, menulis rekam medis, dan menerbitkan dokumen untuknya.",
+    "add": "Tambah pasien",
+    "book": "Buat janji pertama"
   }
 }

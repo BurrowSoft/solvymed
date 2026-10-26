@@ -7,6 +7,7 @@ import { addDays, clinicDate, clinicHour, getClinicTimeZone } from "@/lib/clinic
 import { getOnboardingFlags, getSetupProgress, showChecklist } from "@/lib/setup";
 import { SetupChecklist } from "@/components/SetupChecklist";
 import { OnboardingCard } from "@/components/OnboardingCard";
+import { FirstPatientCard } from "@/components/FirstPatientCard";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
 import { getPracticeCountry } from "@/lib/practiceCountry";
@@ -191,6 +192,9 @@ export default async function DashboardPage({
           </Link>
         </div>
       </div>
+
+      {/* Activation B1: no patient yet → one clear next step, until the first one exists. */}
+      {!isSecretary && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}
 
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
       {setupProgress && showChecklist(setupProgress) && (

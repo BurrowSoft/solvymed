@@ -16,6 +16,8 @@ If the CPF is already registered, the app warns you and doesn't create a duplica
 **On the website:** In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website.
 **No site:** {pending:patient-address-live} Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site. Em **Endereço** (fechado enquanto vazio) ficam CEP, rua, número, complemento, bairro, cidade e UF (numa clínica fora do Brasil, os campos do país: na Tailândia, บ้านเลขที่, ซอย, ตำบล, อำเภอ, จังหวัด). Clínicas no Brasil têm também o **CNS** (15 dígitos, no cartão do SUS). **Observações** é para informações administrativas: não escreva dados clínicos ali, use o prontuário. A secretária vê e edita esses campos. O endereço aparece numa linha na página do paciente (com **Editar**) e na receita impressa, abaixo do nome.
 **On the website:** {pending:patient-address-live} In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website. **Address** (collapsed while empty) has the postal code, street, number, complement, neighbourhood, city and state (in a clinic outside Brazil, that country's fields: in Thailand, house number, soi, subdistrict, district, province). Clinics in Brazil also have the **CNS** (15 digits, on the SUS card). **Notes** is for administrative information: don't write clinical details there, use the medical record. The secretary sees and edits these fields. The address shows on one line on the patient's page (with **Edit**) and on the printed prescription, under the name.
+**No site:** Enquanto a clínica ainda não tem nenhum paciente, a **Visão geral** mostra **Adicione seu primeiro paciente**, com **Adicionar paciente** e **Agendar a primeira consulta**. O cartão some quando o primeiro paciente é cadastrado.
+**On the website:** While the practice has no patients yet, the **Overview** shows **Add your first patient**, with **Add patient** and **Book the first appointment**. The card goes away once the first patient is added.
 Thai title: "เพิ่มผู้ป่วย"
 **th**
 1. เปิด **ผู้ป่วย** แล้วแตะ **+** (**ผู้ป่วยใหม่**)
@@ -23,6 +25,7 @@ Thai title: "เพิ่มผู้ป่วย"
 3. แตะ **บันทึก**
 เลขประจำตัวประชาชนต้องมี 13 หลักที่ถูกต้อง หากเลขนี้มีอยู่แล้ว แอปจะแจ้งเตือนและไม่สร้างผู้ป่วยซ้ำ หากเบอร์โทรศัพท์ หรือชื่อกับวันเกิด ดูเหมือนผู้ป่วยที่มีอยู่แล้ว แอปจะแสดงผู้ป่วยที่คล้ายกัน ให้คุณเปิดรายการเดิมหรือสร้างใหม่ต่อไป
 **ในเว็บไซต์:** ใน **ผู้ป่วย** คลิก **ผู้ป่วยใหม่** กรอกข้อมูล แล้วคลิก **บันทึกผู้ป่วย** การแจ้งเตือนเลขซ้ำและผู้ป่วยที่คล้ายกันแสดงบนเว็บไซต์เช่นกัน
+**ในเว็บไซต์:** ขณะที่คลินิกยังไม่มีผู้ป่วย หน้า **ภาพรวม** จะแสดง **เพิ่มผู้ป่วยรายแรก** พร้อม **เพิ่มผู้ป่วย** และ **นัดหมายครั้งแรก** การ์ดนี้จะหายไปเมื่อเพิ่มผู้ป่วยรายแรกแล้ว
 `open:new-patient`
 
 ---
