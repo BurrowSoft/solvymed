@@ -161,6 +161,12 @@ describe("POST /api/patient-channel/requests", () => {
     expect([res.status, (await res.json()).code]).toEqual([503, "retry_later"]);
   });
 
+  it("too many sends in an hour (the database's limit, cf #623) → 429 rate_limited", async () => {
+    h.submitErrors = [{ message: "rate_limited" }];
+    const res = await post(submit, { profId: PROF, reasonId: REASON, answers: FORM, replace: true });
+    expect([res.status, (await res.json()).code]).toEqual([429, "rate_limited"]);
+  });
+
   it("the practice closed meanwhile → 403 pc_practice_closed (the page shows 'not available')", async () => {
     h.submitErrors = [{ message: "pc_practice_closed" }];
     const res = await post(submit, { profId: PROF, reasonId: REASON, answers: FORM });

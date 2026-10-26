@@ -2751,7 +2751,11 @@
         "hint": "診所認得的詞語會變成標籤：選擇一個建議（點按、Enter、Tab 或 \";\"），或輸入完整詞語後按空白鍵。"
       },
       "entryButton": "聯絡醫師",
-      "unavailable": "此管道目前無法使用。請直接聯絡診所。"
+      "unavailable": "此管道目前無法使用。請直接聯絡診所。",
+      "rateLimited": "您在過去一小時內已多次送出。您的請求已送達診所，請等待回覆。",
+      "urgentCall": "如情況緊急，請撥打 {number}。",
+      "openRequest": "您未處理的請求",
+      "sentAt": "送出於 {when}"
     }
   }
 }

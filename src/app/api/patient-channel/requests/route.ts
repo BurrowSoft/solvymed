@@ -13,7 +13,8 @@ export const preferredRegion = "gru1";
 // with score.ts (the same scoring as a rules save's rescore: requestScore), and written by
 // 237's pc_submit (service role) with the rules version they were scored with. A rules
 // save in between → rules_changed: reload, rescore and retry once, then 503 retry_later.
-// One open request per patient: 409 open_exists unless replace.
+// One open request per patient: 409 open_exists unless replace. Too many sends in an hour
+// (the database's limit per patient and practice) → 429 rate_limited.
 export async function POST(request: NextRequest) {
   const { user, db } = await pcCaller(request).catch(() => ({ user: null, db: null }));
   if (!user || !db) return pcFail("unauthorized", 401);
@@ -67,6 +68,8 @@ export async function POST(request: NextRequest) {
     const m = error.message ?? "";
     if (m.includes("rules_changed")) continue;
     if (m.includes("open_exists")) return pcFail("open_exists", 409);
+    // 237+'s limit on pc_submit (cf, #623): every send writes a permanent clinical record.
+    if (m.includes("rate_limited")) return pcFail("rate_limited", 429);
     if (m.includes("invalid_answers")) return pcFail("invalid_answers", 422);
     if (m.includes("not_found")) return pcFail("not_found", 404);
     const code = accessCode(m);

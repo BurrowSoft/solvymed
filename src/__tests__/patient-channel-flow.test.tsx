@@ -116,6 +116,17 @@ describe("the patient's flow", () => {
     expect((submit.mock.calls[0] as unknown[])[3]).toEqual(["a1"]);
   });
 
+  it("M4b: too many sends → 01's message, the emergency line and the open request; nothing else sent", async () => {
+    const loadOpen = vi.fn(async () => ({ reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T10:00:00Z" }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={async () => ({ status: "rate_limited" })} loadOpen={loadOpen} />));
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const box = await screen.findByTestId("pc-rate-limited");
+    expect(box).toHaveTextContent(P.rateLimited);
+    expect(box).toHaveTextContent(P.urgentCall.replace("{number}", "192"));
+    expect(await screen.findByTestId("pc-open-request")).toHaveTextContent("Possível efeito colateral");
+  });
+
   it("the skip ends with nothing sent", async () => {
     flow();
     toForm("efe");

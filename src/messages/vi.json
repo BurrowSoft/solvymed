@@ -2751,7 +2751,11 @@
         "hint": "Các thuật ngữ phòng khám biết sẽ trở thành thẻ: chọn một gợi ý (nhấp, Enter, Tab hoặc \";\") hoặc gõ trọn từ rồi nhấn dấu cách."
       },
       "entryButton": "Liên hệ bác sĩ",
-      "unavailable": "Kênh này hiện không khả dụng. Vui lòng liên hệ trực tiếp với phòng khám."
+      "unavailable": "Kênh này hiện không khả dụng. Vui lòng liên hệ trực tiếp với phòng khám.",
+      "rateLimited": "Bạn đã gửi nhiều lần trong một giờ qua. Yêu cầu của bạn đã đến phòng khám; vui lòng chờ phản hồi.",
+      "urgentCall": "Nếu khẩn cấp, hãy gọi {number}.",
+      "openRequest": "Yêu cầu đang mở của bạn",
+      "sentAt": "Đã gửi {when}"
     }
   }
 }

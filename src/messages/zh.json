@@ -2751,7 +2751,11 @@
         "hint": "诊所已知的词语会变成标签：选择一个建议（点击、Enter、Tab 或 \";\"），或输入完整词语后按空格。"
       },
       "entryButton": "联系医生",
-      "unavailable": "此渠道不可用。请直接联系诊所。"
+      "unavailable": "此渠道不可用。请直接联系诊所。",
+      "rateLimited": "您在过去一小时内已多次发送。您的请求已送达诊所，请等待回复。",
+      "urgentCall": "如情况紧急，请拨打 {number}。",
+      "openRequest": "您未处理的请求",
+      "sentAt": "发送于 {when}"
     }
   }
 }

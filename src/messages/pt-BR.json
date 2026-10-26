@@ -2751,7 +2751,11 @@
         "hint": "Termos que o consultório conhece viram etiquetas: escolha a sugestão (clique, Enter, Tab ou \";\") ou digite a palavra inteira e um espaço."
       },
       "entryButton": "Fale com o Médico",
-      "unavailable": "Este canal não está disponível. Fale diretamente com o consultório."
+      "unavailable": "Este canal não está disponível. Fale diretamente com o consultório.",
+      "rateLimited": "Você já enviou várias vezes nesta última hora. Sua solicitação está com o consultório; aguarde a resposta.",
+      "urgentCall": "Se for urgente, ligue {number}.",
+      "openRequest": "Sua solicitação aberta",
+      "sentAt": "Enviada em {when}"
     }
   }
 }

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientChannel/score";
-import { PC_TEXT_MAX, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
+import { PC_TEXT_MAX, type PcOpenRequest, type PcOpenRequestFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
+import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
@@ -14,7 +15,7 @@ import { SmartTextBox } from "./SmartTextBox";
 // offline too) and from /preview (red); the automatic messages and "I don't need to send"
 // come only from /preview, and the skip is never offered with a warning or when red.
 
-type Step = "entry" | "faq" | "reason" | "form" | "sent" | "replace" | "resolved" | "unavailable";
+type Step = "entry" | "faq" | "reason" | "form" | "sent" | "replace" | "resolved" | "unavailable" | "rateLimited";
 const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "when", n: 3 },
   { key: "intensity", n: 3 },
@@ -23,17 +24,20 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
 const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
 const PREVIEW_MS = 300;
 
-export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe }: {
+export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe, loadOpen }: {
   page: PcPatientPage;
   preview: PcPreviewFn;
   submit: PcSubmitFn;
   // "This answered my question": counted for the doctor (no content), §4.7 /selfserve.
   onSelfServe?: PcSelfServeFn;
+  // The patient's open request, shown on the "sent too many times" screen (01).
+  loadOpen?: PcOpenRequestFn;
   // The preview test's "sample data, nothing is sent" bar.
   banner?: string;
 }) {
   const t = useTranslations("patientChannel.patient");
   const ta = useTranslations("patientChannel.answers");
+  const locale = useLocale();
   const [step, setStep] = useState<Step>("entry");
   const [reason, setReason] = useState<PcReason | null>(null);
   const [answers, setAnswers] = useState<Answers>(START);
@@ -41,6 +45,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe 
   const [check, setCheck] = useState<PcPreview>({ warning: false, autoMessages: [], canSkip: false });
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [openRequest, setOpenRequest] = useState<PcOpenRequest | null>(null);
   const number = page.emergencyNumber ?? t("localNumber");
   const symptomForm = reason?.kind === "symptom_form";
   const who = reason?.destination === "secretary" ? t("secretary") : page.doctorName;
@@ -69,6 +74,10 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe 
     if (r.status === "sent") setStep("sent");
     else if (r.status === "open_exists") setStep("replace");
     else if (r.status === "unavailable") setStep("unavailable");
+    else if (r.status === "rate_limited") {
+      setStep("rateLimited");
+      void loadOpen?.().then(setOpenRequest).catch(() => undefined);
+    }
     else setFailed(true);
   };
   const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); };
@@ -216,6 +225,21 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe 
         <button type="button" onClick={restart} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("again")}</button>
       </>
     );
+  } else if (step === "rateLimited") {
+    body = (
+      <div className="flex flex-col gap-3" data-testid="pc-rate-limited">
+        <p className="rounded-xl border border-amber-400 bg-amber-50 p-3 text-sm text-amber-900">{t("rateLimited")}</p>
+        <p className="rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900">{t("urgentCall", { number })}</p>
+        {openRequest && (
+          <div data-testid="pc-open-request" className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm">
+            <span className="block text-xs text-slate-500">{t("openRequest")}</span>
+            <b className="block break-words">{openRequest.reasonTitle}</b>
+            <span className="text-xs text-slate-500">{t("sentAt", { when: formatWhen(openRequest.createdAt, locale) })}</span>
+          </div>
+        )}
+        <button type="button" onClick={restart} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("again")}</button>
+      </div>
+    );
   } else if (step === "unavailable") {
     body = <ChannelUnavailableBody emergencyNumber={number} />;
   } else {
@@ -249,6 +273,11 @@ export function ChannelUnavailableBody({ emergencyNumber }: { emergencyNumber: s
       <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">{t("unavailable")}</p>
     </div>
   );
+}
+
+function formatWhen(iso: string, locale: string): string {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat(dateLocale(locale), { dateStyle: "short", timeStyle: "short" }).format(d);
 }
 
 function initials(name: string): string {
