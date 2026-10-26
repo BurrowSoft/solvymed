@@ -243,7 +243,7 @@ export default async function SettingsPage({
   // Document Studio's button in My brand: the document_studio flag (testers first).
   const studioOn = liveFeatures.myBrand && (await studioEnabled(supabase));
   // The Patient Channel (M3a): the patient_channel flag (testers first).
-  const patientChannelOn = await patientChannelEnabled(supabase);
+  const patientChannelOn = await patientChannelEnabled(supabase, user.id);
   // "Meus colegas" (167): the doctor's own list.
   const colleagues = liveFeatures.colleagues && !locked ? await listColleagues() : null;
   // The fields' own values: the raw row (the owner may read it), never the

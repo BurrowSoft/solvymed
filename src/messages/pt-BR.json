@@ -2551,10 +2551,17 @@
     "entryOpen": "Configurar",
     "settings": {
       "intro": "Tudo aqui é seu: os pontos, as palavras e as mensagens. Valores negativos tiram pontos.",
-      "saveSoon": "Salvar chega numa próxima atualização. Por enquanto, monte e teste as suas regras aqui: nada é salvo ainda.",
       "testTitle": "Testar as suas regras",
       "testText": "Abre o formulário do paciente com as regras de agora. Você vê a pontuação linha por linha, o aviso de emergência e as mensagens automáticas. Nada é enviado.",
-      "testButton": "Testar como paciente"
+      "testButton": "Testar como paciente",
+      "save": "Salvar regras",
+      "saving": "Salvando…",
+      "saved": "Regras salvas. As solicitações em aberto foram recalculadas com elas.",
+      "unsaved": "Alterações não salvas",
+      "conflict": "Estas regras foram alteradas em outro lugar. Recarregue a página para ver a versão atual.",
+      "reload": "Recarregar",
+      "invalid": "Confira as regras: há algo para corrigir antes de salvar.",
+      "error": "Não foi possível salvar. Verifique a conexão e tente de novo."
     },
     "symptoms": {
       "title": "Sintomas: pontos e palavras do paciente",
@@ -2565,13 +2572,17 @@
       "removeNamed": "Remover {name}",
       "words": "Palavras do paciente",
       "wordsPlaceholder": "ex.: sem fôlego, falta de ar",
-      "thaiShort": "Palavras em tailandês precisam de 2 letras ou mais.",
       "points": "Pontos",
       "pointsFor": "Pontos para {name}",
       "immediate": "Aviso de emergência imediato",
       "new": "Novo sintoma",
       "add": "Adicionar",
-      "wordsHelp": "\"Palavras do paciente\": como o paciente costuma escrever, separadas por vírgula. O nome do sintoma também conta. \"Aviso de emergência imediato\" mostra o número de emergência assim que o sintoma aparece (caixa ou texto), qualquer que seja a pontuação. Use para sinais de alarme."
+      "wordsHelp": "\"Palavras do paciente\": como o paciente costuma escrever, separadas por vírgula. O nome do sintoma também conta. \"Aviso de emergência imediato\" mostra o número de emergência assim que o sintoma aparece (caixa ou texto), qualquer que seja a pontuação. Use para sinais de alarme.",
+      "termShort": "Os termos precisam de 2 letras ou mais.",
+      "exists": "Já existe um sintoma com esse nome.",
+      "rename": "Renomear",
+      "renameLabel": "Novo nome para {name}",
+      "renameSave": "Salvar nome"
     },
     "combos": {
       "title": "Combinações",
@@ -2648,7 +2659,8 @@
       "editing": "Editando…",
       "pickTerm": "Marque pelo menos 1 termo.",
       "writeMessage": "Escreva a mensagem.",
-      "full": "Você chegou ao limite de mensagens."
+      "full": "Você chegou ao limite de mensagens.",
+      "tooManyTerms": "Escolha no máximo 10 termos."
     },
     "meds": {
       "title": "Remédios reconhecidos no texto",
