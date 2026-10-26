@@ -300,11 +300,11 @@
     "what": "The Android app's demo is live (mobile #535): the entry \"Explore the demo\" on the sign-in screen, its DemoGate / DemoBar / tour, shipped as an OTA to production after the web demo is live and stable. Flip when that OTA is out (01). Gates Help K1's app line and the App Map's app sentence."
   },
   "app-unlinked-delete-live": {
-    "met": false,
-    "what": "The Android app's invite gate (\"Conectar ao seu médico\") offers \"Excluir minha conta\" / \"Pedir exclusão da conta\" (mobile #554, on 243's RPCs; the website has had it since #640). Flip when #554's production OTA is live (the mobile developer says so). Gates Help K4's app line and the App Map's app rule."
+    "met": true,
+    "what": "LIVE 2026-10-26: mobile #554's production OTA, group 0d051ab0, 18:02:29Z (the mobile developer). The Android app's invite gate (\"Conectar ao seu médico\") offers \"Excluir minha conta\" / \"Pedir exclusão da conta\" (mobile #554, on 243's RPCs; the website has had it since #640). Flip when #554's production OTA is live (the mobile developer says so). Gates Help K4's app line and the App Map's app rule."
   },
   "migration-244": {
-    "met": false,
-    "what": "Migration 244 is applied on production and live-checked: close_my_account refuses a patient a practice removed with 'removed_by_practice', and the app's Settings → Excluir Conta then offers the request form (the website's route answers the code since #644; the app maps it in #554). Flip when the mobile developer reports 244 live. Gates Help K4's line and the App Map rule for that refusal."
+    "met": true,
+    "what": "LIVE 2026-10-26: applied 18:12:36–18:14:28Z and live-checked (prod suites + web tester 1's end-to-end pair: status → removed_by_practice, the route → 409), per the mobile developer. Migration 244 is applied on production and live-checked: close_my_account refuses a patient a practice removed with 'removed_by_practice', and the app's Settings → Excluir Conta then offers the request form (the website's route answers the code since #644; the app maps it in #554). Flip when the mobile developer reports 244 live. Gates Help K4's line and the App Map rule for that refusal."
   }
 }
