@@ -34,8 +34,15 @@ export type PcPatientPage = {
 export type PcPreview = { warning: boolean; autoMessages: { id: string; text: string; tone: "info" | "attention" }[]; canSkip: boolean };
 export type PcPreviewFn = (reasonId: string, answers: Answers) => Promise<PcPreview>;
 
-export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "error" };
-export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean) => Promise<PcSubmitResult>;
+// unavailable: the practice closed or the patient was archived meanwhile (237).
+// rate_limited: too many sends in the last hour (the database's limit, cf #623).
+export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
+// The patient's open request with this practice (pc_my_requests), for the limit screen.
+export type PcOpenRequest = { reasonTitle: string; createdAt: string };
+export type PcOpenRequestFn = () => Promise<PcOpenRequest | null>;
+// shownIds: the automatic messages the patient saw (kept with the request, as shown).
+export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean, shownIds: string[]) => Promise<PcSubmitResult>;
+export type PcSelfServeFn = (kind: "faq_resolved" | "auto_resolved") => void;
 
 export const PC_TEXT_MAX = 500;
 

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { useState } from "react";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { readdirSync, readFileSync } from "node:fs";
@@ -84,6 +84,47 @@ describe("the patient's flow", () => {
     await waitFor(() => expect(screen.queryByTestId("pc-skip")).toBeNull());
     expect(screen.getByTestId("pc-auto")).toBeInTheDocument();
     expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+  });
+
+  it("M4b: the FAQ and the skip are counted for the doctor (no content)", async () => {
+    const onSelfServe = vi.fn();
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={sampleSubmit()} onSelfServe={onSelfServe} />));
+    fireEvent.click(screen.getByTestId("pc-start"));
+    fireEvent.click(screen.getByTestId("pc-faq-solved"));
+    expect(onSelfServe).toHaveBeenCalledWith("faq_resolved");
+  });
+
+  it("M4b: the practice closed or the patient archived at send → not available, the emergency notice stays", async () => {
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={async () => ({ status: "unavailable" })} />));
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const box = await screen.findByTestId("pc-unavailable");
+    expect(box).toHaveTextContent(P.unavailable);
+    expect(box).toHaveTextContent("192");
+  });
+
+  it("M4b: the submit gets the automatic messages the patient saw", async () => {
+    const submit = vi.fn(async () => ({ status: "sent" as const }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} />));
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Coceira na pele" }));
+    choose(A.whenQ, A.when0);
+    choose(A.intensityQ, A.intensity0);
+    await screen.findByTestId("pc-skip");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await waitFor(() => expect(submit).toHaveBeenCalled());
+    expect((submit.mock.calls[0] as unknown[])[3]).toEqual(["a1"]);
+  });
+
+  it("M4b: too many sends → 01's message, the emergency line and the open request; nothing else sent", async () => {
+    const loadOpen = vi.fn(async () => ({ reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T10:00:00Z" }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={async () => ({ status: "rate_limited" })} loadOpen={loadOpen} />));
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const box = await screen.findByTestId("pc-rate-limited");
+    expect(box).toHaveTextContent(P.rateLimited);
+    expect(box).toHaveTextContent(P.urgentCall.replace("{number}", "192"));
+    expect(await screen.findByTestId("pc-open-request")).toHaveTextContent("Possível efeito colateral");
   });
 
   it("the skip ends with nothing sent", async () => {

@@ -4,7 +4,7 @@ import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientChannelEnabled } from "@/lib/patientChannel/live";
 import { fromStoredRules, toStoredRules, validateRules } from "@/lib/patientChannel/rules";
-import { scoreRequest, type Answers } from "@/lib/patientChannel/score";
+import { scoreForRequest, storedAnswers, type ReasonKind } from "@/lib/patientChannel/requestScore";
 import { pcAdmin, pcBody, pcCaller, pcFail } from "@/lib/patientChannel/server";
 
 export const runtime = "nodejs";
@@ -56,19 +56,14 @@ export async function PUT(request: NextRequest) {
   try {
     const { data: open, error: readError } = await admin
       .from("pc_requests")
-      .select("id, answers, text")
+      .select("id, answers, text, reason_snapshot")
       .eq("professional_id", user.id)
       .eq("status", "open")
       .lt("rules_version", version as number);
     if (readError) throw readError;
-    const scores = (open ?? []).map((q: { id: string; answers: Partial<Answers> | null; text: string | null }) => {
-      const a = q.answers ?? {};
-      const r = scoreRequest(config, {
-        symptomIds: Array.isArray(a.symptomIds) ? a.symptomIds : [],
-        chips: Array.isArray(a.chips) ? a.chips : [],
-        when: a.when ?? 0, intensity: a.intensity ?? 0, stillTaking: a.stillTaking ?? 0,
-        text: q.text ?? "",
-      });
+    // The same scoring as the submit (lib/patientChannel/requestScore), per reason kind.
+    const scores = (open ?? []).map((q: { id: string; answers: unknown; text: string | null; reason_snapshot: { kind?: ReasonKind } | null }) => {
+      const r = scoreForRequest(config, q.reason_snapshot?.kind ?? "symptom_form", storedAnswers(q.answers, q.text));
       return { id: q.id, total: r.total, band: r.band, lines: r.lines, floorApplied: r.floorApplied };
     });
     if (scores.length > 0) {

@@ -1,13 +1,20 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { patientChannelPreviewTest } from "@/lib/patientChannel/live";
+import { countryProfile } from "@/lib/country";
+import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientChannel/live";
+import { UUID, patientPage } from "@/lib/patientChannel/practice";
+import { pcAdmin } from "@/lib/patientChannel/server";
+import type { PcPatientPage } from "@/lib/patientChannel/patientPage";
 import { SampleChannel } from "./SampleChannel";
+import { RealChannel } from "./RealChannel";
+import { UnavailableChannel } from "./UnavailableChannel";
 
 // The patient's Patient Channel with one doctor (specs/patient-contact-tech.md §6; 01's
-// route, 10-22), from the doctor card's "Fale com o Médico". M4a: the flow's UI only. Until
-// migration 237 (pc_patient_page, the connection check, /preview and the submit) it runs
-// only as a preview test on sample data (?pc_test=1, never on Production); otherwise 404,
-// whatever the flag says.
+// route), from the doctor card's "Fale com o Médico". Dark: 404 unless the channel is on
+// for the caller (the public flag or 237's testers). 237's pc_patient_page, run as the
+// patient, is the access check: not connected, or the doctor's channel off → 404; the
+// practice closed or the patient archived → "this channel isn't available" with the
+// emergency notice (01). ?pc_test=1 (never Production) keeps the M4a sample practice.
 export default async function PatientChannelPage({
   params,
   searchParams,
@@ -15,11 +22,34 @@ export default async function PatientChannelPage({
   params: Promise<{ locale: string; professionalId: string }>;
   searchParams: Promise<{ pc_test?: string | string[] }>;
 }) {
-  const { locale } = await params;
+  const { locale, professionalId } = await params;
   const { pc_test } = await searchParams;
-  if (!patientChannelPreviewTest(pc_test)) notFound();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect(`${locale === "en" ? "" : `/${locale}`}/auth/login`);
-  return <SampleChannel />;
+  if (patientChannelPreviewTest(pc_test)) return <SampleChannel />;
+  if (!UUID.test(professionalId) || !(await patientChannelEnabled(supabase, user.id))) notFound();
+
+  const access = await patientPage(supabase, professionalId);
+  if (!access.ok) {
+    if (access.code !== "pc_practice_closed" && access.code !== "pc_patient_archived") notFound();
+    // The practice's country (the right emergency number) without the patient page.
+    const { data } = await pcAdmin().from("professionals").select("country").eq("id", professionalId).maybeSingle();
+    return <UnavailableChannel emergencyNumber={countryProfile((data as { country?: string | null } | null)?.country).emergencyNumber} />;
+  }
+
+  const p = access.page;
+  const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle();
+  const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null } | null;
+  const page: PcPatientPage = {
+    doctorName: p.brand?.displayName?.trim() || pub?.full_name?.trim() || "",
+    practiceLine: [pub?.clinic_name, p.brand?.title?.trim() || pub?.specialty].filter(Boolean).join(" · "),
+    emergencyNumber: countryProfile(p.country).emergencyNumber,
+    slaBusinessDays: p.slaBusinessDays,
+    welcome: p.welcome ?? "",
+    reasons: p.reasons.map((r) => ({ ...r, subtitle: r.subtitle ?? "", options: Array.isArray(r.options) ? r.options : [] })),
+    faq: p.faq,
+    vocabulary: p.vocabulary,
+  };
+  return <RealChannel page={page} profId={professionalId} />;
 }

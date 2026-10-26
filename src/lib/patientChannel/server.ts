@@ -10,7 +10,10 @@ import { createClient } from "@/lib/supabase/server";
 
 export type PcCode =
   | "unauthorized" | "not_found" | "not_doctor" | "too_large" | "bad_request"
-  | "invalid_rules" | "version_conflict" | "failed";
+  | "invalid_rules" | "version_conflict" | "failed"
+  // the patient routes (M4b)
+  | "channel_off" | "not_connected" | "pc_practice_closed" | "pc_patient_archived"
+  | "invalid_answers" | "open_exists" | "retry_later" | "rate_limited";
 
 export function pcFail(code: PcCode, status: number, extra?: Record<string, unknown>) {
   return NextResponse.json({ code, ...extra }, { status });
