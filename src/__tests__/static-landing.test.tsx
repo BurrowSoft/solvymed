@@ -48,6 +48,12 @@ describe("the closed/deleted note, read in the browser", () => {
     expect(screen.queryByRole("status")).toBeNull();
   });
 
+  it("a self-deleted patient account (243, B): its note", async () => {
+    window.history.replaceState(null, "", "/?account_deleted=1");
+    render(<AccountClosedNotice closed="Conta encerrada." deleted="Conta excluída (antiga)." selfDeleted="Conta excluída." />);
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Conta excluída."));
+  });
+
   it("a cancelled Google sign-up (242, B4 F3): its note only when the text is given", async () => {
     window.history.replaceState(null, "", "/?signup_cancelled=1");
     const r = render(<AccountClosedNotice closed="Conta encerrada." deleted="Conta excluída." cancelled="Cadastro cancelado." />);

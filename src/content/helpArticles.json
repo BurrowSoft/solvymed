@@ -1681,6 +1681,10 @@
             },
             {
               "type": "p",
+              "text": "Um paciente sem nenhum médico pode excluir a própria conta na tela **Conectar a um médico** (**Excluir minha conta**). Quem você removeu não pode: vê **Pedir exclusão da conta**, para que a remoção continue valendo."
+            },
+            {
+              "type": "p",
               "text": "No site, o paciente com um só médico vê **Desconectar** no fim do cartão do médico, em **Minhas consultas**. Não dá enquanto houver uma consulta marcada com você; os pedidos pendentes dele são cancelados e você é avisado. O cadastro e o histórico continuam com você."
             }
           ],
@@ -1700,6 +1704,10 @@
             {
               "type": "p",
               "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, restore the record from **Archived** and share its personal code."
+            },
+            {
+              "type": "p",
+              "text": "A patient with no doctor can delete their own account on the **Connect to a doctor** screen (**Delete my account**). Someone you removed can't: they see **Request account deletion** instead, so the removal still holds."
             },
             {
               "type": "p",

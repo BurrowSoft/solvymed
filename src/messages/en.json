@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "You're already connected to {doctor}. Ask the clinic to combine your records.",
       "alreadyConnectedSamePracticeNoName": "You're already connected to this clinic. Ask the clinic to combine your records.",
       "codeUnavailable": "Couldn't connect with this code. Please contact the clinic.",
-      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code."
+      "storedCodeNotFound": "Invite code not found. Ask your clinic for the code.",
+      "deleteAccount": "Delete my account",
+      "deleteConfirm": "This deletes your account. You can sign up again anytime.",
+      "deletedNotice": "Account deleted.",
+      "requestDeletion": "Request account deletion"
     },
     "pendingConfirmation": {
       "loading": "Checking your status…",

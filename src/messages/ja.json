@@ -924,7 +924,11 @@
       "alreadyConnectedSamePractice": "すでに {doctor} とつながっています。クリニックに記録の統合を依頼してください。",
       "alreadyConnectedSamePracticeNoName": "すでにこのクリニックとつながっています。クリニックに記録の統合を依頼してください。",
       "codeUnavailable": "このコードでは接続できませんでした。クリニックにお問い合わせください。",
-      "storedCodeNotFound": "招待コードが見つかりません。クリニックにコードを確認してください。"
+      "storedCodeNotFound": "招待コードが見つかりません。クリニックにコードを確認してください。",
+      "deleteAccount": "アカウントを削除",
+      "deleteConfirm": "アカウントが削除されます。いつでも再登録できます。",
+      "deletedNotice": "アカウントを削除しました。",
+      "requestDeletion": "アカウント削除を依頼"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
