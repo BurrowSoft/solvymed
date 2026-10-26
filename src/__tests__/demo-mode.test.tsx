@@ -168,17 +168,23 @@ describe("DemoBar", () => {
   });
 
   // Vitor, 10-26: only the bar's sign-up glows (not the tour/value CTAs); a box-shadow
-  // pulse (no layout shift), 2.4 s; reduced motion: a still ring; paused on keyboard focus.
+  // pulse on a ::after (no layout shift), 2.4 s; reduced motion: a still ring; hidden on
+  // keyboard focus. #628 ❌: an unlayered box-shadow on the button itself hid Tailwind's
+  // (layered) focus ring, so no rule may set the button's own box-shadow.
   it("the sign-up button glows; reduced motion keeps a still ring; focus shows the ring", async () => {
     render(wrap(<DemoBar locale="pt-BR" country="BR" />));
-    expect(screen.getByTestId("demo-signup").className).toContain("demo-signup-glow");
+    const button = screen.getByTestId("demo-signup");
+    expect(button.className).toContain("demo-signup-glow");
+    expect(button.className).toMatch(/focus-visible:ring-2 .*focus-visible:ring-\[#116E99\]/);
     expect(document.querySelectorAll(".demo-signup-glow")).toHaveLength(1);
     const { readFileSync } = await import("node:fs");
     const css = readFileSync("src/app/globals.css", "utf8");
-    expect(css).toContain(".demo-signup-glow { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); animation: demo-signup-glow 2.4s");
+    const rules = [...css.matchAll(/([^{}]*\.demo-signup-glow[^{}]*)\{([^{}]*)\}/g)].map((m) => ({ sel: m[1].trim(), body: m[2] }));
+    expect(rules.filter((r) => !r.sel.includes("::after") && r.body.includes("box-shadow"))).toEqual([]);
+    expect(rules.find((r) => r.sel === ".demo-signup-glow::after")?.body).toContain("animation: demo-signup-glow 2.4s");
     expect(css).toMatch(/@keyframes demo-signup-glow \{[^@]*box-shadow/);
-    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{ \.demo-signup-glow \{ animation: none; box-shadow: [^}]*0 0 0 3px/);
-    expect(css).toContain(".demo-signup-glow:focus-visible { animation: none; }");
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{ \.demo-signup-glow::after \{ animation: none; box-shadow: [^}]*0 0 0 3px/);
+    expect(css).toContain(".demo-signup-glow:focus-visible::after { display: none; }");
   });
 });
 
