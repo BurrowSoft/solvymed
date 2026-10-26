@@ -2597,6 +2597,18 @@
     "book": "Book the first appointment"
   },
   "patientChannel": {
+    "cover": {
+      "title": "Cover image",
+      "hint": "Shown at the top of your channel page. It's public once saved (like the logo).",
+      "upload": "Upload image",
+      "change": "Change image",
+      "remove": "Remove",
+      "removeConfirm": "Remove the cover image?",
+      "useThis": "Use this image",
+      "errorSize": "The image must be 3 MB or less.",
+      "errorType": "Use a PNG, JPEG or WebP file.",
+      "errorNotSetUp": "Save the channel settings before uploading the cover."
+    },
     "title": "Patient Channel",
     "entryText": "Your patients ask their questions through an organised channel, ranked by urgency with the score you set up.",
     "entryOpen": "Set up",
@@ -2846,7 +2858,7 @@
       "background": "Page background",
       "bg": {
         "both": "Top band + logo in the background",
-        "cover": "Top band (your brand colour)",
+        "cover": "Top band (brand colour or cover image)",
         "watermark": "Logo in the background",
         "plain": "Plain"
       },

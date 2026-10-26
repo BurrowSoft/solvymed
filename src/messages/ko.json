@@ -2567,6 +2567,18 @@
     "book": "첫 예약 잡기"
   },
   "patientChannel": {
+    "cover": {
+      "title": "커버 이미지",
+      "hint": "채널 페이지 상단에 표시됩니다. 저장하면 공개됩니다(로고와 같음).",
+      "upload": "이미지 업로드",
+      "change": "이미지 변경",
+      "remove": "삭제",
+      "removeConfirm": "커버 이미지를 삭제할까요?",
+      "useThis": "이 이미지 사용",
+      "errorSize": "이미지는 3MB 이하여야 합니다.",
+      "errorType": "PNG, JPEG 또는 WebP 파일을 사용하세요.",
+      "errorNotSetUp": "커버를 업로드하기 전에 채널 설정을 저장하세요."
+    },
     "title": "환자 채널",
     "entryText": "환자가 정리된 채널을 통해 질문을 보내며, 설정하신 점수에 따라 긴급도 순으로 정렬됩니다.",
     "entryOpen": "설정",
@@ -2816,7 +2828,7 @@
       "background": "페이지 배경",
       "bg": {
         "both": "상단 띠 + 배경 로고",
-        "cover": "상단 띠(브랜드 색상)",
+        "cover": "상단 띠(브랜드 색상 또는 커버 이미지)",
         "watermark": "배경 로고",
         "plain": "기본"
       },

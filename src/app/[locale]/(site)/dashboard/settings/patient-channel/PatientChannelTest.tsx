@@ -4,6 +4,10 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { findTerms, scoreRequest, type AnswerKey, type Answers, type ChannelConfig, type ScoreLine } from "@/lib/patientChannel/score";
 import { BandTag } from "./BandTag";
+import { PcPageFrame } from "@/components/patientChannel/PcPageFrame";
+import type { PageLook } from "@/lib/patientChannel/pageLook";
+
+export type PatientView = { doctorName: string; practiceLine: string; look: PageLook };
 
 // "Test as a patient" (§6; the prototype's test mode): the patient's form on the rules
 // being edited, the doctor's live score beside it, and on Send a result screen. No
@@ -18,7 +22,7 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "stillTaking", n: 2 },
 ];
 
-export function PatientChannelTest({ rules, emergencyNumber, onBack }: { rules: ChannelConfig; emergencyNumber: string; onBack: () => void }) {
+export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView }: { rules: ChannelConfig; emergencyNumber: string; onBack: () => void; patientView?: PatientView }) {
   const t = useTranslations("patientChannel");
   const [answers, setAnswers] = useState<Answers>(START);
   const [result, setResult] = useState<"sent" | "skipped" | null>(null);
@@ -57,9 +61,11 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack }: { rules: 
       {bar}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start">
         <form
-          className="min-w-0 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-6"
+          className="min-w-0 overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm"
           onSubmit={(e) => { e.preventDefault(); setResult("sent"); }}
         >
+          {/* As patients see the page: the saved band / cover, logo and watermark (01). */}
+          <PcPageFrame look={patientView?.look} doctorName={patientView?.doctorName ?? ""} practiceLine={patientView?.practiceLine ?? ""} testId="pc-test-page">
           <fieldset className="min-w-0">
             <legend className="text-sm text-slate-700">{t("test.pick")}</legend>
             <div className="mt-2 flex flex-col gap-1.5">
@@ -130,7 +136,8 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack }: { rules: 
             </div>
           )}
 
-          <button type="submit" className="mt-4 w-full rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700">{t("test.send")}</button>
+          <button type="submit" className="mt-4 w-full rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("test.send")}</button>
+          </PcPageFrame>
         </form>
 
         <aside className="min-w-0 rounded-2xl border-2 border-dashed border-slate-200 bg-white p-4" aria-label={t("test.live")}>

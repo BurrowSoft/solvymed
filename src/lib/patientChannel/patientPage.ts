@@ -5,6 +5,7 @@
 // preview test on sample data (M4a), with both calls stubbed in the browser.
 
 import { scoreRequest, toVocabulary, type Answers, type ChannelConfig, type Chip, type Vocabulary } from "./score";
+import type { PageLook } from "./pageLook";
 
 export type PcReason = {
   id: string;
@@ -32,6 +33,8 @@ export type PcPatientPage = {
   // doctor side, the practice's time and calendar). Missing: the browser's.
   timeZone?: string;
   country?: string | null;
+  // The doctor's page look (prototype v17): the band / cover, the watermark, the brand colour.
+  look?: PageLook | null;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.
