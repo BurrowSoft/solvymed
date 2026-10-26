@@ -226,8 +226,18 @@ describe("Complete your account", () => {
       await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/?signup_cancelled=1"));
       expect(h.rpc).toHaveBeenCalledWith("cancel_pending_signup", undefined);
       expect(h.rpc).not.toHaveBeenCalledWith("complete_google_signup", expect.anything());
-      expect(h.signOut).toHaveBeenCalled();
+      expect(h.signOut).toHaveBeenCalledWith({ scope: "local" });
       expect(h.track).toHaveBeenCalledWith("complete_account_cancelled");
+    });
+
+    it("deleted: the auth cookie goes even when the local sign-out fails (cf: the user no longer exists; 7e)", async () => {
+      document.cookie = "sb-test-auth-token=abc; path=/";
+      h.signOut.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+      h.rpc.mockResolvedValue({ data: { status: "deleted" }, error: null });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/?signup_cancelled=1"));
+      expect(document.cookie).not.toContain("sb-test-auth-token");
     });
 
     it("try_later: the hour message, stays; Back closes the confirm", async () => {

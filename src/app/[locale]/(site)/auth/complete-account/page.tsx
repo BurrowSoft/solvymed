@@ -14,6 +14,7 @@ import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legalVersions";
 import { signupAttributionMetadata } from "@/lib/signupAttribution";
 import { authErrorKey } from "@/lib/authErrors";
 import { track } from "@/lib/track";
+import { clearAuthCookies } from "@/lib/signOut";
 
 // "Complete your account" (specs/google-sign-in.md; migration 232): a new
 // Google account has no role yet (232's marker; the middleware sends its
@@ -101,7 +102,11 @@ export default function CompleteAccountPage() {
     const { data, error: rpcError } = await supabase.rpc("cancel_pending_signup");
     if (!rpcError && (data as { status?: string } | null)?.status === "deleted") {
       track("complete_account_cancelled");
-      await supabase.auth.signOut().catch(() => null);
+      // The user no longer exists: drop only this browser's session (scope "local", no
+      // call to Auth for a deleted user) and delete the auth cookies outright, since
+      // auth-js can keep the session when its sign-out fails (7e; CloseAccountPanel, cf).
+      await supabase.auth.signOut({ scope: "local" }).catch(() => null);
+      clearAuthCookies();
       window.location.assign(localePath("/?signup_cancelled=1"));
       return;
     }
