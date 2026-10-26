@@ -568,7 +568,8 @@
     "accessKindMerged": "已与“{name}”合并",
     "accessColWhen": "时间",
     "accessColWho": "人员",
-    "accessColWhat": "内容"
+    "accessColWhat": "内容",
+    "accessKindPcRequest": "打开了患者通道消息"
   },
   "settings": {
     "profileTitle": "个人资料",
@@ -2861,6 +2862,55 @@
         "question": "请输入问题（最多 160 个字符）。",
         "answer": "请输入回答（最多 1,000 个字符）。"
       }
+    },
+    "inbox": {
+      "title": "患者消息",
+      "nav": "消息",
+      "open": "打开消息",
+      "kpiOpen": "待处理",
+      "kpiFaq": "由常见问题解决",
+      "kpiAuto": "由自动消息解决",
+      "kpiWindow": "最近 7 天",
+      "all": "全部",
+      "openOnly": "待处理",
+      "secretary": "前台",
+      "empty": "这里没有消息。",
+      "secretaryOthers": "另有 {n, plural, other {# 条}}待处理消息发给 {doctor}。",
+      "points": "{n} 分",
+      "toDoctor": "发给{doctor}",
+      "toSecretary": "发给前台",
+      "status": {
+        "open": "待处理",
+        "answered": "已回复",
+        "call_back": "将致电",
+        "substituted": "已替换"
+      }
+    },
+    "detail": {
+      "back": "← 消息",
+      "sentAt": "发送于 {date}",
+      "reason": "原因",
+      "ticked": "已勾选",
+      "chips": "识别出的词语",
+      "option": "所选选项",
+      "text": "患者原话",
+      "keywordsOnly": "仅按关键词分类：无法识别同义词、错别字或否定表达。请阅读原文。",
+      "breakdown": "{n} 分是如何得出的",
+      "floor": "文本中未识别出症状：已提升为“{band}”。",
+      "warningShown": "患者已看到紧急警告。",
+      "autoShown": "患者看到的自动消息",
+      "history": "该患者之前的消息",
+      "replyLabel": "您的回复（患者将通过通知收到）",
+      "reply": "回复并关闭",
+      "callBack": "我会致电患者",
+      "call": "致电 {phone}",
+      "sending": "正在发送…",
+      "answeredAt": "回复于 {date}",
+      "callBackAt": "于 {date} 标记为“我会致电”",
+      "replacedBy": "已被更新的消息替换",
+      "notOpen": "此消息已关闭。请刷新查看。",
+      "readOnly": "此消息是发给 {doctor} 的：您可以阅读，但不能回复。",
+      "failed": "发送失败，请重试。"
     }
   }
 }

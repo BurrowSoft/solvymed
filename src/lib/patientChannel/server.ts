@@ -13,7 +13,9 @@ export type PcCode =
   | "invalid_rules" | "version_conflict" | "failed"
   // the patient routes (M4b)
   | "channel_off" | "not_connected" | "pc_practice_closed" | "pc_patient_archived"
-  | "invalid_answers" | "open_exists" | "retry_later" | "rate_limited";
+  | "invalid_answers" | "open_exists" | "retry_later" | "rate_limited"
+  // the staff's reply (M5)
+  | "out_of_scope" | "not_open" | "invalid_reply";
 
 export function pcFail(code: PcCode, status: number, extra?: Record<string, unknown>) {
   return NextResponse.json({ code, ...extra }, { status });

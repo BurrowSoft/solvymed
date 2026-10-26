@@ -568,7 +568,8 @@
     "accessKindMerged": "Digabung dengan “{name}”",
     "accessColWhen": "Kapan",
     "accessColWho": "Siapa",
-    "accessColWhat": "Apa"
+    "accessColWhat": "Apa",
+    "accessKindPcRequest": "Membuka pesan Kanal Pasien"
   },
   "settings": {
     "profileTitle": "Profil",
@@ -2861,6 +2862,55 @@
         "question": "Tulis pertanyaan (maksimal 160 karakter).",
         "answer": "Tulis jawaban (maksimal 1.000 karakter)."
       }
+    },
+    "inbox": {
+      "title": "Pesan pasien",
+      "nav": "Pesan",
+      "open": "Buka pesan",
+      "kpiOpen": "terbuka",
+      "kpiFaq": "Terselesaikan oleh FAQ",
+      "kpiAuto": "Terselesaikan oleh pesan otomatis",
+      "kpiWindow": "7 hari terakhir",
+      "all": "Semua",
+      "openOnly": "Terbuka",
+      "secretary": "Resepsionis",
+      "empty": "Tidak ada pesan di sini.",
+      "secretaryOthers": "{n, plural, other {# pesan terbuka lainnya}} ditujukan kepada {doctor}.",
+      "points": "{n} poin",
+      "toDoctor": "Untuk {doctor}",
+      "toSecretary": "Ke resepsionis",
+      "status": {
+        "open": "Terbuka",
+        "answered": "Dijawab",
+        "call_back": "Akan menelepon",
+        "substituted": "Diganti"
+      }
+    },
+    "detail": {
+      "back": "← Pesan",
+      "sentAt": "Dikirim {date}",
+      "reason": "Alasan",
+      "ticked": "Dicentang",
+      "chips": "Istilah yang dikenali",
+      "option": "Opsi yang dipilih",
+      "text": "Dengan kata-kata pasien",
+      "keywordsOnly": "Klasifikasi hanya berdasarkan kata kunci: tidak mengenali sinonim, salah ketik, atau negasi. Baca teksnya.",
+      "breakdown": "Bagaimana mencapai {n} poin",
+      "floor": "Teks tanpa gejala yang dikenali: dinaikkan ke \"{band}\".",
+      "warningShown": "Pasien melihat peringatan darurat.",
+      "autoShown": "Pesan otomatis yang dilihat pasien",
+      "history": "Pesan sebelumnya dari pasien ini",
+      "replyLabel": "Balasan Anda (pasien menerimanya lewat notifikasi)",
+      "reply": "Balas dan tutup",
+      "callBack": "Saya akan menelepon pasien",
+      "call": "Telepon {phone}",
+      "sending": "Mengirim…",
+      "answeredAt": "Dijawab pada {date}",
+      "callBackAt": "Ditandai \"Saya akan menelepon\" pada {date}",
+      "replacedBy": "Diganti oleh pesan yang lebih baru",
+      "notOpen": "Pesan ini sudah ditutup. Muat ulang untuk melihatnya.",
+      "readOnly": "Pesan ini untuk {doctor}: Anda dapat membacanya, tetapi tidak dapat membalas.",
+      "failed": "Gagal mengirim. Coba lagi."
     }
   }
 }

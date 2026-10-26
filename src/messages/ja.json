@@ -568,7 +568,8 @@
     "accessKindMerged": "「{name}」と統合",
     "accessColWhen": "日時",
     "accessColWho": "誰が",
-    "accessColWhat": "内容"
+    "accessColWhat": "内容",
+    "accessKindPcRequest": "患者チャネルのメッセージを開いた"
   },
   "settings": {
     "profileTitle": "プロフィール",
@@ -2861,6 +2862,55 @@
         "question": "質問を入力してください（160文字以内）。",
         "answer": "回答を入力してください（1,000文字以内）。"
       }
+    },
+    "inbox": {
+      "title": "患者からのメッセージ",
+      "nav": "メッセージ",
+      "open": "メッセージを開く",
+      "kpiOpen": "未対応",
+      "kpiFaq": "よくある質問で解決",
+      "kpiAuto": "自動メッセージで解決",
+      "kpiWindow": "過去7日間",
+      "all": "すべて",
+      "openOnly": "未対応",
+      "secretary": "受付",
+      "empty": "メッセージはありません。",
+      "secretaryOthers": "ほかに未対応のメッセージ{n, plural, other {#件}}が{doctor}宛てです。",
+      "points": "{n}点",
+      "toDoctor": "{doctor}宛て",
+      "toSecretary": "受付宛て",
+      "status": {
+        "open": "未対応",
+        "answered": "返信済み",
+        "call_back": "電話予定",
+        "substituted": "置き換え済み"
+      }
+    },
+    "detail": {
+      "back": "← メッセージ",
+      "sentAt": "送信日時 {date}",
+      "reason": "理由",
+      "ticked": "選択された項目",
+      "chips": "認識された用語",
+      "option": "選択されたオプション",
+      "text": "患者の言葉",
+      "keywordsOnly": "キーワードのみによる分類です。類義語、誤字、否定表現は認識しません。本文をお読みください。",
+      "breakdown": "{n}点の内訳",
+      "floor": "認識された症状のない本文：「{band}」に引き上げ。",
+      "warningShown": "患者に緊急時の警告が表示されました。",
+      "autoShown": "患者に表示された自動メッセージ",
+      "history": "この患者からの過去のメッセージ",
+      "replyLabel": "返信（患者に通知で届きます）",
+      "reply": "返信して完了",
+      "callBack": "患者に電話する",
+      "call": "{phone} に電話",
+      "sending": "送信中…",
+      "answeredAt": "{date} に返信",
+      "callBackAt": "{date} に「電話する」とマーク",
+      "replacedBy": "新しいメッセージに置き換えられました",
+      "notOpen": "このメッセージはすでに完了しています。再読み込みして確認してください。",
+      "readOnly": "このメッセージは{doctor}宛てです。閲覧はできますが、返信はできません。",
+      "failed": "送信できませんでした。もう一度お試しください。"
     }
   }
 }

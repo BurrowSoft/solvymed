@@ -24,6 +24,9 @@ interface Props {
   // The practice country's "Video tutorials" playlist (lib/videoTutorials);
   // null = no item (a country without one).
   videoTutorialsUrl?: string | null;
+  // The Patient Channel inbox (M5): while the channel is on for this practice, or it
+  // already has requests (dashboard/layout.tsx, lib/patientChannel/staff inboxAvailable).
+  patientChannel?: boolean;
 }
 
 const LOCALES: { code: string; label: string; short: string }[] = [
@@ -55,6 +58,11 @@ const CalendarIcon = () => (
 const UsersIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+  </svg>
+);
+const ChatIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
 );
 const CardIcon = () => (
@@ -171,8 +179,9 @@ function LanguageSwitcher({ locale, languages }: { locale: string; languages: re
   );
 }
 
-export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false, languages = OFFERED_LOCALES, videoTutorialsUrl = null }: Props) {
+export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false, languages = OFFERED_LOCALES, videoTutorialsUrl = null, patientChannel = false }: Props) {
   const t = useTranslations("nav");
+  const tChannel = useTranslations("patientChannel.inbox");
   const tVideos = useTranslations("videoTutorials");
   const pathname = usePathname();
   const router = useRouter();
@@ -191,6 +200,7 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
     { label: t("overview"), path: "/dashboard", icon: <HomeIcon /> },
     { label: t("schedule"), path: "/dashboard/schedule", icon: <CalendarIcon /> },
     { label: t("patients"), path: "/dashboard/patients", icon: <UsersIcon /> },
+    ...(patientChannel ? [{ label: tChannel("nav"), path: "/dashboard/patient-channel", icon: <ChatIcon /> }] : []),
     { label: t("clinics"), path: "/dashboard/clinics", icon: <MapPinIcon /> },
     { label: t("payments"), path: "/dashboard/payments", icon: <CardIcon /> },
     { label: t("settings"), path: "/dashboard/settings", icon: <GearIcon /> },

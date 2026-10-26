@@ -568,7 +568,8 @@
     "accessKindMerged": "Đã gộp với “{name}”",
     "accessColWhen": "Khi nào",
     "accessColWho": "Ai",
-    "accessColWhat": "Nội dung"
+    "accessColWhat": "Nội dung",
+    "accessKindPcRequest": "Đã mở tin nhắn Kênh Bệnh nhân"
   },
   "settings": {
     "profileTitle": "Hồ sơ",
@@ -2861,6 +2862,55 @@
         "question": "Nhập câu hỏi (tối đa 160 ký tự).",
         "answer": "Nhập câu trả lời (tối đa 1.000 ký tự)."
       }
+    },
+    "inbox": {
+      "title": "Tin nhắn của bệnh nhân",
+      "nav": "Tin nhắn",
+      "open": "Mở tin nhắn",
+      "kpiOpen": "đang mở",
+      "kpiFaq": "Đã giải quyết bằng Câu hỏi thường gặp",
+      "kpiAuto": "Đã giải quyết bằng tin nhắn tự động",
+      "kpiWindow": "7 ngày qua",
+      "all": "Tất cả",
+      "openOnly": "Đang mở",
+      "secretary": "Lễ tân",
+      "empty": "Không có tin nhắn nào.",
+      "secretaryOthers": "Còn {n, plural, other {# tin nhắn đang mở}} gửi đến {doctor}.",
+      "points": "{n} điểm",
+      "toDoctor": "Gửi {doctor}",
+      "toSecretary": "Đến lễ tân",
+      "status": {
+        "open": "Đang mở",
+        "answered": "Đã trả lời",
+        "call_back": "Sẽ gọi lại",
+        "substituted": "Đã thay thế"
+      }
+    },
+    "detail": {
+      "back": "← Tin nhắn",
+      "sentAt": "Đã gửi {date}",
+      "reason": "Lý do",
+      "ticked": "Đã chọn",
+      "chips": "Thuật ngữ nhận diện được",
+      "option": "Tùy chọn đã chọn",
+      "text": "Theo lời bệnh nhân",
+      "keywordsOnly": "Chỉ phân loại theo từ khóa: không nhận diện từ đồng nghĩa, lỗi chính tả hay câu phủ định. Hãy đọc nội dung.",
+      "breakdown": "Cách tính ra {n} điểm",
+      "floor": "Nội dung không có triệu chứng nhận diện được: nâng lên \"{band}\".",
+      "warningShown": "Bệnh nhân đã thấy cảnh báo khẩn cấp.",
+      "autoShown": "Tin nhắn tự động bệnh nhân đã thấy",
+      "history": "Tin nhắn trước đây của bệnh nhân này",
+      "replyLabel": "Câu trả lời của bạn (bệnh nhân nhận qua thông báo)",
+      "reply": "Trả lời và đóng",
+      "callBack": "Tôi sẽ gọi cho bệnh nhân",
+      "call": "Gọi {phone}",
+      "sending": "Đang gửi…",
+      "answeredAt": "Đã trả lời lúc {date}",
+      "callBackAt": "Đã đánh dấu \"Tôi sẽ gọi\" lúc {date}",
+      "replacedBy": "Đã được thay bằng tin nhắn mới hơn",
+      "notOpen": "Tin nhắn này đã được đóng. Tải lại để xem.",
+      "readOnly": "Tin nhắn này gửi cho {doctor}: bạn có thể đọc nhưng không thể trả lời.",
+      "failed": "Không gửi được. Hãy thử lại."
     }
   }
 }

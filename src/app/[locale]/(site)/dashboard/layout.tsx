@@ -36,6 +36,7 @@ import { DemoBar } from "@/components/DemoBar";
 import { DemoProvider } from "@/components/DemoGate";
 import { isDemoUser } from "@/lib/demo";
 import { parseCountryChoice } from "@/lib/signupCountry";
+import { inboxAvailable } from "@/lib/patientChannel/staff";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -201,7 +202,11 @@ export default async function DashboardLayout({
   // A secretary acts for the doctor chosen in the switcher (1.5.0, behind
   // the flag), else her primary.
   const actingId = isSecretary ? ((await actingPracticeFor(roleRow.invited_by_professional_id!, user.id)) ?? roleRow.invited_by_professional_id!) : user.id;
-  const practice = countryProfile(await getPracticeCountry(supabase, user.id, actingId));
+  const [practice, patientChannel] = await Promise.all([
+    getPracticeCountry(supabase, user.id, actingId).then(countryProfile),
+    // The Patient Channel inbox entry (M5): on for this practice, or it has requests.
+    isDemo ? Promise.resolve(false) : inboxAvailable(supabase, user.id, actingId),
+  ]);
   const demoCountryCode = parseCountryChoice(practice.kind) ?? "BR";
   // A language the practice country doesn't offer: no dashboard in it, the
   // same page in the country's language (ad, after b3's lost SolvyAI answer).
@@ -258,6 +263,7 @@ export default async function DashboardLayout({
           isSecretary={isSecretary}
           languages={practice.languages}
           videoTutorialsUrl={practice.videoTutorialsUrl}
+          patientChannel={patientChannel}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>
