@@ -119,14 +119,17 @@ describe("Ver mensagens anteriores com {doctor} (251's pc_my_past_practices)", (
       { id: DOC, displayName: "Dra. Ana Lima", state: "closed" },
       { id: "22222222-2222-4222-8222-222222222222", displayName: "Dr. Bruno", state: "disconnected" },
       { id: "not-a-uuid", displayName: "x", state: "archived" },
+      { id: "33333333-3333-4333-8333-333333333333", displayName: " ", state: "disconnected" },
     ];
     render(wrap(<PastPracticeLinks />));
     const list = await screen.findByTestId("pc-past-practices");
     const links = list.querySelectorAll("a");
-    expect(links).toHaveLength(2);
+    expect(links).toHaveLength(3);
     expect(links[0]).toHaveTextContent(pt.patientChannel.patient.earlierWith.replace("{doctor}", "Dra. Ana Lima"));
     expect(links[0].getAttribute("href")).toBe(`/pt-BR/my-appointments/channel/${DOC}`);
     expect(links[1]).toHaveTextContent(pt.patientChannel.patient.earlierWith.replace("{doctor}", "Dr. Bruno"));
+    // No name (cf's nit): the plain line, never "… com " with nothing after it.
+    expect(links[2].textContent).toBe(pt.patientChannel.patient.earlierLink);
     expect(h.rpcCalls.some((c) => c.fn === "get_professional_public_info")).toBe(false);
   });
 

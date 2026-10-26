@@ -2804,6 +2804,7 @@
       "statusReceived": "Получено",
       "notTaking": "Сейчас клиника не принимает здесь новые сообщения.",
       "viewMessages": "Мои сообщения",
+      "earlierLink": "Предыдущие сообщения",
       "earlierWith": "Предыдущие сообщения с {doctor}"
     },
     "channel": {

@@ -11,7 +11,8 @@ import { toPastPractices, type PastPractice } from "@/lib/patientChannel/patient
 // any more, the latest first: disconnected, removed, a closed practice or an archived record
 // (a patient can always read what they sent). Read as the patient (migration 251's
 // pc_my_past_practices: own rows only, [] while the channel is paused). Each opens the
-// read-only channel page. Nothing is shown when there's none.
+// read-only channel page. Nothing is shown when there's none. A practice without a name
+// (cf's nit) gets the plain "Ver mensagens anteriores".
 export function PastPracticeLinks({ className = "" }: { className?: string }) {
   const t = useTranslations("patientChannel.patient");
   const { locale } = useParams<{ locale: string }>();
@@ -33,7 +34,7 @@ export function PastPracticeLinks({ className = "" }: { className?: string }) {
       {practices.map((p) => (
         <li key={p.id}>
           <a href={`${prefix}/my-appointments/channel/${p.id}`} className="text-sm font-semibold text-teal-700 underline">
-            {t("earlierWith", { doctor: p.displayName })}
+            {p.displayName ? t("earlierWith", { doctor: p.displayName }) : t("earlierLink")}
           </a>
         </li>
       ))}

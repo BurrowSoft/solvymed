@@ -2804,6 +2804,7 @@
       "statusReceived": "已收到",
       "notTaking": "診所目前不在此接收新訊息。",
       "viewMessages": "查看我的訊息",
+      "earlierLink": "查看先前訊息",
       "earlierWith": "查看與{doctor}的先前訊息"
     },
     "channel": {
