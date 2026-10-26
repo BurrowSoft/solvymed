@@ -31,6 +31,9 @@ type Code =
   | "stripe_cancel_failed"
   | "subscription_active"
   | "cancelled_not_closed"
+  // A patient a practice removed (244): the app offers the request form
+  // (/account/delete) instead, so the removal still holds.
+  | "removed_by_practice"
   | "generic";
 
 function fail(code: Code, status: number) {
@@ -103,7 +106,9 @@ export async function POST(request: NextRequest) {
   // anything irreversible happens (Stripe can't be un-cancelled). It skips
   // the subscription guard, since the subscription is cancelled next.
   const { error: dryRunError } = await supabase.rpc("close_my_account", { p_dry_run: true });
-  if (dryRunError) return fail("generic", 500);
+  if (dryRunError) {
+    return knownDbError(dryRunError.message) === "removed_by_practice" ? fail("removed_by_practice", 409) : fail("generic", 500);
+  }
 
   // 1. Stripe. Only a professional's own row can hold a subscription; for
   // secretaries and patients there's no row and nothing to cancel.
@@ -152,7 +157,7 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase.rpc("close_my_account", { p_dry_run: false });
   if (error) {
     const code = closeFailureCode(step, knownDbError(error.message));
-    return fail(code, code === "subscription_active" ? 409 : 500);
+    return fail(code, code === "subscription_active" || code === "removed_by_practice" ? 409 : 500);
   }
   const rows = (data ?? []) as ClosureRow[];
   const outcome = rows[0]?.outcome ?? "deleted";

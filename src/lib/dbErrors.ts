@@ -15,7 +15,8 @@ export type KnownDbError =
   | "invalid_birth_date"
   | "invalid_cns"
   | "id_conflict"
-  | "demo_not_allowed";
+  | "demo_not_allowed"
+  | "removed_by_practice";
 
 const KNOWN: KnownDbError[] = [
   "patient_archived",
@@ -37,6 +38,9 @@ const KNOWN: KnownDbError[] = [
   "id_conflict",
   // A demo can't do this (234 §5): the page shows "Disponível na sua conta".
   "demo_not_allowed",
+  // Closing the account of a patient a practice removed (244): the deletion
+  // goes through the request form instead, so the removal still holds.
+  "removed_by_practice",
 ];
 
 // The code when a Postgres/PostgREST error message carries one, else null.

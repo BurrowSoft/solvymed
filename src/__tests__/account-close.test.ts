@@ -44,6 +44,10 @@ describe("closeFailureCode", () => {
     expect(closeFailureCode({ kind: "none" }, "subscription_active")).toBe("subscription_active");
   });
 
+  it("a patient a practice removed is sent to the request form (244)", () => {
+    expect(closeFailureCode({ kind: "none" }, "removed_by_practice")).toBe("removed_by_practice");
+  });
+
   it("a retry after a cancel skips Stripe: the subscription is already over", () => {
     // First attempt cancelled sub_1 and the close failed. On retry Stripe
     // reports it canceled, so the route doesn't cancel again and goes
