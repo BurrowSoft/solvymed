@@ -122,6 +122,8 @@ function Symptoms({ rules, setRules }: SectionProps) {
                 const words = parseWords(e.target.value);
                 const allowed = words.filter(termAllowed);
                 setBadWords(allowed.length < words.length ? s.id : null);
+                // The field shows what the rule keeps: a refused word goes (01, #614 row).
+                e.target.value = allowed.join(", ");
                 setRules(updateSymptom(rules, s.id, { words: allowed }));
               }}
             />
