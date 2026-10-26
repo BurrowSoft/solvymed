@@ -39,6 +39,8 @@ describe("googleRedirectTo", () => {
     const bare = new URL(googleRedirectTo("https://x.test", { locale: "en", country: null, role: null, source: "login" }));
     expect(Object.fromEntries(bare.searchParams)).toEqual({ locale: "en", google: "login" });
     expect(parseGoogleRole("secretary")).toBeNull();
+    const demo = new URL(googleRedirectTo("https://x.test", { locale: "pt-BR", country: "BR", role: "professional", source: "signup", via: "demo" }));
+    expect(demo.searchParams.get("via")).toBe("demo");
   });
 });
 

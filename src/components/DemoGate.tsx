@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { isDemoUser, leaveDemo } from "@/lib/demo";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
+import { VALUE_METRIC, demoCount, signupClickMetric } from "@/lib/demoMetrics";
 import { isAndroidWebView, playStoreUrlForVisit, storeLinkForAgent } from "@/lib/appStores";
 import { fallBackIfStillVisible, STORE_FALLBACK_MS } from "@/lib/storeFallback";
 import { consentedVisit } from "@/lib/consentedVisit";
@@ -56,10 +57,18 @@ export function notifyDemoBlocked(kind: DemoBlockKind = "blocked") {
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent<DemoBlockKind>(BLOCKED_EVENT, { detail: kind }));
 }
 
+// The demo counters (238): a sign-up click is counted BEFORE the demo ends (the server
+// counts only a live demo).
+async function countSignupClick(where: string) {
+  const metric = signupClickMetric(where);
+  if (metric) await demoCount(metric);
+}
+
 // Leaves the demo for the sign-up (as the bar's button: end_demo + sign-out
 // first, then the form with the demo's country).
 export async function signUpFromDemo(locale: string, country: CountryChoice, where: string) {
   track("demo_signup_click", { where });
+  await countSignupClick(where);
   await leaveDemo(createClient());
   const prefix = locale === "en" ? "" : `/${locale}`;
   window.location.assign(`${prefix}/auth/signup?c=${country}&via=demo`);
@@ -155,9 +164,10 @@ function seenOnce(kind: DemoValueKind): boolean {
 // Google first (one tap), then e-mail; both end the demo and sign out first.
 async function googleFromDemo(locale: string, country: CountryChoice, where: string) {
   track("demo_signup_click", { where, method: "google" });
+  await countSignupClick(where);
   await leaveDemo(createClient());
   const { googleRedirectTo, startGoogleSignIn } = await import("@/lib/googleSignIn");
-  const { error } = await startGoogleSignIn(createClient(), googleRedirectTo(window.location.origin, { locale, country, role: "professional", source: "signup" }));
+  const { error } = await startGoogleSignIn(createClient(), googleRedirectTo(window.location.origin, { locale, country, role: "professional", source: "signup", via: "demo" }));
   // Google couldn't start: the sign-up form, where Google is offered again.
   if (error) window.location.assign(`${locale === "en" ? "" : `/${locale}`}/auth/signup?c=${country}&via=demo`);
 }
@@ -210,6 +220,7 @@ export function DemoValueSheet({ locale, country }: { locale: string; country: C
   const [kind, setKind] = useState<DemoValueKind | null>(null);
   useEffect(() => onDemoValue((k) => {
     track("demo_value", { type: k });
+    void demoCount(VALUE_METRIC[k]);
     if (!seenOnce(k)) setKind(k);
   }), []);
   if (!kind) return null;
@@ -284,6 +295,7 @@ export function DemoAndroidChip() {
               fallBackIfStillVisible(web, STORE_FALLBACK_MS);
             }
             track("app_store_click", { platform: "android", from: "demo" });
+            void demoCount("app_store_click");
           }}
           className="underline-offset-2 hover:underline">
           {t("androidChip")}

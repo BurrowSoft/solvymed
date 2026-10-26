@@ -46,6 +46,9 @@ vi.mock("@/i18n/navigation", () => ({
   Link: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
 }));
 vi.mock("@/lib/track", () => ({ track: h.track }));
+// The /demo render counts page_load after the response (238): recorded, not sent.
+vi.mock("next/server", async (orig) => ({ ...(await orig<typeof import("next/server")>()), after: (fn: () => unknown) => { h.calls.push("after"); void fn; } }));
+vi.mock("@/lib/demoMetricsServer", () => ({ demoCountServer: async (...a: unknown[]) => { h.calls.push(`count_server ${a.join(" ")}`); } }));
 // The server page reads the switch (#604).
 vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({ rpc: async (fn: string) => { h.calls.push(`server:${fn}`); return h.serverFlagsFail ? { data: null, error: { message: "down" } } : { data: fn === "get_public_flags" ? h.flags : null, error: null }; } }),
@@ -141,19 +144,26 @@ describe("DemoBar", () => {
   });
 
   it("sign-up: end_demo + sign-out BEFORE the sign-up page loads, country prefilled (01)", async () => {
+    render(wrap(<DemoBar locale="pt-BR" country="TH" count />));
+    fireEvent.click(screen.getByTestId("demo-signup"));
+    await waitFor(() => expect(assign).toHaveBeenCalled());
+    expect(h.calls).toEqual(["demo_count({\"p_metric\":\"signup_click_bar\"})", "end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
+    expect(h.track).toHaveBeenCalledWith("demo_signup_click", { where: "bar" });
+  });
+
+  it("off Production (no count prop): nothing is counted, the sign-up still leaves the demo (cf, #615)", async () => {
     render(wrap(<DemoBar locale="pt-BR" country="TH" />));
     fireEvent.click(screen.getByTestId("demo-signup"));
     await waitFor(() => expect(assign).toHaveBeenCalled());
     expect(h.calls).toEqual(["end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
-    expect(h.track).toHaveBeenCalledWith("demo_signup_click", { where: "bar" });
   });
 
   it("exit (behind the DEMO tag): end_demo + sign-out, then the landing", async () => {
-    render(wrap(<DemoBar locale="en" country="BR" />));
+    render(wrap(<DemoBar locale="en" country="BR" count />));
     fireEvent.click(screen.getByRole("button", { name: pt.demo.menu }));
     fireEvent.click(screen.getByTestId("demo-exit"));
     await waitFor(() => expect(assign).toHaveBeenCalledWith("/"));
-    expect(h.calls).toEqual(["end_demo", "signOut", "assign /"]);
+    expect(h.calls).toEqual(["demo_count({\"p_metric\":\"leave\"})", "end_demo", "signOut", "assign /"]);
     expect(h.track).toHaveBeenCalledWith("demo_exit");
   });
 });
@@ -243,7 +253,7 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
+      render(wrap(await DemoPage({ params: Promise.resolve({ locale: "pt-BR" }), searchParams: Promise.resolve({ demo_test: "1" }) })));
       expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
       expect(h.calls).not.toContain("signInAnonymously");
       expect(h.calls.some((c) => c.startsWith("start_demo"))).toBe(false);
@@ -256,14 +266,14 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "production");
     try {
       const cf = () => document.head.querySelector('link[rel="preconnect"][href="https://challenges.cloudflare.com"]');
-      const { unmount } = render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      const { unmount } = render(wrap(await DemoPage({ params: Promise.resolve({ locale: "pt-BR" }), searchParams: Promise.resolve({}) })));
       expect(await screen.findByTestId("demo-unavailable")).toBeInTheDocument();
       expect(h.calls).toContain("server:get_public_flags");
       expect(h.calls).not.toContain("get_public_flags");
       expect(cf()).toBeNull();
       unmount();
       h.flags = [{ key: "demo_mode", enabled: true }];
-      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      render(wrap(await DemoPage({ params: Promise.resolve({ locale: "pt-BR" }), searchParams: Promise.resolve({}) })));
       await waitFor(() => expect(cf()).not.toBeNull());
       expect(h.calls.filter((c) => c === "get_public_flags")).toHaveLength(0);
     } finally {
@@ -276,7 +286,7 @@ describe("/demo", () => {
     try {
       h.serverFlagsFail = true;
       h.flags = [{ key: "demo_mode", enabled: true }];
-      render(wrap(await DemoPage({ searchParams: Promise.resolve({}) })));
+      render(wrap(await DemoPage({ params: Promise.resolve({ locale: "pt-BR" }), searchParams: Promise.resolve({}) })));
       await waitFor(() => expect(h.calls).toContain("get_public_flags"));
       expect(screen.queryByTestId("demo-unavailable")).toBeNull();
     } finally {
@@ -288,7 +298,7 @@ describe("/demo", () => {
     vi.stubEnv("VERCEL_ENV", "preview");
     try {
       Object.defineProperty(window, "location", { configurable: true, value: { ...original, assign, replace, search: "?demo_test=1" } });
-      render(wrap(await DemoPage({ searchParams: Promise.resolve({ demo_test: "1" }) })));
+      render(wrap(await DemoPage({ params: Promise.resolve({ locale: "pt-BR" }), searchParams: Promise.resolve({ demo_test: "1" }) })));
       await waitFor(() => expect(replace).toHaveBeenCalledWith("/pt-BR/dashboard"));
     } finally {
       vi.unstubAllEnvs();

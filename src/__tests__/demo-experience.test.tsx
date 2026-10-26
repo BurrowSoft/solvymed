@@ -31,6 +31,7 @@ import { stampDemo } from "@/lib/pdf/demoStamp";
 import { DemoAndroidChip, DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
+import { setDemoCounting } from "@/lib/demoMetrics";
 
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
 
@@ -83,12 +84,13 @@ describe("moments of value", () => {
   });
 
   it("Google from the sheet: the demo ends and signs out before OAuth starts", async () => {
+    setDemoCounting(true);
     render(wrap(<DemoValueSheet locale="pt-BR" country="TH" />));
     act(() => notifyDemoValue("solvyai"));
     h.calls = [];
     fireEvent.click(screen.getByText(pt.auth.google.continue));
     await waitFor(() => expect(h.calls).toContain("oauth"));
-    expect(h.calls).toEqual(["end_demo", "signOut", "oauth"]);
+    expect(h.calls).toEqual(["demo_count", "end_demo", "signOut", "oauth"]);
   });
 });
 
@@ -140,6 +142,8 @@ describe("the 2-minute tour", () => {
     expect(await screen.findByTestId("demo-tour")).toHaveClass("demo-tour-card");
     const css = readFileSync(resolve(__dirname, "../app/globals.css"), "utf8");
     expect(css).toMatch(/@media \(min-width: 1024px\) \{\s*html\[data-solvyai-open\] \.demo-tour-card \{ right: calc\(400px \+ 1rem\); \}/);
+    // Closed panel: above the ✦ opener (83, #611).
+    expect(css).toMatch(/html:not\(\[data-solvyai-open\]\) \.demo-tour-card \{ bottom: calc\(5\.5rem \+ var\(--consent-h, 0px\)\); \}/);
   });
 
   it("\"Mostrar\" takes the visitor to the step's page", () => {

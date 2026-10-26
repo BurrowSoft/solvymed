@@ -45,6 +45,7 @@ import { POST as register } from "@/app/api/founders/register/route";
 import { POST as uploadUrl } from "@/app/api/founders/upload-url/route";
 import { GET as exportCsv } from "@/app/api/patients/export/route";
 import { DemoBlockedSheet, DemoGate, DemoProvider, notifyDemoBlocked } from "@/components/DemoGate";
+import { setDemoCounting } from "@/lib/demoMetrics";
 
 const post = (body: unknown = {}) =>
   new NextRequest(new URL("/x", "https://www.solvymed.com"), { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } });
@@ -105,6 +106,7 @@ describe("DemoGate + the sheet", () => {
   });
 
   it("in a demo: inert; a tap says \"Disponível na sua conta\"; its CTA leaves for the sign-up", async () => {
+    setDemoCounting(true);
     show(true);
     const gate = screen.getByTestId("demo-blocked");
     fireEvent.click(screen.getByRole("button", { name: pt.demo.blocked }));
@@ -112,7 +114,7 @@ describe("DemoGate + the sheet", () => {
     expect(gate).toHaveTextContent(pt.demo.blockedBody);
     fireEvent.click(screen.getByText(pt.demo.signup));
     await waitFor(() => expect(assign).toHaveBeenCalled());
-    expect(h.calls).toEqual(["end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
+    expect(h.calls).toEqual(["demo_count", "end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
   });
 
   it("the safety net: a demo refusal and the SolvyAI quota open the sheet with their own text", () => {

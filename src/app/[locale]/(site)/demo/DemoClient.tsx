@@ -11,6 +11,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { publicFlag } from "@/lib/publicFlags";
 import { demoCountry, demoTestOn, isDemoUser, leaveDemo } from "@/lib/demo";
 import { track } from "@/lib/track";
+import { demoCount, setDemoCounting } from "@/lib/demoMetrics";
 import { DemoTurnstile } from "@/components/DemoTurnstile";
 
 // /demo: the ads' landing (specs/demo-mode.md). Straight into the demo
@@ -25,7 +26,9 @@ type State = "loading" | "unavailable" | "signedIn" | "busy" | "error";
 // siteKey: the demo's Turnstile key (lib/demoTurnstile, from the server).
 // serverOn: the switch as the server read it (#604; null = unknown, so the
 // browser reads it).
-export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllowed: boolean; siteKey: string; serverOn?: boolean | null }) {
+// count: Production only (the page reads VERCEL_ENV; previews share the database).
+export function DemoClient({ testAllowed, siteKey, serverOn = null, count = false }: { testAllowed: boolean; siteKey: string; serverOn?: boolean | null; count?: boolean }) {
+  setDemoCounting(count);
   const t = useTranslations("demo");
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
@@ -118,7 +121,9 @@ export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllo
           // mints the ticket AND starts the demo on the server.
           const [t] = await Promise.all([
             token().then((tok) => { mark("token"); return tok; }),
-            supabase.auth.signInAnonymously().then(({ error }) => { if (error) throw error; fresh = true; mark("signed-in"); }),
+            // The counters' signin (238) lands before the verify call, so its "verified"
+            // step goes to the same funnel row (the page's country / language).
+            supabase.auth.signInAnonymously().then(async ({ error }) => { if (error) throw error; fresh = true; mark("signed-in"); await demoCount("signin", { country, locale }); }),
           ]);
           if (!live) return;
           setStep("create");
