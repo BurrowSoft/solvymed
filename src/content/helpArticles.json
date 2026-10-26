@@ -1678,6 +1678,10 @@
             {
               "type": "p",
               "text": "Depois de **Remover**, a pessoa não consegue voltar com o código de convite da clínica. Para trazê-la de volta, restaure o cadastro em **Arquivados** e envie o código pessoal dele."
+            },
+            {
+              "type": "p",
+              "text": "No site, o paciente com um só médico vê **Desconectar** no fim do cartão do médico, em **Minhas consultas**. Não dá enquanto houver uma consulta marcada com você; os pedidos pendentes dele são cancelados e você é avisado. O cadastro e o histórico continuam com você."
             }
           ],
           "en": [
@@ -1696,6 +1700,10 @@
             {
               "type": "p",
               "text": "After **Remove**, that person can't rejoin with your clinic's invite code. To bring them back, restore the record from **Archived** and share its personal code."
+            },
+            {
+              "type": "p",
+              "text": "On the website, a patient with one doctor sees **Disconnect** at the bottom of that doctor's card in **My appointments**. It's refused while a visit with you is booked; their pending requests are cancelled and you're told. The record and history stay with you."
             }
           ]
         },

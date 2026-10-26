@@ -2787,7 +2787,8 @@
       "earlier": "Pesan sebelumnya ({n})",
       "statusReceived": "Diterima",
       "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",
-      "viewMessages": "Lihat pesan saya"
+      "viewMessages": "Lihat pesan saya",
+      "earlierLink": "Lihat pesan sebelumnya"
     },
     "channel": {
       "title": "Kanal Anda",

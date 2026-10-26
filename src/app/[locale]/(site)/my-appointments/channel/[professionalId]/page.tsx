@@ -37,19 +37,23 @@ export default async function PatientChannelPage({
   if (!access.ok && (access.code === "channel_off" || access.code === "not_connected")) {
     const requests = await myRequestsWith(supabase, professionalId);
     if (requests.length === 0) notFound();
+    // The practice the patient wrote to: its name, country and zone, read with the service
+    // role ONLY here, after the patient's own requests there are proven above (01, #636 ❌:
+    // the public lookup answers nothing once they're disconnected, and it is not widened).
     const [{ data: info }, { data: prof }] = await Promise.all([
       supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle(),
-      pcAdmin().from("professionals").select("country").eq("id", professionalId).maybeSingle(),
+      pcAdmin().from("professionals").select("country, full_name, time_zone").eq("id", professionalId).maybeSingle(),
     ]);
     const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null; time_zone?: string | null } | null;
-    const country = (prof as { country?: string | null } | null)?.country ?? null;
+    const own = prof as { country?: string | null; full_name?: string | null; time_zone?: string | null } | null;
+    const country = own?.country ?? null;
     return (
       <ReadOnlyChannel
-        doctorName={pub?.full_name?.trim() || ""}
+        doctorName={pub?.full_name?.trim() || own?.full_name?.trim() || ""}
         practiceLine={[pub?.clinic_name, pub?.specialty].filter(Boolean).join(" · ")}
         emergencyNumber={countryProfile(country).emergencyNumber}
         requests={requests}
-        timeZone={pub?.time_zone || countryProfile(country).defaultTimeZone}
+        timeZone={pub?.time_zone || own?.time_zone || countryProfile(country).defaultTimeZone}
         country={country}
       />
     );

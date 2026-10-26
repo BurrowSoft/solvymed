@@ -19,6 +19,11 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: async () => ({
     auth: { getUser: async () => ({ data: { user: { id: "pat-1", user_metadata: { full_name: "Maria Silva" } } } }) },
     rpc: (fn: string, args: unknown) => { h.calls.push(`rpc:${fn}`); return h.rpc(fn, args); },
+    // The caller's role row: a patient whose primary doctor is doc-1 (the one-doctor card).
+    from: () => {
+      const chain = { select: () => chain, eq: () => chain, maybeSingle: async () => { h.calls.push("read:user_roles"); return { data: { role: "patient", invited_by_professional_id: "doc-1", linked_patient_id: "p-1" }, error: null }; } };
+      return chain;
+    },
   }),
 }));
 
@@ -45,10 +50,16 @@ describe("disconnectDoctor", () => {
     expect(await disconnectDoctor("doc-2")).toEqual({ ok: false, code: "has_future_visits" });
   });
 
-  it("flag off: refused without touching the database", async () => {
+  // 01, 10-26: without multiDoctor (www) only the one-doctor card's case: the caller's own
+  // primary doctor. Any other id is refused before the RPC.
+  it("flag off: another doctor is refused without the RPC; the primary one goes through", async () => {
     h.flag = false;
     expect(await disconnectDoctor("doc-2")).toEqual({ ok: false, code: "error" });
-    expect(h.calls).toEqual([]);
+    expect(h.calls).toEqual(["read:user_roles"]);
+    h.calls = [];
+    h.rpc.mockResolvedValue({ data: [], error: null });
+    expect(await disconnectDoctor("doc-1")).toEqual({ ok: true });
+    expect(h.calls).toEqual(["read:user_roles", "rpc:disconnect_doctor"]);
   });
 });
 

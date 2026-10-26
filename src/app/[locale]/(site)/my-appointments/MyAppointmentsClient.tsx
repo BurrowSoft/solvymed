@@ -23,6 +23,7 @@ import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
 import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { MyDoctors } from "./MyDoctors";
+import { OneDoctorDisconnect } from "./OneDoctorDisconnect";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
@@ -565,6 +566,8 @@ export function MyAppointmentsClient({
                 {tChannel("viewMessages")}
               </a>
             )}
+            {/* 01, 10-26: a discreet way to leave this doctor (MyDoctors has its own). */}
+            {myProfessionalId && <OneDoctorDisconnect doctorId={myProfessionalId} doctorName={doctorDisplayName(doctorName)} />}
           </section>
         )}
 

@@ -48,11 +48,14 @@ export type DisconnectResult = { ok: true } | { ok: false; code: "has_future_vis
 // that doctor is ahead; otherwise the pending requests to that doctor are
 // cancelled, and the SERVER tells the clinic, once per request ("Pedido
 // cancelado"; 171, the push service). The doctor keeps the record.
+// Without multiDoctor (www today) only the one-doctor card's case is open (01, 10-26):
+// the patient's own primary doctor (user_roles.invited_by_professional_id, else the
+// linked patient row's practice), checked here; the RPC checks the connection itself.
 export async function disconnectDoctor(professionalId: string): Promise<DisconnectResult> {
-  if (!liveFeatures.multiDoctor) return { ok: false, code: "error" };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { ok: false, code: "error" };
+  if (!liveFeatures.multiDoctor && (await primaryDoctorOf(supabase, user.id)) !== professionalId) return { ok: false, code: "error" };
   const { error } = await supabase.rpc("disconnect_doctor", { p_professional_id: professionalId });
   if (error) {
     const msg = error.message ?? "";
@@ -62,4 +65,15 @@ export async function disconnectDoctor(professionalId: string): Promise<Disconne
   }
   revalidatePath("/my-appointments");
   return { ok: true };
+}
+
+// The patient's primary doctor (the one-doctor card's), as My appointments reads it.
+async function primaryDoctorOf(supabase: Awaited<ReturnType<typeof createClient>>, userId: string): Promise<string | null> {
+  const { data: role } = await supabase.from("user_roles").select("role, invited_by_professional_id, linked_patient_id").eq("user_id", userId).maybeSingle();
+  const r = role as { role?: string | null; invited_by_professional_id?: string | null; linked_patient_id?: string | null } | null;
+  if (r?.role !== "patient") return null;
+  if (r.invited_by_professional_id) return r.invited_by_professional_id;
+  if (!r.linked_patient_id) return null;
+  const { data } = await supabase.rpc("get_linked_professional_id");
+  return (data as string | null) ?? null;
 }

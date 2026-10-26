@@ -2787,7 +2787,8 @@
       "earlier": "Tin nhắn trước đó ({n})",
       "statusReceived": "Đã nhận",
       "notTaking": "Hiện phòng khám không nhận tin nhắn mới tại đây.",
-      "viewMessages": "Xem tin nhắn của tôi"
+      "viewMessages": "Xem tin nhắn của tôi",
+      "earlierLink": "Xem tin nhắn trước đây"
     },
     "channel": {
       "title": "Kênh của bạn",

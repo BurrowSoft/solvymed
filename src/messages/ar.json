@@ -2787,7 +2787,8 @@
       "earlier": "رسائل سابقة ({n})",
       "statusReceived": "تم الاستلام",
       "notTaking": "لا تستقبل العيادة رسائل جديدة من هنا حاليًا.",
-      "viewMessages": "عرض رسائلي"
+      "viewMessages": "عرض رسائلي",
+      "earlierLink": "عرض الرسائل السابقة"
     },
     "channel": {
       "title": "قناتك",

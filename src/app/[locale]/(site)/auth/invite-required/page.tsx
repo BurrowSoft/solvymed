@@ -10,6 +10,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { conditionMet } from "@/lib/conditions";
 import { signOutHere } from "@/lib/signOut";
 import { BecomeProfessional } from "@/components/BecomeProfessional";
+import { LeftDoctorMessages } from "@/components/patientChannel/LeftDoctorMessages";
 
 export default function InviteRequiredPage() {
   const t = useTranslations("auth");
@@ -262,6 +263,9 @@ export default function InviteRequiredPage() {
             )}
           </button>
         </form>
+
+        {/* Just disconnected (?left=): their Patient Channel messages with that doctor, if any. */}
+        <LeftDoctorMessages />
 
         {/* A doctor who signed up as a patient by mistake (Vitor, 10-18): switch
             this account to a professional one (migration 231; the app has it). */}

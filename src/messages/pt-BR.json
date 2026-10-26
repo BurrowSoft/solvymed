@@ -2787,7 +2787,8 @@
       "earlier": "Mensagens anteriores ({n})",
       "statusReceived": "Recebida",
       "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
-      "viewMessages": "Ver minhas mensagens"
+      "viewMessages": "Ver minhas mensagens",
+      "earlierLink": "Ver mensagens anteriores"
     },
     "channel": {
       "title": "Seu canal",
