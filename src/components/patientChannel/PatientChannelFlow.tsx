@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientChannel/score";
-import { PC_TEXT_MAX, type PcOpenRequest, type PcOpenRequestFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
+import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
+import { MyRequests } from "./MyRequests";
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
 // tab 1), phone first: entry (the rules, the response time, the practice country's
@@ -24,14 +25,15 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
 const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
 const PREVIEW_MS = 300;
 
-export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe, loadOpen }: {
+export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe, loadRequests }: {
   page: PcPatientPage;
   preview: PcPreviewFn;
   submit: PcSubmitFn;
   // "This answered my question": counted for the doctor (no content), §4.7 /selfserve.
   onSelfServe?: PcSelfServeFn;
-  // The patient's open request, shown on the "sent too many times" screen (01).
-  loadOpen?: PcOpenRequestFn;
+  // The patient's requests with this practice: "Suas mensagens" on the first screen (P-14)
+  // and the open one on the "sent too many times" screen (01).
+  loadRequests?: PcMyRequestsFn;
   // The preview test's "sample data, nothing is sent" bar.
   banner?: string;
 }) {
@@ -45,7 +47,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const [check, setCheck] = useState<PcPreview>({ warning: false, autoMessages: [], canSkip: false });
   const [sending, setSending] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [openRequest, setOpenRequest] = useState<PcOpenRequest | null>(null);
+  const [requests, setRequests] = useState<PcMyRequest[] | null>(null);
+  const openRequest = requests?.find((r) => r.status === "open") ?? null;
   const number = page.emergencyNumber ?? t("localNumber");
   const symptomForm = reason?.kind === "symptom_form";
   const who = reason?.destination === "secretary" ? t("secretary") : page.doctorName;
@@ -76,10 +79,19 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     else if (r.status === "unavailable") setStep("unavailable");
     else if (r.status === "rate_limited") {
       setStep("rateLimited");
-      void loadOpen?.().then(setOpenRequest).catch(() => undefined);
+      void loadRequests?.().then(setRequests).catch(() => undefined);
     }
     else setFailed(true);
   };
+  // "Suas mensagens": read each time the first screen shows (a reply that came meanwhile
+  // appears when the patient comes back to it).
+  useEffect(() => {
+    if (step !== "entry" || !loadRequests) return;
+    let live = true;
+    void loadRequests().then((r) => { if (live) setRequests(r); }).catch(() => undefined);
+    return () => { live = false; };
+  }, [step, loadRequests]);
+
   const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); };
 
   const back = (to: Step) => (
@@ -104,6 +116,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("oneTitle")}</b>{t("oneLabel")}</li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("privateTitle")}</b>{t("privateLabel")}</li>
         </ul>
+        {requests && requests.length > 0 && <MyRequests requests={requests} timeZone={page.timeZone} country={page.country} />}
         <button type="button" data-testid="pc-start" onClick={() => setStep(page.faq.length > 0 ? "faq" : "reason")} className="mt-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("start")}</button>
       </>
     );

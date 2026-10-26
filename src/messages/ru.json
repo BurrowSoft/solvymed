@@ -2774,7 +2774,18 @@
       "rateLimited": "Вы уже несколько раз отправляли запрос за последний час. Ваш запрос у клиники; пожалуйста, дождитесь ответа.",
       "urgentCall": "Если это срочно, звоните {number}.",
       "openRequest": "Ваш открытый запрос",
-      "sentAt": "Отправлено {when}"
+      "sentAt": "Отправлено {when}",
+      "myRequests": "Ваши сообщения",
+      "statusOpen": "Ожидает ответа",
+      "statusAnswered": "Отвечено {when}",
+      "statusCallBack": "Клиника вам позвонит",
+      "statusSubstituted": "Заменено более новым сообщением",
+      "statusClosed": "Закрыто клиникой",
+      "replyTitle": "Ответ клиники",
+      "youWrote": "Вы написали",
+      "youChose": "Вы выбрали: {option}",
+      "earlier": "Предыдущие сообщения ({n})",
+      "statusReceived": "Получено"
     },
     "channel": {
       "title": "Ваш канал",

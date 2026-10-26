@@ -1,8 +1,9 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
-import type { PcOpenRequestFn, PcPatientPage, PcPreviewFn, PcSelfServeFn, PcSubmitFn } from "@/lib/patientChannel/patientPage";
+import { toMyRequests, type PcMyRequestsFn, type PcPatientPage, PcPreviewFn, PcSelfServeFn, PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { PatientChannelFlow } from "@/components/patientChannel/PatientChannelFlow";
 
 // The patient's Patient Channel on the real practice (M4b): /preview while filling the
@@ -35,13 +36,13 @@ export function RealChannel({ page, profId }: { page: PcPatientPage; profId: str
     void postJson("/api/patient-channel/selfserve", { profId, kind }).catch(() => undefined);
   }, [profId]);
 
-  // The open request with this practice (237's pc_my_requests: the patient's own, never a score).
-  const loadOpen = useMemo<PcOpenRequestFn>(() => async () => {
+  // The patient's requests with this practice (237's pc_my_requests: their own, newest
+  // first, never a score): "Suas mensagens" (P-14) and the open one. null on a failed read.
+  const loadRequests = useMemo<PcMyRequestsFn>(() => async () => {
     const { data, error } = await createClient().rpc("pc_my_requests", { p_prof: profId });
-    if (error || !Array.isArray(data)) return null;
-    const open = (data as { status: string; reasonTitle: string; createdAt: string }[]).find((r) => r.status === "open");
-    return open ? { reasonTitle: open.reasonTitle, createdAt: open.createdAt } : null;
+    // A status this page doesn't know (01): shown as "Recebida", and reported, the code only.
+    return error ? null : toMyRequests(data, (status) => Sentry.captureMessage("pc_unknown_request_status", { level: "warning", tags: { status } }));
   }, [profId]);
 
-  return <PatientChannelFlow page={page} preview={preview} submit={submit} onSelfServe={onSelfServe} loadOpen={loadOpen} />;
+  return <PatientChannelFlow page={page} preview={preview} submit={submit} onSelfServe={onSelfServe} loadRequests={loadRequests} />;
 }

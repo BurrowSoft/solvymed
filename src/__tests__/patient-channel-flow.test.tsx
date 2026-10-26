@@ -6,7 +6,7 @@ import { resolve } from "node:path";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
 import en from "@/messages/en.json";
-import { SAMPLE_PAGE, samplePreview, sampleSubmit } from "@/lib/patientChannel/patientPage";
+import { SAMPLE_PAGE, samplePreview, sampleSubmit, toMyRequests, type PcMyRequest } from "@/lib/patientChannel/patientPage";
 import type { Chip, Vocabulary } from "@/lib/patientChannel/score";
 import { PatientChannelFlow } from "@/components/patientChannel/PatientChannelFlow";
 import { SmartTextBox } from "@/components/patientChannel/SmartTextBox";
@@ -16,6 +16,10 @@ import { SmartTextBox } from "@/components/patientChannel/SmartTextBox";
 
 const P = pt.patientChannel.patient;
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
+const REQ = (o: Partial<PcMyRequest> = {}): PcMyRequest => ({
+  id: "q1", status: "open", reasonTitle: "Possível efeito colateral", option: null, text: "Estou com coceira",
+  replyText: null, repliedAt: null, createdAt: "2026-10-26T10:00:00Z", ...o,
+});
 const flow = () => render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={sampleSubmit()} banner={P.sampleBanner} />));
 const toForm = (reason: string) => {
   fireEvent.click(screen.getByTestId("pc-start"));
@@ -117,8 +121,8 @@ describe("the patient's flow", () => {
   });
 
   it("M4b: too many sends → 01's message, the emergency line and the open request; nothing else sent", async () => {
-    const loadOpen = vi.fn(async () => ({ reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T10:00:00Z" }));
-    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={async () => ({ status: "rate_limited" })} loadOpen={loadOpen} />));
+    const loadRequests = vi.fn(async () => [REQ({ reasonTitle: "Possível efeito colateral" })]);
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={async () => ({ status: "rate_limited" })} loadRequests={loadRequests} />));
     toForm("adm");
     fireEvent.click(screen.getByTestId("pc-send"));
     const box = await screen.findByTestId("pc-rate-limited");
@@ -135,6 +139,58 @@ describe("the patient's flow", () => {
     choose(A.intensityQ, A.intensity0);
     fireEvent.click(await screen.findByTestId("pc-skip"));
     expect(screen.getByTestId("pc-resolved")).toBeInTheDocument();
+  });
+});
+
+// P-14 (01, 10-26): the patient sees their requests and the practice's reply.
+describe("Suas mensagens", () => {
+  const show = (list: PcMyRequest[] | null, page = SAMPLE_PAGE) =>
+    render(wrap(<PatientChannelFlow page={page} preview={samplePreview()} submit={sampleSubmit()} loadRequests={async () => list} />));
+
+  it("the latest, answered: what they wrote, the status with the date in the practice's zone, the reply", async () => {
+    show([REQ({ status: "answered", replyText: "Pode tomar com comida.", repliedAt: "2026-10-26T13:05:00Z" })], { ...SAMPLE_PAGE, timeZone: "America/Sao_Paulo", country: "BR" });
+    const card = await screen.findByTestId("pc-my-request");
+    expect(screen.getByTestId("pc-my-requests")).toHaveTextContent(P.myRequests);
+    expect(card).toHaveTextContent(P.youWrote);
+    expect(card).toHaveTextContent("Estou com coceira");
+    // 13:05 UTC = 10:05 in São Paulo.
+    expect(screen.getByTestId("pc-my-request-status").textContent).toMatch(/^Respondida em .*10:05/);
+    expect(screen.getByTestId("pc-my-request-reply")).toHaveTextContent(P.replyTitle);
+    expect(screen.getByTestId("pc-my-request-reply")).toHaveTextContent("Pode tomar com comida.");
+    // Never a score, a band or a breakdown.
+    expect(screen.getByTestId("pc-my-requests").textContent).not.toMatch(/pts|Urgente|Atenção|Não urgente|pontos/);
+  });
+
+  it("every status has a line: open, call back (no text → no reply card), closed without a text, replaced", async () => {
+    const { unmount } = show([REQ({ status: "call_back", repliedAt: "2026-10-26T13:00:00Z" })]);
+    expect(await screen.findByTestId("pc-my-request-status")).toHaveTextContent(P.statusCallBack);
+    expect(screen.queryByTestId("pc-my-request-reply")).toBeNull();
+    unmount();
+    const r2 = show([REQ({ status: "answered", repliedAt: "2026-10-26T13:00:00Z" })]);
+    expect(await screen.findByTestId("pc-my-request-status")).toHaveTextContent(P.statusClosed);
+    r2.unmount();
+    show([REQ({ id: "new" }), REQ({ id: "old", status: "substituted", option: "Recibo", text: "" })]);
+    expect(await screen.findByTestId("pc-my-request-status")).toHaveTextContent(P.statusOpen);
+    fireEvent.click(screen.getByTestId("pc-my-requests-earlier"));
+    const earlier = screen.getByTestId("pc-my-request-earlier");
+    expect(earlier).toHaveTextContent(P.statusSubstituted);
+    expect(earlier).toHaveTextContent(P.youChose.replace("{option}", "Recibo"));
+  });
+
+  it("none, or a failed read: no section", async () => {
+    show(null);
+    await screen.findByTestId("pc-start");
+    expect(screen.queryByTestId("pc-my-requests")).toBeNull();
+  });
+
+  it("an unknown status: never dropped, never shown raw: 'Recebida', and reported (01)", async () => {
+    const onUnknown = vi.fn();
+    const list = toMyRequests([{ id: "x", status: "weird_new", reasonTitle: "Receita", text: "Preciso da receita", createdAt: "2026-10-26T10:00:00Z" }], onUnknown);
+    expect(list.map((r) => [r.id, r.status])).toEqual([["x", "other"]]);
+    expect(onUnknown).toHaveBeenCalledWith("weird_new");
+    show(list);
+    expect(await screen.findByTestId("pc-my-request-status")).toHaveTextContent(P.statusReceived);
+    expect(screen.getByTestId("pc-my-requests").textContent).not.toContain("weird_new");
   });
 });
 

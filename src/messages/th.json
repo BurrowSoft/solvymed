@@ -2804,7 +2804,18 @@
       "rateLimited": "คุณส่งหลายครั้งแล้วในชั่วโมงที่ผ่านมา คำขอของคุณอยู่กับคลินิกแล้ว กรุณารอคำตอบ",
       "urgentCall": "หากเร่งด่วน โทร {number}",
       "openRequest": "คำขอที่เปิดอยู่ของคุณ",
-      "sentAt": "ส่งเมื่อ {when}"
+      "sentAt": "ส่งเมื่อ {when}",
+      "myRequests": "ข้อความของคุณ",
+      "statusOpen": "รอการตอบกลับ",
+      "statusAnswered": "ตอบเมื่อ {when}",
+      "statusCallBack": "คลินิกจะโทรหาคุณ",
+      "statusSubstituted": "ถูกแทนที่ด้วยข้อความใหม่",
+      "statusClosed": "คลินิกปิดเรื่องนี้แล้ว",
+      "replyTitle": "คำตอบจากคลินิก",
+      "youWrote": "คุณเขียนว่า",
+      "youChose": "คุณเลือก: {option}",
+      "earlier": "ข้อความก่อนหน้า ({n})",
+      "statusReceived": "ได้รับแล้ว"
     },
     "channel": {
       "title": "ช่องทางของคุณ",

@@ -2774,7 +2774,18 @@
       "rateLimited": "この1時間に何度も送信されています。リクエストはクリニックに届いていますので、返信をお待ちください。",
       "urgentCall": "緊急の場合は {number} に電話してください。",
       "openRequest": "受付中のリクエスト",
-      "sentAt": "送信日時 {when}"
+      "sentAt": "送信日時 {when}",
+      "myRequests": "あなたのメッセージ",
+      "statusOpen": "返信待ち",
+      "statusAnswered": "{when} に回答済み",
+      "statusCallBack": "クリニックからお電話します",
+      "statusSubstituted": "新しいメッセージに置き換えられました",
+      "statusClosed": "クリニックが終了しました",
+      "replyTitle": "クリニックからの回答",
+      "youWrote": "あなたの記入内容",
+      "youChose": "選択：{option}",
+      "earlier": "以前のメッセージ（{n}）",
+      "statusReceived": "受付済み"
     },
     "channel": {
       "title": "あなたのチャネル",

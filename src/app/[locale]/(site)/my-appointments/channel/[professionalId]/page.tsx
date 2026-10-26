@@ -40,7 +40,7 @@ export default async function PatientChannelPage({
 
   const p = access.page;
   const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle();
-  const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null } | null;
+  const pub = info as { full_name?: string | null; specialty?: string | null; clinic_name?: string | null; time_zone?: string | null } | null;
   const page: PcPatientPage = {
     doctorName: p.brand?.displayName?.trim() || pub?.full_name?.trim() || "",
     practiceLine: [pub?.clinic_name, p.brand?.title?.trim() || pub?.specialty].filter(Boolean).join(" · "),
@@ -50,6 +50,9 @@ export default async function PatientChannelPage({
     reasons: p.reasons.map((r) => ({ ...r, subtitle: r.subtitle ?? "", options: Array.isArray(r.options) ? r.options : [] })),
     faq: p.faq,
     vocabulary: p.vocabulary,
+    // The dates in "Suas mensagens" (P-14): the practice's zone and calendar.
+    timeZone: pub?.time_zone || countryProfile(p.country).defaultTimeZone,
+    country: p.country ?? null,
   };
   return <RealChannel page={page} profId={professionalId} />;
 }

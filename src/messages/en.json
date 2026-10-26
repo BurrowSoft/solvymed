@@ -2804,7 +2804,18 @@
       "rateLimited": "You’ve sent several times in the last hour. Your request is with the practice; please wait for the answer.",
       "urgentCall": "If it’s urgent, call {number}.",
       "openRequest": "Your open request",
-      "sentAt": "Sent {when}"
+      "sentAt": "Sent {when}",
+      "myRequests": "Your messages",
+      "statusOpen": "Waiting for a reply",
+      "statusAnswered": "Answered on {when}",
+      "statusCallBack": "The practice will call you",
+      "statusSubstituted": "Replaced by a newer message",
+      "statusClosed": "Closed by the practice",
+      "replyTitle": "The practice's reply",
+      "youWrote": "You wrote",
+      "youChose": "You chose: {option}",
+      "earlier": "Earlier messages ({n})",
+      "statusReceived": "Received"
     },
     "channel": {
       "title": "Your channel",

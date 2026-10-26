@@ -28,6 +28,10 @@ export type PcPatientPage = {
   reasons: PcReason[];
   faq: PcFaq[];
   vocabulary: Vocabulary;
+  // The practice's zone and country, for the dates in "Suas mensagens" (P-14: like the
+  // doctor side, the practice's time and calendar). Missing: the browser's.
+  timeZone?: string;
+  country?: string | null;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.
@@ -37,9 +41,41 @@ export type PcPreviewFn = (reasonId: string, answers: Answers) => Promise<PcPrev
 // unavailable: the practice closed or the patient was archived meanwhile (237).
 // rate_limited: too many sends in the last hour (the database's limit, cf #623).
 export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
-// The patient's open request with this practice (pc_my_requests), for the limit screen.
-export type PcOpenRequest = { reasonTitle: string; createdAt: string };
-export type PcOpenRequestFn = () => Promise<PcOpenRequest | null>;
+// The patient's requests with this practice (237's pc_my_requests: their own, newest first;
+// never a score, a band or a breakdown): "Suas mensagens" (P-14) and the open one on the
+// limit screen. null when they couldn't be read (the section just doesn't show).
+// "other": a status this page doesn't know yet; still shown, as "Recebida" (01: never drop
+// a request the patient sent), and reported (onUnknown).
+export type PcMyRequestStatus = "open" | "answered" | "call_back" | "substituted" | "other";
+export type PcMyRequest = {
+  id: string;
+  status: PcMyRequestStatus;
+  reasonTitle: string;
+  option: string | null;
+  text: string;
+  replyText: string | null;
+  repliedAt: string | null;
+  createdAt: string;
+};
+export type PcMyRequestsFn = () => Promise<PcMyRequest[] | null>;
+
+const STATUSES: PcMyRequestStatus[] = ["open", "answered", "call_back", "substituted"];
+const str = (v: unknown) => (typeof v === "string" ? v : "");
+// pc_my_requests' rows, checked. A status the page doesn't know becomes "other" (never shown
+// raw, never dropped) and is passed to onUnknown (the code only, never content).
+export function toMyRequests(raw: unknown, onUnknown?: (status: string) => void): PcMyRequest[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((r) => {
+    const o = (r ?? {}) as Record<string, unknown>;
+    const known = STATUSES.find((s) => s === o.status);
+    if (!known) onUnknown?.(str(o.status).slice(0, 40) || "empty");
+    const status: PcMyRequestStatus = known ?? "other";
+    return [{
+      id: str(o.id), status, reasonTitle: str(o.reasonTitle), option: str(o.option) || null, text: str(o.text),
+      replyText: str(o.replyText).trim() || null, repliedAt: str(o.repliedAt) || null, createdAt: str(o.createdAt),
+    }];
+  });
+}
 // shownIds: the automatic messages the patient saw (kept with the request, as shown).
 export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean, shownIds: string[]) => Promise<PcSubmitResult>;
 export type PcSelfServeFn = (kind: "faq_resolved" | "auto_resolved") => void;

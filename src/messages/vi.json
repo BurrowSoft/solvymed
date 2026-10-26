@@ -2774,7 +2774,18 @@
       "rateLimited": "Bạn đã gửi nhiều lần trong một giờ qua. Yêu cầu của bạn đã đến phòng khám; vui lòng chờ phản hồi.",
       "urgentCall": "Nếu khẩn cấp, hãy gọi {number}.",
       "openRequest": "Yêu cầu đang mở của bạn",
-      "sentAt": "Đã gửi {when}"
+      "sentAt": "Đã gửi {when}",
+      "myRequests": "Tin nhắn của bạn",
+      "statusOpen": "Đang chờ trả lời",
+      "statusAnswered": "Đã trả lời lúc {when}",
+      "statusCallBack": "Phòng khám sẽ gọi cho bạn",
+      "statusSubstituted": "Đã được thay bằng tin nhắn mới hơn",
+      "statusClosed": "Phòng khám đã đóng",
+      "replyTitle": "Trả lời của phòng khám",
+      "youWrote": "Bạn đã viết",
+      "youChose": "Bạn đã chọn: {option}",
+      "earlier": "Tin nhắn trước đó ({n})",
+      "statusReceived": "Đã nhận"
     },
     "channel": {
       "title": "Kênh của bạn",

@@ -2774,7 +2774,18 @@
       "rateLimited": "您在过去一小时内已多次发送。您的请求已送达诊所，请等待回复。",
       "urgentCall": "如情况紧急，请拨打 {number}。",
       "openRequest": "您未处理的请求",
-      "sentAt": "发送于 {when}"
+      "sentAt": "发送于 {when}",
+      "myRequests": "您的消息",
+      "statusOpen": "等待回复",
+      "statusAnswered": "已于 {when} 回复",
+      "statusCallBack": "诊所会给您打电话",
+      "statusSubstituted": "已被较新的消息替换",
+      "statusClosed": "诊所已关闭此消息",
+      "replyTitle": "诊所的回复",
+      "youWrote": "您写道",
+      "youChose": "您选择了：{option}",
+      "earlier": "较早的消息（{n}）",
+      "statusReceived": "已收到"
     },
     "channel": {
       "title": "您的频道",
