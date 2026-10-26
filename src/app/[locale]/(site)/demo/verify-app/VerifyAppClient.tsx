@@ -12,6 +12,11 @@ import { DemoTurnstile } from "@/components/DemoTurnstile";
 // is never sent to any other address.
 export const APP_RETURN = "solvymed://demo-verify";
 
+// No answer at all from the widget (no token, no error, no challenge shown) after this:
+// report "stalled", so the app offers to try again instead of waiting (an Android
+// WebView that never ran the check; the mobile developer, 10-26).
+export const STALL_MS = 15000;
+
 type RnWebView = { postMessage: (message: string) => void };
 
 function post(message: Record<string, string>): boolean {
@@ -47,7 +52,7 @@ export function VerifyAppClient({ siteKey }: { siteKey: string }) {
     <main data-testid="demo-verify-app" className="flex min-h-screen flex-col items-center justify-center gap-4 bg-white p-6 text-center">
       <p className="text-base font-semibold text-slate-800">{t("verifying")}</p>
       {siteKey ? (
-        <DemoTurnstile key={attempt} siteKey={siteKey} locale={locale} onToken={onToken} onError={onError} />
+        <DemoTurnstile key={attempt} siteKey={siteKey} locale={locale} onToken={onToken} onError={onError} stallMs={STALL_MS} />
       ) : (
         <span data-testid="demo-verify-unconfigured" hidden />
       )}
