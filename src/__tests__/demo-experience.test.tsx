@@ -131,6 +131,8 @@ describe("the 2-minute tour", () => {
     expect(await screen.findByTestId("demo-tour")).toHaveClass("demo-tour-card");
     const css = readFileSync(resolve(__dirname, "../app/globals.css"), "utf8");
     expect(css).toMatch(/@media \(min-width: 1024px\) \{\s*html\[data-solvyai-open\] \.demo-tour-card \{ right: calc\(400px \+ 1rem\); \}/);
+    // Closed panel: above the ✦ opener (83, #611).
+    expect(css).toMatch(/html:not\(\[data-solvyai-open\]\) \.demo-tour-card \{ bottom: calc\(5\.5rem \+ var\(--consent-h, 0px\)\); \}/);
   });
 
   it("\"Mostrar\" takes the visitor to the step's page", () => {
