@@ -246,7 +246,10 @@ describe("the sidebar entry", () => {
     const a = renderSidebar(true, 3);
     const badge = screen.getAllByTestId("pc-nav-badge")[0];
     expect(badge.textContent).toBe("3");
-    expect(badge.getAttribute("aria-label")).toBe("3 mensagens abertas");
+    expect(badge.getAttribute("aria-hidden")).toBe("true");
+    expect(screen.getAllByTestId("pc-nav-badge-label")[0].textContent).toBe("3 mensagens abertas");
+    // The link's accessible name includes the spoken count (cf).
+    expect(screen.getAllByRole("link", { name: /Mensagens.*3 mensagens abertas/ }).length).toBeGreaterThan(0);
     a.unmount();
     const b = renderSidebar(true, 0);
     expect(screen.queryByTestId("pc-nav-badge")).toBeNull();

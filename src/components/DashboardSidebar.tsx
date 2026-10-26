@@ -243,10 +243,14 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
             <span className={active ? "text-teal-600" : "text-slate-400"}>{icon}</span>
             {label}
             {path === "/dashboard/patient-channel" && patientChannelOpen > 0 && (
-              <span data-testid="pc-nav-badge" aria-label={tChannel("navOpen", { n: patientChannelOpen })}
-                className="ml-auto rounded-full bg-teal-600 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
-                {patientChannelOpen > 99 ? "99+" : patientChannelOpen}
-              </span>
+              <>
+                {/* The number is visual; the link's name gets the words (an aria-label on a span isn't reliably read; cf). */}
+                <span data-testid="pc-nav-badge" aria-hidden="true"
+                  className="ml-auto rounded-full bg-teal-600 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
+                  {patientChannelOpen > 99 ? "99+" : patientChannelOpen}
+                </span>
+                <span className="sr-only" data-testid="pc-nav-badge-label">{tChannel("navOpen", { n: patientChannelOpen })}</span>
+              </>
             )}
             {active && !(path === "/dashboard/patient-channel" && patientChannelOpen > 0) && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-teal-600" />}
           </Link>
