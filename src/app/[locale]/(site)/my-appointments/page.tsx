@@ -47,10 +47,17 @@ export type PatientAppointment = {
 
 export default async function MyAppointmentsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ single_doctor?: string | string[] }>;
 }) {
   const { locale } = await params;
+  // Previews only (never Production): ?single_doctor=1 shows the one-doctor layout www has
+  // while multiDoctor is a preview feature, so a row can check what www patients see
+  // (TH-1: the Patient Channel button was missing there).
+  const forceSingle = process.env.VERCEL_ENV !== "production" && (await searchParams).single_doctor === "1";
+  const multiDoctor = liveFeatures.multiDoctor && !forceSingle;
   const prefix = locale === "en" ? "" : `/${locale}`;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -166,14 +173,19 @@ export default async function MyAppointmentsPage({
   // 1.5.0 (behind the flag): the patient's doctors (get_my_doctors, the
   // only doctor list a patient reads) and whether the server lets them add
   // another one yet.
-  const loadedDoctors = liveFeatures.multiDoctor ? await loadMyDoctors(supabase) : null;
+  const loadedDoctors = multiDoctor ? await loadMyDoctors(supabase) : null;
   // The Patient Channel (M4b): "Fale com o Médico" only where 237 opens it to this patient
-  // (the doctor turned it on; connected; not archived; practice open). Dark otherwise.
-  const channelOn = !!loadedDoctors?.length && (await patientChannelEnabled(supabase, user.id));
+  // (the doctor turned it on; connected; not archived; practice open). Dark otherwise. On
+  // the doctor card in BOTH layouts (01, TH-1): each of the doctors, or, without the doctors
+  // list (www today), the one doctor's card.
+  const channelOn = (!!loadedDoctors?.length || !!myProfessionalId) && (await patientChannelEnabled(supabase, user.id));
   const doctors = loadedDoctors && channelOn
     ? await Promise.all(loadedDoctors.map(async (d) => ({ ...d, channel: (await patientPage(supabase, d.id)).ok })))
     : loadedDoctors;
-  const canAddDoctor = liveFeatures.multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
+  const primaryChannel = !loadedDoctors?.length && !!myProfessionalId && channelOn
+    ? (await patientPage(supabase, myProfessionalId)).ok
+    : false;
+  const canAddDoctor = multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
   // 1.8.0 A: empty unless the server's switch is on for this patient (190).
   const docDoctors = await loadMyDocumentDoctors();
   const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
@@ -204,6 +216,7 @@ export default async function MyAppointmentsPage({
       practiceCountry={practiceCountry}
       practices={practices}
       doctors={doctors}
+      primaryChannel={primaryChannel}
       canAddDoctor={canAddDoctor}
       docDoctors={docDoctors}
     />
