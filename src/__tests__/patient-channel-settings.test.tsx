@@ -36,6 +36,15 @@ describe("the Patient Channel rules editor", () => {
     expect(screen.getByText(P.symptoms.none)).toBeInTheDocument();
   });
 
+  it("a refused 1-letter Thai word is cleared from the patient-words field (01, #614 row)", () => {
+    render(wrap(<PatientChannelSettings initialRules={sample} emergencyNumber="1669" />));
+    const field = screen.getAllByRole("textbox", { name: P.symptoms.words })[0] as HTMLInputElement;
+    fireEvent.change(field, { target: { value: "ก, มึนหัว" } });
+    fireEvent.blur(field);
+    expect(field.value).toBe("มึนหัว");
+    expect(screen.getByRole("alert")).toHaveTextContent(P.symptoms.thaiShort);
+  });
+
   it("the warn-on-urgent line names the practice country's number", () => {
     render(wrap(<PatientChannelSettings initialRules={sample} emergencyNumber="1669" />));
     expect(screen.getByText(P.bands.warnOnUrgent.replace("{number}", "1669"))).toBeInTheDocument();
