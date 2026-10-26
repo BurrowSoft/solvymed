@@ -113,13 +113,15 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   return (
     <>
     {/* The test hides the editor without unmounting it: unsaved edits and the channel
-        cards' state survive a round trip. */}
+        cards' state survive a round trip. relative: absolutely positioned bits (sr-only
+        legends/labels) stay inside the dashboard's scrolling <main> instead of stretching
+        the whole document (83, #620). */}
     {testing && (
-      <div className="p-4 sm:p-6 lg:p-8 max-w-6xl">
+      <div className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
         <PatientChannelTest rules={rules} emergencyNumber={number} onBack={() => setTesting(false)} />
       </div>
     )}
-    <div hidden={testing} className="p-4 sm:p-6 lg:p-8 max-w-6xl">
+    <div hidden={testing} className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
       <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
       <p className="mt-1 max-w-prose text-sm text-slate-500">{t("settings.intro")}</p>
 
