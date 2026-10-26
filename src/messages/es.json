@@ -2954,5 +2954,13 @@
       "warningFloor": "Symptom with an emergency warning: always Urgent.",
       "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI)."
     }
+  },
+  "noticesUnsubscribe": {
+    "title": "Stop Patient Channel e-mails",
+    "lead": "If you confirm, you'll stop getting e-mails about Patient Channel replies. App notifications continue.",
+    "button": "Stop these e-mails",
+    "done": "Done. You won't get these e-mails anymore. Replies still appear in the app and on the website.",
+    "incomplete": "This link is incomplete. Open the link in the e-mail again.",
+    "error": "Algo salió mal. Inténtalo de nuevo."
   }
 }

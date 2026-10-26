@@ -2954,5 +2954,13 @@
       "warningFloor": "Gejala dengan peringatan darurat: selalu Mendesak.",
       "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI)."
     }
+  },
+  "noticesUnsubscribe": {
+    "title": "Berhenti menerima email Saluran Pasien",
+    "lead": "Jika Anda mengonfirmasi, Anda tidak akan lagi menerima email tentang balasan di Saluran Pasien. Notifikasi aplikasi tetap berjalan.",
+    "button": "Hentikan email ini",
+    "done": "Selesai. Anda tidak akan menerima email ini lagi. Balasan tetap tampil di aplikasi dan di situs web.",
+    "incomplete": "Tautan ini tidak lengkap. Buka lagi tautan dari email.",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

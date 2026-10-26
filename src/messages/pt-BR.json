@@ -2954,5 +2954,13 @@
       "warningFloor": "Sintoma com aviso de emergência: sempre Urgente.",
       "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA)."
     }
+  },
+  "noticesUnsubscribe": {
+    "title": "Parar e-mails do Canal do Paciente",
+    "lead": "Ao confirmar, você deixa de receber e-mails sobre respostas no Canal do Paciente. Os avisos no app continuam.",
+    "button": "Parar estes e-mails",
+    "done": "Pronto. Você não receberá mais estes e-mails. As respostas continuam no app e no site.",
+    "incomplete": "Este link está incompleto. Abra o link do e-mail novamente.",
+    "error": "Algo deu errado. Tente novamente."
   }
 }

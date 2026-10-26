@@ -2954,5 +2954,13 @@
       "warningFloor": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp.",
       "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI)."
     }
+  },
+  "noticesUnsubscribe": {
+    "title": "Ngừng nhận email từ Kênh bệnh nhân",
+    "lead": "Khi xác nhận, bạn sẽ không còn nhận email về các câu trả lời trong Kênh bệnh nhân. Thông báo trong ứng dụng vẫn tiếp tục.",
+    "button": "Ngừng nhận các email này",
+    "done": "Xong. Bạn sẽ không nhận các email này nữa. Câu trả lời vẫn hiển thị trong ứng dụng và trên trang web.",
+    "incomplete": "Liên kết này không đầy đủ. Hãy mở lại liên kết trong email.",
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại."
   }
 }
