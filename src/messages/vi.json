@@ -803,14 +803,18 @@
     },
     "completeAccount": {
       "title": "Hoàn tất tài khoản",
-      "subtitle": "Bước cuối: cho chúng tôi biết bạn là ai.",
+      "subtitle": "Bước cuối: cho chúng tôi biết bạn là nhân viên y tế hay bệnh nhân để mở đúng khu vực.",
       "countryLabel": "Phòng khám của bạn ở đâu?",
       "countryRequired": "Chọn quốc gia của phòng khám.",
       "consentRequired": "Vui lòng đồng ý Điều khoản sử dụng và Chính sách quyền riêng tư.",
       "submit": "Tiếp tục",
       "loadError": "Không mở được bước này. Hãy kiểm tra kết nối và thử lại.",
       "retry": "Thử lại",
-      "working": "Đang lưu…"
+      "working": "Đang lưu…",
+      "accountLine": "Tài khoản Google: {email}",
+      "useAnother": "Dùng tài khoản khác",
+      "noCode": "Tôi không có mã",
+      "noCodeText": "Hãy xin phòng khám của bác sĩ đường liên kết mời. Bạn vào bằng liên kết đó."
     },
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {

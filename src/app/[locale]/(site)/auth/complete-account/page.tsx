@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -24,6 +24,12 @@ import { track } from "@/lib/track";
 // writes what a form sign-up writes; then the same post-sign-up step as an
 // e-mail confirmation (/api/auth/after-verify: attribution, routing: the
 // professional welcome, or the patient's invite linking and its gate).
+// B4 (01, 10-26): the Google account being completed is shown, with "Usar outra
+// conta" (signs out → the login), so the wrong account is never a dead end; a
+// patient without a code gets "Não tenho código" (how to get in + the same way
+// out); a missing field's error sits next to it, scrolled to and focused.
+type Field = "country" | "code" | "consent";
+
 export default function CompleteAccountPage() {
   const t = useTranslations("auth");
   const tc = useTranslations("auth.completeAccount");
@@ -44,6 +50,38 @@ export default function CompleteAccountPage() {
   // button kept spinning with nothing to do; now it says so, with Try again.
   const [loadFailed, setLoadFailed] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [email, setEmail] = useState("");
+  const [leaving, setLeaving] = useState(false);
+  const [noCode, setNoCode] = useState(false);
+  const [fieldError, setFieldError] = useState<{ field: Field; text: string } | null>(null);
+  const countryRef = useRef<HTMLDivElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+  const termsRef = useRef<HTMLInputElement>(null);
+
+  // The error next to its field; the field scrolled into view and focused (F6). After the
+  // render: a refused country reopens the picker first, and the focus must land on its
+  // first country, not on the "Alterar" button that's going away (cf, #629). A new object
+  // per call, so the same error twice focuses again.
+  function showFieldError(field: Field, text: string) {
+    setFieldError({ field, text });
+  }
+  useEffect(() => {
+    if (!fieldError) return;
+    const f = fieldError.field;
+    const el = f === "country" ? countryRef.current?.querySelector<HTMLElement>("button") : f === "code" ? codeRef.current : termsRef.current;
+    el?.scrollIntoView?.({ block: "center", behavior: "smooth" });
+    el?.focus({ preventScroll: true });
+  }, [fieldError]);
+  const errorFor = (field: Field) => (fieldError?.field === field ? fieldError.text : null);
+
+  // "Usar outra conta": out of this account, to the login (F1/F2).
+  async function useAnotherAccount() {
+    if (leaving) return;
+    setLeaving(true);
+    track("complete_account_switch");
+    await createClient().auth.signOut().catch(() => null);
+    window.location.assign(localePath("/auth/login"));
+  }
 
   // Only for an account that still has to be completed; anyone else goes on
   // (signed out: the login; done: the dashboard, which routes every role).
@@ -68,6 +106,7 @@ export default function CompleteAccountPage() {
           return;
         }
         setName((n) => n || String(user.user_metadata?.full_name ?? user.user_metadata?.name ?? ""));
+        setEmail(user.email ?? "");
         setLoadFailed(false);
         setReady(true);
       } catch {
@@ -85,16 +124,17 @@ export default function CompleteAccountPage() {
     e.preventDefault();
     if (working || !ready) return;
     setError("");
+    setFieldError(null);
     if (role === "professional" && !country) {
-      setError(tc("countryRequired"));
+      showFieldError("country", tc("countryRequired"));
       return;
     }
     if (role === "patient" && !code.trim()) {
-      setError(t("signup.inviteCodeRequired"));
+      showFieldError("code", t("signup.inviteCodeRequired"));
       return;
     }
     if (!accepted) {
-      setError(tc("consentRequired"));
+      showFieldError("consent", tc("consentRequired"));
       return;
     }
     setWorking(true);
@@ -121,13 +161,10 @@ export default function CompleteAccountPage() {
       }
       track("complete_account_error", { code: ["invite_code_required", "unsupported_country", "consent_required"].find((c) => m.includes(c)) ?? (authErrorKey(rpcError) === "network" ? "network" : "other") });
       setWorking(false);
-      setError(
-        m.includes("invite_code_required") ? t("signup.inviteCodeRequired")
-          : m.includes("unsupported_country") ? tc("countryRequired")
-          : m.includes("consent_required") ? tc("consentRequired")
-          : authErrorKey(rpcError) === "network" ? t("errors.network")
-          : t("errors.generic"),
-      );
+      if (m.includes("invite_code_required")) showFieldError("code", t("signup.inviteCodeRequired"));
+      else if (m.includes("unsupported_country")) { setCountry(null); showFieldError("country", tc("countryRequired")); }
+      else if (m.includes("consent_required")) showFieldError("consent", tc("consentRequired"));
+      else setError(authErrorKey(rpcError) === "network" ? t("errors.network") : t("errors.generic"));
       return;
     }
     track("signup_complete_submitted", { role });
@@ -149,7 +186,18 @@ export default function CompleteAccountPage() {
         <BrandMark />
         <div data-testid="complete-account">
           <h1 className="mb-1 text-center text-2xl font-extrabold text-slate-900">{tc("title")}</h1>
-          <p className="mb-6 text-center text-sm text-slate-500">{tc("subtitle")}</p>
+          <p className="mb-2 text-center text-sm text-slate-500">{tc("subtitle")}</p>
+          {ready && email && (
+            <p data-testid="complete-account-line" className="mb-6 break-words text-center text-xs text-slate-500">
+              {tc("accountLine", { email })}
+              {" · "}
+              <button type="button" data-testid="complete-use-another" onClick={useAnotherAccount} disabled={leaving}
+                className="font-semibold text-teal-700 underline hover:text-teal-800 disabled:opacity-60">
+                {tc("useAnother")}
+              </button>
+            </p>
+          )}
+          {!(ready && email) && <div className="mb-4" />}
 
           <form onSubmit={submit} className="space-y-5" noValidate>
             <fieldset>
@@ -162,7 +210,7 @@ export default function CompleteAccountPage() {
               </div>
             </fieldset>
 
-            {role === "professional" && (
+            {role === "professional" && (<div ref={countryRef}>{
               country ? (
                 // The practice country locks after this: always in view.
                 <p data-testid="complete-country-line" className="text-center text-sm font-semibold text-slate-700">
@@ -177,16 +225,18 @@ export default function CompleteAccountPage() {
                   <legend className="mb-2 text-sm font-semibold text-slate-700">{tc("countryLabel")}</legend>
                   <div className="grid grid-cols-2 gap-2">
                     {COUNTRY_STEP.map((c) => (
-                      <button key={c.code} type="button" data-testid={`complete-country-${c.code}`} onClick={() => setCountry(c.code)}
+                      <button key={c.code} type="button" data-testid={`complete-country-${c.code}`} onClick={() => { setCountry(c.code); setFieldError(null); }}
+                        aria-describedby={errorFor("country") ? "complete-error-country" : undefined}
                         className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:border-teal-500">
                         <span aria-hidden="true">{c.flag}</span>
                         {c.label}
                       </button>
                     ))}
                   </div>
+                  {errorFor("country") && <p id="complete-error-country" role="alert" data-testid="complete-error-country" className="mt-1.5 text-sm text-red-600">{errorFor("country")}</p>}
                 </fieldset>
               )
-            )}
+            }</div>)}
 
             <div>
               <label htmlFor="complete-name" className="field-label">{t("signup.fullName")}</label>
@@ -199,14 +249,33 @@ export default function CompleteAccountPage() {
                 <label htmlFor="complete-invite-code" className="field-label">
                   {t("signup.inviteCode")} <span className="text-red-500">*</span>
                 </label>
-                <input id="complete-invite-code" data-testid="complete-invite-code" type="text" autoCapitalize="characters" value={code}
-                  onChange={(e) => setCode(e.target.value)} placeholder={t("signup.inviteCodePlaceholder")} className="text-input" />
+                <input id="complete-invite-code" ref={codeRef} data-testid="complete-invite-code" type="text" autoCapitalize="characters" value={code}
+                  onChange={(e) => { setCode(e.target.value); if (fieldError?.field === "code") setFieldError(null); }}
+                  aria-invalid={errorFor("code") ? true : undefined} aria-describedby={errorFor("code") ? "complete-error-code" : undefined}
+                  placeholder={t("signup.inviteCodePlaceholder")} className="text-input" />
+                {errorFor("code") && <p id="complete-error-code" role="alert" data-testid="complete-error-code" className="mt-1.5 text-sm text-red-600">{errorFor("code")}</p>}
                 <p className="mt-1.5 text-xs text-slate-500">{t("signup.inviteCodeHint")}</p>
+                <button type="button" data-testid="complete-no-code" aria-expanded={noCode} onClick={() => setNoCode((v) => !v)}
+                  className="mt-2 text-sm font-semibold text-teal-700 underline hover:text-teal-800">
+                  {tc("noCode")}
+                </button>
+                {noCode && (
+                  <div data-testid="complete-no-code-help" className="mt-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">
+                    <p>{tc("noCodeText")}</p>
+                    <button type="button" data-testid="complete-no-code-use-another" onClick={useAnotherAccount} disabled={leaving}
+                      className="mt-2 font-semibold text-teal-700 underline hover:text-teal-800 disabled:opacity-60">
+                      {tc("useAnother")}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
+            <div>
             <label className="flex items-start gap-2.5 text-sm text-slate-600">
-              <input type="checkbox" data-testid="complete-terms" checked={accepted} onChange={(e) => setAccepted(e.target.checked)}
+              <input type="checkbox" ref={termsRef} data-testid="complete-terms" checked={accepted}
+                onChange={(e) => { setAccepted(e.target.checked); if (fieldError?.field === "consent") setFieldError(null); }}
+                aria-invalid={errorFor("consent") ? true : undefined} aria-describedby={errorFor("consent") ? "complete-error-consent" : undefined}
                 className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-teal-600 focus:ring-teal-500" />
               <span>
                 {t.rich("signup.consentCheckbox", {
@@ -215,6 +284,8 @@ export default function CompleteAccountPage() {
                 })}
               </span>
             </label>
+            {errorFor("consent") && <p id="complete-error-consent" role="alert" data-testid="complete-error-consent" className="mt-1.5 text-sm text-red-600">{errorFor("consent")}</p>}
+            </div>
 
             {error && <p role="alert" data-testid="complete-error" className="text-sm text-red-600">{error}</p>}
 

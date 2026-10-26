@@ -803,14 +803,18 @@
     },
     "completeAccount": {
       "title": "アカウントを完成させる",
-      "subtitle": "最後のステップ：あなたについて教えてください。",
+      "subtitle": "最後のステップ：医療従事者か患者かを教えてください。適切な画面を開きます。",
       "countryLabel": "診療所はどこにありますか？",
       "countryRequired": "診療所の国を選んでください。",
       "consentRequired": "利用規約とプライバシーポリシーに同意してください。",
       "submit": "続行",
       "loadError": "このステップを開けませんでした。接続を確認して、もう一度お試しください。",
       "retry": "もう一度試す",
-      "working": "保存しています…"
+      "working": "保存しています…",
+      "accountLine": "Google アカウント：{email}",
+      "useAnother": "別のアカウントを使う",
+      "noCode": "招待コードがない",
+      "noCodeText": "担当医のクリニックに招待リンクを依頼してください。そのリンクから利用を開始できます。"
     },
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
     "login": {

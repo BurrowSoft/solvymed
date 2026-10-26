@@ -803,14 +803,18 @@
     },
     "completeAccount": {
       "title": "Complete your account",
-      "subtitle": "One last step: tell us who you are.",
+      "subtitle": "Last step: tell us if you're a professional or a patient, so we can open the right area.",
       "countryLabel": "Where is your practice?",
       "countryRequired": "Choose your practice's country.",
       "consentRequired": "Please accept the Terms of Use and the Privacy Policy.",
       "submit": "Continue",
       "loadError": "We couldn’t open this step. Check your connection and try again.",
       "retry": "Try again",
-      "working": "Saving…"
+      "working": "Saving…",
+      "accountLine": "Google account: {email}",
+      "useAnother": "Use another account",
+      "noCode": "I don't have a code",
+      "noCodeText": "Ask your doctor's practice for the invite link. That's how you get in."
     },
     "passwordTooShort": "La contraseña debe tener al menos {min} caracteres.",
     "login": {

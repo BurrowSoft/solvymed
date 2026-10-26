@@ -803,14 +803,18 @@
     },
     "completeAccount": {
       "title": "Complete sua conta",
-      "subtitle": "Último passo: conte quem você é.",
+      "subtitle": "Último passo: diga se você é profissional ou paciente, para abrirmos a área certa.",
       "countryLabel": "Onde fica seu consultório?",
       "countryRequired": "Escolha o país do seu consultório.",
       "consentRequired": "Aceite os Termos de Uso e a Política de Privacidade.",
       "submit": "Continuar",
       "loadError": "Não conseguimos abrir esta etapa. Verifique a conexão e tente de novo.",
       "retry": "Tentar de novo",
-      "working": "Salvando…"
+      "working": "Salvando…",
+      "accountLine": "Conta Google: {email}",
+      "useAnother": "Usar outra conta",
+      "noCode": "Não tenho código",
+      "noCodeText": "Peça o link de convite ao consultório do seu médico. É por ele que você entra."
     },
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {
