@@ -92,7 +92,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     <>
       <SiteHeader />
 
-      <AccountClosedNotice closed={t("accountClose.closedNotice")} deleted={t("accountClose.deletedNotice")} />
+      <AccountClosedNotice closed={t("accountClose.closedNotice")} deleted={t("accountClose.deletedNotice")} cancelled={t("auth.completeAccount.cancelledNotice")} />
 
       <main>
         {/* Hero */}

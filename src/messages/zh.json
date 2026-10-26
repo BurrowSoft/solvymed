@@ -814,7 +814,12 @@
       "accountLine": "Google 账号：{email}",
       "useAnother": "使用其他账号",
       "noCode": "我没有邀请码",
-      "noCodeText": "请向您医生的诊所索取邀请链接，您需通过该链接进入。"
+      "noCodeText": "请向您医生的诊所索取邀请链接，您需通过该链接进入。",
+      "cancelSignup": "取消注册",
+      "cancelConfirm": "这将删除此登录。您随时可以重新注册。",
+      "cancelBack": "返回",
+      "cancelTryLater": "现在无法取消。请在1小时后重试。",
+      "cancelledNotice": "已取消注册。"
     },
     "passwordTooShort": "密码至少需要{min}个字符。",
     "login": {

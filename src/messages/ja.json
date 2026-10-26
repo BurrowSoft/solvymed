@@ -814,7 +814,12 @@
       "accountLine": "Google アカウント：{email}",
       "useAnother": "別のアカウントを使う",
       "noCode": "招待コードがない",
-      "noCodeText": "担当医のクリニックに招待リンクを依頼してください。そのリンクから利用を開始できます。"
+      "noCodeText": "担当医のクリニックに招待リンクを依頼してください。そのリンクから利用を開始できます。",
+      "cancelSignup": "登録をキャンセル",
+      "cancelConfirm": "このログインを削除します。いつでも再登録できます。",
+      "cancelBack": "戻る",
+      "cancelTryLater": "今はキャンセルできません。1時間後にもう一度お試しください。",
+      "cancelledNotice": "登録をキャンセルしました。"
     },
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
     "login": {

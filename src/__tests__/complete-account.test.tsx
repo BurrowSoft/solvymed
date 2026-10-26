@@ -211,4 +211,60 @@ describe("Complete your account", () => {
     fireEvent.click(screen.getByTestId("complete-submit"));
     expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.errors.generic);
   });
+
+  describe("F3: Cancelar cadastro (242)", () => {
+    const openConfirm = async () => {
+      show("c=BR");
+      fireEvent.click(await screen.findByTestId("complete-cancel"));
+      expect(screen.getByTestId("complete-cancel-confirm")).toHaveTextContent(pt.auth.completeAccount.cancelConfirm);
+    };
+
+    it("deleted → signed out → the landing with its note; nothing else is called", async () => {
+      h.rpc.mockResolvedValue({ data: { status: "deleted" }, error: null });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/?signup_cancelled=1"));
+      expect(h.rpc).toHaveBeenCalledWith("cancel_pending_signup", undefined);
+      expect(h.rpc).not.toHaveBeenCalledWith("complete_google_signup", expect.anything());
+      expect(h.signOut).toHaveBeenCalledWith({ scope: "local" });
+      expect(h.track).toHaveBeenCalledWith("complete_account_cancelled");
+    });
+
+    it("deleted: the auth cookie goes even when the local sign-out fails (cf: the user no longer exists; 7e)", async () => {
+      document.cookie = "sb-test-auth-token=abc; path=/";
+      h.signOut.mockRejectedValueOnce(new TypeError("Failed to fetch"));
+      h.rpc.mockResolvedValue({ data: { status: "deleted" }, error: null });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/?signup_cancelled=1"));
+      expect(document.cookie).not.toContain("sb-test-auth-token");
+    });
+
+    it("try_later: the hour message, stays; Back closes the confirm", async () => {
+      h.rpc.mockResolvedValue({ data: null, error: { message: "try_later", code: "P0001" } });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      expect(await screen.findByTestId("complete-cancel-error")).toHaveTextContent(pt.auth.completeAccount.cancelTryLater);
+      expect(assign).not.toHaveBeenCalled();
+      expect(h.signOut).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByTestId("complete-cancel-back"));
+      expect(screen.queryByTestId("complete-cancel-confirm")).toBeNull();
+      expect(screen.getByTestId("complete-cancel")).toBeInTheDocument();
+    });
+
+    it.each(["not_pending", "has_account"])("%s (completed elsewhere) → the dashboard, not deleted", async (code) => {
+      h.rpc.mockResolvedValue({ data: null, error: { message: code, code: "P0001" } });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/dashboard"));
+      expect(h.signOut).not.toHaveBeenCalled();
+    });
+
+    it("any other refusal: the generic error", async () => {
+      h.rpc.mockResolvedValue({ data: null, error: { message: "demo_account", code: "P0001" } });
+      await openConfirm();
+      fireEvent.click(screen.getByTestId("complete-cancel-yes"));
+      expect(await screen.findByTestId("complete-cancel-error")).toHaveTextContent(pt.auth.errors.generic);
+    });
+  });
 });

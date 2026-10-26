@@ -47,6 +47,15 @@ describe("the closed/deleted note, read in the browser", () => {
     show();
     expect(screen.queryByRole("status")).toBeNull();
   });
+
+  it("a cancelled Google sign-up (242, B4 F3): its note only when the text is given", async () => {
+    window.history.replaceState(null, "", "/?signup_cancelled=1");
+    const r = render(<AccountClosedNotice closed="Conta encerrada." deleted="Conta excluída." cancelled="Cadastro cancelado." />);
+    await waitFor(() => expect(screen.getByRole("status").textContent).toBe("Cadastro cancelado."));
+    r.unmount();
+    show();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
 });
 
 describe("the Founders form's country in English (from /api/geo)", () => {

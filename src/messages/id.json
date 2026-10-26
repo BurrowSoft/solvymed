@@ -814,7 +814,12 @@
       "accountLine": "Akun Google: {email}",
       "useAnother": "Gunakan akun lain",
       "noCode": "Saya tidak punya kode",
-      "noCodeText": "Minta tautan undangan ke klinik dokter Anda. Melalui tautan itulah Anda masuk."
+      "noCodeText": "Minta tautan undangan ke klinik dokter Anda. Melalui tautan itulah Anda masuk.",
+      "cancelSignup": "Batalkan pendaftaran",
+      "cancelConfirm": "Ini menghapus akses masuk ini. Anda dapat mendaftar lagi kapan saja.",
+      "cancelBack": "Kembali",
+      "cancelTryLater": "Belum dapat dibatalkan sekarang. Coba lagi dalam 1 jam.",
+      "cancelledNotice": "Pendaftaran dibatalkan."
     },
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {

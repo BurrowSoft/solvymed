@@ -814,7 +814,12 @@
       "accountLine": "Google 帳號：{email}",
       "useAnother": "使用其他帳號",
       "noCode": "我沒有邀請碼",
-      "noCodeText": "請向您醫師的診所索取邀請連結，您需透過該連結進入。"
+      "noCodeText": "請向您醫師的診所索取邀請連結，您需透過該連結進入。",
+      "cancelSignup": "取消註冊",
+      "cancelConfirm": "這將刪除此登入。您隨時可以重新註冊。",
+      "cancelBack": "返回",
+      "cancelTryLater": "目前無法取消。請在1小時後再試。",
+      "cancelledNotice": "已取消註冊。"
     },
     "passwordTooShort": "密碼至少需要{min}個字元。",
     "login": {
