@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -23,7 +23,9 @@ type State = "loading" | "unavailable" | "signedIn" | "busy" | "error";
 
 // testAllowed: ?demo_test=1 counts only off Production (page.tsx, the server).
 // siteKey: the demo's Turnstile key (lib/demoTurnstile, from the server).
-export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; siteKey: string }) {
+// serverOn: the switch as the server read it (#604; null = unknown, so the
+// browser reads it).
+export function DemoClient({ testAllowed, siteKey, serverOn = null }: { testAllowed: boolean; siteKey: string; serverOn?: boolean | null }) {
   const t = useTranslations("demo");
   const params = useParams();
   const locale = (params.locale as string) ?? "en";
@@ -31,6 +33,10 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
   const country = demoCountry(locale);
   const [state, setState] = useState<State>("loading");
   const [attempt, setAttempt] = useState(0);
+  // The router in a ref: the start runs once per attempt, whatever re-renders.
+  const router = useRef(useRouter());
+  // The loading card's real steps (#604, E): verify → create → open.
+  const [step, setStep] = useState<"verify" | "create" | "open">("verify");
   // The bot check (01 + 0e): shown on the loading screen only while a token
   // is awaited; the flow waits on this promise.
   const [challenge, setChallenge] = useState(0);
@@ -48,6 +54,7 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
     // never reached, it's sent to its dashboard above) is never signed out.
     let fresh = false;
     let cleaned = false;
+    setStep("verify");
     const cleanUp = async (refused: boolean) => {
       if (cleaned || !(refused || fresh)) return;
       cleaned = true;
@@ -62,43 +69,73 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
       pending.current = { resolve, reject };
       setChallenge((n) => n + 1);
     });
-    const verify = async (t: string) => {
-      const res = await fetch("/api/demo/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: t }) });
-      if (!res.ok) throw new Error("demo_unverified");
+    // One call (#604, C): the ticket, then start_demo with this session, on
+    // the server. Its answer: null (ready) or the refusal, as start_demo's.
+    const verifyAndStart = async (t: string): Promise<{ message: string } | null> => {
+      try {
+        const res = await fetch("/api/demo/verify", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ token: t, country, locale }) });
+        const body = (await res.json().catch(() => ({}))) as { status?: string; code?: string };
+        if (res.ok && body.status === "ready") return null;
+        return { message: res.ok ? "demo_unverified" : body.code ?? "demo_unverified" };
+      } catch {
+        return { message: "demo_unverified" };
+      }
     };
+    // No prefetch of the dashboard before the demo exists (83's ❌ on
+    // a55da1d3): its layout sends a session WITHOUT a role to /auth/login,
+    // the role comes with start_demo, and Next caches a prefetched redirect,
+    // so router.replace followed it to the login. The in-app navigation below
+    // fetches the dashboard fresh, after start_demo.
+    // Timing marks for the testers (performance.getEntriesByType("mark")):
+    // nothing is sent anywhere (#604, 0e's split).
+    const mark = (n: string) => { try { performance.mark(`demo:${n}`); } catch { /* not supported */ } };
+    mark("start");
     void (async () => {
       try {
-        const on = demoTestOn(location.search, testAllowed) || (await publicFlag(supabase, "demo_mode"));
+        // In parallel (#604): the switch and the session; the widget only
+        // once the demo is known to be on.
+        const [on, { data: { user } }] = await Promise.all([
+          serverOn !== null ? Promise.resolve(serverOn) : demoTestOn(location.search, testAllowed) ? Promise.resolve(true) : publicFlag(supabase, "demo_mode"),
+          supabase.auth.getUser(),
+        ]);
+        mark("switch-and-session");
         if (!live) return;
         if (!on) {
           setState("unavailable");
           return;
         }
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!live) return;
         if (user && !isDemoUser(user)) {
           setState("signedIn");
           return;
         }
-        // A new visitor passes the check BEFORE any session is made; a
-        // returning one (an open sandbox answers "ready" with no ticket) only
-        // when 234 asks (demo_unverified).
-        const start = () => supabase.rpc("start_demo", { p_country: country, p_locale: locale });
+        // Wake the verify function while the visitor waits (#604, F; a no-op GET).
+        void fetch("/api/demo/verify", { method: "GET" }).catch(() => undefined);
         let startError: { message?: string } | null;
         if (!user) {
-          const t = await token();
+          // A new visitor: the Turnstile solve and the anonymous sign-in run
+          // together (01: a bare anonymous user is no new exposure; 235's
+          // cleanup and a refusal's end_demo remove it), then one call that
+          // mints the ticket AND starts the demo on the server.
+          const [t] = await Promise.all([
+            token().then((tok) => { mark("token"); return tok; }),
+            supabase.auth.signInAnonymously().then(({ error }) => { if (error) throw error; fresh = true; mark("signed-in"); }),
+          ]);
           if (!live) return;
-          const { error } = await supabase.auth.signInAnonymously();
-          if (error) throw error;
-          fresh = true;
-          try { await verify(t); } catch (e) { startError = { message: (e as Error).message }; }
-          startError ??= (await start()).error;
+          setStep("create");
+          startError = await verifyAndStart(t);
+          mark("verified-and-started");
         } else {
-          startError = (await start()).error;
+          // A returning session: an open sandbox answers "ready" with no
+          // ticket; the check only when 234 asks (demo_unverified).
+          setStep("create");
+          startError = (await supabase.rpc("start_demo", { p_country: country, p_locale: locale })).error;
           if (refusal(startError) === "demo_unverified") {
+            setStep("verify");
             const t = await token();
             if (!live) return;
-            try { await verify(t); startError = (await start()).error; } catch (e) { startError = { message: (e as Error).message }; }
+            setStep("create");
+            startError = await verifyAndStart(t);
+          mark("verified-and-started");
           }
         }
         const refused = refusal(startError);
@@ -117,14 +154,18 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
         // demo_unverified (the check failed): cleaned up above, a retry.
         if (startError) throw startError;
         track("demo_start", { platform: "web", c: country });
-        window.location.replace(`${prefix}/dashboard`);
+        if (!live) return;
+        mark("open-dashboard");
+        setStep("open");
+        // In-app navigation (no full reload), fetched now that the demo exists.
+        router.current.replace(`${prefix}/dashboard`);
       } catch {
         await cleanUp(false);
         if (live) setState("error");
       }
     })();
     return () => { live = false; };
-  }, [attempt, country, locale, prefix, testAllowed, siteKey]);
+  }, [attempt, country, locale, prefix, testAllowed, siteKey, serverOn]);
 
   return (
     <AuthPageShell>
@@ -133,7 +174,14 @@ export function DemoClient({ testAllowed, siteKey }: { testAllowed: boolean; sit
         {state === "loading" && (
           <div data-testid="demo-loading" role="status" className="flex flex-col items-center gap-4 py-6">
             <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#F59E0B] border-t-transparent" aria-hidden="true" />
-            <p className="text-base font-semibold text-slate-800">{t("loading")}</p>
+            <p data-testid="demo-step" data-step={step} className="text-base font-semibold text-slate-800">
+              {step === "verify" ? t("verifying") : step === "create" ? t("stepCreate") : t("stepOpen")}
+            </p>
+            <div className="flex w-48 gap-1" aria-hidden="true">
+              {(["verify", "create", "open"] as const).map((s, i) => (
+                <span key={s} className={`h-1.5 flex-1 rounded-full ${i <= ["verify", "create", "open"].indexOf(step) ? "bg-[#F59E0B]" : "bg-slate-200"}`} />
+              ))}
+            </div>
             <p data-testid="demo-loading-hint" className="text-center text-xs font-semibold text-slate-500"><span aria-hidden="true">⚠️ </span>{t("realDataHint")}</p>
             {challenge > 0 && (
               <DemoTurnstile key={challenge} siteKey={siteKey} locale={locale}

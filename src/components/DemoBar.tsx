@@ -22,6 +22,12 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
   const [leaving, setLeaving] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // The testers' timing mark: the dashboard is up (#604; /demo's marks share
+  // this timeline, since /demo opens it in-app).
+  useEffect(() => {
+    try { performance.mark("demo:dashboard"); } catch { /* not supported */ }
+  }, []);
+
   // "[Demo] " in front of every page title, also after client navigations
   // (Next rewrites <title>; the observer puts the prefix back).
   useEffect(() => {
@@ -68,8 +74,9 @@ export function DemoBar({ locale, country }: { locale: string; country: CountryC
     <DemoBlockedSheet locale={locale} country={country} />
     <DemoValueSheet locale={locale} country={country} />
     <DemoTour locale={locale} country={country} />
-    {/* Under the bar on phones and tablets: the real-data hint, then the Android chip. */}
-    <div className="pointer-events-none fixed inset-x-0 top-12 z-[55] flex flex-col items-center gap-1.5 px-3 pt-1.5 lg:hidden [&>*]:pointer-events-auto">
+    {/* Under the bar on phones and tablets: the real-data hint, then the Android chip.
+        Inset 4rem on the left so neither covers the dashboard's ☰ (83, #610). */}
+    <div data-testid="demo-under-bar" className="pointer-events-none fixed inset-x-0 top-12 z-[55] flex flex-col items-center gap-1.5 pl-16 pr-3 pt-1.5 lg:hidden [&>*]:pointer-events-auto">
       <DemoRealDataHint />
       <DemoAndroidChip />
     </div>

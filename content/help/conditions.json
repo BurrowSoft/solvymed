@@ -272,12 +272,12 @@
     "what": "LIVE 2026-10-17: 13's mobile #525 released to production 16:22:06Z (group 8303a25e; the bundle ca verified). The app's neutral sign-up screen for an address that already has a confirmed account (13's mobile #525: \"Verifique seu e-mail\" + Entrar + Esqueceu sua senha?, no code field; switch-aware body) is in a RELEASED app build (OTA or store; 13 pings). Gates the App Map's app rule for that screen; the website's twin is live with #580."
   },
   "app-google-signin-live": {
-    "met": false,
-    "what": "Sign in with Google is in the Android app (3e, phase 2; an OTA or a store build, live for users), using the same complete_google_signup (232) and the same google_signin switch. Flip with the app's release; together with google-signin-live it shows Help K3's and the App Map's app line."
+    "met": true,
+    "what": "LIVE 2026-10-20: 3e's mobile #531 released to production 07:47:03Z (OTA, runtime 1.9.1, Android, group dc1b5e55; the bundle 8b verified on staging 01a1583f, row 2 green) with google_signin ON since 07:47:55Z. Sign in with Google is in the Android app (3e, phase 2; an OTA or a store build, live for users), using the same complete_google_signup (232) and the same google_signin switch. Flip with the app's release; together with google-signin-live it shows Help K3's and the App Map's app line."
   },
   "demo-mode-live": {
-    "met": false,
-    "what": "The web demo is live (specs/demo-mode.md): migration 234 (the sandbox, start_demo / end_demo, the side-effect guards, the 24 h cleanup) applied, the demo privacy text live, anonymous sign-ins ON in Supabase, the test window passed, and the public switch server_flags demo_mode ON. Flip with that switch. Gates Help K1's demo line and the App Map rule."
+    "met": true,
+    "what": "LIVE 2026-10-22 (with #599: the demo privacy text published, then 01 flips demo_mode; if the post-merge key/text check fails, set this back to false). The web demo is live (specs/demo-mode.md): migration 234 (the sandbox, start_demo / end_demo, the side-effect guards, the 24 h cleanup) applied, the demo privacy text live, anonymous sign-ins ON in Supabase, the test window passed, and the public switch server_flags demo_mode ON. Flip with that switch. Gates Help K1's demo line and the App Map rule."
   },
   "google-signin-live": {
     "met": true,
@@ -290,6 +290,10 @@
   "app-1-9-1-live": {
     "met": true,
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
+  },
+  "patient-channel-live": {
+    "met": false,
+    "what": "The Patient Channel (specs/patient-contact-tech.md) is live: the server flag patient_channel ON for everyone (lib/patientChannel/live; testers get it first through get_server_flags), migration 237 applied, the doctor can save the rules (M3b), and the patient flow, inbox and notices shipped on the website and the app. Flag and condition flip in the same window. Gates Help C18 and the App Map rule for Settings → Canal do Paciente."
   },
   "app-demo-live": {
     "met": false,

@@ -243,9 +243,11 @@ export default async function DashboardLayout({
       prefix={locale === "en" ? "" : `/${locale}`}
       entry={isDemo || (!isSecretary && sub && !isAccessAllowed(sub)) ? null : tourEntry(tourState)}
       resumeStep={tourState.kind === "row" ? tourState.step : 0}
-      newsPending={newsPending}
-      introPending={introPending}
-      introTestable={panelOn && process.env.VERCEL_ENV !== "production"}
+      // The demo has its own tour (DemoTour): no "what's new" or SolvyAI
+      // intro sheet over the DEMO bar and its sign-up (83, iPhone SE /th).
+      newsPending={!isDemo && newsPending}
+      introPending={!isDemo && introPending}
+      introTestable={!isDemo && panelOn && process.env.VERCEL_ENV !== "production"}
     >
       <div className="mt-[var(--demo-bar-h,0px)] flex h-[calc(100vh-var(--demo-bar-h,0px))] overflow-hidden bg-slate-50">
         <DashboardSidebar

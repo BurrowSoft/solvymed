@@ -16,6 +16,8 @@ export const BUTTON_EVENT = "solvyai-button";
 // (detail { text }); the panel tells when it's closed again.
 export const OPEN_EVENT = "solvyai-open";
 export const CLOSED_EVENT = "solvyai-closed";
+// Something else needs the screen (the phone's menu drawer): close the panel.
+export const CLOSE_REQUEST_EVENT = "solvyai-close";
 
 export function readButtonHidden(): boolean {
   try { return localStorage.getItem(BUTTON_HIDDEN_KEY) === "1"; } catch { return false; }

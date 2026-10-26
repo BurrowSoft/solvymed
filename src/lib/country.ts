@@ -104,6 +104,9 @@ export type CountryProfile = {
   // else another council; lib/registration, the app's Registrations form) or
   // one free-text field.
   registrationForm: "brCouncil" | "free";
+  // The emergency number the Patient Channel shows (specs/patient-contact-tech.md
+  // §4.5): SAMU 192 in Brazil, 1669 in Thailand; null = "the local emergency number".
+  emergencyNumber: "192" | "1669" | null;
   // Examples and labels in the practice's forms (UX: they follow the
   // practice country, never the UI language). null = the generic wording.
   examples: {
@@ -128,7 +131,7 @@ const BR: CountryProfile = {
   idFields: [{ name: "cpf", label: "cpf", placeholder: "000.000.000-00", store: "text", maxLength: 20, search: "digits" }],
   phonePrefix: "+55", paymentQr: "pix", defaultTimeZone: "America/Sao_Paulo",
   clinicTaxId: "cnpj", fallbackLocale: "pt-BR", languages: ["pt-BR", "en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: "cns", importPresets: ["iclinic", "prontuario_verde"], addressFormat: "br", registrationForm: "brCouncil", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
+  healthCard: "cns", importPresets: ["iclinic", "prontuario_verde"], addressFormat: "br", registrationForm: "brCouncil", emergencyNumber: "192", paymentShare: "whatsapp", defaultHours: DEFAULT_HOURS,
   videoTutorialsUrl: "https://www.youtube.com/playlist?list=PLGStjTQLFN3M",
   promoTourUrl: "https://youtu.be/TdN3jxEczoQ",
   zoneCities: {
@@ -150,7 +153,7 @@ const TH: CountryProfile = {
   ],
   phonePrefix: "+66", paymentQr: "promptpay", defaultTimeZone: "Asia/Bangkok",
   clinicTaxId: "th_tax_id", fallbackLocale: "th", languages: ["th", "en"], shortMonthKeepsDot: true, messagingApp: "line", receipts: "app", calendar: "buddhist",
-  healthCard: null, importPresets: [], addressFormat: "th", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  healthCard: null, importPresets: [], addressFormat: "th", registrationForm: "free", emergencyNumber: "1669", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
   videoTutorialsUrl: "https://www.youtube.com/playlist?list=PLI6329of7MSY",
   promoTourUrl: "https://youtu.be/9zi10rrXTYY",
   examples: {
@@ -166,7 +169,7 @@ const OTHER: CountryProfile = {
   idFields: [{ name: "passport_number", label: "passportOrId", placeholder: "", store: "text", maxLength: 30, keep: 30, search: "text" }],
   phonePrefix: null, paymentQr: null, defaultTimeZone: "UTC",
   clinicTaxId: null, fallbackLocale: "en", languages: ["en"], shortMonthKeepsDot: false, messagingApp: "whatsapp", receipts: "web", calendar: "gregorian",
-  healthCard: null, importPresets: [], addressFormat: "intl", registrationForm: "free", paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
+  healthCard: null, importPresets: [], addressFormat: "intl", registrationForm: "free", emergencyNumber: null, paymentShare: null, defaultHours: DEFAULT_HOURS, zoneCities: {},
   // No English playlist yet: no entry.
   videoTutorialsUrl: null,
   promoTourUrl: null,

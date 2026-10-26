@@ -114,3 +114,16 @@ html[data-platform="android"] .android-hide { display: none; }
 }
 .demo-spotlight { position: relative; z-index: 45; border-radius: 0.75rem; animation: demo-spotlight-pulse 1.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .demo-spotlight { animation: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.9); } }
+
+/* SolvyAI's panel is full screen below lg: the phone's menu button (☰)
+   hides while it's open instead of floating over its title (Vitor 10-23;
+   components/solvyai/SolvyAi sets the attribute). */
+@media (max-width: 1023.98px) {
+  html[data-solvyai-open] [data-tour="nav-menu"] { display: none; }
+}
+
+/* At lg+ the panel is a 400px column on the right: the demo's open tour card
+   (components/DemoTour) moves left of it instead of covering its input (83, #610). */
+@media (min-width: 1024px) {
+  html[data-solvyai-open] .demo-tour-card { right: calc(400px + 1rem); }
+}

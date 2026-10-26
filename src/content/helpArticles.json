@@ -441,8 +441,8 @@
           ]
         },
         "web": {
-          "pt": "Em **Pacientes**, clique em **Novo Paciente**, preencha os dados e clique em **Salvar Paciente**. Os mesmos avisos de CPF repetido e de paciente parecido aparecem no site. Em **Endereço** (fechado enquanto vazio) ficam CEP, rua, número, complemento, bairro, cidade e UF (numa clínica fora do Brasil, os campos do país: na Tailândia, บ้านเลขที่, ซอย, ตำบล, อำเภอ, จังหวัด). Clínicas no Brasil têm também o **CNS** (15 dígitos, no cartão do SUS). **Observações** é para informações administrativas: não escreva dados clínicos ali, use o prontuário. A secretária vê e edita esses campos. O endereço aparece numa linha na página do paciente (com **Editar**) e na receita impressa, abaixo do nome.",
-          "en": "In **Patients**, click **New Patient**, fill in the details and click **Save Patient**. The same duplicate-CPF and similar-patient warnings appear on the website. **Address** (collapsed while empty) has the postal code, street, number, complement, neighbourhood, city and state (in a clinic outside Brazil, that country's fields: in Thailand, house number, soi, subdistrict, district, province). Clinics in Brazil also have the **CNS** (15 digits, on the SUS card). **Notes** is for administrative information: don't write clinical details there, use the medical record. The secretary sees and edits these fields. The address shows on one line on the patient's page (with **Edit**) and on the printed prescription, under the name."
+          "pt": "Enquanto a clínica ainda não tem nenhum paciente, a **Visão geral** mostra **Adicione seu primeiro paciente**, com **Adicionar paciente** e **Agendar a primeira consulta**. O cartão some quando o primeiro paciente é cadastrado.",
+          "en": "While the practice has no patients yet, the **Overview** shows **Add your first patient**, with **Add patient** and **Book the first appointment**. The card goes away once the first patient is added."
         },
         "webUnavailable": false,
         "open": "new-patient",
@@ -2295,6 +2295,10 @@
             },
             {
               "type": "p",
+              "text": "Antes de criar sua conta, você pode experimentar o SolvyMed numa demonstração: no site, **Ver demonstração** abre uma clínica de demonstração com pacientes, consultas e documentos fictícios. A barra âmbar com **DEMO** fica no topo, os documentos têm a marca d'água DEMO, nada é enviado a ninguém e tudo é apagado em até 24 horas ou quando você sai da demonstração. **Criar minha conta grátis**, na barra, abre sua própria conta, sem os dados da demonstração. **Não digite dados reais de pacientes na demonstração** (a barra e os formulários lembram disso)."
+            },
+            {
+              "type": "p",
               "text": "Com a assinatura inativa, o app mostra \"Sua assinatura do SolvyMed está inativa.\" e a linha \"Dúvidas? Escreva para support@solvymed.com.\" (toque para abrir o e-mail), com o botão **Sair**. A secretária(o) vê \"Assinatura inativa\": o acesso volta assim que a assinatura do médico for renovada, com a mesma linha de suporte."
             }
           ],
@@ -2302,6 +2306,10 @@
             {
               "type": "p",
               "text": "You get 15 days free, with no card. To continue afterwards, subscribe on solvymed.com, signed in with your account. The plan includes everything, with a team of up to 3 people."
+            },
+            {
+              "type": "p",
+              "text": "Before creating an account, you can try SolvyMed in a demo: on the website, **Try the demo** opens a demonstration clinic with fictional patients, appointments and documents. An amber bar with **DEMO** stays at the top, documents carry a DEMO watermark, nothing is sent to anyone, and everything is deleted within 24 hours or when you leave the demo. **Create my free account** in that bar starts your own account, without the demo data. **Don't enter real patient data in the demo** (the bar and the forms remind you)."
             },
             {
               "type": "p",
@@ -2381,7 +2389,11 @@
             },
             {
               "type": "p",
-              "text": "No site, o cadastro e a tela de entrada têm **Continuar com Google**: você entra com sua conta Google, sem senha nem e-mail de confirmação. Na primeira vez, a tela **Complete sua conta** pede se você é profissional de saúde (com o país do consultório) ou paciente (com o código de convite da clínica), seu nome e o aceite dos Termos de Uso e da Política de Privacidade. Se você já tem uma conta com o mesmo e-mail, entra nela."
+              "text": "No site, o cadastro e a tela de entrada têm **Continuar com Google**: você entra com sua conta Google, sem senha nem e-mail de confirmação. Na primeira vez, a tela **Complete sua conta** pede se você é profissional de saúde (com o país do consultório) ou paciente (com o código de convite da clínica), seu nome e o aceite dos Termos de Uso e da Política de Privacidade. Se você já tem uma conta com o mesmo e-mail, entra nela. Se essa tela não abrir (por exemplo, sem conexão), ela avisa e mostra **Tentar de novo**."
+            },
+            {
+              "type": "p",
+              "text": "No app para Android, a tela de entrada também tem **Continuar com Google**, com a mesma tela **Complete sua conta** na primeira vez."
             },
             {
               "type": "p",
@@ -2415,7 +2427,11 @@
             },
             {
               "type": "p",
-              "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it."
+              "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it. If that screen can't open (for example, with no connection), it says so and shows **Try again**."
+            },
+            {
+              "type": "p",
+              "text": "In the Android app, the sign-in screen also has **Continue with Google**, with the same **Complete your account** screen the first time."
             },
             {
               "type": "p",

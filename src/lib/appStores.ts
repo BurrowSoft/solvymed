@@ -53,6 +53,32 @@ export function appShortlinkPlayTarget(visit: VisitUtm | null | undefined): stri
   return referrer ? `${PLAY_STORE_URL}&referrer=${encodeURIComponent(referrer)}` : APP_SHORTLINK_TARGET;
 }
 
+// Android (01; c6's row from YouTube): inside an in-app browser (a Chrome
+// Custom Tab) a play.google.com link opens the Play WEBSITE, an extra step
+// at the key moment. An intent:// to market:// opens the Play Store app
+// with the same referrer; a browser that can't (no Play Store) follows
+// S.browser_fallback_url, today's exact play.google.com link. One helper
+// for every Android store link (the landing CTA, /app, the demo's chip).
+export function androidStoreLink(playUrl: string): string {
+  const u = new URL(playUrl);
+  const id = u.searchParams.get("id") ?? "";
+  const referrer = u.searchParams.get("referrer");
+  const query = `id=${encodeURIComponent(id)}${referrer ? `&referrer=${encodeURIComponent(referrer)}` : ""}`;
+  return `intent://details?${query}#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=${encodeURIComponent(playUrl)};end`;
+}
+
+// A plain Android WebView ("; wv)" in the user agent: Instagram, Facebook
+// and other in-app browsers) may show a scheme error on intent:// and has
+// no S.browser_fallback_url (cf): it keeps the https Play link. Chrome, its
+// Custom Tabs and Samsung Internet get the intent.
+export function isAndroidWebView(userAgent: string | null | undefined): boolean {
+  return /; wv\)/.test(userAgent ?? "");
+}
+
+export function storeLinkForAgent(userAgent: string | null | undefined, playUrl: string): string {
+  return isAndroidWebView(userAgent) ? playUrl : androidStoreLink(playUrl);
+}
+
 // An Android phone (Android tablets omit "Mobile").
 export function isAndroidPhone(userAgent: string | null | undefined): boolean {
   return /Android.+Mobile/i.test(userAgent ?? "");

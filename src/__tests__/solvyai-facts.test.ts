@@ -44,16 +44,25 @@ describe("the App Map states the corrected facts", () => {
   });
 });
 
-describe("a model failure logs only its status and type", () => {
-  it("an API error: the status and the API's error type, never the message", async () => {
+describe("a model failure logs its status, type and the API's own reason (01, 10-22)", () => {
+  it("an API error: the status, the type and the API's message (capped, quoted values cut), never the SDK error text", async () => {
     const { modelErrorSummary } = await import("@/lib/assistant/server/handle");
     const apiError = Object.assign(new Error("Your credit balance is too low (secret detail)"), {
       status: 400,
-      error: { type: "error", error: { type: "invalid_request_error", message: "Your credit balance is too low" } },
+      error: { type: "error", error: { type: "invalid_request_error", message: "Your credit balance is too low to access the Anthropic API." } },
     });
     const s = modelErrorSummary(apiError);
-    expect(s).toEqual({ status: 400, type: "invalid_request_error" });
-    expect(JSON.stringify(s)).not.toContain("credit");
+    expect(s).toEqual({ status: 400, type: "invalid_request_error", message: "Your credit balance is too low to access the Anthropic API." });
+    expect(JSON.stringify(s)).not.toContain("secret detail");
+  });
+
+  it("quoted values and anything key-like are cut; the message is capped at 300", async () => {
+    const { modelErrorSummary } = await import("@/lib/assistant/server/handle");
+    const err = (message: string) => ({ status: 400, error: { error: { type: "invalid_request_error", message } } });
+    expect(modelErrorSummary(err(`messages.1.content: unexpected "Maria da Silva" in 'x' and \`y\``)).message).toBe("messages.1.content: unexpected … in … and …");
+    expect(modelErrorSummary(err("bad key sk-ant-api03-abcDEF_123")).message).toBe("bad key …");
+    expect(modelErrorSummary(err("x".repeat(500))).message).toHaveLength(300);
+    expect(modelErrorSummary({ status: 500, error: { error: { type: "api_error" } } })).toEqual({ status: 500, type: "api_error" });
   });
 
   it("anything else: its class name", async () => {

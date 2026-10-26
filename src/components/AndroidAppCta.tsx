@@ -1,7 +1,8 @@
 "use client";
 
-import { playStoreUrl, playStoreUrlForVisit } from "@/lib/appStores";
+import { isAndroidWebView, playStoreUrl, playStoreUrlForVisit, storeLinkForAgent } from "@/lib/appStores";
 import { consentedVisit } from "@/lib/consentedVisit";
+import { fallBackIfStillVisible, STORE_FALLBACK_MS } from "@/lib/storeFallback";
 import { COUNTRY_STEP } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { SignupCta } from "./SignupCta";
@@ -36,7 +37,16 @@ export function AndroidAppCta({
         data-testid="android-app-cta-play"
         className={className}
         onClick={(e) => {
-          e.currentTarget.href = playStoreUrlForVisit("landing", consentedVisit());
+          // The Play Store app (an intent; the website as its fallback), in
+          // this tab: a new tab would be left blank behind the store (01). A
+          // plain WebView keeps the https link, as before (cf).
+          const web = playStoreUrlForVisit("landing", consentedVisit());
+          e.currentTarget.href = storeLinkForAgent(navigator.userAgent, web);
+          if (!isAndroidWebView(navigator.userAgent)) {
+            e.currentTarget.target = "_self";
+            // Play disabled or stubbed: the intent does nothing, so the web listing.
+            fallBackIfStillVisible(web, STORE_FALLBACK_MS);
+          }
           track("app_store_click", { platform: "android", c: COUNTRY_STEP.find((s) => s.locale === locale)?.code ?? null });
         }}
       >

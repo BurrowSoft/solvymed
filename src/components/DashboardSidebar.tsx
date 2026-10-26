@@ -10,6 +10,7 @@ import { OFFERED_LOCALES } from "@/lib/publicLocales";
 import { BrandLogo } from "@/components/BrandLogo";
 import { signOutHere } from "@/lib/signOut";
 import { leaveGuarded } from "@/components/DiscardGuard";
+import { CLOSE_REQUEST_EVENT } from "@/components/solvyai/SolvyAiSettings";
 
 interface Props {
   locale: string;
@@ -290,9 +291,15 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
 
   return (
     <>
-      {/* Mobile menu button */}
+      {/* Mobile menu button. Hidden below lg while SolvyAI's full-screen
+          panel is open (globals.css, html[data-solvyai-open]; Vitor 10-23);
+          opening the drawer closes that panel first, so the drawer is never
+          behind it. */}
       <button
-        onClick={() => setMobileOpen(!mobileOpen)}
+        onClick={() => {
+          if (!mobileOpen) window.dispatchEvent(new Event(CLOSE_REQUEST_EVENT));
+          setMobileOpen(!mobileOpen);
+        }}
         // Tours spotlight it when their step's link is inside the closed drawer.
         data-tour="nav-menu"
         aria-label={mobileOpen ? t("closeMenu") : t("openMenu")}

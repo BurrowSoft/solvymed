@@ -28,7 +28,7 @@ vi.mock("@/lib/supabase/client", () => ({
 }));
 
 import { stampDemo } from "@/lib/pdf/demoStamp";
-import { DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
+import { DemoAndroidChip, DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
 
@@ -110,6 +110,29 @@ describe("the 2-minute tour", () => {
     expect(h.track).toHaveBeenCalledWith("demo_tour_done");
   });
 
+  it("\"Mostrar\" leaves no spotlight search running once the tour is gone (cf, #610)", () => {
+    vi.useFakeTimers();
+    try {
+      const qs = vi.spyOn(document, "querySelector");
+      const { unmount } = render(wrap(<DemoTour locale="pt-BR" country="BR" />));
+      fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
+      const before = qs.mock.calls.length;
+      unmount();
+      vi.advanceTimersByTime(5000);
+      expect(qs.mock.calls.length).toBe(before);
+      qs.mockRestore();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("the open card moves left of SolvyAI's panel at lg+ instead of covering its input (83, #610)", async () => {
+    render(wrap(<DemoTour locale="pt-BR" country="BR" />));
+    expect(await screen.findByTestId("demo-tour")).toHaveClass("demo-tour-card");
+    const css = readFileSync(resolve(__dirname, "../app/globals.css"), "utf8");
+    expect(css).toMatch(/@media \(min-width: 1024px\) \{\s*html\[data-solvyai-open\] \.demo-tour-card \{ right: calc\(400px \+ 1rem\); \}/);
+  });
+
   it("\"Mostrar\" takes the visitor to the step's page", () => {
     render(wrap(<DemoTour locale="pt-BR" country="BR" />));
     fireEvent.click(screen.getAllByText(pt.demo.tourShow)[0]);
@@ -162,5 +185,44 @@ describe("don't enter real patient data (the spec's guardrail; cf's #598 block)"
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/PatientsClient.tsx")).toBe(1);
     expect(notes("app/[locale]/(site)/dashboard/(gated)/patients/[id]/PatientDetailClient.tsx")).toBe(3);
     expect(src("components/DemoBar.tsx")).toContain("data-testid=\"demo-bar-hint\"");
+  });
+
+  it("phones: the line under the bar keeps clear of the dashboard's ☰ (83, #610)", () => {
+    const bar = readFileSync(resolve(__dirname, "../components/DemoBar.tsx"), "utf8");
+    const stack = bar.split("\n").find((l) => l.includes("data-testid=\"demo-under-bar\""));
+    expect(stack).toMatch(/\bpl-16\b/);
+    expect(stack).not.toMatch(/\bpx-/);
+  });
+});
+
+describe("the demo's Android chip (#601: the Play Store app, not its website)", () => {
+  const ANDROID = "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36";
+  const WEBVIEW = "Mozilla/5.0 (Linux; Android 14; Pixel 7; wv) AppleWebKit/537.36 Version/4.0 Chrome/129.0 Mobile Safari/537.36 Instagram 350.0";
+  const click = () => {
+    const a = screen.getByTestId("demo-android-chip").querySelector("a")!;
+    a.addEventListener("click", (e) => e.preventDefault());
+    fireEvent.click(a);
+    return a;
+  };
+  beforeEach(() => { sessionStorage.clear(); h.track.mockReset(); });
+
+  it("Android Chrome: an intent to the Play Store app, in this tab, the https listing as its fallback; the event", () => {
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue(ANDROID);
+    render(wrap(<DemoAndroidChip />));
+    const a = click();
+    expect(a.href.startsWith("intent://details?id=com.burrowsoft.solvymed")).toBe(true);
+    expect(a.href).toContain("#Intent;scheme=market;package=com.android.vending;S.browser_fallback_url=https%3A%2F%2Fplay.google.com%2F");
+    expect(a.target).toBe("_self");
+    expect(h.track).toHaveBeenCalledWith("app_store_click", { platform: "android", from: "demo" });
+    ua.mockRestore();
+  });
+
+  it("a plain WebView (\"; wv)\"): the https listing in a new tab", () => {
+    const ua = vi.spyOn(navigator, "userAgent", "get").mockReturnValue(WEBVIEW);
+    render(wrap(<DemoAndroidChip />));
+    const a = click();
+    expect(a.href.startsWith("https://play.google.com/store/apps/details?id=com.burrowsoft.solvymed")).toBe(true);
+    expect(a.target).toBe("_blank");
+    ua.mockRestore();
   });
 });

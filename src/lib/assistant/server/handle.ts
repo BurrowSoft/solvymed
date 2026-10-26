@@ -72,13 +72,22 @@ export function practiceLine(country: string | undefined): string {
 
 // What a model failure may log: the HTTP status and the API's error type
 // (e.g. 400 invalid_request_error, 401 authentication_error, 404
-// not_found_error), else the error's class name. Never its message.
-export function modelErrorSummary(err: unknown): { status: number | null; type: string } {
-  const e = err as { status?: unknown; error?: { error?: { type?: unknown } }; name?: unknown } | null;
+// not_found_error), else the error's class name, and the API's own
+// validation message (10-22: a 400 with no reason took hours to place; 01).
+// That message is Anthropic's text about the request, never the
+// conversation or the key; quoted values are cut anyway, and it's capped.
+export function modelErrorSummary(err: unknown): { status: number | null; type: string; message?: string } {
+  const e = err as { status?: unknown; error?: { error?: { type?: unknown; message?: unknown } }; name?: unknown } | null;
   const status = typeof e?.status === "number" ? e.status : null;
   const apiType = e?.error?.error?.type;
   const type = typeof apiType === "string" ? apiType : typeof e?.name === "string" ? e.name : "unknown";
-  return { status, type };
+  const apiMessage = e?.error?.error?.message;
+  if (typeof apiMessage !== "string" || !apiMessage) return { status, type };
+  const message = apiMessage
+    .replace(/"[^"]*"|'[^']*'|`[^`]*`/g, "…")
+    .replace(/sk-ant-[A-Za-z0-9_-]+/g, "…")
+    .slice(0, 300);
+  return { status, type, message };
 }
 
 // The clinic's "now" and the tool context for one request.
