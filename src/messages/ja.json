@@ -799,7 +799,10 @@
       "countryLabel": "診療所はどこにありますか？",
       "countryRequired": "診療所の国を選んでください。",
       "consentRequired": "利用規約とプライバシーポリシーに同意してください。",
-      "submit": "続行"
+      "submit": "続行",
+      "loadError": "このステップを開けませんでした。接続を確認して、もう一度お試しください。",
+      "retry": "もう一度試す",
+      "working": "保存しています…"
     },
     "passwordTooShort": "パスワードは{min}文字以上である必要があります。",
     "login": {
