@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false }: { turnstile: boolean; demo?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false }: { turnstile: boolean; demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -46,7 +46,8 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           tags), the referring website, the first page you visited and when, with your account when you sign up
           {founders
             ? ", or, if you apply to the Founders Program, with your application (kept up to 12 months after its last status change, or while your account exists if you're accepted)."
-            : "."}{" "}
+            : "."}
+          {appReferrer && " In the Android app, with the same consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up."}{" "}
           Until you confirm your email, we keep these details with your pending signup (deleted when you confirm, or after 30 days at most).{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
@@ -75,6 +76,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
         <ul>
           <li>To provide the Service (scheduling, records, prescriptions, payments, secretary access).</li>
           <li>To send appointment notifications (push notifications) and service emails (such as account confirmation, password reset and account notices).</li>
+          {reminders && <li>To send, at most once, a reminder to finish your sign-up or to set up your practice (by e-mail, and as a push notification if you use the app). Every reminder has a link to stop them.</li>}
           <li>To bill subscriptions and manage accounts.</li>
           <li>To detect and fix errors and keep the Service secure. Error reports are stripped of patient data and contain at most an internal user ID.</li>
           <li>With your consent: to measure which campaigns bring new professionals to SolvyMed and to improve sign-up.</li>
@@ -91,7 +93,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Supabase", "Database, authentication, file storage", "Brazil (São Paulo region)"],
             ["Vercel", "Website hosting; server processing in Brazil (São Paulo), static content via a global edge network", "Brazil / global"],
             ["Stripe", "Subscription payments", "USA / global"],
-            ["Resend", `Transactional email (confirmations, password resets)${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
+            ["Resend", `Transactional email (confirmations, password resets${reminders ? ", one-time account reminders" : ""})${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
             ["Expo", "Push notification delivery", "USA"],
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
@@ -192,7 +194,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
 
       <Section title="6g. Notifications">
         <ul>
-          <li>We send push notifications about appointments: requests and their answers, confirmations, changes and cancellations. A professional can also send a general notice to the patients connected to them (a title and a message). Notifications reach your device through Expo (see section 5).</li>
+          <li>We send push notifications about appointments: requests and their answers, confirmations, changes and cancellations{reminders && " and, at most once, a reminder to set up your practice"}. A professional can also send a general notice to the patients connected to them (a title and a message). Notifications reach your device through Expo (see section 5).</li>
           <li>When our servers send a notification, we keep it in a queue only to deliver it: who it is for and who caused it, which appointment and kind of notice it is, the visit&rsquo;s date and time, the names shown in it, and its delivery status (for a general notice, its title and message). Each one is deleted at most 30 days after it was created.</li>
           {closureNotices && (
             <li>When a professional closes their account, our server sends their patients a notice that the practice closed or that an appointment was cancelled. To do this we keep only the clinic&rsquo;s name (which can be the professional&rsquo;s own name) and country, the appointment date and time (for cancelled appointments), and the delivery status, and we delete the notice as soon as it&rsquo;s sent (at most 30 days).</li>
@@ -207,7 +209,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
       {demo && (
         <Section title="6h. Demo mode">
           <ul className="list-disc space-y-1 pl-5">
-            <li>You can try SolvyMed without an account at solvymed.com/demo. We create a temporary, anonymous session (a random identifier, with no name, e-mail or password) and a demo clinic filled with fictional patients and appointments.</li>
+            <li>You can try SolvyMed without an account at solvymed.com/demo{appDemo && " or in the Android app"}. We create a temporary, anonymous session (a random identifier, with no name, e-mail or password) and a demo clinic filled with fictional patients and appointments.</li>
             <li>Before the demo starts, Cloudflare Turnstile checks that you&rsquo;re a person, not a bot. Cloudflare receives your IP address and technical information from your browser for this check (see section 5). We keep only the scrambled form of your IP address described below.</li>
             <li><strong>Please don&rsquo;t enter real patient data in the demo.</strong> Anything you type stays in that temporary session, visible only to you.</li>
             <li>The demo contacts no one: it sends no notifications, e-mails or WhatsApp/LINE messages, takes no payments, can&rsquo;t upload files, and can&rsquo;t connect to or book with real professionals or patients.</li>
@@ -216,6 +218,23 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <li>The demo session and everything in it are deleted within 24 hours of the start, or right away when you leave the demo or create an account. Nothing from the demo is copied into a real account.</li>
             <li>We count, without identifying anyone, how many demos are opened and which steps are used. These are daily totals per country and language; no account, IP address or device identifier is stored with them. To count each demo only once, a note is kept with the demo and deleted with it.</li>
             <li>Website usage statistics in the demo follow section 3.6 and the cookie banner: only with your consent.</li>
+          </ul>
+        </Section>
+      )}
+
+      {patientChannel && (
+        <Section title={'6i. Patient Channel ("Fale com o Médico")'}>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>A patient connected to a professional can send that professional a question or request through the Patient Channel, if the professional turned the channel on.</li>
+            <li>A request is part of the patient&rsquo;s medical record with that professional: what the patient answered and wrote, the reason, the automatic guidance they were shown, the professional&rsquo;s or secretary&rsquo;s reply, and the dates.</li>
+            <li>What the patient sent can&rsquo;t be changed afterwards. Sending a new request replaces the open one, and the replaced one stays in the record, marked as replaced.</li>
+            <li>To help the professional see what is most urgent, each request gets a priority score from rules the professional sets (symptoms, answers, keywords). The patient never sees the score or the priority. A symptom the professional marked for an emergency warning always shows the patient the local emergency number before sending.</li>
+            <li>The scoring rules (the points and thresholds) stay on our servers and are only shown to the professional; they are never sent to the patient&rsquo;s device.</li>
+            <li>The channel is not for emergencies, and the form says so: in an emergency, call the local emergency number. The form also tells the patient that the request goes into their record.</li>
+            <li>The FAQ and the automatic guidance can answer a question without sending anything. When they do, we only count it for the professional (how many questions were solved this way, per day), without who asked or what.</li>
+            <li>A patient can read their own requests and the replies on the channel page. If the professional turns the channel off, or the patient is no longer connected, the patient can still read the requests they already sent there but can&rsquo;t send new ones. This doesn&rsquo;t apply if the practice has closed or the professional archived the patient&rsquo;s record, or while we pause the channel.</li>
+            {pcCover && <li>The professional can add a cover image to their channel page. Like the logo (see 6f), the cover image is public once saved.</li>}
+            {pcAi && <li>SolvyAI reads the patient&rsquo;s message only if the professional turns on the AI option for the channel, and then only to suggest symptoms from the professional&rsquo;s own list; it uses the professional&rsquo;s AI credits, and names and identifiers are masked as described in section 6b. It never answers the patient. If the option is on, the form tells the patient that the clinic uses AI to organise messages.</li>}
           </ul>
         </Section>
       )}
@@ -229,11 +248,15 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             appointment payments, and can add, archive and restore patients. They <strong>cannot</strong> see
             medical records, prescriptions, {clinicalDocs && "medical certificates, declarations, exam requests, "}exams or clinical files
             {patientDocs && ", including documents shared with or sent by patients"}.
+            {patientChannel && " The exception is Patient Channel requests: secretaries see the administrative ones and, if the professional allows it, can read the others without replying (see 6i)."}
           </li>
           <li>
             <strong>Patients</strong> see their own appointments and the clinic&apos;s booking and payment information
             {patientDocs && ", and the documents their professional shares with them and the documents they send (see 3.8)"}.
           </li>
+          {patientChannel && (
+            <li>Patient Channel requests: the professional sees all of them. Secretaries see the administrative requests (those sent to the secretary) and can reply to them; if the professional allows it, secretaries can also read the other requests, without replying to them. Opening a request is recorded in the access log.</li>
+          )}
           <li>
             Nobody outside the clinic, including other SolvyMed users, can see a clinic&apos;s data. SolvyMed staff
             access data only when needed for support or legal obligations.
@@ -295,6 +318,9 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <li>
               <strong>Demo mode</strong>: the demo&rsquo;s fictional data, and anything typed into it, is not a medical record and is deleted within 24 hours (see section 6h).
             </li>
+          )}
+          {patientChannel && (
+            <li>Patient Channel requests and replies are part of the medical record: they are kept for the same period (at least 20 years) and can&rsquo;t be deleted, including when the patient deletes their account (the request stays with the clinic, without the link to the patient&rsquo;s login) or the professional closes theirs (it is locked with the other records).</li>
           )}
         </ul>
       </Section>

@@ -93,6 +93,14 @@
 // demo_sandboxes.metrics_seen / demo_signin_marks) so each demo counts once, deleted with
 // the demo. Mobile's 238 (accepting 2026-10-27) applied FIRST; merged with (or right
 // before) #615, the web counters; then 01 flips server_flags.demo_metrics.
+// 2026-10-28 (NOT YET: the text is in, each part hidden behind its own condition; Vitor's
+// OKs, 10-27, specs/privacy-approved-lines-2026-10-27.md + specs/patient-channel-privacy-draft.md):
+// §6i Patient Channel with its §6g / §7 / §9 lines (patient-channel-live; PC-9 pc-cover-live,
+// PC-10 pc-ai-live; PC-N1/N2 wait for their 247 rewrite), the one-time reminders in §4 / §5 / §6g
+// (reminders-live), §3.6's Android install campaign (app-referrer-live), §6h's "or in the
+// Android app" (app-demo-live) and the automatic WhatsApp rows (whatsapp-auto-live). The FIRST
+// of those flips bumps this to "2026-10-28" (and PRIVACY_PUBLISHED to its merge day), only
+// after mobile 248 accepting ('privacy','2026-10-28') is live; a test enforces the pairing.
 export const PRIVACY_VERSION = "2026-10-27";
 export const TERMS_VERSION = "2026-10-01";
 

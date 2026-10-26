@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false }: { demo?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false }: { demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -46,7 +46,8 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           site de origem, a primeira página que você visitou e quando, com a sua conta quando você se cadastra
           {founders
             ? ", ou, se você se inscrever no Programa Fundadores, com a sua inscrição (guardada até 12 meses após a última mudança de status, ou enquanto a sua conta existir, se você for aceito)."
-            : "."}{" "}
+            : "."}
+          {appReferrer && " No app Android, com o mesmo consentimento, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar."}{" "}
           Até você confirmar o e-mail, guardamos esses dados com o seu cadastro pendente (apagados na confirmação ou em no máximo 30 dias).{" "}
           <strong>Dados de pacientes nunca são usados para análise ou marketing.</strong>
         </p>
@@ -75,6 +76,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         <ul>
           <li>Para prestar o Serviço (agenda, prontuários, receitas, pagamentos, acesso de secretárias).</li>
           <li>Para enviar notificações de consultas (notificações push) e e-mails do serviço (como confirmação de conta, redefinição de senha e avisos sobre a conta).</li>
+          {reminders && <li>Para enviar, no máximo uma vez, um lembrete para concluir o cadastro ou configurar sua clínica (por e-mail e, se você usa o app, por notificação push). Todo lembrete tem um link para não recebê-los mais.</li>}
           <li>Para cobrar assinaturas e gerenciar contas.</li>
           <li>Para detectar e corrigir erros e manter o Serviço seguro. Os relatórios de erro não contêm dados de pacientes e trazem no máximo um identificador interno do usuário.</li>
           <li>Com o seu consentimento: para medir quais campanhas trazem novos profissionais ao SolvyMed e melhorar o cadastro.</li>
@@ -91,7 +93,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Supabase", "Banco de dados, autenticação, armazenamento de arquivos", "Brasil (região de São Paulo)"],
             ["Vercel", "Hospedagem do site; processamento no Brasil (São Paulo), conteúdo estático por rede global", "Brasil / global"],
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
-            ["Resend", `E-mails transacionais (confirmações, redefinição de senha)${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
+            ["Resend", `E-mails transacionais (confirmações, redefinição de senha${reminders ? ", lembretes únicos sobre a conta" : ""})${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
@@ -191,7 +193,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       <Section title="6g. Notificações">
         <ul>
-          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos. O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
+          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos{reminders && " e, no máximo uma vez, um lembrete para configurar sua clínica"}. O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
           <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é e quem a gerou, de qual consulta e tipo de aviso se trata, a data e o horário da consulta, os nomes que aparecem nela e o status de entrega (no aviso geral, o título e a mensagem). Cada uma é apagada no máximo 30 dias depois de criada.</li>
           {closureNotices && (
             <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica (que pode ser o próprio nome do profissional) e o país dela, a data e o horário da consulta (no caso de consultas canceladas) e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
@@ -206,7 +208,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       {demo && (
         <Section title="6h. Modo demonstração">
           <ul className="list-disc space-y-1 pl-5">
-            <li>Você pode experimentar o SolvyMed sem conta em solvymed.com/demo. Criamos uma sessão temporária e anônima (um identificador aleatório, sem nome, e-mail ou senha) e uma clínica de demonstração com pacientes e consultas fictícios.</li>
+            <li>Você pode experimentar o SolvyMed sem conta em solvymed.com/demo{appDemo && " ou no app Android"}. Criamos uma sessão temporária e anônima (um identificador aleatório, sem nome, e-mail ou senha) e uma clínica de demonstração com pacientes e consultas fictícios.</li>
             <li>Antes de a demonstração começar, o Cloudflare Turnstile verifica que você é uma pessoa, e não um robô. O Cloudflare recebe seu endereço IP e informações técnicas do seu navegador para essa verificação (veja a seção 5). Guardamos apenas a forma embaralhada do seu endereço IP descrita abaixo.</li>
             <li><strong>Não digite dados reais de pacientes na demonstração.</strong> O que você digitar fica nessa sessão temporária, visível só para você.</li>
             <li>A demonstração não contata ninguém: ela não envia notificações, e-mails nem mensagens de WhatsApp/LINE, não recebe pagamentos, não permite enviar arquivos e não se conecta nem agenda com profissionais ou pacientes reais.</li>
@@ -215,6 +217,23 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <li>A sessão de demonstração e tudo o que estiver nela são apagados em até 24 horas depois do início, ou na hora, quando você sai da demonstração ou cria uma conta. Nada da demonstração é copiado para uma conta real.</li>
             <li>Contamos, sem identificar ninguém, quantas demonstrações são abertas e quais etapas são usadas. São totais por dia, por país e por idioma; nenhuma conta, endereço IP ou identificador do aparelho é guardado junto. Para contar cada demonstração uma única vez, guardamos uma anotação junto da demonstração, que é apagada com ela.</li>
             <li>As estatísticas de uso do site na demonstração seguem a seção 3.6 e o banner de cookies: só com o seu consentimento.</li>
+          </ul>
+        </Section>
+      )}
+
+      {patientChannel && (
+        <Section title={'6i. Canal do Paciente ("Fale com o Médico")'}>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>O paciente conectado a um profissional pode enviar a ele uma dúvida ou solicitação pelo Canal do Paciente, se o profissional ativou o canal.</li>
+            <li>A solicitação faz parte do prontuário do paciente com aquele profissional: o que o paciente respondeu e escreveu, o motivo, as orientações automáticas que ele viu, a resposta do profissional ou da secretária e as datas.</li>
+            <li>O que o paciente enviou não pode ser alterado depois. Enviar uma nova solicitação substitui a que estava aberta, e a substituída continua no prontuário, marcada como substituída.</li>
+            <li>Para ajudar o profissional a ver o que é mais urgente, cada solicitação recebe uma pontuação de prioridade pelas regras que o profissional define (sintomas, respostas, palavras-chave). O paciente nunca vê a pontuação nem a prioridade. Um sintoma que o profissional marcou com aviso de emergência sempre mostra ao paciente o número de emergência local antes do envio.</li>
+            <li>As regras de pontuação (os pontos e os limites) ficam nos nossos servidores e só são mostradas ao profissional; nunca são enviadas ao aparelho do paciente.</li>
+            <li>O canal não é para emergências, e o formulário avisa: em uma emergência, ligue para o número de emergência local. O formulário também avisa que a solicitação fica no prontuário do paciente.</li>
+            <li>As perguntas frequentes e as orientações automáticas podem responder a uma dúvida sem que nada seja enviado. Quando isso acontece, só contamos para o profissional (quantas dúvidas foram resolvidas assim, por dia), sem quem perguntou nem o quê.</li>
+            <li>O paciente pode ler as próprias solicitações e as respostas na página do canal. Se o profissional desligar o canal, ou o paciente não estiver mais conectado, o paciente ainda pode ler as solicitações que já enviou ali, mas não pode enviar novas. Isso não vale se o consultório foi encerrado ou o profissional arquivou o cadastro do paciente, nem enquanto pausamos o canal.</li>
+            {pcCover && <li>O profissional pode adicionar uma imagem de capa à página do canal. Como o logo (veja 6f), a imagem de capa é pública depois de salva.</li>}
+            {pcAi && <li>O SolvyAI lê a mensagem do paciente somente se o profissional ativar a opção de IA do canal, e apenas para sugerir sintomas da própria lista do profissional; usa os créditos de IA do profissional, e nomes e identificadores são mascarados como descrito na seção 6b. Ele nunca responde ao paciente. Com a opção ativada, o formulário avisa ao paciente que a clínica usa IA para organizar as mensagens.</li>}
           </ul>
         </Section>
       )}
@@ -228,11 +247,15 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             das consultas, e podem cadastrar, arquivar e restaurar pacientes. Elas <strong>não</strong> podem ver
             prontuários, receitas, {clinicalDocs && "atestados, declarações, solicitações de exames, "}exames nem arquivos clínicos
             {patientDocs && ", nem documentos compartilhados com os pacientes ou enviados por eles"}.
+            {patientChannel && " A exceção são as solicitações do Canal do Paciente: as secretárias veem as administrativas e, se o profissional permitir, podem ler as demais sem respondê-las (veja 6i)."}
           </li>
           <li>
             <strong>Os pacientes</strong> veem as próprias consultas e as informações de agendamento e pagamento da clínica
             {patientDocs && ", além dos documentos que o profissional compartilha com eles e dos documentos que eles enviam (ver 3.8)"}.
           </li>
+          {patientChannel && (
+            <li>Solicitações do Canal do Paciente: o profissional vê todas. As secretárias veem as solicitações administrativas (as enviadas à secretária) e podem respondê-las; se o profissional permitir, as secretárias também podem ler as demais solicitações, sem respondê-las. A abertura de uma solicitação fica registrada no log de acessos.</li>
+          )}
           <li>
             Ninguém de fora da clínica, incluindo outros usuários do SolvyMed, pode ver os dados de uma clínica. A
             equipe do SolvyMed só acessa dados quando necessário para suporte ou obrigações legais.
@@ -296,6 +319,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <li>
               <strong>Modo demonstração</strong>: os dados fictícios da demonstração, e o que for digitado nela, não são prontuário e são apagados em até 24 horas (veja a seção 6h).
             </li>
+          )}
+          {patientChannel && (
+            <li>As solicitações e respostas do Canal do Paciente fazem parte do prontuário: são mantidas pelo mesmo período (no mínimo 20 anos) e não podem ser excluídas, inclusive quando o paciente exclui a conta (a solicitação fica com a clínica, sem o vínculo com o login do paciente) ou o profissional encerra a dele (ela é bloqueada com os demais registros).</li>
           )}
         </ul>
       </Section>

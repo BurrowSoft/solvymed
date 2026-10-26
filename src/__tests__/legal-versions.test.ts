@@ -222,3 +222,77 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
     expect(conditions["demo-mode-live"]).toBeDefined();
   });
 });
+
+describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo, automatic WhatsApp (Vitor's OKs, 10-27)", () => {
+  const CONDITIONS = ["patient-channel-live", "pc-cover-live", "pc-ai-live", "reminders-live", "app-referrer-live", "app-demo-live", "whatsapp-auto-live"];
+  const render = async (props: Record<string, boolean>) => {
+    const { renderToStaticMarkup } = await import("react-dom/server");
+    const { createElement } = await import("react");
+    const { PrivacyEn } = await import("@/app/[locale]/(site)/privacy/PrivacyEn");
+    const { PrivacyPtBR } = await import("@/app/[locale]/(site)/privacy/PrivacyPtBR");
+    return {
+      en: renderToStaticMarkup(createElement(PrivacyEn, { turnstile: false, demo: true, ...props })),
+      pt: renderToStaticMarkup(createElement(PrivacyPtBR, { turnstile: false, demo: true, ...props })),
+    };
+  };
+
+  it("any of its conditions met needs PRIVACY_VERSION 2026-10-28 or later (mobile 248 accepting it applied first)", async () => {
+    const fs = await import("node:fs");
+    const conditions = JSON.parse(fs.readFileSync("content/help/conditions.json", "utf8"));
+    for (const id of CONDITIONS) {
+      expect(conditions[id], id).toBeDefined();
+      if (conditions[id].met) expect(PRIVACY_VERSION >= "2026-10-28", id).toBe(true);
+    }
+  });
+
+  it("with none of them, the page is exactly as before", async () => {
+    const off = await render({});
+    for (const s of ["6i. Patient Channel", "one-time account reminders", "at most once", "Google Play", "or in the Android app"]) expect(off.en).not.toContain(s);
+    for (const s of ["6i. Canal do Paciente", "lembretes únicos", "no máximo uma vez", "Google Play", "ou no app Android"]) expect(off.pt).not.toContain(s);
+    expect(off.en).toContain("which appointment and kind of notice it is");
+  });
+
+  it("each part shows only with its own flag, word for word, in both languages", async () => {
+    const pc = await render({ patientChannel: true });
+    expect(pc.en).toContain("6i. Patient Channel (&quot;Fale com o Médico&quot;)");
+    expect(pc.pt).toContain("6i. Canal do Paciente (&quot;Fale com o Médico&quot;)");
+    expect(pc.en).toContain("The patient never sees the score or the priority.");
+    expect(pc.en).toContain("The exception is Patient Channel requests: secretaries see the administrative ones");
+    expect(pc.pt).toContain("A abertura de uma solicitação fica registrada no log de acessos.");
+    expect(pc.en).toContain("Patient Channel requests and replies are part of the medical record");
+    // PC-9 and PC-10 wait for their own features. (PC-N1/N2, the channel's
+    // notices, come with their 247 rewrite and Vitor's OK: not in this text.)
+    for (const s of ["cover image", "SolvyAI reads the patient", "New message from a patient"]) expect(pc.en).not.toContain(s);
+    const pcAll = await render({ patientChannel: true, pcCover: true, pcAi: true });
+    expect(pcAll.en).toContain("the cover image is public once saved");
+    expect(pcAll.en).toContain("It never answers the patient.");
+    expect(pcAll.pt).toContain("Ele nunca responde ao paciente.");
+    expect(pcAll.en).toContain("which appointment and kind of notice it is");
+    // The sub-parts never show without the section's own condition.
+    expect((await render({ pcCover: true, pcAi: true })).en).not.toMatch(/cover image|SolvyAI reads the patient/);
+
+    const rem = await render({ reminders: true });
+    expect(rem.en).toContain("To send, at most once, a reminder to finish your sign-up or to set up your practice (by e-mail, and as a push notification if you use the app). Every reminder has a link to stop them.");
+    expect(rem.pt).toContain("Para enviar, no máximo uma vez, um lembrete para concluir o cadastro ou configurar sua clínica (por e-mail e, se você usa o app, por notificação push). Todo lembrete tem um link para não recebê-los mais.");
+    expect(rem.en).toContain("password resets, one-time account reminders)");
+    expect(rem.pt).toContain("redefinição de senha, lembretes únicos sobre a conta)");
+    expect(rem.en).toContain("changes and cancellations and, at most once, a reminder to set up your practice.");
+    expect(rem.pt).toContain("alterações e cancelamentos e, no máximo uma vez, um lembrete para configurar sua clínica.");
+
+    const ref = await render({ appReferrer: true });
+    expect(ref.en).toContain("In the Android app, with the same consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up.");
+    expect(ref.pt).toContain("No app Android, com o mesmo consentimento, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar.");
+
+    const demo = await render({ appDemo: true });
+    expect(demo.en).toContain("without an account at solvymed.com/demo or in the Android app.");
+    expect(demo.pt).toContain("sem conta em solvymed.com/demo ou no app Android.");
+  });
+
+  it("the page passes each condition (app-demo-live only with demo-mode-live)", async () => {
+    const fs = await import("node:fs");
+    const page = fs.readFileSync("src/app/[locale]/(site)/privacy/page.tsx", "utf8");
+    for (const id of CONDITIONS) expect(page).toContain(`conditionMet("${id}")`);
+    expect(page).toContain('demo && conditionMet("app-demo-live")');
+    expect(page.match(/\{\.\.\.v1028\}/g)).toHaveLength(2);
+  });
+});
