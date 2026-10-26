@@ -595,6 +595,8 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Save is disabled then too; this also stops an Enter submit (the app's handleSave guard).
+    if (picker.blocked) return;
     submit(new FormData(formRef.current!));
   }
 
