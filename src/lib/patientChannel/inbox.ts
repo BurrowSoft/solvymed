@@ -198,13 +198,12 @@ export function highlightParts(text: string, matches: Match[]): { text: string; 
 
 export const REPLY_MAX = 500;
 
-// Why a request is Urgent below the threshold (the safety floor, 01 10-26): a line of a
-// symptom with the immediate warning. "patient" when the patient selected or wrote it,
-// "ai" when only the AI found it; null otherwise.
-export function warningFloorCause(names: DetailNames, lines: ScoreLine[], band: Band): "patient" | "ai" | null {
-  if (band !== "red" || names.warnings.length === 0) return null;
-  const warned = (l: ScoreLine) => "symptomId" in l.label && names.warnings.includes(l.label.symptomId);
-  if (lines.some((l) => l.source !== "ai" && warned(l))) return "patient";
-  if (lines.some((l) => l.source === "ai" && warned(l))) return "ai";
+// Why a request is Urgent through the safety floor (01, 10-26): a symptom with the immediate
+// warning that the patient chose or wrote (boxes, chips, text: patientIds, even one worth 0
+// points, which has no line; cf), else one only the AI found (its "IA" line). null otherwise.
+export function warningFloorCause(warningIds: string[], patientIds: string[], lines: ScoreLine[], band: Band): "patient" | "ai" | null {
+  if (band !== "red" || warningIds.length === 0) return null;
+  if (patientIds.some((id) => warningIds.includes(id))) return "patient";
+  if (lines.some((l) => l.source === "ai" && "symptomId" in l.label && warningIds.includes(l.label.symptomId))) return "ai";
   return null;
 }

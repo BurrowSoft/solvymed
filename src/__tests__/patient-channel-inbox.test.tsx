@@ -130,13 +130,19 @@ describe("the detail", () => {
   it("the safety floor line (01, 10-26): a warning symptom the patient chose, or one only the AI found", () => {
     const floor = cases.safetyFloor.config as ChannelConfig;
     const mild = { symptomIds: ["f1"], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
+    const warn = floor.symptoms.filter((s) => s.immediateWarning).map((s) => s.id);
     const byPatient = scoreRequest(floor, mild);
-    expect(warningFloorCause(detailNames(floor, byPatient.lines, mild.symptomIds), byPatient.lines, byPatient.band)).toBe("patient");
+    expect(warningFloorCause(warn, mild.symptomIds, byPatient.lines, byPatient.band)).toBe("patient");
     const byAi = scoreRequest(floor, { ...mild, symptomIds: [], text: "não estou bem" }, { aiSymptomIds: ["f1"] });
-    expect(warningFloorCause(detailNames(floor, byAi.lines, []), byAi.lines, byAi.band)).toBe("ai");
+    expect(warningFloorCause(warn, [], byAi.lines, byAi.band)).toBe("ai");
     expect(detailNames(floor, byAi.lines, []).warnings).toEqual(["f1"]);
     const plain = scoreRequest(floor, { ...mild, symptomIds: ["f2"] });
-    expect(warningFloorCause(detailNames(floor, plain.lines, ["f2"]), plain.lines, plain.band)).toBeNull();
+    expect(warningFloorCause(warn, ["f2"], plain.lines, plain.band)).toBeNull();
+    // cf: a warning symptom worth 0 points (and no answer points) has no line, still the reason.
+    const zero = { ...floor, symptoms: floor.symptoms.map((s) => (s.id === "f1" ? { ...s, points: 0, adjust: { when: [0, 0, 0], intensity: [0, 0, 0], stillTaking: [0, 0] } } : s)) };
+    const silent = scoreRequest(zero, mild);
+    expect([silent.lines, silent.band]).toEqual([[], "red"]);
+    expect(warningFloorCause(warn, mild.symptomIds, silent.lines, silent.band)).toBe("patient");
   });
 
   it("the highlights: the list's words in the patient's text, split for <mark>", () => {

@@ -58,7 +58,13 @@ export default async function PatientChannelRequestPage({
   const names = detailNames(config, lines, answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []);
   const parts = highlightParts(row.text, detailHighlights(config, row.text));
   const shownMessages = toShownMessages(q.auto_messages_shown);
-  const floorCause = warningFloorCause(names, lines, row.band);
+  // The safety floor's reason: the warning symptoms (ids only, from the rules read above) vs
+  // what the patient chose or wrote, or the AI's lines.
+  const warningIds = (config?.symptoms ?? []).filter((x) => x.immediateWarning).map((x) => x.id);
+  const patientIds = answers.kind === "form"
+    ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref), ...detailHighlights(config, row.text).filter((m) => m.kind === "symptom").map((m) => m.ref)]
+    : [];
+  const floorCause = warningFloorCause(warningIds, patientIds, lines, row.band);
   const tl = (key: string, values?: Record<string, string | number>) => t(key as never, values as never);
   const symptomName = (id: string) => names.symptoms[id] ?? "?";
   const readOnly = isSecretary && row.destination === "doctor";
