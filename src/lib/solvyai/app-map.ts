@@ -386,6 +386,10 @@ export const GENERAL: { rule: Rule; help: string }[] = [
     },
     help: "P1",
   },
+  {
+    rule: "On the website, while the practice has no patient yet, the doctor's \"Visão geral\" / \"Overview\" shows \"Adicione seu primeiro paciente\" / \"Add your first patient\" (after the guided tour ends or is skipped), with \"Adicionar paciente\" / \"Add patient\" (the new-patient form) and \"Agendar a primeira consulta\" / \"Book the first appointment\" (the Schedule). It goes away once the first patient exists. Secretaries don't see it.",
+    help: "P1",
+  },
   { rule: "SolvyAI is for doctors only; secretaries and patients don't have it.", help: "C9" },
   {
     rule: {
