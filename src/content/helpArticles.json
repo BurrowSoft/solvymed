@@ -2389,7 +2389,7 @@
             },
             {
               "type": "p",
-              "text": "No site, o cadastro e a tela de entrada têm **Continuar com Google**: você entra com sua conta Google, sem senha nem e-mail de confirmação. Na primeira vez, a tela **Complete sua conta** pede se você é profissional de saúde (com o país do consultório) ou paciente (com o código de convite da clínica), seu nome e o aceite dos Termos de Uso e da Política de Privacidade. Se você já tem uma conta com o mesmo e-mail, entra nela."
+              "text": "No site, o cadastro e a tela de entrada têm **Continuar com Google**: você entra com sua conta Google, sem senha nem e-mail de confirmação. Na primeira vez, a tela **Complete sua conta** pede se você é profissional de saúde (com o país do consultório) ou paciente (com o código de convite da clínica), seu nome e o aceite dos Termos de Uso e da Política de Privacidade. Se você já tem uma conta com o mesmo e-mail, entra nela. Se essa tela não abrir (por exemplo, sem conexão), ela avisa e mostra **Tentar de novo**."
             },
             {
               "type": "p",
@@ -2427,7 +2427,7 @@
             },
             {
               "type": "p",
-              "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it."
+              "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it. If that screen can't open (for example, with no connection), it says so and shows **Try again**."
             },
             {
               "type": "p",

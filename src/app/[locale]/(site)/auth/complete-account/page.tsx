@@ -40,32 +40,46 @@ export default function CompleteAccountPage() {
   const [ready, setReady] = useState(false);
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
+  // Activation B4: the opening check failed (no connection, a server error). Before, the
+  // button kept spinning with nothing to do; now it says so, with Try again.
+  const [loadFailed, setLoadFailed] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   // Only for an account that still has to be completed; anyone else goes on
   // (signed out: the login; done: the dashboard, which routes every role).
   useEffect(() => {
     let live = true;
     const supabase = createClient();
+    if (attempt === 0) track("complete_account_view");
     void (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!live) return;
-      if (!user) {
-        window.location.replace(localePath("/auth/login"));
-        return;
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!live) return;
+        if (!user) {
+          window.location.replace(localePath("/auth/login"));
+          return;
+        }
+        const { data: pending, error: pendingError } = await supabase.rpc("signup_onboarding_is_pending");
+        if (!live) return;
+        // A failed check isn't "done": sending the person on would leave them without a role.
+        if (pendingError) throw pendingError;
+        if (pending !== true) {
+          window.location.replace(localePath("/dashboard"));
+          return;
+        }
+        setName((n) => n || String(user.user_metadata?.full_name ?? user.user_metadata?.name ?? ""));
+        setLoadFailed(false);
+        setReady(true);
+      } catch {
+        if (!live) return;
+        track("complete_account_error", { code: "load_failed" });
+        setLoadFailed(true);
       }
-      const { data: pending } = await supabase.rpc("signup_onboarding_is_pending");
-      if (!live) return;
-      if (pending !== true) {
-        window.location.replace(localePath("/dashboard"));
-        return;
-      }
-      setName((n) => n || String(user.user_metadata?.full_name ?? user.user_metadata?.name ?? ""));
-      setReady(true);
     })();
     return () => { live = false; };
-    // On mount only.
+    // On mount, and on Try again.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [attempt]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -100,6 +114,12 @@ export default function CompleteAccountPage() {
     });
     if (rpcError) {
       const m = rpcError.message ?? "";
+      // The account is already complete (another tab, the app): nothing to fix here.
+      if (["not_pending", "already_professional", "is_secretary", "patient_linked"].some((c) => m.includes(c))) {
+        window.location.assign(localePath("/dashboard"));
+        return;
+      }
+      track("complete_account_error", { code: ["invite_code_required", "unsupported_country", "consent_required"].find((c) => m.includes(c)) ?? (authErrorKey(rpcError) === "network" ? "network" : "other") });
       setWorking(false);
       setError(
         m.includes("invite_code_required") ? t("signup.inviteCodeRequired")
@@ -198,10 +218,20 @@ export default function CompleteAccountPage() {
 
             {error && <p role="alert" data-testid="complete-error" className="text-sm text-red-600">{error}</p>}
 
-            <button type="submit" data-testid="complete-submit" disabled={working || !ready}
-              className="w-full rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60">
-              {working || !ready ? <span className="spinner-white" aria-hidden="true" /> : tc("submit")}
-            </button>
+            {loadFailed ? (
+              <div role="alert" data-testid="complete-load-failed" className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <p>{tc("loadError")}</p>
+                <button type="button" data-testid="complete-retry" onClick={() => { setLoadFailed(false); setAttempt((n) => n + 1); }}
+                  className="mt-2 rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">
+                  {tc("retry")}
+                </button>
+              </div>
+            ) : (
+              <button type="submit" data-testid="complete-submit" disabled={working || !ready}
+                className="w-full rounded-xl bg-teal-600 px-6 py-4 text-base font-bold text-white shadow-md transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60">
+                {working || !ready ? <><span className="spinner-white" aria-hidden="true" /><span className="sr-only">{tc("working")}</span></> : tc("submit")}
+              </button>
+            )}
           </form>
         </div>
       </AuthCard>

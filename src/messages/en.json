@@ -799,7 +799,10 @@
       "countryLabel": "Where is your practice?",
       "countryRequired": "Choose your practice's country.",
       "consentRequired": "Please accept the Terms of Use and the Privacy Policy.",
-      "submit": "Continue"
+      "submit": "Continue",
+      "loadError": "We couldn’t open this step. Check your connection and try again.",
+      "retry": "Try again",
+      "working": "Saving…"
     },
     "passwordTooShort": "Password must be at least {min} characters.",
     "login": {
