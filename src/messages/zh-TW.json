@@ -916,7 +916,7 @@
       "notPendingPatient": "該帳戶並非以患者身分註冊，因此無法在此關聯邀請碼。",
       "linkFailed": "關聯您的帳戶時發生錯誤，請重試。",
       "backToSignup": "使用其他帳戶",
-      "tooManyAttempts": "嘗試次數過多，請稍後再試。",
+      "tooManyAttempts": "嘗試次數過多。請等待一小時後再試。",
       "alreadyInvitedByAnother": "您的帳戶已與另一位醫生關聯。",
       "archived": "這間診所目前不接受您帳戶的新預約。請聯絡診所。",
       "alreadyConnected": "您已與 {doctor} 連結。如需更換，請聯絡客服。",

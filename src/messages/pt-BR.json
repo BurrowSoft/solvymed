@@ -916,7 +916,7 @@
       "notPendingPatient": "Esta conta não foi criada como um cadastro de paciente, então um código de convite não pode ser vinculado aqui.",
       "linkFailed": "Ocorreu um erro ao vincular sua conta. Tente novamente.",
       "backToSignup": "Usar outra conta",
-      "tooManyAttempts": "Muitas tentativas. Aguarde um pouco antes de tentar novamente.",
+      "tooManyAttempts": "Muitas tentativas. Aguarde uma hora e tente novamente.",
       "alreadyInvitedByAnother": "Sua conta já está conectada a outra clínica.",
       "archived": "Esta clínica não está aceitando novos pedidos de consulta para a sua conta. Entre em contato com a clínica.",
       "alreadyConnected": "Você já está conectado a {doctor}. Para trocar, fale com o suporte.",

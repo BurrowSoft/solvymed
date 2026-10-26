@@ -59,4 +59,15 @@ describe("routeAfterAuth: patients", () => {
     const removed: Row = { role: "patient", invited_by_professional_id: null, linked_patient_id: null };
     expect(await routeAfterAuth(fakeDb({ before: removed }), patient(), "", "magiclink")).toBe("/auth/invite-required");
   });
+
+  // 243 (cf, A+B): complete_google_signup links the patient itself. The confirmation step
+  // must then route by that row and never link again (no extra attempt, no invite gate),
+  // even with the invite code still in the metadata.
+  it("linked by the signup RPC with the code still in the metadata: no second link attempt", async () => {
+    const calls: string[] = [];
+    const db = fakeDb({ before: linked });
+    const spy = { ...db, rpc: async (fn: string) => { calls.push(fn); return { data: null, error: null }; } } as unknown as SupabaseClient;
+    expect(await routeAfterAuth(spy, patient({ invite_code: "ABC123" }), "/pt-BR", "signup")).toBe("/pt-BR/auth/patient-welcome");
+    expect(calls).toEqual([]);
+  });
 });

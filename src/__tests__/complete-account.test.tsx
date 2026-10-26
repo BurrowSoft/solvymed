@@ -245,6 +245,10 @@ describe("Complete your account", () => {
       await openConfirm();
       fireEvent.click(screen.getByTestId("complete-cancel-yes"));
       expect(await screen.findByTestId("complete-cancel-error")).toHaveTextContent(pt.auth.completeAccount.cancelTryLater);
+      // The error sits BELOW the buttons: it never moves them (01, cf: a destructive slip in the app).
+      const err = screen.getByTestId("complete-cancel-error");
+      expect(screen.getByTestId("complete-cancel-back").compareDocumentPosition(err) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(screen.getByTestId("complete-cancel-yes").compareDocumentPosition(err) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
       expect(assign).not.toHaveBeenCalled();
       expect(h.signOut).not.toHaveBeenCalled();
       fireEvent.click(screen.getByTestId("complete-cancel-back"));
@@ -265,6 +269,51 @@ describe("Complete your account", () => {
       await openConfirm();
       fireEvent.click(screen.getByTestId("complete-cancel-yes"));
       expect(await screen.findByTestId("complete-cancel-error")).toHaveTextContent(pt.auth.errors.generic);
+    });
+  });
+
+  // 243 (shipped BEFORE it, cf): a patient's code can miss without an error. The answer's
+  // status decides: the miss codes stay on the form at the code field, nothing completed;
+  // "done" (today) or no status is success; anything else is the generic error.
+  describe("the RPC's status (243)", () => {
+    const submitPatient = async () => {
+      const view = show("role=patient");
+      await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+      fireEvent.change(screen.getByTestId("complete-invite-code"), { target: { value: "ABC123" } });
+      fireEvent.click(screen.getByTestId("complete-terms"));
+      fireEvent.click(screen.getByTestId("complete-submit"));
+      return view;
+    };
+
+    it.each([
+      ["invite_not_found", pt.auth.inviteRequired.storedCodeNotFound],
+      ["code_unavailable", pt.auth.inviteRequired.codeUnavailable],
+      ["too_many_attempts", pt.auth.inviteRequired.tooManyAttempts],
+    ])("%s: its line at the code field; no after-verify, no redirect", async (status, line) => {
+      h.rpc.mockResolvedValue({ data: { status }, error: null });
+      await submitPatient();
+      expect(await screen.findByTestId("complete-error-code")).toHaveTextContent(line);
+      expect(fetch).not.toHaveBeenCalled();
+      expect(assign).not.toHaveBeenCalled();
+      expect(h.track).toHaveBeenCalledWith("complete_account_error", { code: status });
+    });
+
+    it("an unknown status: the generic error, never a silent success", async () => {
+      h.rpc.mockResolvedValue({ data: { status: "something_new" }, error: null });
+      await submitPatient();
+      expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.errors.generic);
+      expect(assign).not.toHaveBeenCalled();
+    });
+
+    it("'done' (today's answer) and no status at all are success", async () => {
+      h.rpc.mockResolvedValue({ data: { status: "done", linked: true }, error: null });
+      const first = await submitPatient();
+      await waitFor(() => expect(assign).toHaveBeenCalled());
+      first.unmount();
+      assign.mockReset();
+      h.rpc.mockResolvedValue({ data: null, error: null });
+      await submitPatient();
+      await waitFor(() => expect(assign).toHaveBeenCalled());
     });
   });
 });
