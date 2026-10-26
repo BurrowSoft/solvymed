@@ -8,7 +8,7 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({ rpc: (...a: unknown[]) => { h.calls.push(a); return h.rpc(...a); } }),
 }));
 
-import { VALUE_METRIC, demoCount, signupClickMetric } from "@/lib/demoMetrics";
+import { VALUE_METRIC, demoCount, setDemoCounting, signupClickMetric } from "@/lib/demoMetrics";
 
 afterEach(() => {
   h.calls = [];
@@ -17,6 +17,13 @@ afterEach(() => {
 });
 
 describe("demoCount", () => {
+  it("counts nothing until the server says Production (cf, #615: previews share the database)", async () => {
+    setDemoCounting(false);
+    await demoCount("tour_step_1");
+    expect(h.calls).toEqual([]);
+    setDemoCounting(true);
+  });
+
   it("calls demo_count with the metric (and the page's country/language for signin)", async () => {
     await demoCount("tour_step_2");
     await demoCount("signin", { country: "TH", locale: "th" });
@@ -49,5 +56,24 @@ describe("the counters' names", () => {
 
   it("the value moments", () => {
     expect(VALUE_METRIC).toEqual({ prescription: "value_rx", appointment: "value_booking", solvyai: "value_ai" });
+  });
+});
+
+describe("the server's counts", () => {
+  it("only on Production (previews and tests share the database)", async () => {
+    vi.resetModules();
+    vi.doMock("server-only", () => ({}));
+    const created: unknown[] = [];
+    vi.doMock("@supabase/supabase-js", () => ({ createClient: (...a: unknown[]) => { created.push(a); return { rpc: async () => ({ error: null }) }; } }));
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321");
+    vi.stubEnv("SUPABASE_SERVICE_ROLE_KEY", "test");
+    const { demoCountServer } = await import("@/lib/demoMetricsServer");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    await demoCountServer("page_load", "BR", "pt-BR");
+    expect(created).toHaveLength(0);
+    vi.stubEnv("VERCEL_ENV", "production");
+    await demoCountServer("page_load", "BR", "pt-BR");
+    expect(created).toHaveLength(1);
+    vi.unstubAllEnvs();
   });
 });

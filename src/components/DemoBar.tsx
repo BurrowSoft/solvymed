@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { demoTitle, leaveDemo } from "@/lib/demo";
-import { demoCount } from "@/lib/demoMetrics";
+import { demoCount, setDemoCounting } from "@/lib/demoMetrics";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { DemoAndroidChip, DemoBlockedSheet, DemoRealDataHint, DemoValueSheet } from "./DemoGate";
@@ -16,7 +16,10 @@ import { DEMO_TOUR_OPEN_EVENT, DemoTour } from "./DemoTour";
 // "DEMO" and the button; the DEMO tag opens a small menu with "Sair da
 // demonstração" there. The tab title gets "[Demo] " too. Its height is the
 // dashboard's --demo-bar-h (3rem), which the layout and the sidebar offset by.
-export function DemoBar({ locale, country }: { locale: string; country: CountryChoice }) {
+// count: Production only (the dashboard layout reads VERCEL_ENV).
+export function DemoBar({ locale, country, count = false }: { locale: string; country: CountryChoice; count?: boolean }) {
+  // Set while rendering, so the tour's and the sheets' first counts already see it.
+  setDemoCounting(count);
   const t = useTranslations("demo");
   const prefix = locale === "en" ? "" : `/${locale}`;
   const [menu, setMenu] = useState(false);

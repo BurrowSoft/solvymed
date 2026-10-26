@@ -43,7 +43,7 @@ export default async function DemoPage({ params, searchParams }: { params: Promi
       {/* React hoists these into <head>. */}
       {supabase && <link rel="preconnect" href={supabase} crossOrigin="anonymous" />}
       {on && <link rel="preconnect" href="https://challenges.cloudflare.com" />}
-      <DemoClient testAllowed={testAllowed} siteKey={demoTurnstileKeys().siteKey} serverOn={on} />
+      <DemoClient testAllowed={testAllowed} siteKey={demoTurnstileKeys().siteKey} serverOn={on} count={!testAllowed} />
     </>
   );
 }

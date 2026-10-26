@@ -31,6 +31,7 @@ import { stampDemo } from "@/lib/pdf/demoStamp";
 import { DemoAndroidChip, DemoProvider, DemoRealDataHint, DemoRealDataNote, DemoValueSheet, notifyDemoValue } from "@/components/DemoGate";
 import { PrintToolbar } from "@/components/PrintToolbar";
 import { DemoTour } from "@/components/DemoTour";
+import { setDemoCounting } from "@/lib/demoMetrics";
 
 const wrap = (node: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{node}</NextIntlClientProvider>;
 
@@ -74,6 +75,7 @@ describe("moments of value", () => {
   });
 
   it("Google from the sheet: the demo ends and signs out before OAuth starts", async () => {
+    setDemoCounting(true);
     render(wrap(<DemoValueSheet locale="pt-BR" country="TH" />));
     act(() => notifyDemoValue("solvyai"));
     h.calls = [];

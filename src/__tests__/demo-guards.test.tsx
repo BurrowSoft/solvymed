@@ -45,6 +45,7 @@ import { POST as register } from "@/app/api/founders/register/route";
 import { POST as uploadUrl } from "@/app/api/founders/upload-url/route";
 import { GET as exportCsv } from "@/app/api/patients/export/route";
 import { DemoBlockedSheet, DemoGate, DemoProvider, notifyDemoBlocked } from "@/components/DemoGate";
+import { setDemoCounting } from "@/lib/demoMetrics";
 
 const post = (body: unknown = {}) =>
   new NextRequest(new URL("/x", "https://www.solvymed.com"), { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } });
@@ -105,6 +106,7 @@ describe("DemoGate + the sheet", () => {
   });
 
   it("in a demo: inert; a tap says \"Disponível na sua conta\"; its CTA leaves for the sign-up", async () => {
+    setDemoCounting(true);
     show(true);
     const gate = screen.getByTestId("demo-blocked");
     fireEvent.click(screen.getByRole("button", { name: pt.demo.blocked }));

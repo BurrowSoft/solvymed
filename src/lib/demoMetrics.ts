@@ -17,7 +17,16 @@ export type DemoClientMetric =
 
 const CAP_MS = 1500;
 
+// Only Production counts (cf, #615: previews share the production database). The
+// server decides (VERCEL_ENV) and hands it down: the demo page and the demo bar call
+// this while rendering, before any child counts. Off until then.
+let countingOn = false;
+export function setDemoCounting(on: boolean): void {
+  countingOn = on;
+}
+
 export function demoCount(metric: DemoClientMetric, where?: { country: string; locale: string }): Promise<void> {
+  if (!countingOn) return Promise.resolve();
   const call = (async () => {
     try {
       await createClient().rpc("demo_count", where ? { p_metric: metric, p_country: where.country, p_locale: where.locale } : { p_metric: metric });

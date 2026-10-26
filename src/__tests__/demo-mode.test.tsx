@@ -144,15 +144,22 @@ describe("DemoBar", () => {
   });
 
   it("sign-up: end_demo + sign-out BEFORE the sign-up page loads, country prefilled (01)", async () => {
-    render(wrap(<DemoBar locale="pt-BR" country="TH" />));
+    render(wrap(<DemoBar locale="pt-BR" country="TH" count />));
     fireEvent.click(screen.getByTestId("demo-signup"));
     await waitFor(() => expect(assign).toHaveBeenCalled());
     expect(h.calls).toEqual(["demo_count({\"p_metric\":\"signup_click_bar\"})", "end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
     expect(h.track).toHaveBeenCalledWith("demo_signup_click", { where: "bar" });
   });
 
+  it("off Production (no count prop): nothing is counted, the sign-up still leaves the demo (cf, #615)", async () => {
+    render(wrap(<DemoBar locale="pt-BR" country="TH" />));
+    fireEvent.click(screen.getByTestId("demo-signup"));
+    await waitFor(() => expect(assign).toHaveBeenCalled());
+    expect(h.calls).toEqual(["end_demo", "signOut", "assign /pt-BR/auth/signup?c=TH&via=demo"]);
+  });
+
   it("exit (behind the DEMO tag): end_demo + sign-out, then the landing", async () => {
-    render(wrap(<DemoBar locale="en" country="BR" />));
+    render(wrap(<DemoBar locale="en" country="BR" count />));
     fireEvent.click(screen.getByRole("button", { name: pt.demo.menu }));
     fireEvent.click(screen.getByTestId("demo-exit"));
     await waitFor(() => expect(assign).toHaveBeenCalledWith("/"));
