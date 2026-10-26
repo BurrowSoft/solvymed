@@ -2567,6 +2567,11 @@
     "book": "Agendar a primeira consulta"
   },
   "patientChannel": {
+    "template": {
+      "start": "Comece com o modelo pronto: Geral / efeitos colaterais",
+      "use": "Usar o modelo",
+      "openRequests": "Responda ou feche as solicitações abertas antes de trocar o modelo."
+    },
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
     "entryOpen": "Configurar",

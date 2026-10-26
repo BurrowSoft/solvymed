@@ -2567,6 +2567,11 @@
     "book": "Buat janji pertama"
   },
   "patientChannel": {
+    "template": {
+      "start": "Mulai dengan templat siap pakai: Umum / efek samping",
+      "use": "Gunakan templat",
+      "openRequests": "Jawab atau tutup permintaan yang masih terbuka sebelum mengganti templat."
+    },
     "title": "Kanal Pasien",
     "entryText": "Pasien Anda mengajukan pertanyaan melalui kanal yang tertata, diurutkan berdasarkan tingkat urgensi dengan skor yang Anda atur.",
     "entryOpen": "Atur",

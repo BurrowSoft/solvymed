@@ -2597,6 +2597,11 @@
     "book": "Book the first appointment"
   },
   "patientChannel": {
+    "template": {
+      "start": "Start with the ready-made template: General / side effects",
+      "use": "Use the template",
+      "openRequests": "Answer or close the open requests before changing the template."
+    },
     "title": "Patient Channel",
     "entryText": "Your patients ask their questions through an organised channel, ranked by urgency with the score you set up.",
     "entryOpen": "Set up",

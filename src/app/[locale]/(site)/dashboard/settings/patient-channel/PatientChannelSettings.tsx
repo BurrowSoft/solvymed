@@ -31,6 +31,7 @@ import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
+import { TemplateStart } from "./TemplateStart";
 import type { PcFaqRow, PcReasonRow, PcSettings } from "@/lib/patientChannel/channel";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
@@ -54,13 +55,15 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
 
 type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
 
-export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref }: {
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, templateId }: {
   initialRules: ChannelConfig;
   // pc_settings.rules_version; 0 = no row yet (the first save of either part creates it).
   initialVersion: number;
   emergencyNumber: string | null;
   professionalId: string;
   channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[] };
+  // The practice country's starting template (pc_templates), or null.
+  templateId?: string | null;
   brandHref: string;
 }) {
   const t = useTranslations("patientChannel");
@@ -148,6 +151,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
+      {/* No symptoms yet: start from the ready-made template (01). */}
+      {templateId && rules.symptoms.length === 0 && <TemplateStart templateId={templateId} />}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Symptoms rules={rules} setRules={setRules} />
         <div className="flex min-w-0 flex-col gap-4">

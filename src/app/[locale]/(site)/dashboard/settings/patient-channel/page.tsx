@@ -21,8 +21,8 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
   if (!user) redirect(`${prefix}/auth/login`);
   if (!(await patientChannelEnabled(supabase, user.id))) notFound();
   if ((await isProfessionalRole(supabase, user.id)) !== true) redirect(`${prefix}/dashboard/settings`);
-  const [country, saved, settings, reasons, faq] = await Promise.all([
-    getPracticeCountry(supabase, user.id, user.id),
+  const country = await getPracticeCountry(supabase, user.id, user.id);
+  const [saved, settings, reasons, faq, template] = await Promise.all([
     supabase.rpc("pc_get_rules"),
     supabase.from("pc_settings")
       .select("enabled, secretary_sees_all, sla_business_days, reading_hours, reading_note, welcome, page_bg")
@@ -31,6 +31,8 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
       .eq("professional_id", user.id).is("archived_at", null).order("sort").order("created_at"),
     supabase.from("pc_faq").select("id, question, answer, sort")
       .eq("professional_id", user.id).is("archived_at", null).order("sort").order("created_at"),
+    // The practice country's starting template (246; read by country, no hard-coded id).
+    supabase.from("pc_templates").select("id").eq("country", country).eq("specialty", "general").order("id").limit(1).maybeSingle(),
   ]);
   // A failed read must not open an empty editor (Save would replace the stored rules).
   if (saved.error || settings.error || reasons.error || faq.error) {
@@ -57,6 +59,7 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
         faq: (faq.data ?? []) as PcFaqRow[],
       }}
       brandHref={`${prefix}/dashboard/settings#brand`}
+      templateId={(template.data as { id?: string } | null)?.id ?? null}
     />
   );
 }
