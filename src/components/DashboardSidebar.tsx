@@ -27,6 +27,8 @@ interface Props {
   // The Patient Channel inbox (M5): while the channel is on for this practice, or it
   // already has requests (dashboard/layout.tsx, lib/patientChannel/staff inboxAvailable).
   patientChannel?: boolean;
+  // Open requests the caller can act on: a count badge on "Mensagens" (0: none).
+  patientChannelOpen?: number;
 }
 
 const LOCALES: { code: string; label: string; short: string }[] = [
@@ -179,7 +181,7 @@ function LanguageSwitcher({ locale, languages }: { locale: string; languages: re
   );
 }
 
-export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false, languages = OFFERED_LOCALES, videoTutorialsUrl = null, patientChannel = false }: Props) {
+export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecretary = false, languages = OFFERED_LOCALES, videoTutorialsUrl = null, patientChannel = false, patientChannelOpen = 0 }: Props) {
   const t = useTranslations("nav");
   const tChannel = useTranslations("patientChannel.inbox");
   const tVideos = useTranslations("videoTutorials");
@@ -240,7 +242,13 @@ export function DashboardSidebar({ locale, firstName, email, photoUrl, isSecreta
           >
             <span className={active ? "text-teal-600" : "text-slate-400"}>{icon}</span>
             {label}
-            {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-teal-600" />}
+            {path === "/dashboard/patient-channel" && patientChannelOpen > 0 && (
+              <span data-testid="pc-nav-badge" aria-label={tChannel("navOpen", { n: patientChannelOpen })}
+                className="ml-auto rounded-full bg-teal-600 px-2 py-0.5 text-xs font-bold tabular-nums text-white">
+                {patientChannelOpen > 99 ? "99+" : patientChannelOpen}
+              </span>
+            )}
+            {active && !(path === "/dashboard/patient-channel" && patientChannelOpen > 0) && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-teal-600" />}
           </Link>
         );
       })}

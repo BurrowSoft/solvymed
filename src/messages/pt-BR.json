@@ -2906,7 +2906,8 @@
         "answered": "Respondida",
         "call_back": "Vai ligar",
         "substituted": "Substituída"
-      }
+      },
+      "navOpen": "{n, plural, one {# mensagem aberta} other {# mensagens abertas}}"
     },
     "detail": {
       "back": "← Mensagens",

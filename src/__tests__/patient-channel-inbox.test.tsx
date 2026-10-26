@@ -58,7 +58,7 @@ vi.mock("@/lib/patientChannel/server", async (orig) => ({
 }));
 
 const { POST: reply } = await import("@/app/api/patient-channel/requests/[id]/reply/route");
-const { inboxAvailable } = await import("@/lib/patientChannel/staff");
+const { inboxAvailable, inboxOpenCount } = await import("@/lib/patientChannel/staff");
 const { DashboardSidebar } = await import("@/components/DashboardSidebar");
 
 const ID = "33333333-3333-4333-8333-333333333333";
@@ -226,10 +226,10 @@ describe("the staff gate (01, 10-26: a switch-off never hides waiting patients)"
 });
 
 describe("the sidebar entry", () => {
-  const renderSidebar = (patientChannel?: boolean) =>
+  const renderSidebar = (patientChannel?: boolean, patientChannelOpen?: number) =>
     render(
       <NextIntlClientProvider locale="pt-BR" messages={pt}>
-        <DashboardSidebar locale="pt-BR" firstName="Ana" email="ana@x.invalid" patientChannel={patientChannel} />
+        <DashboardSidebar locale="pt-BR" firstName="Ana" email="ana@x.invalid" patientChannel={patientChannel} patientChannelOpen={patientChannelOpen} />
       </NextIntlClientProvider>,
     );
 
@@ -239,6 +239,29 @@ describe("the sidebar entry", () => {
     unmount();
     renderSidebar();
     expect(screen.queryByRole("link", { name: /Mensagens/ })).toBeNull();
+  });
+
+  // 01, 10-26: the open requests the caller can act on, as a badge on "Mensagens".
+  it("the open-count badge: shown with its count and a spoken label, hidden at 0, capped at 99+", () => {
+    const a = renderSidebar(true, 3);
+    const badge = screen.getAllByTestId("pc-nav-badge")[0];
+    expect(badge.textContent).toBe("3");
+    expect(badge.getAttribute("aria-label")).toBe("3 mensagens abertas");
+    a.unmount();
+    const b = renderSidebar(true, 0);
+    expect(screen.queryByTestId("pc-nav-badge")).toBeNull();
+    b.unmount();
+    renderSidebar(true, 250);
+    expect(screen.getAllByTestId("pc-nav-badge")[0].textContent).toBe("99+");
+  });
+
+  it("the count: the doctor all open; a secretary the administrative ones; 0 on a failure", async () => {
+    const counts = { open: 5, openForDoctor: 3, openForSecretary: 2 };
+    const ok = { rpc: async () => ({ data: counts, error: null }) } as never;
+    expect(await inboxOpenCount(ok, "doc1", false)).toBe(5);
+    expect(await inboxOpenCount(ok, "doc1", true)).toBe(2);
+    const bad = { rpc: async () => ({ data: null, error: { message: "out_of_scope" } }) } as never;
+    expect(await inboxOpenCount(bad, "doc1", false)).toBe(0);
   });
 });
 

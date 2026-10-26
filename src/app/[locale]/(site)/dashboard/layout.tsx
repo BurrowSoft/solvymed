@@ -36,7 +36,7 @@ import { DemoBar } from "@/components/DemoBar";
 import { DemoProvider } from "@/components/DemoGate";
 import { isDemoUser } from "@/lib/demo";
 import { parseCountryChoice } from "@/lib/signupCountry";
-import { inboxAvailable } from "@/lib/patientChannel/staff";
+import { inboxAvailable, inboxOpenCount } from "@/lib/patientChannel/staff";
 
 function isVersionBelow(current: string, minimum: string): boolean {
   const parse = (v: string) => v.split(".").map(n => parseInt(n, 10) || 0);
@@ -207,6 +207,8 @@ export default async function DashboardLayout({
     // The Patient Channel inbox entry (M5): on for this practice, or it has requests.
     isDemo ? Promise.resolve(false) : inboxAvailable(supabase, user.id, actingId),
   ]);
+  // The badge on "Mensagens": the open requests the caller can act on (01, 10-26).
+  const patientChannelOpen = patientChannel ? await inboxOpenCount(supabase, actingId, isSecretary) : 0;
   const demoCountryCode = parseCountryChoice(practice.kind) ?? "BR";
   // A language the practice country doesn't offer: no dashboard in it, the
   // same page in the country's language (ad, after b3's lost SolvyAI answer).
@@ -264,6 +266,7 @@ export default async function DashboardLayout({
           languages={practice.languages}
           videoTutorialsUrl={practice.videoTutorialsUrl}
           patientChannel={patientChannel}
+          patientChannelOpen={patientChannelOpen}
         />
         <div className="flex flex-1 flex-col overflow-hidden">
           <div className="px-4 pt-3 empty:hidden lg:hidden"><OpenInApp onlyWithParam /></div>

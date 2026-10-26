@@ -2936,7 +2936,8 @@
         "answered": "Answered",
         "call_back": "Will call",
         "substituted": "Replaced"
-      }
+      },
+      "navOpen": "{n, plural, one {# open message} other {# open messages}}"
     },
     "detail": {
       "back": "← Messages",

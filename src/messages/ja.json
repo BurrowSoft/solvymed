@@ -2906,7 +2906,8 @@
         "answered": "返信済み",
         "call_back": "電話予定",
         "substituted": "置き換え済み"
-      }
+      },
+      "navOpen": "未対応のメッセージ {n} 件"
     },
     "detail": {
       "back": "← メッセージ",
