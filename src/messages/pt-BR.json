@@ -2538,7 +2538,7 @@
   },
   "firstPatient": {
     "title": "Adicione seu primeiro paciente",
-    "body": "Comece por um paciente: depois você agenda consultas, registra os atendimentos e emite documentos para ele.",
+    "body": "Comece por um paciente: depois você agenda consultas, registra os atendimentos e emite documentos.",
     "add": "Adicionar paciente",
     "book": "Agendar a primeira consulta"
   }
