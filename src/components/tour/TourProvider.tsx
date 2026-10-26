@@ -45,6 +45,11 @@ type TourCtx = { start: () => void; startNews: (release: string, replay?: boolea
 const Ctx = createContext<TourCtx>({ start: () => {}, startNews: () => {}, role: "professional", running: false, touring: false });
 export const useTour = () => useContext(Ctx);
 
+export const INTRO_SEEN_KEY = "solvymed.solvyaiIntroSeen";
+function seenHere(key: string): boolean {
+  try { return localStorage.getItem(key) === "1"; } catch { return false; }
+}
+
 export function TourProvider({
   role,
   paymentQr,
@@ -54,6 +59,7 @@ export function TourProvider({
   newsPending = false,
   introPending = false,
   introTestable = false,
+  userId,
   children,
 }: {
   role: TourRole;
@@ -67,6 +73,8 @@ export function TourProvider({
   introPending?: boolean;
   // ?solvyai-intro=1 works (not Production; the layout decides).
   introTestable?: boolean;
+  // For this browser's "Meet SolvyAI seen" marker (one per account).
+  userId?: string;
   children: ReactNode;
 }) {
   const t = useTranslations("tour");
@@ -91,13 +99,25 @@ export function TourProvider({
   // Novidades popup, never on top of them. Testing (panel flag on, and
   // never on Production: introTestable, from the server's VERCEL_ENV; UX):
   // /dashboard?solvyai-intro=1 opens it even when already seen.
+  // Once seen it never opens by itself again (01, 10-26; it stays reachable from the SolvyAI
+  // button). Seen = saved on the server when shown AND in this browser (a per-account
+  // marker): web tester 1 saw it again after a reload of /dashboard?setup=1 because the
+  // save sent as it opened (while the tour's router.push was in flight) never reached the
+  // server. "Depois" / "Experimentar" save again, and a failed save is tried once more.
   const [introPopup, setIntroPopup] = useState(false);
   const introWaiting = useRef(introPending && role === "professional");
+  const introForced = useRef(false);
+  const introKey = userId ? `${INTRO_SEEN_KEY}.${userId}` : null;
   useEffect(() => {
     if (introTestable && liveFeatures.solvyAi && role === "professional" && new URLSearchParams(window.location.search).get("solvyai-intro") === "1") {
       introWaiting.current = true;
+      introForced.current = true;
     }
   }, [role, introTestable]);
+  const saveIntro = useCallback((status: "skipped" | "completed") => {
+    if (introKey) { try { localStorage.setItem(introKey, "1"); } catch { /* storage off */ } }
+    void saveProgress(status, 0, SOLVYAI_INTRO_TOUR).then((ok) => { if (!ok) setTimeout(() => void saveProgress(status, 0, SOLVYAI_INTRO_TOUR), 2000); });
+  }, [introKey]);
   const [offerResume, setOfferResume] = useState(entry === "resume");
   // Where "Continuar" picks up: the saved step, or the step after SolvyAI
   // when "Experimentar agora" paused the tour (UX 36, like the app).
@@ -166,20 +186,22 @@ export function TourProvider({
     const id = setTimeout(() => {
       if (!introWaiting.current || newsWaiting.current || document.querySelector("[data-tour-block]")) return;
       introWaiting.current = false;
+      if (!introForced.current && introKey && seenHere(introKey)) return; // seen in this browser already
       setIntroPopup(true);
       track("solvyai_intro_shown", { role });
-      void saveProgress("skipped", 0, SOLVYAI_INTRO_TOUR);
+      saveIntro("skipped");
     }, 900);
     return () => clearTimeout(id);
-  }, [active, newsTour, newsPopup, introPopup, pathname, home, entry, role]);
+  }, [active, newsTour, newsPopup, introPopup, pathname, home, entry, role, introKey, saveIntro]);
 
   const introTry = useCallback(() => {
     setIntroPopup(false);
     track("solvyai_intro_try", { role });
-    void saveProgress("completed", 0, SOLVYAI_INTRO_TOUR);
+    saveIntro("completed");
     window.dispatchEvent(new CustomEvent(OPEN_EVENT, { detail: { chip: tIntro("whatCanDo") } }));
-  }, [role, tIntro]);
-  const introLater = useCallback(() => setIntroPopup(false), []);
+  }, [role, tIntro, saveIntro]);
+  // "Depois": saved again now that no navigation is in flight.
+  const introLater = useCallback(() => { setIntroPopup(false); saveIntro("skipped"); }, [saveIntro]);
 
   // replay: from Settings → What's new (the release was already seen, so
   // nothing is re-saved as "started").
