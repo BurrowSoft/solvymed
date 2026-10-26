@@ -2536,6 +2536,12 @@
     "title": "Vídeos tutoriais",
     "subtitle": "Vídeos curtos mostrando cada parte do SolvyMed"
   },
+  "firstPatient": {
+    "title": "Adicione seu primeiro paciente",
+    "body": "Comece por um paciente: depois você agenda consultas, registra os atendimentos e emite documentos.",
+    "add": "Adicionar paciente",
+    "book": "Agendar a primeira consulta"
+  },
   "patientChannel": {
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
