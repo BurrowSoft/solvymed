@@ -2932,7 +2932,9 @@
       "replacedBy": "Đã được thay bằng tin nhắn mới hơn",
       "notOpen": "Tin nhắn này đã được đóng. Tải lại để xem.",
       "readOnly": "Tin nhắn này gửi cho {doctor}: bạn có thể đọc nhưng không thể trả lời.",
-      "failed": "Không gửi được. Hãy thử lại."
+      "failed": "Không gửi được. Hãy thử lại.",
+      "warningFloor": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp.",
+      "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI)."
     }
   }
 }

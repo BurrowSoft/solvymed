@@ -2932,7 +2932,9 @@
       "replacedBy": "Substituída por uma mensagem mais nova",
       "notOpen": "Esta mensagem já foi encerrada. Recarregue para ver.",
       "readOnly": "Esta mensagem é para {doctor}: você pode ler, mas não responder.",
-      "failed": "Não foi possível enviar. Tente de novo."
+      "failed": "Não foi possível enviar. Tente de novo.",
+      "warningFloor": "Sintoma com aviso de emergência: sempre Urgente.",
+      "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA)."
     }
   }
 }

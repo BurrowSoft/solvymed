@@ -2932,7 +2932,9 @@
       "replacedBy": "已被更新的消息替换",
       "notOpen": "此消息已关闭。请刷新查看。",
       "readOnly": "此消息是发给 {doctor} 的：您可以阅读，但不能回复。",
-      "failed": "发送失败，请重试。"
+      "failed": "发送失败，请重试。",
+      "warningFloor": "带紧急警告的症状：始终为紧急。",
+      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。"
     }
   }
 }

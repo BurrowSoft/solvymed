@@ -2962,7 +2962,9 @@
       "replacedBy": "Replaced by a newer message",
       "notOpen": "This message was already closed. Reload to see it.",
       "readOnly": "This message is for {doctor}: you can read it, not reply.",
-      "failed": "Couldn't send. Try again."
+      "failed": "Couldn't send. Try again.",
+      "warningFloor": "Symptom with an emergency warning: always Urgent.",
+      "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI)."
     }
   }
 }

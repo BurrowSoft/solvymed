@@ -2932,7 +2932,9 @@
       "replacedBy": "Diganti oleh pesan yang lebih baru",
       "notOpen": "Pesan ini sudah ditutup. Muat ulang untuk melihatnya.",
       "readOnly": "Pesan ini untuk {doctor}: Anda dapat membacanya, tetapi tidak dapat membalas.",
-      "failed": "Gagal mengirim. Coba lagi."
+      "failed": "Gagal mengirim. Coba lagi.",
+      "warningFloor": "Gejala dengan peringatan darurat: selalu Mendesak.",
+      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI)."
     }
   }
 }

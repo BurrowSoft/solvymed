@@ -6,7 +6,7 @@ import { logChannelRequestOpen } from "@/lib/accessLog";
 import { pcAdmin } from "@/lib/patientChannel/server";
 import { fromStoredRules } from "@/lib/patientChannel/rules";
 import {
-  detailHighlights, detailLineLabel, detailNames, highlightParts, toDetailAnswers, toInboxRow, toLines, toShownMessages,
+  detailHighlights, detailLineLabel, detailNames, highlightParts, toDetailAnswers, toInboxRow, toLines, toShownMessages, warningFloorCause,
 } from "@/lib/patientChannel/inbox";
 import { BandTag } from "../../../settings/patient-channel/BandTag";
 import { ReplyBox } from "./ReplyBox";
@@ -58,6 +58,13 @@ export default async function PatientChannelRequestPage({
   const names = detailNames(config, lines, answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []);
   const parts = highlightParts(row.text, detailHighlights(config, row.text));
   const shownMessages = toShownMessages(q.auto_messages_shown);
+  // The safety floor's reason: the warning symptoms (ids only, from the rules read above) vs
+  // what the patient chose or wrote, or the AI's lines.
+  const warningIds = (config?.symptoms ?? []).filter((x) => x.immediateWarning).map((x) => x.id);
+  const patientIds = answers.kind === "form"
+    ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref), ...detailHighlights(config, row.text).filter((m) => m.kind === "symptom").map((m) => m.ref)]
+    : [];
+  const floorCause = warningFloorCause(warningIds, patientIds, lines, row.band);
   const tl = (key: string, values?: Record<string, string | number>) => t(key as never, values as never);
   const symptomName = (id: string) => names.symptoms[id] ?? "?";
   const readOnly = isSecretary && row.destination === "doctor";
@@ -135,6 +142,8 @@ export default async function PatientChannelRequestPage({
           ))}
         </ul>
         {q.floor_applied === true && config && <p className="mt-2 text-xs text-slate-600">{t("detail.floor", { band: t(`bands.${config.minBandForTextOnly}`) })}</p>}
+        {/* The safety floor (01, 10-26): Urgent because of a symptom with the immediate warning. */}
+        {floorCause && <p className="mt-2 text-xs font-semibold text-red-700" data-testid="pc-detail-warning-floor">{t(floorCause === "ai" ? "detail.warningFloorAi" : "detail.warningFloor")}</p>}
       </section>
 
       {row.status === "open" && !readOnly && <ReplyBox requestId={row.id} />}
