@@ -2774,7 +2774,18 @@
       "rateLimited": "您在過去一小時內已多次送出。您的請求已送達診所，請等待回覆。",
       "urgentCall": "如情況緊急，請撥打 {number}。",
       "openRequest": "您未處理的請求",
-      "sentAt": "送出於 {when}"
+      "sentAt": "送出於 {when}",
+      "myRequests": "您的訊息",
+      "statusOpen": "等待回覆",
+      "statusAnswered": "已於 {when} 回覆",
+      "statusCallBack": "診所會打電話給您",
+      "statusSubstituted": "已被較新的訊息取代",
+      "statusClosed": "診所已結案",
+      "replyTitle": "診所的回覆",
+      "youWrote": "您寫道",
+      "youChose": "您選擇了：{option}",
+      "earlier": "較早的訊息（{n}）",
+      "statusReceived": "已收到"
     },
     "channel": {
       "title": "您的頻道",

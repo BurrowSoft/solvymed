@@ -2774,7 +2774,18 @@
       "rateLimited": "Você já enviou várias vezes nesta última hora. Sua solicitação está com o consultório; aguarde a resposta.",
       "urgentCall": "Se for urgente, ligue {number}.",
       "openRequest": "Sua solicitação aberta",
-      "sentAt": "Enviada em {when}"
+      "sentAt": "Enviada em {when}",
+      "myRequests": "Suas mensagens",
+      "statusOpen": "Aguardando resposta",
+      "statusAnswered": "Respondida em {when}",
+      "statusCallBack": "O consultório vai ligar para você",
+      "statusSubstituted": "Substituída por uma mensagem mais nova",
+      "statusClosed": "Encerrada pelo consultório",
+      "replyTitle": "Resposta do consultório",
+      "youWrote": "Você escreveu",
+      "youChose": "Você escolheu: {option}",
+      "earlier": "Mensagens anteriores ({n})",
+      "statusReceived": "Recebida"
     },
     "channel": {
       "title": "Seu canal",

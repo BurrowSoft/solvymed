@@ -2774,7 +2774,18 @@
       "rateLimited": "لقد أرسلت عدة مرات خلال الساعة الأخيرة. طلبك لدى العيادة؛ يُرجى انتظار الرد.",
       "urgentCall": "إذا كان الأمر عاجلاً، اتصل بالرقم {number}.",
       "openRequest": "طلبك المفتوح",
-      "sentAt": "أُرسل في {when}"
+      "sentAt": "أُرسل في {when}",
+      "myRequests": "رسائلك",
+      "statusOpen": "بانتظار الرد",
+      "statusAnswered": "تم الرد في {when}",
+      "statusCallBack": "ستتصل بك العيادة",
+      "statusSubstituted": "استُبدلت برسالة أحدث",
+      "statusClosed": "أغلقتها العيادة",
+      "replyTitle": "رد العيادة",
+      "youWrote": "كتبت",
+      "youChose": "اخترت: {option}",
+      "earlier": "رسائل سابقة ({n})",
+      "statusReceived": "تم الاستلام"
     },
     "channel": {
       "title": "قناتك",

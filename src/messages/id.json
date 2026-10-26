@@ -2774,7 +2774,18 @@
       "rateLimited": "Anda sudah mengirim beberapa kali dalam satu jam terakhir. Permintaan Anda sudah diterima klinik; mohon tunggu jawabannya.",
       "urgentCall": "Jika mendesak, hubungi {number}.",
       "openRequest": "Permintaan terbuka Anda",
-      "sentAt": "Dikirim {when}"
+      "sentAt": "Dikirim {when}",
+      "myRequests": "Pesan Anda",
+      "statusOpen": "Menunggu balasan",
+      "statusAnswered": "Dijawab pada {when}",
+      "statusCallBack": "Klinik akan menelepon Anda",
+      "statusSubstituted": "Diganti dengan pesan yang lebih baru",
+      "statusClosed": "Ditutup oleh klinik",
+      "replyTitle": "Balasan klinik",
+      "youWrote": "Anda menulis",
+      "youChose": "Anda memilih: {option}",
+      "earlier": "Pesan sebelumnya ({n})",
+      "statusReceived": "Diterima"
     },
     "channel": {
       "title": "Kanal Anda",
