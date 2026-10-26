@@ -44,7 +44,7 @@ vi.mock("@/lib/supabase/client", () => ({
 // The page's own RPCs only: B's delete option (its own status RPC on load) is tested in
 // unlinked-patient-delete.test.tsx; the past-messages link in one-doctor-disconnect.test.tsx.
 vi.mock("@/components/AccountDeleteOption", () => ({ AccountDeleteOption: () => null }));
-vi.mock("@/components/patientChannel/LeftDoctorMessages", () => ({ LeftDoctorMessages: () => null }));
+vi.mock("@/components/patientChannel/PastPracticeLinks", () => ({ PastPracticeLinks: () => null }));
 import InviteRequiredPage from "@/app/[locale]/(site)/auth/invite-required/page";
 
 async function submit() {

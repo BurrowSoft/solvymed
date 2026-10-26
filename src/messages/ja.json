@@ -2804,7 +2804,7 @@
       "statusReceived": "受付済み",
       "notTaking": "現在、クリニックはここで新しいメッセージを受け付けていません。",
       "viewMessages": "メッセージを見る",
-      "earlierLink": "以前のメッセージを見る"
+      "earlierWith": "{doctor}との以前のメッセージを見る"
     },
     "channel": {
       "title": "あなたのチャネル",

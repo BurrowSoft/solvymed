@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { fromStoredRules } from "./rules";
 import type { ChannelConfig } from "./score";
 import type { ReasonKind } from "./requestScore";
-import { toMyRequests, type PcMyRequest } from "./patientPage";
+import { toMyRequests, toPastPractices, type PastPractice, type PcMyRequest } from "./patientPage";
 
 // The patient routes' server reads (M4b). Access is 237's own check, run AS the patient:
 // pc_patient_page refuses unless signed in, the channel is on for them, they're connected
@@ -88,3 +88,9 @@ export async function practiceReason(admin: SupabaseClient, profId: string, reas
 }
 
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// The patient's past practices (migration 251), as the patient. [] on a failed read.
+export async function myPastPractices(db: SupabaseClient): Promise<PastPractice[]> {
+  const { data, error } = await db.rpc("pc_my_past_practices");
+  return error ? [] : toPastPractices(data);
+}

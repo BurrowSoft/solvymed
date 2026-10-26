@@ -53,6 +53,9 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const number = page.emergencyNumber ?? t("localNumber");
   const symptomForm = reason?.kind === "symptom_form";
   const who = reason?.destination === "secretary" ? t("secretary") : page.doctorName;
+  // "Quer atualizar a que já está com {who}?": the OPEN request's destination (migration 251;
+  // mobile tester 2), not the new one's. Unknown (an older answer): the new one's, as before.
+  const openWho = openRequest?.destination ? (openRequest.destination === "secretary" ? t("secretary") : page.doctorName) : who;
 
   // /preview, debounced (§10.6); the latest answer wins.
   const seq = useRef(0);
@@ -76,7 +79,11 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
     if (r.status === "sent") setStep("sent");
-    else if (r.status === "open_exists") setStep("replace");
+    else if (r.status === "open_exists") {
+      setStep("replace");
+      // The open request may be newer than the list read on the first screen.
+      void loadRequests?.().then(setRequests).catch(() => undefined);
+    }
     else if (r.status === "unavailable") setStep("unavailable");
     else if (r.status === "rate_limited") {
       setStep("rateLimited");
@@ -227,7 +234,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     body = (
       <div className="flex flex-col gap-3 rounded-xl border border-amber-400 bg-amber-50 p-4" data-testid="pc-replace">
         <h2 className="text-base font-bold text-slate-900">{t("openTitle")}</h2>
-        <p className="text-sm text-slate-700">{t("openText", { who })}</p>
+        <p className="text-sm text-slate-700">{t("openText", { who: openWho })}</p>
         <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("replace")}</button>
         <button type="button" onClick={() => setStep("form")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("keep")}</button>
       </div>

@@ -11,7 +11,8 @@ import pt from "@/messages/pt-BR.json";
 // here (the page keeps "não disponível").
 
 vi.mock("server-only", () => ({}));
-const { channelEntry, myRequestsWith } = await import("@/lib/patientChannel/practice");
+const { channelEntry, myPastPractices, myRequestsWith } = await import("@/lib/patientChannel/practice");
+const { toPastPractices } = await import("@/lib/patientChannel/patientPage");
 const { ReadOnlyChannel } = await import("@/app/[locale]/(site)/my-appointments/channel/[professionalId]/ReadOnlyChannel");
 
 const ROW = { id: "q1", status: "answered", reasonTitle: "Receita", option: null, text: "Preciso da receita", replyText: "Enviada por e-mail.", repliedAt: "2026-10-26T13:00:00Z", createdAt: "2026-10-26T10:00:00Z" };
@@ -77,5 +78,23 @@ describe("a closed practice or an archived record (01 + cf, 10-27)", () => {
     const page = fs.readFileSync("src/app/[locale]/(site)/my-appointments/channel/[professionalId]/page.tsx", "utf8");
     expect(page).toContain('access.code === "pc_practice_closed" || access.code === "pc_patient_archived"');
     expect(page).toContain("unavailable={closedOrArchived}");
+    // 251: a closed practice's patient arrives as not_connected; the past state picks the line.
+    expect(page).toContain('pastState === "closed" || pastState === "archived"');
+  });
+});
+
+describe("pc_my_past_practices (251)", () => {
+  const A = "11111111-1111-4111-8111-111111111111";
+  it("ids checked, names trimmed, an unknown state read as disconnected; not an array → []", () => {
+    expect(toPastPractices([{ id: A, displayName: " Dra. Ana ", state: "closed" }, { id: "x", displayName: "y", state: "closed" }, { id: A, displayName: "B", state: "new" }]))
+      .toEqual([{ id: A, displayName: "Dra. Ana", state: "closed" }, { id: A, displayName: "B", state: "disconnected" }]);
+    expect(toPastPractices(null)).toEqual([]);
+  });
+
+  it("myPastPractices: the rows, or [] on a failed read", async () => {
+    const ok = { rpc: async () => ({ data: [{ id: A, displayName: "Dra. Ana", state: "archived" }], error: null }) } as never;
+    expect((await myPastPractices(ok)).map((p) => p.state)).toEqual(["archived"]);
+    const failing = { rpc: async () => ({ data: null, error: { message: "x" } }) } as never;
+    expect(await myPastPractices(failing)).toEqual([]);
   });
 });

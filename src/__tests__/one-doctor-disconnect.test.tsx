@@ -6,7 +6,8 @@ import pt from "@/messages/pt-BR.json";
 
 // 01, 10-26: "Desconectar" on the one-doctor card (www's layout; MyDoctors has its own),
 // the server action open without multiDoctor only for the caller's own primary doctor, and
-// "Ver mensagens anteriores com {doctor}" on the connect page after it (?left=, own rows only).
+// "Ver mensagens anteriores com {doctor}" on the connect page after it (251's
+// pc_my_past_practices, own rows only; it replaced the ?left= one-shot, 10-27).
 
 const h = vi.hoisted(() => ({
   multi: false,
@@ -14,6 +15,7 @@ const h = vi.hoisted(() => ({
   rpcCalls: [] as { fn: string; args: unknown }[],
   rpcError: null as null | { message: string },
   myRows: [] as unknown[],
+  past: [] as unknown[],
   search: "",
   action: vi.fn(),
 }));
@@ -38,14 +40,16 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     rpc: (fn: string, args: unknown) => {
       h.rpcCalls.push({ fn, args });
-      const result = fn === "pc_my_requests" ? { data: h.myRows, error: null } : { data: { full_name: "Dra. Ana Lima" }, error: null };
+      const result = fn === "pc_my_requests" ? { data: h.myRows, error: null }
+        : fn === "pc_my_past_practices" ? { data: h.past, error: null }
+        : { data: { full_name: "Dra. Ana Lima" }, error: null };
       return { ...result, maybeSingle: async () => result, then: (r: (v: unknown) => void) => r(result) };
     },
   }),
 }));
 
 const { disconnectDoctor } = await import("@/app/[locale]/(site)/my-appointments/doctor-actions");
-const { LeftDoctorMessages } = await import("@/components/patientChannel/LeftDoctorMessages");
+const { PastPracticeLinks } = await import("@/components/patientChannel/PastPracticeLinks");
 
 const DOC = "11111111-1111-4111-8111-111111111111";
 const wrap = (ui: React.ReactNode) => <NextIntlClientProvider locale="pt-BR" messages={pt}>{ui}</NextIntlClientProvider>;
@@ -56,6 +60,7 @@ beforeEach(() => {
   h.rpcCalls = [];
   h.rpcError = null;
   h.myRows = [];
+  h.past = [];
   h.search = "";
 });
 
@@ -87,7 +92,7 @@ describe("the one-doctor card's link", () => {
   });
   afterEach(() => Object.defineProperty(window, "location", { configurable: true, value: original }));
 
-  it("confirm → disconnected → the connect page with ?left; a future visit → the blocked note; cancel closes", async () => {
+  it("confirm → disconnected → the connect page; a future visit → the blocked note; cancel closes", async () => {
     vi.doMock("@/app/[locale]/(site)/my-appointments/doctor-actions", () => ({ disconnectDoctor: h.action }));
     vi.resetModules();
     const { OneDoctorDisconnect } = await import("@/app/[locale]/(site)/my-appointments/OneDoctorDisconnect");
@@ -103,32 +108,31 @@ describe("the one-doctor card's link", () => {
     expect(assign).not.toHaveBeenCalled();
     fireEvent.click(screen.getByTestId("one-doctor-disconnect"));
     fireEvent.click(screen.getAllByRole("button", { name: pt.patientDoctors.disconnect })[0]);
-    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/invite-required?left=doc1"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/invite-required"));
     vi.doUnmock("@/app/[locale]/(site)/my-appointments/doctor-actions");
   });
 });
 
-describe("Ver mensagens anteriores com {doctor} (?left=)", () => {
-  it("own rows there → the link (no name looked up: #636 ❌, 01), to the read-only channel", async () => {
-    h.search = `left=${DOC}`;
-    h.myRows = [{ id: "q1", status: "answered", reasonTitle: "R", createdAt: "t" }];
-    render(wrap(<LeftDoctorMessages />));
-    const link = await screen.findByTestId("pc-left-messages");
-    expect(link).toHaveTextContent(pt.patientChannel.patient.earlierLink);
+describe("Ver mensagens anteriores com {doctor} (251's pc_my_past_practices)", () => {
+  it("one link per past practice, named, to its read-only channel; no doctor lookup (#636 ❌, 01)", async () => {
+    h.past = [
+      { id: DOC, displayName: "Dra. Ana Lima", state: "closed" },
+      { id: "22222222-2222-4222-8222-222222222222", displayName: "Dr. Bruno", state: "disconnected" },
+      { id: "not-a-uuid", displayName: "x", state: "archived" },
+    ];
+    render(wrap(<PastPracticeLinks />));
+    const list = await screen.findByTestId("pc-past-practices");
+    const links = list.querySelectorAll("a");
+    expect(links).toHaveLength(2);
+    expect(links[0]).toHaveTextContent(pt.patientChannel.patient.earlierWith.replace("{doctor}", "Dra. Ana Lima"));
+    expect(links[0].getAttribute("href")).toBe(`/pt-BR/my-appointments/channel/${DOC}`);
+    expect(links[1]).toHaveTextContent(pt.patientChannel.patient.earlierWith.replace("{doctor}", "Dr. Bruno"));
     expect(h.rpcCalls.some((c) => c.fn === "get_professional_public_info")).toBe(false);
-    expect(link.getAttribute("href")).toBe(`/pt-BR/my-appointments/channel/${DOC}`);
   });
 
-  it("no rows there: nothing; a bad id: nothing at all", async () => {
-    h.search = `left=${DOC}`;
-    const { unmount } = render(wrap(<LeftDoctorMessages />));
-    await waitFor(() => expect(h.rpcCalls.some((c) => c.fn === "pc_my_requests")).toBe(true));
-    expect(screen.queryByTestId("pc-left-messages")).toBeNull();
-    expect(h.rpcCalls.some((c) => c.fn === "get_professional_public_info")).toBe(false);
-    unmount();
-    h.rpcCalls = [];
-    h.search = "left=not-a-uuid";
-    render(wrap(<LeftDoctorMessages />));
-    expect(h.rpcCalls).toEqual([]);
+  it("none (or a failed read): nothing", async () => {
+    render(wrap(<PastPracticeLinks />));
+    await waitFor(() => expect(h.rpcCalls.some((c) => c.fn === "pc_my_past_practices")).toBe(true));
+    expect(screen.queryByTestId("pc-past-practices")).toBeNull();
   });
 });

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { countryProfile } from "@/lib/country";
 import { patientChannelEnabled, patientChannelPreviewTest } from "@/lib/patientChannel/live";
-import { UUID, myRequestsWith, patientPage } from "@/lib/patientChannel/practice";
+import { UUID, myPastPractices, myRequestsWith, patientPage } from "@/lib/patientChannel/practice";
 import { pcAdmin } from "@/lib/patientChannel/server";
 import type { PcPatientPage } from "@/lib/patientChannel/patientPage";
 import { coverUrl } from "@/lib/patientChannel/cover";
@@ -41,7 +41,11 @@ export default async function PatientChannelPage({
   // Read-only (01, 10-26 / 10-27: a patient can always read what they sent): the channel is
   // off, they're no longer connected, the practice closed or their record was archived, and
   // they have requests there. Closed / archived with none: the "não disponível" screen.
-  const closedOrArchived = !access.ok && (access.code === "pc_practice_closed" || access.code === "pc_patient_archived");
+  // A closed practice's patient arrives as not_connected (251): its past state picks the line.
+  const pastState = !access.ok && access.code === "not_connected"
+    ? (await myPastPractices(supabase)).find((p) => p.id === professionalId)?.state
+    : undefined;
+  const closedOrArchived = !access.ok && (access.code === "pc_practice_closed" || access.code === "pc_patient_archived" || pastState === "closed" || pastState === "archived");
   if (!access.ok && (access.code === "channel_off" || access.code === "not_connected" || closedOrArchived)) {
     const requests = await myRequestsWith(supabase, professionalId);
     if (requests.length === 0 && !closedOrArchived) notFound();
