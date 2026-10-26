@@ -12,8 +12,10 @@
 export type Band = "green" | "amber" | "red";
 export type AnswerKey = "when" | "intensity" | "stillTaking";
 
-// Points added per answer: when = [today, 1–3 days, 3+ days], intensity = [light,
-// moderate, strong], stillTaking = [no, yes]. Indexed by the answer.
+// Points added per answer, indexed by the answer (spec §1's index table):
+//   when        = [0 today, 1 1–3 days ago, 2 more than 3 days ago]
+//   intensity   = [0 mild, 1 moderate, 2 strong]
+//   stillTaking = [0 yes, still taking it, 1 stopped on their own]
 export type Adjust = { when: number[]; intensity: number[]; stillTaking: number[] };
 
 export type Symptom = {
