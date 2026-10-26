@@ -2562,7 +2562,9 @@
       "conflict": "这些规则已在其他地方被修改。请刷新页面以查看当前版本。",
       "reload": "刷新",
       "invalid": "请检查规则：保存前有内容需要修正。",
-      "error": "无法保存。请检查网络连接后重试。"
+      "error": "无法保存。请检查网络连接后重试。",
+      "rulesTitle": "评分规则",
+      "rulesHelp": "每个患者问题如何确定紧急程度。请使用页面底部的按钮保存。"
     },
     "symptoms": {
       "title": "症状：分值和患者用语",
@@ -2750,6 +2752,102 @@
         "remove": "移除 {term}",
         "suggestions": "建议",
         "hint": "诊所已知的词语会变成标签：选择一个建议（点击、Enter、Tab 或 \";\"），或输入完整词语后按空格。"
+      }
+    },
+    "channel": {
+      "title": "您的频道",
+      "enabled": "为我的患者开启频道",
+      "enabledHelp": "关闭期间，您的患者看不到该频道。请先设置联系原因和规则，再开启频道。",
+      "secretarySeesAll": "前台可查看所有请求",
+      "secretarySeesAllHelp": "关闭：前台只能查看发给前台的请求（行政类）以及其余请求的数量。开启：前台还可以阅读临床类请求，但不能回复。",
+      "sla": "向患者显示的回复时间",
+      "slaDays": "{n, plural, other {# 个工作日}}",
+      "hours": "您阅读消息的时间",
+      "hoursHelp": "向患者显示。按您诊所的时区。",
+      "hoursDays": "日期",
+      "from": "从",
+      "to": "至",
+      "remove": "移除",
+      "addHours": "添加时段",
+      "hoursInvalid": "每行至少需要选择一天，且结束时间必须晚于开始时间。",
+      "readingNote": "时间备注（可选）",
+      "readingNotePlaceholder": "例如：法定节假日不阅读。",
+      "welcome": "欢迎语",
+      "background": "页面背景",
+      "bg": {
+        "both": "顶部横幅 + 背景徽标",
+        "cover": "顶部横幅（您的品牌色）",
+        "watermark": "背景徽标",
+        "plain": "纯色"
+      },
+      "brandNote": "颜色和徽标来自<link>我的品牌</link>。",
+      "alwaysShown": "紧急情况提示、回复时间和规则始终显示，且对所有人相同：品牌只改变外观，不改变规则。",
+      "save": "保存频道",
+      "saved": "已保存。",
+      "saveError": "无法保存。请检查网络连接后重试。"
+    },
+    "reasons": {
+      "title": "联系原因",
+      "help": "患者选择一项；每项原因会发送给您或前台。已归档的原因仍保留在以往的请求中。",
+      "none": "暂无原因。",
+      "kind": {
+        "options": "选择选项",
+        "symptom_form": "症状表单",
+        "exam": "检查"
+      },
+      "to": {
+        "doctor": "发给您",
+        "secretary": "发给前台"
+      },
+      "up": "上移 {title}",
+      "down": "下移 {title}",
+      "edit": "编辑",
+      "archive": "归档",
+      "newTitle": "新原因",
+      "editTitle": "编辑原因",
+      "titleLabel": "标题",
+      "titlePlaceholder": "例如：关于药物的问题",
+      "subtitleLabel": "简短描述",
+      "subtitlePlaceholder": "例如：剂量、服药时间、漏服",
+      "kindLabel": "类型",
+      "destinationLabel": "发送给",
+      "optionsLabel": "选项（每行一个）",
+      "optionsPlaceholder": "我漏服了一次\n关于服药时间的问题",
+      "symptomFormHelp": "患者会看到您的症状列表、三个问题和自由填写栏，请求将获得评分。",
+      "add": "添加原因",
+      "update": "更新原因",
+      "cancel": "取消",
+      "saved": "已保存。",
+      "saveError": "无法保存。请检查网络连接后重试。",
+      "problem": {
+        "title": "请输入标题（最多 80 个字符）。",
+        "subtitle": "描述最多 120 个字符。",
+        "options": "请输入 1 到 12 个选项，每行一个。",
+        "optionLength": "每个选项最多 80 个字符。"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "help": "显示在联系原因之前：患者可能在这里找到答案，无需再写消息。",
+      "none": "暂无问题。",
+      "up": "上移“{question}”",
+      "down": "下移“{question}”",
+      "edit": "编辑",
+      "archive": "归档",
+      "newTitle": "新问题",
+      "editTitle": "编辑问题",
+      "questionLabel": "问题",
+      "questionPlaceholder": "例如：我忘记吃药了，现在该怎么办？",
+      "answerLabel": "回答",
+      "answerPlaceholder": "请用通俗易懂的语言回答。",
+      "add": "添加问题",
+      "update": "更新问题",
+      "cancel": "取消",
+      "saved": "已保存。",
+      "saveError": "无法保存。请检查网络连接后重试。",
+      "problem": {
+        "question": "请输入问题（最多 160 个字符）。",
+        "answer": "请输入回答（最多 1,000 个字符）。"
       }
     }
   }

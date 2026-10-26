@@ -2592,7 +2592,9 @@
       "conflict": "These rules were changed somewhere else. Reload the page to see the current version.",
       "reload": "Reload",
       "invalid": "Check the rules: something needs fixing before saving.",
-      "error": "It couldn’t be saved. Check your connection and try again."
+      "error": "It couldn’t be saved. Check your connection and try again.",
+      "rulesTitle": "Scoring rules",
+      "rulesHelp": "How each patient question gets its urgency. Save them with the button at the bottom."
     },
     "symptoms": {
       "title": "Symptoms: points and patient words",
@@ -2780,6 +2782,102 @@
         "remove": "Remove {term}",
         "suggestions": "Suggestions",
         "hint": "Terms your practice knows become tags: pick a suggestion (click, Enter, Tab or \";\") or type the whole word and a space."
+      }
+    },
+    "channel": {
+      "title": "Your channel",
+      "enabled": "Turn on the channel for my patients",
+      "enabledHelp": "While it's off, your patients don't see it. Set up the reasons and the rules first, then turn it on.",
+      "secretarySeesAll": "The front desk sees all requests",
+      "secretarySeesAllHelp": "Off: the front desk sees only the requests sent to them (administrative) and the counts of the rest. On: they also read the clinical ones, without replying to them.",
+      "sla": "Response time shown to patients",
+      "slaDays": "{n, plural, one {# business day} other {# business days}}",
+      "hours": "When you read the messages",
+      "hoursHelp": "Shown to the patient. Your practice's time zone.",
+      "hoursDays": "Days",
+      "from": "from",
+      "to": "to",
+      "remove": "Remove",
+      "addHours": "Add hours",
+      "hoursInvalid": "Each row needs at least one day, and the end after the start.",
+      "readingNote": "Note about the hours (optional)",
+      "readingNotePlaceholder": "E.g. Not on public holidays.",
+      "welcome": "Welcome message",
+      "background": "Page background",
+      "bg": {
+        "both": "Top band + logo in the background",
+        "cover": "Top band (your brand colour)",
+        "watermark": "Logo in the background",
+        "plain": "Plain"
+      },
+      "brandNote": "The colour and logo come from <link>My brand</link>.",
+      "alwaysShown": "The emergency warning, the response time and the rules are always shown, the same for everyone: your brand changes the look, not the rules.",
+      "save": "Save channel",
+      "saved": "Saved.",
+      "saveError": "It couldn't be saved. Check your connection and try again."
+    },
+    "reasons": {
+      "title": "Reasons for contact",
+      "help": "The patient picks one; each goes to you or to the front desk. Archived reasons stay in old requests.",
+      "none": "No reasons yet.",
+      "kind": {
+        "options": "Pick an option",
+        "symptom_form": "Symptom form",
+        "exam": "Exam"
+      },
+      "to": {
+        "doctor": "To you",
+        "secretary": "To the front desk"
+      },
+      "up": "Move {title} up",
+      "down": "Move {title} down",
+      "edit": "Edit",
+      "archive": "Archive",
+      "newTitle": "New reason",
+      "editTitle": "Edit reason",
+      "titleLabel": "Title",
+      "titlePlaceholder": "E.g. Question about the medicine",
+      "subtitleLabel": "Short description",
+      "subtitlePlaceholder": "E.g. Dose, timing, a missed dose",
+      "kindLabel": "Type",
+      "destinationLabel": "Goes to",
+      "optionsLabel": "Options (one per line)",
+      "optionsPlaceholder": "I missed a dose\nQuestion about the timing",
+      "symptomFormHelp": "The patient sees your symptom list, the three questions and the free text, and the request gets its score.",
+      "add": "Add reason",
+      "update": "Update reason",
+      "cancel": "Cancel",
+      "saved": "Saved.",
+      "saveError": "It couldn't be saved. Check your connection and try again.",
+      "problem": {
+        "title": "Write a title (up to 80 characters).",
+        "subtitle": "The description can have up to 120 characters.",
+        "options": "Write 1 to 12 options, one per line.",
+        "optionLength": "Each option can have up to 80 characters."
+      }
+    },
+    "faq": {
+      "title": "Frequent questions",
+      "help": "Shown before the reasons: the patient may find the answer here and not need to write.",
+      "none": "No questions yet.",
+      "up": "Move \"{question}\" up",
+      "down": "Move \"{question}\" down",
+      "edit": "Edit",
+      "archive": "Archive",
+      "newTitle": "New question",
+      "editTitle": "Edit question",
+      "questionLabel": "Question",
+      "questionPlaceholder": "E.g. I forgot to take my medicine. What now?",
+      "answerLabel": "Answer",
+      "answerPlaceholder": "Your answer, in plain words.",
+      "add": "Add question",
+      "update": "Update question",
+      "cancel": "Cancel",
+      "saved": "Saved.",
+      "saveError": "It couldn't be saved. Check your connection and try again.",
+      "problem": {
+        "question": "Write the question (up to 160 characters).",
+        "answer": "Write the answer (up to 1,000 characters)."
       }
     }
   }

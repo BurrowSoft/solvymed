@@ -2562,7 +2562,9 @@
       "conflict": "Các quy tắc này đã được thay đổi ở nơi khác. Hãy tải lại trang để xem phiên bản hiện tại.",
       "reload": "Tải lại",
       "invalid": "Kiểm tra quy tắc: có điểm cần sửa trước khi lưu.",
-      "error": "Không thể lưu. Hãy kiểm tra kết nối và thử lại."
+      "error": "Không thể lưu. Hãy kiểm tra kết nối và thử lại.",
+      "rulesTitle": "Quy tắc chấm điểm",
+      "rulesHelp": "Cách mỗi câu hỏi của bệnh nhân được xác định mức độ khẩn cấp. Lưu bằng nút ở cuối trang."
     },
     "symptoms": {
       "title": "Triệu chứng: điểm và từ ngữ của bệnh nhân",
@@ -2750,6 +2752,102 @@
         "remove": "Xóa {term}",
         "suggestions": "Gợi ý",
         "hint": "Các thuật ngữ phòng khám biết sẽ trở thành thẻ: chọn một gợi ý (nhấp, Enter, Tab hoặc \";\") hoặc gõ trọn từ rồi nhấn dấu cách."
+      }
+    },
+    "channel": {
+      "title": "Kênh của bạn",
+      "enabled": "Bật kênh cho bệnh nhân của tôi",
+      "enabledHelp": "Khi kênh đang tắt, bệnh nhân của bạn sẽ không thấy kênh. Hãy thiết lập lý do liên hệ và quy tắc trước, sau đó bật kênh.",
+      "secretarySeesAll": "Lễ tân xem được tất cả yêu cầu",
+      "secretarySeesAllHelp": "Tắt: lễ tân chỉ thấy các yêu cầu gửi đến lễ tân (hành chính) và số lượng các yêu cầu còn lại. Bật: lễ tân cũng đọc được các yêu cầu lâm sàng, nhưng không trả lời.",
+      "sla": "Thời gian phản hồi hiển thị cho bệnh nhân",
+      "slaDays": "{n, plural, other {# ngày làm việc}}",
+      "hours": "Thời gian bạn đọc tin nhắn",
+      "hoursHelp": "Hiển thị cho bệnh nhân. Theo múi giờ của phòng khám.",
+      "hoursDays": "Ngày",
+      "from": "từ",
+      "to": "đến",
+      "remove": "Xóa",
+      "addHours": "Thêm khung giờ",
+      "hoursInvalid": "Mỗi dòng cần ít nhất một ngày, và giờ kết thúc phải sau giờ bắt đầu.",
+      "readingNote": "Ghi chú về khung giờ (không bắt buộc)",
+      "readingNotePlaceholder": "VD: Không đọc vào ngày lễ.",
+      "welcome": "Lời chào",
+      "background": "Nền trang",
+      "bg": {
+        "both": "Dải trên cùng + logo làm nền",
+        "cover": "Dải trên cùng (màu thương hiệu)",
+        "watermark": "Logo làm nền",
+        "plain": "Đơn giản"
+      },
+      "brandNote": "Màu sắc và logo được lấy từ <link>Thương hiệu của tôi</link>.",
+      "alwaysShown": "Cảnh báo khẩn cấp, thời gian phản hồi và quy tắc luôn được hiển thị, giống nhau cho mọi người: thương hiệu thay đổi giao diện, không thay đổi quy tắc.",
+      "save": "Lưu kênh",
+      "saved": "Đã lưu.",
+      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại."
+    },
+    "reasons": {
+      "title": "Lý do liên hệ",
+      "help": "Bệnh nhân chọn một lý do; mỗi lý do được gửi đến bạn hoặc lễ tân. Lý do đã lưu trữ vẫn còn trong các yêu cầu cũ.",
+      "none": "Chưa có lý do nào.",
+      "kind": {
+        "options": "Chọn một tùy chọn",
+        "symptom_form": "Biểu mẫu triệu chứng",
+        "exam": "Xét nghiệm"
+      },
+      "to": {
+        "doctor": "Đến bạn",
+        "secretary": "Đến lễ tân"
+      },
+      "up": "Di chuyển {title} lên",
+      "down": "Di chuyển {title} xuống",
+      "edit": "Sửa",
+      "archive": "Lưu trữ",
+      "newTitle": "Lý do mới",
+      "editTitle": "Sửa lý do",
+      "titleLabel": "Tiêu đề",
+      "titlePlaceholder": "VD: Câu hỏi về thuốc",
+      "subtitleLabel": "Mô tả ngắn",
+      "subtitlePlaceholder": "VD: Liều lượng, giờ uống, quên một liều",
+      "kindLabel": "Loại",
+      "destinationLabel": "Gửi đến",
+      "optionsLabel": "Tùy chọn (mỗi dòng một tùy chọn)",
+      "optionsPlaceholder": "Tôi đã quên một liều\nCâu hỏi về giờ uống",
+      "symptomFormHelp": "Bệnh nhân sẽ thấy danh sách triệu chứng của bạn, ba câu hỏi và ô nhập tự do, và yêu cầu sẽ được chấm điểm.",
+      "add": "Thêm lý do",
+      "update": "Cập nhật lý do",
+      "cancel": "Hủy",
+      "saved": "Đã lưu.",
+      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
+      "problem": {
+        "title": "Nhập tiêu đề (tối đa 80 ký tự).",
+        "subtitle": "Mô tả có thể dài tối đa 120 ký tự.",
+        "options": "Nhập từ 1 đến 12 tùy chọn, mỗi dòng một tùy chọn.",
+        "optionLength": "Mỗi tùy chọn có thể dài tối đa 80 ký tự."
+      }
+    },
+    "faq": {
+      "title": "Câu hỏi thường gặp",
+      "help": "Hiển thị trước các lý do liên hệ: bệnh nhân có thể tìm thấy câu trả lời ở đây mà không cần viết tin nhắn.",
+      "none": "Chưa có câu hỏi nào.",
+      "up": "Di chuyển \"{question}\" lên",
+      "down": "Di chuyển \"{question}\" xuống",
+      "edit": "Sửa",
+      "archive": "Lưu trữ",
+      "newTitle": "Câu hỏi mới",
+      "editTitle": "Sửa câu hỏi",
+      "questionLabel": "Câu hỏi",
+      "questionPlaceholder": "VD: Tôi quên uống thuốc. Giờ phải làm sao?",
+      "answerLabel": "Câu trả lời",
+      "answerPlaceholder": "Câu trả lời của bạn, bằng lời lẽ đơn giản.",
+      "add": "Thêm câu hỏi",
+      "update": "Cập nhật câu hỏi",
+      "cancel": "Hủy",
+      "saved": "Đã lưu.",
+      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
+      "problem": {
+        "question": "Nhập câu hỏi (tối đa 160 ký tự).",
+        "answer": "Nhập câu trả lời (tối đa 1.000 ký tự)."
       }
     }
   }

@@ -2562,7 +2562,9 @@
       "conflict": "這些規則已在其他地方被修改。請重新整理頁面以查看目前版本。",
       "reload": "重新整理",
       "invalid": "請檢查規則：儲存前有內容需要修正。",
-      "error": "無法儲存。請檢查網路連線後再試一次。"
+      "error": "無法儲存。請檢查網路連線後再試一次。",
+      "rulesTitle": "評分規則",
+      "rulesHelp": "每個病患問題如何判定緊急程度。請使用頁面底部的按鈕儲存。"
     },
     "symptoms": {
       "title": "症狀：分數與病患用語",
@@ -2750,6 +2752,102 @@
         "remove": "移除 {term}",
         "suggestions": "建議",
         "hint": "診所認得的詞語會變成標籤：選擇一個建議（點按、Enter、Tab 或 \";\"），或輸入完整詞語後按空白鍵。"
+      }
+    },
+    "channel": {
+      "title": "您的頻道",
+      "enabled": "為我的病患開啟頻道",
+      "enabledHelp": "關閉期間，您的病患看不到此頻道。請先設定聯絡原因和規則，再開啟頻道。",
+      "secretarySeesAll": "櫃檯可查看所有請求",
+      "secretarySeesAllHelp": "關閉：櫃檯只能查看傳給櫃檯的請求（行政類）以及其餘請求的數量。開啟：櫃檯也能閱讀臨床類請求，但無法回覆。",
+      "sla": "向病患顯示的回覆時間",
+      "slaDays": "{n, plural, other {# 個工作天}}",
+      "hours": "您閱讀訊息的時間",
+      "hoursHelp": "會顯示給病患。依您診所的時區。",
+      "hoursDays": "日期",
+      "from": "從",
+      "to": "至",
+      "remove": "移除",
+      "addHours": "新增時段",
+      "hoursInvalid": "每一列至少需要選擇一天，且結束時間必須晚於開始時間。",
+      "readingNote": "時間備註（選填）",
+      "readingNotePlaceholder": "例如：國定假日不閱讀。",
+      "welcome": "歡迎訊息",
+      "background": "頁面背景",
+      "bg": {
+        "both": "頂部橫幅 + 背景標誌",
+        "cover": "頂部橫幅（您的品牌色）",
+        "watermark": "背景標誌",
+        "plain": "純色"
+      },
+      "brandNote": "顏色和標誌來自<link>我的品牌</link>。",
+      "alwaysShown": "緊急狀況提醒、回覆時間和規則一律顯示，且對所有人相同：品牌只改變外觀，不改變規則。",
+      "save": "儲存頻道",
+      "saved": "已儲存。",
+      "saveError": "無法儲存。請檢查網路連線後再試一次。"
+    },
+    "reasons": {
+      "title": "聯絡原因",
+      "help": "病患選擇一項；每項原因會傳給您或櫃檯。已封存的原因仍會保留在過去的請求中。",
+      "none": "尚無原因。",
+      "kind": {
+        "options": "選擇選項",
+        "symptom_form": "症狀表單",
+        "exam": "檢查"
+      },
+      "to": {
+        "doctor": "傳給您",
+        "secretary": "傳給櫃檯"
+      },
+      "up": "上移 {title}",
+      "down": "下移 {title}",
+      "edit": "編輯",
+      "archive": "封存",
+      "newTitle": "新原因",
+      "editTitle": "編輯原因",
+      "titleLabel": "標題",
+      "titlePlaceholder": "例如：關於藥物的問題",
+      "subtitleLabel": "簡短說明",
+      "subtitlePlaceholder": "例如：劑量、服藥時間、漏服",
+      "kindLabel": "類型",
+      "destinationLabel": "傳送給",
+      "optionsLabel": "選項（每行一個）",
+      "optionsPlaceholder": "我漏服了一次\n關於服藥時間的問題",
+      "symptomFormHelp": "病患會看到您的症狀清單、三個問題和自由填寫欄，請求將獲得評分。",
+      "add": "新增原因",
+      "update": "更新原因",
+      "cancel": "取消",
+      "saved": "已儲存。",
+      "saveError": "無法儲存。請檢查網路連線後再試一次。",
+      "problem": {
+        "title": "請輸入標題（最多 80 個字元）。",
+        "subtitle": "說明最多 120 個字元。",
+        "options": "請輸入 1 到 12 個選項，每行一個。",
+        "optionLength": "每個選項最多 80 個字元。"
+      }
+    },
+    "faq": {
+      "title": "常見問題",
+      "help": "顯示在聯絡原因之前：病患可能在這裡找到答案，不必再寫訊息。",
+      "none": "尚無問題。",
+      "up": "上移「{question}」",
+      "down": "下移「{question}」",
+      "edit": "編輯",
+      "archive": "封存",
+      "newTitle": "新問題",
+      "editTitle": "編輯問題",
+      "questionLabel": "問題",
+      "questionPlaceholder": "例如：我忘記吃藥了，現在該怎麼辦？",
+      "answerLabel": "回答",
+      "answerPlaceholder": "請用淺顯易懂的文字回答。",
+      "add": "新增問題",
+      "update": "更新問題",
+      "cancel": "取消",
+      "saved": "已儲存。",
+      "saveError": "無法儲存。請檢查網路連線後再試一次。",
+      "problem": {
+        "question": "請輸入問題（最多 160 個字元）。",
+        "answer": "請輸入回答（最多 1,000 個字元）。"
       }
     }
   }
