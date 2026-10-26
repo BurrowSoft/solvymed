@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { patientChannelEnabled } from "@/lib/patientChannel/live";
+import { PatientChannelCard } from "./patient-channel/PatientChannelCard";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Card, ProfileForm, ClinicForm, WorkingHoursForm, ProceduresPanel, SchedulingRulesForm, BlockedPatientsPanel, InviteCodeCard } from "./SettingsClient";
@@ -240,6 +242,8 @@ export default async function SettingsPage({
   const brand = liveFeatures.myBrand ? await loadPracticeBrand(supabase, user.id) : null;
   // Document Studio's button in My brand: the document_studio flag (testers first).
   const studioOn = liveFeatures.myBrand && (await studioEnabled(supabase));
+  // The Patient Channel (M3a): the patient_channel flag (testers first).
+  const patientChannelOn = await patientChannelEnabled(supabase);
   // "Meus colegas" (167): the doctor's own list.
   const colleagues = liveFeatures.colleagues && !locked ? await listColleagues() : null;
   // The fields' own values: the raw row (the owner may read it), never the
@@ -296,6 +300,8 @@ export default async function SettingsPage({
             }}
           />
         )}
+
+        {patientChannelOn && <PatientChannelCard href={`${locale === "en" ? "" : `/${locale}`}/dashboard/settings/patient-channel`} />}
 
         {/* "Meus colegas" (167, doctors only; this part of the page is the doctor's). */}
         {liveFeatures.colleagues && !locked && colleagues && (
