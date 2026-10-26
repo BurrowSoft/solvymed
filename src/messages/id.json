@@ -802,14 +802,18 @@
     },
     "completeAccount": {
       "title": "Lengkapi akun Anda",
-      "subtitle": "Langkah terakhir: beri tahu kami siapa Anda.",
+      "subtitle": "Langkah terakhir: beri tahu kami apakah Anda tenaga kesehatan atau pasien, agar kami membuka area yang tepat.",
       "countryLabel": "Di mana praktik Anda?",
       "countryRequired": "Pilih negara praktik Anda.",
       "consentRequired": "Harap setujui Ketentuan Penggunaan dan Kebijakan Privasi.",
       "submit": "Lanjutkan",
       "loadError": "Langkah ini tidak dapat dibuka. Periksa koneksi Anda lalu coba lagi.",
       "retry": "Coba lagi",
-      "working": "Menyimpan…"
+      "working": "Menyimpan…",
+      "accountLine": "Akun Google: {email}",
+      "useAnother": "Gunakan akun lain",
+      "noCode": "Saya tidak punya kode",
+      "noCodeText": "Minta tautan undangan ke klinik dokter Anda. Melalui tautan itulah Anda masuk."
     },
     "passwordTooShort": "Kata sandi harus minimal {min} karakter.",
     "login": {

@@ -11,13 +11,14 @@ import { PRIVACY_VERSION, TERMS_VERSION } from "@/lib/legalVersions";
 
 const h = vi.hoisted(() => ({
   params: new URLSearchParams(),
-  user: { id: "g1", user_metadata: { full_name: "Dra Google" } } as { id: string; user_metadata: Record<string, unknown> } | null,
+  user: { id: "g1", email: "dra.google@example.invalid", user_metadata: { full_name: "Dra Google" } } as { id: string; email?: string; user_metadata: Record<string, unknown> } | null,
   pending: true,
   // B4: the opening check fails ("error": the RPC answers an error; "throw": no connection).
   pendingFail: null as null | "error" | "throw",
   rpc: vi.fn(),
   refresh: vi.fn(async () => ({ data: {}, error: null })),
   track: vi.fn(),
+  signOut: vi.fn(async () => ({ error: null })),
 }));
 vi.mock("next/navigation", async (orig) => ({
   ...(await orig<typeof import("next/navigation")>()),
@@ -26,7 +27,7 @@ vi.mock("next/navigation", async (orig) => ({
 }));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
-    auth: { getUser: async () => ({ data: { user: h.user } }), refreshSession: h.refresh },
+    auth: { getUser: async () => ({ data: { user: h.user } }), refreshSession: h.refresh, signOut: h.signOut },
     rpc: async (fn: string, args?: unknown) => {
       if (fn !== "signup_onboarding_is_pending") return h.rpc(fn, args);
       if (h.pendingFail === "throw") throw new TypeError("Failed to fetch");
@@ -52,7 +53,8 @@ describe("Complete your account", () => {
   const assign = vi.fn();
   const original = window.location;
   beforeEach(() => {
-    h.user = { id: "g1", user_metadata: { full_name: "Dra Google" } };
+    h.user = { id: "g1", email: "dra.google@example.invalid", user_metadata: { full_name: "Dra Google" } };
+    h.signOut.mockClear();
     h.pending = true;
     h.pendingFail = null;
     h.rpc.mockReset();
@@ -100,7 +102,9 @@ describe("Complete your account", () => {
     fireEvent.click(screen.getByTestId("complete-terms"));
     await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
     fireEvent.click(screen.getByTestId("complete-submit"));
-    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.countryRequired);
+    expect(await screen.findByTestId("complete-error-country")).toHaveTextContent(pt.auth.completeAccount.countryRequired);
+    // F6: the first missing field is focused.
+    expect(document.activeElement).toBe(screen.getByTestId("complete-country-BR"));
     fireEvent.click(screen.getByTestId("complete-country-BR"));
     fireEvent.click(screen.getByTestId("complete-country-change"));
     expect(screen.getByTestId("complete-country-TH")).toBeInTheDocument();
@@ -113,7 +117,9 @@ describe("Complete your account", () => {
     fireEvent.click(screen.getByTestId("complete-terms"));
     await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
     fireEvent.click(screen.getByTestId("complete-submit"));
-    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.signup.inviteCodeRequired);
+    expect(await screen.findByTestId("complete-error-code")).toHaveTextContent(pt.auth.signup.inviteCodeRequired);
+    expect(document.activeElement).toBe(screen.getByTestId("complete-invite-code"));
+    expect(screen.getByTestId("complete-invite-code")).toHaveAttribute("aria-invalid", "true");
     fireEvent.change(screen.getByTestId("complete-invite-code"), { target: { value: " abc123 " } });
     fireEvent.click(screen.getByTestId("complete-submit"));
     await waitFor(() => expect(h.rpc).toHaveBeenCalledWith("complete_google_signup", expect.objectContaining({
@@ -125,12 +131,12 @@ describe("Complete your account", () => {
     show("c=BR");
     await waitFor(() => expect(screen.getByTestId("complete-submit")).not.toBeDisabled());
     fireEvent.click(screen.getByTestId("complete-submit"));
-    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
+    expect(await screen.findByTestId("complete-error-consent")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
     h.rpc.mockResolvedValue({ data: null, error: { message: "consent_required", code: "P0001" } });
     fireEvent.click(screen.getByTestId("complete-terms"));
     fireEvent.click(screen.getByTestId("complete-submit"));
     await waitFor(() => expect(h.rpc).toHaveBeenCalled());
-    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
+    expect(await screen.findByTestId("complete-error-consent")).toHaveTextContent(pt.auth.completeAccount.consentRequired);
     expect(assign).not.toHaveBeenCalled();
   });
   it.each(["error", "throw"] as const)("B4: the opening check fails (%s) → says so with Try again, never a dead spinner nor the dashboard", async (fail) => {
@@ -164,5 +170,44 @@ describe("Complete your account", () => {
     fireEvent.click(screen.getByTestId("complete-terms"));
     fireEvent.click(screen.getByTestId("complete-submit"));
     await waitFor(() => expect(h.track).toHaveBeenCalledWith("complete_account_error", { code: "invite_code_required" }));
+  });
+
+  it("F1: the Google account being completed, with 'Usar outra conta' → signed out, to the login", async () => {
+    show("c=BR");
+    const line = await screen.findByTestId("complete-account-line");
+    expect(line).toHaveTextContent("Conta Google: dra.google@example.invalid");
+    fireEvent.click(screen.getByTestId("complete-use-another"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/login"));
+    expect(h.signOut).toHaveBeenCalledTimes(1);
+    expect(h.track).toHaveBeenCalledWith("complete_account_switch");
+    expect(h.rpc).not.toHaveBeenCalled();
+  });
+
+  it("F2: a patient without a code: 'Não tenho código' explains how to get in, with the same way out", async () => {
+    show("role=patient");
+    await screen.findByTestId("complete-invite-code");
+    expect(screen.queryByTestId("complete-no-code-help")).toBeNull();
+    fireEvent.click(screen.getByTestId("complete-no-code"));
+    expect(screen.getByTestId("complete-no-code-help")).toHaveTextContent(pt.auth.completeAccount.noCodeText);
+    expect(screen.getByTestId("complete-no-code")).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(screen.getByTestId("complete-no-code-use-another"));
+    await waitFor(() => expect(assign).toHaveBeenCalledWith("/pt-BR/auth/login"));
+    expect(h.signOut).toHaveBeenCalled();
+  });
+
+  it("F6: the RPC's field refusals land next to their field; other errors stay at the bottom", async () => {
+    h.rpc.mockResolvedValue({ data: null, error: { message: "unsupported_country", code: "P0001" } });
+    show("c=TH");
+    await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+    fireEvent.click(screen.getByTestId("complete-terms"));
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    expect(await screen.findByTestId("complete-error-country")).toHaveTextContent(pt.auth.completeAccount.countryRequired);
+    expect(screen.getByTestId("complete-country-BR")).toBeInTheDocument();
+    expect(screen.queryByTestId("complete-error")).toBeNull();
+    h.rpc.mockResolvedValue({ data: null, error: { message: "boom", code: "XX000" } });
+    fireEvent.click(screen.getByTestId("complete-country-TH"));
+    expect(screen.queryByTestId("complete-error-country")).toBeNull();
+    fireEvent.click(screen.getByTestId("complete-submit"));
+    expect(await screen.findByTestId("complete-error")).toHaveTextContent(pt.auth.errors.generic);
   });
 });
