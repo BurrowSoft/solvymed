@@ -2849,6 +2849,55 @@
         "question": "질문을 입력하세요(최대 160자).",
         "answer": "답변을 입력하세요(최대 1,000자)."
       }
+    },
+    "inbox": {
+      "title": "환자 메시지",
+      "nav": "메시지",
+      "open": "메시지 열기",
+      "kpiOpen": "미처리",
+      "kpiFaq": "FAQ로 해결",
+      "kpiAuto": "자동 메시지로 해결",
+      "kpiWindow": "최근 7일",
+      "all": "전체",
+      "openOnly": "미처리",
+      "secretary": "접수처",
+      "empty": "메시지가 없습니다.",
+      "secretaryOthers": "미처리 메시지 {n, plural, other {#건}}이 더 {doctor}에게 전달됩니다.",
+      "points": "{n}점",
+      "toDoctor": "{doctor}에게",
+      "toSecretary": "접수처로",
+      "status": {
+        "open": "미처리",
+        "answered": "답변 완료",
+        "call_back": "전화 예정",
+        "substituted": "대체됨"
+      }
+    },
+    "detail": {
+      "back": "← 메시지",
+      "sentAt": "{date} 전송",
+      "reason": "사유",
+      "ticked": "선택 항목",
+      "chips": "인식된 용어",
+      "option": "선택한 옵션",
+      "text": "환자가 작성한 내용",
+      "keywordsOnly": "키워드만으로 분류합니다. 동의어, 오타, 부정 표현은 인식하지 못합니다. 본문을 읽어 주세요.",
+      "breakdown": "{n}점 산정 방식",
+      "floor": "인식된 증상이 없는 본문: \"{band}\"(으)로 상향.",
+      "warningShown": "환자에게 응급 경고가 표시되었습니다.",
+      "autoShown": "환자가 본 자동 메시지",
+      "history": "이 환자의 이전 메시지",
+      "replyLabel": "답변 (환자에게 알림으로 전달됩니다)",
+      "reply": "답변하고 종료",
+      "callBack": "환자에게 전화하겠습니다",
+      "call": "{phone}로 전화",
+      "sending": "전송 중…",
+      "answeredAt": "{date}에 답변",
+      "callBackAt": "{date}에 \"전화하겠습니다\"로 표시",
+      "replacedBy": "새 메시지로 대체됨",
+      "notOpen": "이미 종료된 메시지입니다. 새로고침하여 확인하세요.",
+      "readOnly": "{doctor}에게 온 메시지입니다. 읽을 수는 있지만 답변할 수는 없습니다.",
+      "failed": "전송하지 못했습니다. 다시 시도하세요."
     }
   }
 }

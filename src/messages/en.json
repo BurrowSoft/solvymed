@@ -2879,6 +2879,55 @@
         "question": "Write the question (up to 160 characters).",
         "answer": "Write the answer (up to 1,000 characters)."
       }
+    },
+    "inbox": {
+      "title": "Patient messages",
+      "nav": "Messages",
+      "open": "Open messages",
+      "kpiOpen": "open",
+      "kpiFaq": "Solved by the FAQ",
+      "kpiAuto": "Solved by automatic messages",
+      "kpiWindow": "last 7 days",
+      "all": "All",
+      "openOnly": "Open",
+      "secretary": "Front desk",
+      "empty": "No messages here.",
+      "secretaryOthers": "{n, plural, one {# more open message goes} other {# more open messages go}} to {doctor}.",
+      "points": "{n} pts",
+      "toDoctor": "To {doctor}",
+      "toSecretary": "To the front desk",
+      "status": {
+        "open": "Open",
+        "answered": "Answered",
+        "call_back": "Will call",
+        "substituted": "Replaced"
+      }
+    },
+    "detail": {
+      "back": "← Messages",
+      "sentAt": "Sent {date}",
+      "reason": "Reason",
+      "ticked": "Ticked",
+      "chips": "Recognised terms",
+      "option": "Option chosen",
+      "text": "In the patient's words",
+      "keywordsOnly": "Classification by keywords only: it doesn't recognise synonyms, typos or negations. Read the text.",
+      "breakdown": "How it reached {n} points",
+      "floor": "Text with no symptom recognised: raised to \"{band}\".",
+      "warningShown": "The patient saw the emergency warning.",
+      "autoShown": "Automatic messages the patient saw",
+      "history": "Earlier messages from this patient",
+      "replyLabel": "Your reply (the patient gets it by notification)",
+      "reply": "Reply and close",
+      "callBack": "I'll call the patient",
+      "call": "Call {phone}",
+      "sending": "Sending…",
+      "answeredAt": "Answered on {date}",
+      "callBackAt": "Marked \"I'll call\" on {date}",
+      "replacedBy": "Replaced by a newer message",
+      "notOpen": "This message was already closed. Reload to see it.",
+      "readOnly": "This message is for {doctor}: you can read it, not reply.",
+      "failed": "Couldn't send. Try again."
     }
   }
 }

@@ -41,3 +41,16 @@ export async function patientChannelEnabled(
 export function patientChannelPreviewTest(param: string | string[] | undefined): boolean {
   return process.env.VERCEL_ENV !== "production" && param === "1";
 }
+
+// The inbox (M5) for a practice's staff: on with the public switch, or when the caller or
+// the practice's doctor is on the testers' allowlist (a secretary isn't on it herself; she
+// works for an allowlisted doctor).
+export async function patientChannelOnForPractice(
+  supabase: Rpc,
+  userId: string,
+  profId: string,
+  isTester: (id: string) => Promise<boolean> = isPatientChannelTester,
+): Promise<boolean> {
+  if (await patientChannelEnabled(supabase, userId, isTester)) return true;
+  return profId !== userId && (await isTester(profId));
+}

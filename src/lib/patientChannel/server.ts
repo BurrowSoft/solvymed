@@ -10,7 +10,8 @@ import { createClient } from "@/lib/supabase/server";
 
 export type PcCode =
   | "unauthorized" | "not_found" | "not_doctor" | "too_large" | "bad_request"
-  | "invalid_rules" | "version_conflict" | "failed";
+  | "invalid_rules" | "version_conflict" | "failed"
+  | "out_of_scope" | "not_open" | "invalid_reply";
 
 export function pcFail(code: PcCode, status: number, extra?: Record<string, unknown>) {
   return NextResponse.json({ code, ...extra }, { status });

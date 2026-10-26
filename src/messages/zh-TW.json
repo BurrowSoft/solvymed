@@ -2849,6 +2849,55 @@
         "question": "請輸入問題（最多 160 個字元）。",
         "answer": "請輸入回答（最多 1,000 個字元）。"
       }
+    },
+    "inbox": {
+      "title": "病患訊息",
+      "nav": "訊息",
+      "open": "開啟訊息",
+      "kpiOpen": "待處理",
+      "kpiFaq": "由常見問題解決",
+      "kpiAuto": "由自動訊息解決",
+      "kpiWindow": "最近 7 天",
+      "all": "全部",
+      "openOnly": "待處理",
+      "secretary": "櫃檯",
+      "empty": "這裡沒有訊息。",
+      "secretaryOthers": "另有 {n, plural, other {# 則}}待處理訊息傳給 {doctor}。",
+      "points": "{n} 分",
+      "toDoctor": "給{doctor}",
+      "toSecretary": "傳給櫃檯",
+      "status": {
+        "open": "待處理",
+        "answered": "已回覆",
+        "call_back": "將致電",
+        "substituted": "已取代"
+      }
+    },
+    "detail": {
+      "back": "← 訊息",
+      "sentAt": "傳送於 {date}",
+      "reason": "原因",
+      "ticked": "已勾選",
+      "chips": "辨識出的詞語",
+      "option": "所選選項",
+      "text": "病患原話",
+      "keywordsOnly": "僅依關鍵字分類：無法辨識同義詞、錯字或否定說法。請閱讀原文。",
+      "breakdown": "{n} 分是如何得出的",
+      "floor": "文字中未辨識出症狀：已提升為「{band}」。",
+      "warningShown": "病患已看到緊急警告。",
+      "autoShown": "病患看到的自動訊息",
+      "history": "此病患先前的訊息",
+      "replyLabel": "您的回覆（病患會透過通知收到）",
+      "reply": "回覆並結案",
+      "callBack": "我會致電病患",
+      "call": "致電 {phone}",
+      "sending": "傳送中…",
+      "answeredAt": "回覆於 {date}",
+      "callBackAt": "於 {date} 標記為「我會致電」",
+      "replacedBy": "已被較新的訊息取代",
+      "notOpen": "此訊息已結案。請重新整理以查看。",
+      "readOnly": "此訊息是給 {doctor} 的：您可以閱讀，但無法回覆。",
+      "failed": "無法傳送，請再試一次。"
     }
   }
 }

@@ -2849,6 +2849,55 @@
         "question": "Escreva a pergunta (até 160 caracteres).",
         "answer": "Escreva a resposta (até 1.000 caracteres)."
       }
+    },
+    "inbox": {
+      "title": "Mensagens dos pacientes",
+      "nav": "Mensagens",
+      "open": "Abrir mensagens",
+      "kpiOpen": "abertas",
+      "kpiFaq": "Resolvidas pelas perguntas frequentes",
+      "kpiAuto": "Resolvidas pelas mensagens automáticas",
+      "kpiWindow": "últimos 7 dias",
+      "all": "Todas",
+      "openOnly": "Abertas",
+      "secretary": "Secretaria",
+      "empty": "Nenhuma mensagem aqui.",
+      "secretaryOthers": "{n, plural, one {Mais # mensagem aberta é} other {Mais # mensagens abertas são}} para {doctor}.",
+      "points": "{n} pts",
+      "toDoctor": "Para {doctor}",
+      "toSecretary": "Para a secretaria",
+      "status": {
+        "open": "Aberta",
+        "answered": "Respondida",
+        "call_back": "Vai ligar",
+        "substituted": "Substituída"
+      }
+    },
+    "detail": {
+      "back": "← Mensagens",
+      "sentAt": "Enviada em {date}",
+      "reason": "Motivo",
+      "ticked": "Marcou",
+      "chips": "Termos reconhecidos",
+      "option": "Opção escolhida",
+      "text": "Nas palavras do paciente",
+      "keywordsOnly": "Classificação só por palavras-chave: não reconhece sinônimos, erros de digitação nem negações. Leia o texto.",
+      "breakdown": "Como chegou a {n} pontos",
+      "floor": "Texto sem sintoma reconhecido: elevado para \"{band}\".",
+      "warningShown": "O paciente viu o aviso de emergência.",
+      "autoShown": "Mensagens automáticas que o paciente viu",
+      "history": "Mensagens anteriores deste paciente",
+      "replyLabel": "Sua resposta (o paciente recebe por notificação)",
+      "reply": "Responder e encerrar",
+      "callBack": "Vou ligar para o paciente",
+      "call": "Ligar {phone}",
+      "sending": "Enviando…",
+      "answeredAt": "Respondida em {date}",
+      "callBackAt": "Marcada \"Vou ligar\" em {date}",
+      "replacedBy": "Substituída por uma mensagem mais nova",
+      "notOpen": "Esta mensagem já foi encerrada. Recarregue para ver.",
+      "readOnly": "Esta mensagem é para {doctor}: você pode ler, mas não responder.",
+      "failed": "Não foi possível enviar. Tente de novo."
     }
   }
 }
