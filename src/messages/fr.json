@@ -2570,7 +2570,10 @@
     "template": {
       "start": "Start with the ready-made template: General / side effects",
       "use": "Use the template",
-      "openRequests": "Answer or close the open requests before changing the template."
+      "openRequests": "Answer or close the open requests before changing the template.",
+      "backTo": "Back to the starting template",
+      "confirm": "This replaces your symptoms, combinations, urgency bands, medicines and automatic messages with the template. Continue?",
+      "replace": "Replace"
     },
     "title": "Patient Channel",
     "entryText": "Your patients ask their questions through an organised channel, ranked by urgency with the score you set up.",

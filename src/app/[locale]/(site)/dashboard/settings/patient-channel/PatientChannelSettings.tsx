@@ -31,7 +31,7 @@ import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
-import { TemplateStart } from "./TemplateStart";
+import { TemplateReset, TemplateStart } from "./TemplateStart";
 import type { PcFaqRow, PcReasonRow, PcSettings } from "@/lib/patientChannel/channel";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
@@ -159,6 +159,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
       {/* No symptoms yet: start from the ready-made template (01). */}
       {templateId && blank && !dirty && <TemplateStart templateId={templateId} />}
+      {/* Later: back to the template, rules only, after a confirm (nothing unsaved). */}
+      {templateId && !blank && !dirty && <TemplateReset templateId={templateId} />}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Symptoms rules={rules} setRules={setRules} />
         <div className="flex min-w-0 flex-col gap-4">

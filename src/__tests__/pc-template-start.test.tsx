@@ -103,3 +103,61 @@ describe("where the card shows", () => {
     expect(screen.queryByTestId("pc-template-start")).toBeNull();
   });
 });
+
+// Later: "Voltar ao modelo inicial" (rules only, p_rules_only from migration 250), after a confirm.
+describe("back to the starting template", () => {
+  const P = pt.patientChannel;
+  const reload = vi.fn();
+  const original = window.location;
+  beforeEach(() => {
+    h.rpc.mockReset();
+    reload.mockReset();
+    Object.defineProperty(window, "location", { configurable: true, value: { ...original, reload } });
+  });
+  afterEach(() => Object.defineProperty(window, "location", { configurable: true, value: original }));
+  const withRules = { ...EMPTY_RULES, medicines: ["Dipirona"] };
+  const show = () =>
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <PatientChannelSettings professionalId="doc1" channel={{ settings: DEFAULT_SETTINGS, reasons: [], faq: [] }} brandHref="/x" templateId="general-side-effects-br" initialRules={withRules} initialVersion={2} emergencyNumber="192" />
+      </NextIntlClientProvider>,
+    );
+
+  it("saved rules: a discreet link instead of the card; it asks first with the approved text", () => {
+    show();
+    expect(screen.queryByTestId("pc-template-start")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: P.template.backTo }));
+    expect(screen.getByText(P.template.confirm)).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: P.reasons.cancel }));
+    expect(screen.queryByTestId("pc-template-confirm")).toBeNull();
+    expect(h.rpc).not.toHaveBeenCalled();
+  });
+
+  it("'Substituir' replaces the rules only (p_rules_only), then reloads", async () => {
+    h.rpc.mockResolvedValue({ data: 3, error: null });
+    show();
+    fireEvent.click(screen.getByRole("button", { name: P.template.backTo }));
+    fireEvent.click(screen.getByRole("button", { name: P.template.replace }));
+    await waitFor(() => expect(reload).toHaveBeenCalled());
+    expect(h.rpc).toHaveBeenCalledWith("pc_apply_template", { p_template_id: "general-side-effects-br", p_rules_only: true });
+  });
+
+  it("an open request: the refusal below the buttons, nothing reloaded", async () => {
+    h.rpc.mockResolvedValue({ data: null, error: { message: "open_requests_exist" } });
+    show();
+    fireEvent.click(screen.getByRole("button", { name: P.template.backTo }));
+    fireEvent.click(screen.getByRole("button", { name: P.template.replace }));
+    const alert = await screen.findByRole("alert");
+    expect(alert.textContent).toBe(P.template.openRequests);
+    const cancel = screen.getByRole("button", { name: P.reasons.cancel });
+    expect(cancel.compareDocumentPosition(alert) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(reload).not.toHaveBeenCalled();
+  });
+
+  it("an unsaved edit hides the link", () => {
+    show();
+    fireEvent.change(screen.getByRole("textbox", { name: P.symptoms.new }), { target: { value: "Tontura" } });
+    fireEvent.click(within(screen.getByRole("region", { name: P.symptoms.title })).getByRole("button", { name: P.symptoms.add }));
+    expect(screen.queryByRole("button", { name: P.template.backTo })).toBeNull();
+  });
+});

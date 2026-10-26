@@ -2570,7 +2570,10 @@
     "template": {
       "start": "Mulai dengan templat siap pakai: Umum / efek samping",
       "use": "Gunakan templat",
-      "openRequests": "Jawab atau tutup permintaan yang masih terbuka sebelum mengganti templat."
+      "openRequests": "Jawab atau tutup permintaan yang masih terbuka sebelum mengganti templat.",
+      "backTo": "Kembali ke templat awal",
+      "confirm": "Ini akan mengganti gejala, kombinasi, tingkat urgensi, obat, dan pesan otomatis Anda dengan templat. Lanjutkan?",
+      "replace": "Ganti"
     },
     "title": "Kanal Pasien",
     "entryText": "Pasien Anda mengajukan pertanyaan melalui kanal yang tertata, diurutkan berdasarkan tingkat urgensi dengan skor yang Anda atur.",

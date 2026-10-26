@@ -2570,7 +2570,10 @@
     "template": {
       "start": "Comece com o modelo pronto: Geral / efeitos colaterais",
       "use": "Usar o modelo",
-      "openRequests": "Responda ou feche as solicitações abertas antes de trocar o modelo."
+      "openRequests": "Responda ou feche as solicitações abertas antes de trocar o modelo.",
+      "backTo": "Voltar ao modelo inicial",
+      "confirm": "Isso substitui seus sintomas, combinações, faixas de urgência, remédios e mensagens automáticas pelo modelo. Continuar?",
+      "replace": "Substituir"
     },
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
