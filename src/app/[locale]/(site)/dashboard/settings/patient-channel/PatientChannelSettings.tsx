@@ -113,7 +113,9 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl">
+    // relative: absolutely positioned bits (sr-only legends/labels) stay inside the
+    // dashboard's scrolling <main> instead of stretching the whole document (83, #620).
+    <div className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
       <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
       <p className="mt-1 max-w-prose text-sm text-slate-500">{t("settings.intro")}</p>
 
