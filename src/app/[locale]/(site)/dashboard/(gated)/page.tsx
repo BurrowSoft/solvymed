@@ -20,6 +20,7 @@ import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { MassMessageButton } from "./MassMessageButton";
 import { PrivacyNoticeCard } from "@/components/PrivacyNoticeCard";
+import { isDemoUser } from "@/lib/demo";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
 
 
@@ -169,7 +170,11 @@ export default async function DashboardPage({
   const todayFormatted = formatDateLabel(locale, today, { weekday: "long", year: "numeric", month: "long", day: "numeric" }, countryProfile(practiceCountry).calendar);
   // A newer privacy policy than this account accepted (migration 204; none
   // before it).
-  const privacyNotice = privacyNoticeDue(await readAcceptedPrivacy(supabase));
+  // A web demo session (01, 10-26): no setup checklist and no privacy-update card on the
+  // home (the demo has its own bar, hint and tour; What's new and the SolvyAI intro are
+  // already off in the demo).
+  const isDemo = isDemoUser(user);
+  const privacyNotice = !isDemo && privacyNoticeDue(await readAcceptedPrivacy(supabase));
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-7xl">
@@ -197,7 +202,7 @@ export default async function DashboardPage({
       {!isSecretary && !patientCountResult.error && patientCount === 0 && <FirstPatientCard prefix={prefix} />}
 
       {/* First-run: the doctor's setup checklist, or a secretary's one-time welcome */}
-      {setupProgress && showChecklist(setupProgress) && (
+      {!isDemo && setupProgress && showChecklist(setupProgress) && (
         <SetupChecklist
           country={practiceCountry}
           progress={setupProgress}

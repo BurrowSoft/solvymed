@@ -41,7 +41,8 @@
     "realDataHint": "请勿在演示中输入真实患者数据。",
     "verifying": "正在验证…",
     "stepCreate": "正在创建您的演示诊所…",
-    "stepOpen": "正在打开您的日程…"
+    "stepOpen": "正在打开您的日程…",
+    "verifyContinue": "继续"
   },
   "getApp": "下载应用",
   "hero": {

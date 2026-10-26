@@ -41,7 +41,8 @@
     "realDataHint": "Jangan masukkan data pasien sungguhan di demo.",
     "verifying": "Memverifikasi…",
     "stepCreate": "Membuat klinik demo Anda…",
-    "stepOpen": "Membuka jadwal Anda…"
+    "stepOpen": "Membuka jadwal Anda…",
+    "verifyContinue": "Lanjutkan"
   },
   "getApp": "Unduh Aplikasi",
   "hero": {

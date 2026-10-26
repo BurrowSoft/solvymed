@@ -41,7 +41,8 @@
     "realDataHint": "Don't enter real patient data in the demo.",
     "verifying": "Verifying…",
     "stepCreate": "Creating your demo clinic…",
-    "stepOpen": "Opening your schedule…"
+    "stepOpen": "Opening your schedule…",
+    "verifyContinue": "Continue"
   },
   "getApp": "Get the App",
   "hero": {

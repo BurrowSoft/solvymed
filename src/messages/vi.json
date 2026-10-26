@@ -41,7 +41,8 @@
     "realDataHint": "Đừng nhập dữ liệu bệnh nhân thật vào bản demo.",
     "verifying": "Đang xác minh…",
     "stepCreate": "Đang tạo phòng khám demo của bạn…",
-    "stepOpen": "Đang mở lịch của bạn…"
+    "stepOpen": "Đang mở lịch của bạn…",
+    "verifyContinue": "Tiếp tục"
   },
   "getApp": "Tải ứng dụng",
   "hero": {
