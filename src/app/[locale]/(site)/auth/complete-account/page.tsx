@@ -58,13 +58,20 @@ export default function CompleteAccountPage() {
   const codeRef = useRef<HTMLInputElement>(null);
   const termsRef = useRef<HTMLInputElement>(null);
 
-  // The error next to its field; the field scrolled into view and focused (F6).
+  // The error next to its field; the field scrolled into view and focused (F6). After the
+  // render: a refused country reopens the picker first, and the focus must land on its
+  // first country, not on the "Alterar" button that's going away (cf, #629). A new object
+  // per call, so the same error twice focuses again.
   function showFieldError(field: Field, text: string) {
     setFieldError({ field, text });
-    const el = field === "country" ? countryRef.current?.querySelector<HTMLElement>("button") : field === "code" ? codeRef.current : termsRef.current;
+  }
+  useEffect(() => {
+    if (!fieldError) return;
+    const f = fieldError.field;
+    const el = f === "country" ? countryRef.current?.querySelector<HTMLElement>("button") : f === "code" ? codeRef.current : termsRef.current;
     el?.scrollIntoView?.({ block: "center", behavior: "smooth" });
     el?.focus({ preventScroll: true });
-  }
+  }, [fieldError]);
   const errorFor = (field: Field) => (fieldError?.field === field ? fieldError.text : null);
 
   // "Usar outra conta": out of this account, to the login (F1/F2).

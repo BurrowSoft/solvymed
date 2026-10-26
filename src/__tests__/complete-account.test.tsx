@@ -202,7 +202,8 @@ describe("Complete your account", () => {
     fireEvent.click(screen.getByTestId("complete-terms"));
     fireEvent.click(screen.getByTestId("complete-submit"));
     expect(await screen.findByTestId("complete-error-country")).toHaveTextContent(pt.auth.completeAccount.countryRequired);
-    expect(screen.getByTestId("complete-country-BR")).toBeInTheDocument();
+    // The picker reopens and takes the focus (not the "Alterar" that went away; cf, #629).
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByTestId("complete-country-BR")));
     expect(screen.queryByTestId("complete-error")).toBeNull();
     h.rpc.mockResolvedValue({ data: null, error: { message: "boom", code: "XX000" } });
     fireEvent.click(screen.getByTestId("complete-country-TH"));
