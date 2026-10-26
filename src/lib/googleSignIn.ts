@@ -26,7 +26,7 @@ export function parseGoogleRole(raw: string | null | undefined): GoogleRole | nu
 
 export function googleRedirectTo(
   origin: string,
-  s: { locale: string; country?: CountryChoice | null; role?: GoogleRole | null; source: GoogleSource },
+  s: { locale: string; country?: CountryChoice | null; role?: GoogleRole | null; source: GoogleSource; via?: "demo" },
 ): string {
   const url = new URL("/api/auth/callback", origin);
   url.searchParams.set("locale", s.locale);
@@ -35,6 +35,9 @@ export function googleRedirectTo(
   if (c) url.searchParams.set("c", c);
   const role = parseGoogleRole(s.role ?? null);
   if (role) url.searchParams.set("role", role);
+  // From the demo's sign-up (238's signup_from_demo, counted by the callback for a
+  // NEW account; nothing stored).
+  if (s.via === "demo") url.searchParams.set("via", "demo");
   return url.toString();
 }
 

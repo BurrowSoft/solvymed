@@ -167,7 +167,7 @@ async function googleFromDemo(locale: string, country: CountryChoice, where: str
   await countSignupClick(where);
   await leaveDemo(createClient());
   const { googleRedirectTo, startGoogleSignIn } = await import("@/lib/googleSignIn");
-  const { error } = await startGoogleSignIn(createClient(), googleRedirectTo(window.location.origin, { locale, country, role: "professional", source: "signup" }));
+  const { error } = await startGoogleSignIn(createClient(), googleRedirectTo(window.location.origin, { locale, country, role: "professional", source: "signup", via: "demo" }));
   // Google couldn't start: the sign-up form, where Google is offered again.
   if (error) window.location.assign(`${locale === "en" ? "" : `/${locale}`}/auth/signup?c=${country}&via=demo`);
 }
