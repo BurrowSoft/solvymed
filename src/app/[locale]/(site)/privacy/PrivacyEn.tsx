@@ -214,6 +214,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <li>SolvyAI works in the demo for up to 5 messages, under the same rules as section 6b: what you type is sent to Anthropic to get the answer (see section 5), and SolvyMed doesn&rsquo;t store it. We keep only an anonymous count of SolvyAI use, with no text.</li>
             <li>To prevent abuse, we keep a scrambled (salted hash) form of your IP address with the demo session, never the address itself.</li>
             <li>The demo session and everything in it are deleted within 24 hours of the start, or right away when you leave the demo or create an account. Nothing from the demo is copied into a real account.</li>
+            <li>We count, without identifying anyone, how many demos are opened and which steps are used. These are daily totals per country and language; no account, IP address or device identifier is stored with them. To count each demo only once, a note is kept with the demo and deleted with it.</li>
             <li>Website usage statistics in the demo follow section 3.6 and the cookie banner: only with your consent.</li>
           </ul>
         </Section>
