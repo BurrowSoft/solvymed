@@ -4,6 +4,7 @@ import { liveFeatures } from "@/lib/liveFeatures";
 import { LegalDoc, legalLangFor } from "@/components/LegalDoc";
 import { PrivacyEn } from "./PrivacyEn";
 import { PrivacyPtBR } from "./PrivacyPtBR";
+import { PrivacyTh } from "./PrivacyTh";
 import { legalDateLabel, PRIVACY_PUBLISHED } from "@/lib/legalVersions";
 
 export default async function PrivacyPage({
@@ -56,6 +57,16 @@ export default async function PrivacyPage({
   const reminders = conditionMet("reminders-live");
   const appReferrer = conditionMet("app-referrer-live");
   const v1028 = { appDemo, patientChannel, pcCover, pcAi, reminders, appReferrer };
+  // The Thai text (a draft until Vitor's first pass): only for /th, only once
+  // privacy-th-live is met; until then Thai readers get the English page.
+  const thai = conditionMet("privacy-th-live");
+  if (legalLangFor(locale, thai) === "th") {
+    return (
+      <LegalDoc locale={locale} thai title="นโยบายความเป็นส่วนตัว" updated={`ปรับปรุงล่าสุด: ${legalDateLabel("th", PRIVACY_PUBLISHED)}`}>
+        <PrivacyTh turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} />
+      </LegalDoc>
+    );
+  }
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_PUBLISHED)}`}>
       <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} />

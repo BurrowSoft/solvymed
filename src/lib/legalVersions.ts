@@ -124,9 +124,10 @@ export function consentMetadata() {
 
 // "September 28, 2026" / "28 de setembro de 2026" (the legal pages are in
 // English or Brazilian Portuguese).
-export function legalDateLabel(lang: "en" | "pt-BR", version: string): string {
+export function legalDateLabel(lang: "en" | "pt-BR" | "th", version: string): string {
   const [y, m, d] = version.split("-").map(Number);
-  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : "en-GB", {
+  // Thai: the Buddhist-era year, as Thai documents write it (e.g. 26 ตุลาคม 2569).
+  return new Intl.DateTimeFormat(lang === "pt-BR" ? "pt-BR" : lang === "th" ? "th-TH" : "en-GB", {
     year: "numeric", month: "long", day: "numeric", timeZone: "UTC",
   }).format(new Date(Date.UTC(y, m - 1, d, 12)));
 }
