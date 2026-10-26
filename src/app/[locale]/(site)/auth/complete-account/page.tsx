@@ -28,6 +28,9 @@ import { track } from "@/lib/track";
 // conta" (signs out → the login), so the wrong account is never a dead end; a
 // patient without a code gets "Não tenho código" (how to get in + the same way
 // out); a missing field's error sits next to it, scrolled to and focused.
+// F3 (242): "Cancelar cadastro" deletes this still-pending sign-in
+// (cancel_pending_signup, only ever the caller), after an in-page confirm; then
+// sign-out and the landing with "Cadastro cancelado.".
 type Field = "country" | "code" | "consent";
 
 export default function CompleteAccountPage() {
@@ -54,6 +57,9 @@ export default function CompleteAccountPage() {
   const [leaving, setLeaving] = useState(false);
   const [noCode, setNoCode] = useState(false);
   const [fieldError, setFieldError] = useState<{ field: Field; text: string } | null>(null);
+  const [cancelAsk, setCancelAsk] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState("");
   const countryRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
   const termsRef = useRef<HTMLInputElement>(null);
@@ -81,6 +87,32 @@ export default function CompleteAccountPage() {
     track("complete_account_switch");
     await createClient().auth.signOut().catch(() => null);
     window.location.assign(localePath("/auth/login"));
+  }
+
+  // "Cancelar cadastro" (F3, 242): deleted → signed out → the landing's note. Already
+  // complete elsewhere → the dashboard (as complete_google_signup's "already done");
+  // an invite-code guess in the last hour → try_later (078's limit can't be reset by
+  // cancelling and signing up again); anything else → the generic error.
+  async function cancelSignup() {
+    if (cancelling) return;
+    setCancelling(true);
+    setCancelError("");
+    const supabase = createClient();
+    const { data, error: rpcError } = await supabase.rpc("cancel_pending_signup");
+    if (!rpcError && (data as { status?: string } | null)?.status === "deleted") {
+      track("complete_account_cancelled");
+      await supabase.auth.signOut().catch(() => null);
+      window.location.assign(localePath("/?signup_cancelled=1"));
+      return;
+    }
+    const m = rpcError?.message ?? "";
+    if (["not_pending", "has_account"].some((c) => m.includes(c))) {
+      window.location.assign(localePath("/dashboard"));
+      return;
+    }
+    track("complete_account_error", { code: m.includes("try_later") ? "cancel_try_later" : "cancel_failed" });
+    setCancelling(false);
+    setCancelError(m.includes("try_later") ? tc("cancelTryLater") : authErrorKey(rpcError) === "network" ? t("errors.network") : t("errors.generic"));
   }
 
   // Only for an account that still has to be completed; anyone else goes on
@@ -304,6 +336,32 @@ export default function CompleteAccountPage() {
               </button>
             )}
           </form>
+
+          {ready && (
+            <div className="mt-6 border-t border-slate-100 pt-4 text-center text-sm">
+              {!cancelAsk ? (
+                <button type="button" data-testid="complete-cancel" onClick={() => setCancelAsk(true)}
+                  className="font-semibold text-slate-500 underline hover:text-slate-700">
+                  {tc("cancelSignup")}
+                </button>
+              ) : (
+                <div role="alertdialog" aria-labelledby="complete-cancel-text" data-testid="complete-cancel-confirm" className="rounded-xl bg-slate-50 p-3 text-left">
+                  <p id="complete-cancel-text" className="text-slate-700">{tc("cancelConfirm")}</p>
+                  {cancelError && <p role="alert" data-testid="complete-cancel-error" className="mt-2 text-red-600">{cancelError}</p>}
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <button type="button" data-testid="complete-cancel-yes" onClick={cancelSignup} disabled={cancelling}
+                      className="rounded-xl border border-red-300 bg-white px-4 py-2 font-semibold text-red-700 hover:bg-red-50 disabled:opacity-60">
+                      {tc("cancelSignup")}
+                    </button>
+                    <button type="button" data-testid="complete-cancel-back" onClick={() => { setCancelAsk(false); setCancelError(""); }} disabled={cancelling}
+                      className="rounded-xl border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-60">
+                      {tc("cancelBack")}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </AuthCard>
     </AuthPageShell>

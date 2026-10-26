@@ -814,7 +814,12 @@
       "accountLine": "Tài khoản Google: {email}",
       "useAnother": "Dùng tài khoản khác",
       "noCode": "Tôi không có mã",
-      "noCodeText": "Hãy xin phòng khám của bác sĩ đường liên kết mời. Bạn vào bằng liên kết đó."
+      "noCodeText": "Hãy xin phòng khám của bác sĩ đường liên kết mời. Bạn vào bằng liên kết đó.",
+      "cancelSignup": "Hủy đăng ký",
+      "cancelConfirm": "Thao tác này xóa lần đăng nhập này. Bạn có thể đăng ký lại bất cứ lúc nào.",
+      "cancelBack": "Quay lại",
+      "cancelTryLater": "Chưa thể hủy lúc này. Hãy thử lại sau 1 giờ.",
+      "cancelledNotice": "Đã hủy đăng ký."
     },
     "passwordTooShort": "Mật khẩu phải có ít nhất {min} ký tự.",
     "login": {

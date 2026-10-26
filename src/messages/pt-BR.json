@@ -814,7 +814,12 @@
       "accountLine": "Conta Google: {email}",
       "useAnother": "Usar outra conta",
       "noCode": "Não tenho código",
-      "noCodeText": "Peça o link de convite ao consultório do seu médico. É por ele que você entra."
+      "noCodeText": "Peça o link de convite ao consultório do seu médico. É por ele que você entra.",
+      "cancelSignup": "Cancelar cadastro",
+      "cancelConfirm": "Isso apaga este acesso. Você pode se cadastrar de novo quando quiser.",
+      "cancelBack": "Voltar",
+      "cancelTryLater": "Não foi possível cancelar agora. Tente de novo em 1 hora.",
+      "cancelledNotice": "Cadastro cancelado."
     },
     "passwordTooShort": "A senha deve ter pelo menos {min} caracteres.",
     "login": {

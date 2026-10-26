@@ -814,7 +814,12 @@
       "accountLine": "Google account: {email}",
       "useAnother": "Use another account",
       "noCode": "I don't have a code",
-      "noCodeText": "Ask your doctor's practice for the invite link. That's how you get in."
+      "noCodeText": "Ask your doctor's practice for the invite link. That's how you get in.",
+      "cancelSignup": "Cancel sign-up",
+      "cancelConfirm": "This deletes this sign-in. You can sign up again anytime.",
+      "cancelBack": "Back",
+      "cancelTryLater": "This can't be cancelled right now. Try again in an hour.",
+      "cancelledNotice": "Sign-up cancelled."
     },
     "passwordTooShort": "La password deve essere lunga almeno {min} caratteri.",
     "login": {
