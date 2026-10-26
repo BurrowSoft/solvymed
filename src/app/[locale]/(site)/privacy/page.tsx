@@ -49,7 +49,7 @@ export default async function PrivacyPage({
   const demo = conditionMet("demo-mode-live");
   // Privacy 2026-10-28 (Vitor's OKs, 10-27; specs/privacy-approved-lines-2026-10-27.md
   // and specs/patient-channel-privacy-draft.md): each part only with its feature.
-  // Flipping any of them needs PRIVACY_VERSION 2026-10-28 (mobile 250 accepting it applied first).
+  // Flipping any of them needs PRIVACY_VERSION 2026-10-28 (the mobile privacy-accept migration applied first).
   const appDemo = demo && conditionMet("app-demo-live");
   const patientChannel = conditionMet("patient-channel-live");
   const pcCover = conditionMet("pc-cover-live");
