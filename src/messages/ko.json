@@ -905,7 +905,7 @@
       "confirmed": "계정이 확인되었습니다."
     },
     "inviteRequired": {
-      "heading": "초대 코드가 필요합니다",
+      "heading": "담당 의사와 연결하기",
       "body": "계정은 생성되었지만, SolvyMed 환자가 계속하려면 의사의 초대 코드가 필요합니다. 의사에게 초대 코드를 요청한 후 아래에 입력하세요.",
       "codeLabel": "초대 코드",
       "codeRequired": "초대 코드를 입력하세요",

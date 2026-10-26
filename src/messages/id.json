@@ -905,7 +905,7 @@
       "confirmed": "Akun Anda telah dikonfirmasi."
     },
     "inviteRequired": {
-      "heading": "Kode undangan diperlukan",
+      "heading": "Hubungkan ke dokter Anda",
       "body": "Akun Anda telah dibuat, tetapi pasien SolvyMed memerlukan kode undangan dari dokter mereka untuk melanjutkan. Minta kode undangan dari dokter Anda, lalu masukkan di bawah ini.",
       "codeLabel": "Kode undangan",
       "codeRequired": "Masukkan kode undangan",

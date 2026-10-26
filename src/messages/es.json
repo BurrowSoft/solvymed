@@ -905,7 +905,7 @@
       "confirmed": "Tu cuenta ha sido confirmada."
     },
     "inviteRequired": {
-      "heading": "Se necesita un código de invitación",
+      "heading": "Connect to your doctor",
       "body": "Tu cuenta fue creada, pero los pacientes de SolvyMed necesitan un código de invitación de su clínica para continuar. Pide el código a tu clínica e ingrésalo abajo.",
       "codeLabel": "Código de invitación",
       "codeRequired": "Ingresa un código de invitación",
