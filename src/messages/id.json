@@ -2828,7 +2828,7 @@
       "background": "Latar belakang halaman",
       "bg": {
         "both": "Pita atas + logo di latar belakang",
-        "cover": "Pita atas (warna merek Anda)",
+        "cover": "Pita atas (warna merek atau gambar sampul)",
         "watermark": "Logo di latar belakang",
         "plain": "Polos"
       },

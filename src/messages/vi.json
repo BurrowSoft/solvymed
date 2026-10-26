@@ -2828,7 +2828,7 @@
       "background": "Nền trang",
       "bg": {
         "both": "Dải trên cùng + logo làm nền",
-        "cover": "Dải trên cùng (màu thương hiệu)",
+        "cover": "Dải trên cùng (màu thương hiệu hoặc ảnh bìa)",
         "watermark": "Logo làm nền",
         "plain": "Đơn giản"
       },

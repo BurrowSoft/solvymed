@@ -2858,7 +2858,7 @@
       "background": "Page background",
       "bg": {
         "both": "Top band + logo in the background",
-        "cover": "Top band (your brand colour)",
+        "cover": "Top band (brand colour or cover image)",
         "watermark": "Logo in the background",
         "plain": "Plain"
       },

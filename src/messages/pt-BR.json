@@ -2828,7 +2828,7 @@
       "background": "Fundo da página",
       "bg": {
         "both": "Faixa no topo + logo de fundo",
-        "cover": "Faixa no topo (a cor da sua marca)",
+        "cover": "Faixa no topo (cor da marca ou imagem de capa)",
         "watermark": "Logo de fundo",
         "plain": "Simples"
       },
