@@ -115,6 +115,25 @@ html[data-platform="android"] .android-hide { display: none; }
 .demo-spotlight { position: relative; z-index: 45; border-radius: 0.75rem; animation: demo-spotlight-pulse 1.4s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .demo-spotlight { animation: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.9); } }
 
+/* The DemoBar's sign-up button (Vitor, 10-26): a soft teal glow that expands and fades
+   every 2.4 s, drawn by a ::after over the button's own box. Only that layer's
+   box-shadow moves (no layout shift; the colours and contrast are the button's own).
+   The button's own box-shadow is never set here: this file is unlayered, and an
+   unlayered box-shadow beats Tailwind's layered focus-visible:ring (#628 ❌, 01 + web
+   tester 1). On keyboard focus the glow hides, so the ring stands alone. Reduced
+   motion: a still ring, hidden on focus the same way. */
+@keyframes demo-signup-glow {
+  0% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.55); }
+  70%, 100% { box-shadow: 0 0 0 8px rgba(13, 148, 136, 0); }
+}
+.demo-signup-glow { position: relative; }
+.demo-signup-glow::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  animation: demo-signup-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.demo-signup-glow:focus-visible::after { display: none; }
+@media (prefers-reduced-motion: reduce) { .demo-signup-glow::after { animation: none; box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.35); } }
+
 /* SolvyAI's panel is full screen below lg: the phone's menu button (☰)
    hides while it's open instead of floating over its title (Vitor 10-23;
    components/solvyai/SolvyAi sets the attribute). */
