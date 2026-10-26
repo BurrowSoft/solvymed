@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { fromStoredRules } from "./rules";
 import type { ChannelConfig } from "./score";
 import type { ReasonKind } from "./requestScore";
+import { toMyRequests, type PcMyRequest } from "./patientPage";
 
 // The patient routes' server reads (M4b). Access is 237's own check, run AS the patient:
 // pc_patient_page refuses unless signed in, the channel is on for them, they're connected
@@ -37,6 +38,26 @@ export async function patientPage(db: SupabaseClient, profId: string): Promise<{
   const { data, error } = await db.rpc("pc_patient_page", { p_prof: profId });
   if (error) return { ok: false, code: accessCode(error.message) };
   return { ok: true, page: data as PatientPageRpc };
+}
+
+// The patient's own requests with a practice (237's pc_my_requests, as the patient): newest
+// first, never a score. [] on a failed read.
+export async function myRequestsWith(db: SupabaseClient, profId: string): Promise<PcMyRequest[]> {
+  const { data, error } = await db.rpc("pc_my_requests", { p_prof: profId });
+  return error ? [] : toMyRequests(data);
+}
+
+// What the doctor card offers (01, 10-26): "open" (the channel takes messages: "Fale com o
+// Médico"); "view" (it doesn't right now, the doctor's own switch off or no longer
+// connected, but the patient has requests there: "Ver minhas mensagens", read-only); null
+// (nothing). The platform-wide switch off is the emergency stop: callers check
+// patientChannelEnabled first and offer nothing (pc_my_requests answers [] there anyway).
+export type ChannelEntry = "open" | "view" | null;
+export async function channelEntry(db: SupabaseClient, profId: string): Promise<ChannelEntry> {
+  const access = await patientPage(db, profId);
+  if (access.ok) return "open";
+  if (access.code !== "channel_off" && access.code !== "not_connected") return null;
+  return (await myRequestsWith(db, profId)).length > 0 ? "view" : null;
 }
 
 // The HTTP status of an access refusal (§4.7).
