@@ -127,12 +127,14 @@ export function toShownMessages(raw: unknown): ShownMessage[] {
 // combinations the lines and answers name, and the highlights in the text. The rules
 // themselves (the weights) never reach a secretary's browser (cf's M0 point 4); these
 // are computed on the server.
-export type DetailNames = { symptoms: Record<string, string>; combos: Record<string, string[]> };
+// warnings: the ids (among those) with the immediate warning, for the safety-floor line.
+export type DetailNames = { symptoms: Record<string, string>; combos: Record<string, string[]>; warnings: string[] };
 
 export function detailNames(config: ChannelConfig | null, lines: ScoreLine[], symptomIds: string[]): DetailNames {
   const symptoms: Record<string, string> = {};
   const combos: Record<string, string[]> = {};
-  if (!config) return { symptoms, combos };
+  const warnings: string[] = [];
+  if (!config) return { symptoms, combos, warnings };
   const want = new Set(symptomIds);
   for (const l of lines) {
     if ("comboId" in l.label) {
@@ -145,8 +147,12 @@ export function detailNames(config: ChannelConfig | null, lines: ScoreLine[], sy
       want.add(l.label.symptomId);
     }
   }
-  for (const s of config.symptoms) if (want.has(s.id)) symptoms[s.id] = s.name;
-  return { symptoms, combos };
+  for (const s of config.symptoms) {
+    if (!want.has(s.id)) continue;
+    symptoms[s.id] = s.name;
+    if (s.immediateWarning) warnings.push(s.id);
+  }
+  return { symptoms, combos, warnings };
 }
 
 export function detailHighlights(config: ChannelConfig | null, text: string): Match[] {
@@ -191,3 +197,13 @@ export function highlightParts(text: string, matches: Match[]): { text: string; 
 }
 
 export const REPLY_MAX = 500;
+
+// Why a request is Urgent through the safety floor (01, 10-26): a symptom with the immediate
+// warning that the patient chose or wrote (boxes, chips, text: patientIds, even one worth 0
+// points, which has no line; cf), else one only the AI found (its "IA" line). null otherwise.
+export function warningFloorCause(warningIds: string[], patientIds: string[], lines: ScoreLine[], band: Band): "patient" | "ai" | null {
+  if (band !== "red" || warningIds.length === 0) return null;
+  if (patientIds.some((id) => warningIds.includes(id))) return "patient";
+  if (lines.some((l) => l.source === "ai" && "symptomId" in l.label && warningIds.includes(l.label.symptomId))) return "ai";
+  return null;
+}

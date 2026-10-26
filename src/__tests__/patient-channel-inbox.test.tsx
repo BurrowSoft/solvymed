@@ -8,7 +8,7 @@ import cases from "./fixtures/patient-channel-score-cases.json";
 import type { ChannelConfig, ScoreLine } from "@/lib/patientChannel/score";
 import { scoreRequest } from "@/lib/patientChannel/score";
 import {
-  detailHighlights, detailLineLabel, detailNames, filterInbox, highlightParts, sortInbox, toCounts, toDetailAnswers, toInboxRow,
+  detailHighlights, detailLineLabel, detailNames, filterInbox, highlightParts, sortInbox, toCounts, toDetailAnswers, toInboxRow, warningFloorCause,
   type InboxRow,
 } from "@/lib/patientChannel/inbox";
 
@@ -124,7 +124,25 @@ describe("the detail", () => {
     const t = (k: string, v?: Record<string, string | number>) => (k === "lines.combo" ? `Combinação ${v?.names}` : k === "lines.text" ? "(texto)" : k);
     expect(detailLineLabel(names, lines[0], t)).toBe(sample.symptoms.find((s) => s.id === "s1")!.name);
     // A symptom the rules no longer have shows "?", never a wrong name.
-    expect(detailLineLabel({ symptoms: {}, combos: {} }, lines[0], t)).toBe("?");
+    expect(detailLineLabel({ symptoms: {}, combos: {}, warnings: [] }, lines[0], t)).toBe("?");
+  });
+
+  it("the safety floor line (01, 10-26): a warning symptom the patient chose, or one only the AI found", () => {
+    const floor = cases.safetyFloor.config as ChannelConfig;
+    const mild = { symptomIds: ["f1"], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
+    const warn = floor.symptoms.filter((s) => s.immediateWarning).map((s) => s.id);
+    const byPatient = scoreRequest(floor, mild);
+    expect(warningFloorCause(warn, mild.symptomIds, byPatient.lines, byPatient.band)).toBe("patient");
+    const byAi = scoreRequest(floor, { ...mild, symptomIds: [], text: "não estou bem" }, { aiSymptomIds: ["f1"] });
+    expect(warningFloorCause(warn, [], byAi.lines, byAi.band)).toBe("ai");
+    expect(detailNames(floor, byAi.lines, []).warnings).toEqual(["f1"]);
+    const plain = scoreRequest(floor, { ...mild, symptomIds: ["f2"] });
+    expect(warningFloorCause(warn, ["f2"], plain.lines, plain.band)).toBeNull();
+    // cf: a warning symptom worth 0 points (and no answer points) has no line, still the reason.
+    const zero = { ...floor, symptoms: floor.symptoms.map((s) => (s.id === "f1" ? { ...s, points: 0, adjust: { when: [0, 0, 0], intensity: [0, 0, 0], stillTaking: [0, 0] } } : s)) };
+    const silent = scoreRequest(zero, mild);
+    expect([silent.lines, silent.band]).toEqual([[], "red"]);
+    expect(warningFloorCause(warn, mild.symptomIds, silent.lines, silent.band)).toBe("patient");
   });
 
   it("the highlights: the list's words in the patient's text, split for <mark>", () => {

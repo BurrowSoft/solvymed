@@ -33,6 +33,7 @@ type Case = {
 
 const config = cases.config as ChannelConfig;
 const thConfig = cases.handWritten.config as ChannelConfig;
+const floorConfig = cases.safetyFloor.config as ChannelConfig;
 
 // The prototype's pt-BR breakdown wording, only to compare with labelPt.
 const ANSWER_PT = {
@@ -78,6 +79,14 @@ describe("the Patient Channel score: the prototype's vectors", () => {
 
 describe("the Patient Channel score: Thai, whole words, accents", () => {
   for (const c of cases.handWritten.cases as Case[]) it(c.id, () => check(thConfig, c));
+});
+
+// 01, 10-26 (TH-1): an immediate-warning symptom (box, chip or text; never the AI) puts the
+// request in red whatever the points; its own negative answer adjustments don't apply. The AI
+// never lowers the band (the text-only floor still applies when it finds something).
+describe("the Patient Channel score: the safety floor", () => {
+  it("has its 7 cases", () => expect(cases.safetyFloor.cases).toHaveLength(7));
+  for (const c of cases.safetyFloor.cases as Case[]) it(c.id, () => check(floorConfig, c));
 });
 
 describe("the Patient Channel score's rules", () => {
