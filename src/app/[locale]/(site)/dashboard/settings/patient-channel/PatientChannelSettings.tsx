@@ -28,7 +28,7 @@ import {
 } from "@/lib/patientChannel/rules";
 import { termAllowed } from "@/lib/patientChannel/score";
 import { useLeaveGuard } from "@/components/DiscardGuard";
-import { PatientChannelTest } from "./PatientChannelTest";
+import { PatientChannelTest, type PatientView } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
 import { TemplateReset, TemplateStart } from "./TemplateStart";
@@ -55,13 +55,15 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
 
 type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
 
-export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, templateId }: {
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, patientView, templateId }: {
   initialRules: ChannelConfig;
   // pc_settings.rules_version; 0 = no row yet (the first save of either part creates it).
   initialVersion: number;
   emergencyNumber: string | null;
   professionalId: string;
-  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[] };
+  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null };
+  // How patients see the page (the saved look), for "Testar como paciente".
+  patientView?: PatientView;
   // The practice country's starting template (pc_templates), or null.
   templateId?: string | null;
   brandHref: string;
@@ -127,7 +129,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         the whole document (83, #620). */}
     {testing && (
       <div className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
-        <PatientChannelTest rules={rules} emergencyNumber={number} onBack={() => setTesting(false)} />
+        <PatientChannelTest rules={rules} emergencyNumber={number} onBack={() => setTesting(false)} patientView={patientView} />
       </div>
     )}
     <div hidden={testing} className="relative p-4 sm:p-6 lg:p-8 max-w-6xl">
@@ -153,6 +155,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         reasons={channel.reasons}
         faq={channel.faq}
         brandHref={brandHref}
+        cover={channel.cover}
       />
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>

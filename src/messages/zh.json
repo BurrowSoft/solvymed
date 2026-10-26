@@ -2567,6 +2567,18 @@
     "book": "安排首次预约"
   },
   "patientChannel": {
+    "cover": {
+      "title": "封面图片",
+      "hint": "显示在您的频道页面顶部。保存后即公开（与标志相同）。",
+      "upload": "上传图片",
+      "change": "更换图片",
+      "remove": "移除",
+      "removeConfirm": "要移除封面图片吗？",
+      "useThis": "使用此图片",
+      "errorSize": "图片不能超过 3 MB。",
+      "errorType": "请使用 PNG、JPEG 或 WebP 文件。",
+      "errorNotSetUp": "上传封面前请先保存频道设置。"
+    },
     "template": {
       "start": "从现成模板开始：通用 / 副作用",
       "use": "使用模板",
@@ -2824,7 +2836,7 @@
       "background": "页面背景",
       "bg": {
         "both": "顶部横幅 + 背景徽标",
-        "cover": "顶部横幅（您的品牌色）",
+        "cover": "顶部横幅（品牌色或封面图片）",
         "watermark": "背景徽标",
         "plain": "纯色"
       },

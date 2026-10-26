@@ -21,6 +21,8 @@ export type PatientPageRpc = {
   readingNote: string | null;
   welcome: string | null;
   pageBg: string;
+  // The cover's path in the public pc-covers bucket (237), or null.
+  coverPath?: string | null;
   rulesVersion: number;
   brand: { displayName?: string | null; title?: string | null; accentColor?: string | null } | null;
   reasons: { id: string; title: string; subtitle: string | null; kind: ReasonKind; options: string[]; destination: "doctor" | "secretary" }[];

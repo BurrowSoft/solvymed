@@ -2567,6 +2567,18 @@
     "book": "Đặt lịch khám đầu tiên"
   },
   "patientChannel": {
+    "cover": {
+      "title": "Ảnh bìa",
+      "hint": "Hiển thị ở đầu trang kênh của bạn. Ảnh sẽ công khai sau khi lưu (giống logo).",
+      "upload": "Tải ảnh lên",
+      "change": "Đổi ảnh",
+      "remove": "Xóa",
+      "removeConfirm": "Xóa ảnh bìa?",
+      "useThis": "Dùng ảnh này",
+      "errorSize": "Ảnh tối đa 3 MB.",
+      "errorType": "Hãy dùng tệp PNG, JPEG hoặc WebP.",
+      "errorNotSetUp": "Hãy lưu cài đặt kênh trước khi tải ảnh bìa lên."
+    },
     "template": {
       "start": "Bắt đầu với mẫu có sẵn: Chung / tác dụng phụ",
       "use": "Dùng mẫu",
@@ -2824,7 +2836,7 @@
       "background": "Nền trang",
       "bg": {
         "both": "Dải trên cùng + logo làm nền",
-        "cover": "Dải trên cùng (màu thương hiệu)",
+        "cover": "Dải trên cùng (màu thương hiệu hoặc ảnh bìa)",
         "watermark": "Logo làm nền",
         "plain": "Đơn giản"
       },

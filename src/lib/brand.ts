@@ -197,7 +197,7 @@ async function publishOne(supabase: SupabaseClient, uid: string, blob: Blob, kin
 
 // The JSON error code of a non-2xx function reply ({ error: "too_large" }),
 // when there is one.
-async function functionErrorCode(error: unknown): Promise<string | null> {
+export async function functionErrorCode(error: unknown): Promise<string | null> {
   const res = (error as { context?: unknown })?.context;
   if (!(res instanceof Response)) return null;
   try {

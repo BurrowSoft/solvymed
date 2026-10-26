@@ -2567,6 +2567,18 @@
     "book": "安排第一次預約"
   },
   "patientChannel": {
+    "cover": {
+      "title": "封面圖片",
+      "hint": "顯示在您的頻道頁面頂部。儲存後即公開（與標誌相同）。",
+      "upload": "上傳圖片",
+      "change": "更換圖片",
+      "remove": "移除",
+      "removeConfirm": "要移除封面圖片嗎？",
+      "useThis": "使用此圖片",
+      "errorSize": "圖片不能超過 3 MB。",
+      "errorType": "請使用 PNG、JPEG 或 WebP 檔案。",
+      "errorNotSetUp": "上傳封面前請先儲存頻道設定。"
+    },
     "template": {
       "start": "從現成範本開始：通用 / 副作用",
       "use": "使用範本",
@@ -2824,7 +2836,7 @@
       "background": "頁面背景",
       "bg": {
         "both": "頂部橫幅 + 背景標誌",
-        "cover": "頂部橫幅（您的品牌色）",
+        "cover": "頂部橫幅（品牌色或封面圖片）",
         "watermark": "背景標誌",
         "plain": "純色"
       },

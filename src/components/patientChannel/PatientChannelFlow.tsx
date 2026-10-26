@@ -7,6 +7,7 @@ import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage,
 import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
 import { MyRequests } from "./MyRequests";
+import { PcPageFrame } from "./PcPageFrame";
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
 // tab 1), phone first: entry (the rules, the response time, the practice country's
@@ -117,7 +118,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("privateTitle")}</b>{t("privateLabel")}</li>
         </ul>
         {requests && requests.length > 0 && <MyRequests requests={requests} timeZone={page.timeZone} country={page.country} />}
-        <button type="button" data-testid="pc-start" onClick={() => setStep(page.faq.length > 0 ? "faq" : "reason")} className="mt-2 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("start")}</button>
+        <button type="button" data-testid="pc-start" onClick={() => setStep(page.faq.length > 0 ? "faq" : "reason")} className="mt-2 rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)]">{t("start")}</button>
       </>
     );
   } else if (step === "faq") {
@@ -132,7 +133,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           </details>
         ))}
         <button type="button" data-testid="pc-faq-solved" onClick={() => { onSelfServe?.("faq_resolved"); setStep("resolved"); }} className="mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700">{t("faqSolved")}</button>
-        <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("faqContinue")}</button>
+        <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)]">{t("faqContinue")}</button>
       </>
     );
   } else if (step === "reason") {
@@ -217,7 +218,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           </fieldset>
         )}
         {failed && <p role="alert" className="text-sm font-semibold text-red-600">{t("sendFailed")}</p>}
-        <button type="submit" data-testid="pc-send" disabled={sending} className="mt-1 rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white disabled:opacity-60">
+        <button type="submit" data-testid="pc-send" disabled={sending} className="mt-1 rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)] disabled:opacity-60">
           {sending ? t("sending") : t("send", { who })}
         </button>
       </form>
@@ -227,7 +228,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
       <div className="flex flex-col gap-3 rounded-xl border border-amber-400 bg-amber-50 p-4" data-testid="pc-replace">
         <h2 className="text-base font-bold text-slate-900">{t("openTitle")}</h2>
         <p className="text-sm text-slate-700">{t("openText", { who })}</p>
-        <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">{t("replace")}</button>
+        <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("replace")}</button>
         <button type="button" onClick={() => setStep("form")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("keep")}</button>
       </div>
     );
@@ -264,15 +265,18 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     );
   }
 
+  // The doctor's page look (prototype v17), shared with "Testar como paciente" (PcPageFrame).
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-col gap-3 p-4 sm:p-6">
-      {banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
-      <div className="flex items-center gap-3 border-b border-slate-100 pb-3">
-        <span aria-hidden="true" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-teal-50 font-bold text-teal-700">{initials(page.doctorName)}</span>
-        <div className="min-w-0"><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>
-      </div>
+    <PcPageFrame
+      look={page.look}
+      doctorName={page.doctorName}
+      practiceLine={page.practiceLine}
+      banner={banner && <p className="rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900">{banner}</p>}
+      className="mx-auto w-full max-w-xl"
+      testId="pc-page"
+    >
       {body}
-    </div>
+    </PcPageFrame>
   );
 }
 
@@ -293,6 +297,3 @@ function formatWhen(iso: string, locale: string): string {
   return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat(dateLocale(locale), { dateStyle: "short", timeStyle: "short" }).format(d);
 }
 
-function initials(name: string): string {
-  return name.replace(/^(dra?|dr|prof)\.?\s+/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
-}

@@ -2567,6 +2567,18 @@
     "book": "Buat janji pertama"
   },
   "patientChannel": {
+    "cover": {
+      "title": "Gambar sampul",
+      "hint": "Ditampilkan di bagian atas halaman saluran Anda. Bersifat publik setelah disimpan (seperti logo).",
+      "upload": "Unggah gambar",
+      "change": "Ganti gambar",
+      "remove": "Hapus",
+      "removeConfirm": "Hapus gambar sampul?",
+      "useThis": "Gunakan gambar ini",
+      "errorSize": "Ukuran gambar maksimal 3 MB.",
+      "errorType": "Gunakan file PNG, JPEG, atau WebP.",
+      "errorNotSetUp": "Simpan pengaturan saluran sebelum mengunggah sampul."
+    },
     "template": {
       "start": "Mulai dengan templat siap pakai: Umum / efek samping",
       "use": "Gunakan templat",
@@ -2824,7 +2836,7 @@
       "background": "Latar belakang halaman",
       "bg": {
         "both": "Pita atas + logo di latar belakang",
-        "cover": "Pita atas (warna merek Anda)",
+        "cover": "Pita atas (warna merek atau gambar sampul)",
         "watermark": "Logo di latar belakang",
         "plain": "Polos"
       },
