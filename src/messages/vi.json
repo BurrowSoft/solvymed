@@ -905,7 +905,7 @@
       "confirmed": "Tài khoản của bạn đã được xác nhận."
     },
     "inviteRequired": {
-      "heading": "Cần có mã mời",
+      "heading": "Kết nối với bác sĩ của bạn",
       "body": "Tài khoản của bạn đã được tạo, nhưng bệnh nhân SolvyMed cần mã mời từ bác sĩ để tiếp tục. Hãy xin mã mời từ bác sĩ và nhập bên dưới.",
       "codeLabel": "Mã mời",
       "codeRequired": "Nhập mã mời",

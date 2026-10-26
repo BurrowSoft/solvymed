@@ -905,7 +905,7 @@
       "confirmed": "您的账户已确认。"
     },
     "inviteRequired": {
-      "heading": "需要邀请码",
+      "heading": "连接您的医生",
       "body": "您的账户已创建，但 SolvyMed 患者需要医生提供的邀请码才能继续。请向您的医生索取邀请码，并在下方输入。",
       "codeLabel": "邀请码",
       "codeRequired": "请输入邀请码",

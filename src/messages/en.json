@@ -905,7 +905,7 @@
       "confirmed": "Your account has been confirmed."
     },
     "inviteRequired": {
-      "heading": "An invite code is needed",
+      "heading": "Connect to your doctor",
       "body": "Your account was created, but SolvyMed patients need an invite code from their doctor to continue. Ask your doctor for their invite code and enter it below.",
       "codeLabel": "Invite code",
       "codeRequired": "Enter an invite code",

@@ -1681,7 +1681,7 @@
             },
             {
               "type": "p",
-              "text": "Um paciente sem nenhum médico pode excluir a própria conta na tela **Conectar a um médico** (**Excluir minha conta**). Quem você removeu não pode: vê **Pedir exclusão da conta**, para que a remoção continue valendo."
+              "text": "Um paciente sem nenhum médico pode excluir a própria conta na tela **Conectar ao seu médico** (**Excluir minha conta**). Quem você removeu não pode: vê **Pedir exclusão da conta**, para que a remoção continue valendo."
             },
             {
               "type": "p",
@@ -1707,7 +1707,7 @@
             },
             {
               "type": "p",
-              "text": "A patient with no doctor can delete their own account on the **Connect to a doctor** screen (**Delete my account**). Someone you removed can't: they see **Request account deletion** instead, so the removal still holds."
+              "text": "A patient with no doctor can delete their own account on the **Connect to your doctor** screen (**Delete my account**). Someone you removed can't: they see **Request account deletion** instead, so the removal still holds."
             },
             {
               "type": "p",
