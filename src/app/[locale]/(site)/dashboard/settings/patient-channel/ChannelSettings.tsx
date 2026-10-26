@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { dateLocale } from "@/lib/dateLabels";
 import {
   CHANNEL_LIMITS,
   PAGE_BGS,
@@ -58,7 +59,8 @@ export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial,
 
 function weekdayNames(locale: string): string[] {
   // Mon = 1 … Sun = 7 (237): 2024-01-01 was a Monday.
-  const f = new Intl.DateTimeFormat(locale, { weekday: "short", timeZone: "UTC" });
+  // The app's date locale (lib/dateLabels: th → th-TH with its calendar, en → en-GB).
+  const f = new Intl.DateTimeFormat(dateLocale(locale), { weekday: "short", timeZone: "UTC" });
   return Array.from({ length: 7 }, (_, i) => f.format(new Date(Date.UTC(2024, 0, 1 + i))));
 }
 
