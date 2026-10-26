@@ -2749,7 +2749,9 @@
         "remove": "Remove {term}",
         "suggestions": "Suggestions",
         "hint": "Terms your practice knows become tags: pick a suggestion (click, Enter, Tab or \";\") or type the whole word and a space."
-      }
+      },
+      "entryButton": "Contact the doctor",
+      "unavailable": "This channel isn’t available. Please contact the practice directly."
     }
   }
 }

@@ -2749,7 +2749,9 @@
         "remove": "Remover {term}",
         "suggestions": "Sugestões",
         "hint": "Termos que o consultório conhece viram etiquetas: escolha a sugestão (clique, Enter, Tab ou \";\") ou digite a palavra inteira e um espaço."
-      }
+      },
+      "entryButton": "Fale com o Médico",
+      "unavailable": "Este canal não está disponível. Fale diretamente com o consultório."
     }
   }
 }

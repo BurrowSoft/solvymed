@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientChannel/score";
-import { PC_TEXT_MAX, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
+import { PC_TEXT_MAX, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { SmartTextBox } from "./SmartTextBox";
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
@@ -14,7 +14,7 @@ import { SmartTextBox } from "./SmartTextBox";
 // offline too) and from /preview (red); the automatic messages and "I don't need to send"
 // come only from /preview, and the skip is never offered with a warning or when red.
 
-type Step = "entry" | "faq" | "reason" | "form" | "sent" | "replace" | "resolved";
+type Step = "entry" | "faq" | "reason" | "form" | "sent" | "replace" | "resolved" | "unavailable";
 const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "when", n: 3 },
   { key: "intensity", n: 3 },
@@ -23,10 +23,12 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
 const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
 const PREVIEW_MS = 300;
 
-export function PatientChannelFlow({ page, preview, submit, banner }: {
+export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe }: {
   page: PcPatientPage;
   preview: PcPreviewFn;
   submit: PcSubmitFn;
+  // "This answered my question": counted for the doctor (no content), §4.7 /selfserve.
+  onSelfServe?: PcSelfServeFn;
   // The preview test's "sample data, nothing is sent" bar.
   banner?: string;
 }) {
@@ -61,10 +63,12 @@ export function PatientChannelFlow({ page, preview, submit, banner }: {
     if (!reason || sending) return;
     setSending(true);
     setFailed(false);
-    const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace).catch(() => ({ status: "error" as const }));
+    const shown = symptomForm ? check.autoMessages.map((m) => m.id) : [];
+    const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
     if (r.status === "sent") setStep("sent");
     else if (r.status === "open_exists") setStep("replace");
+    else if (r.status === "unavailable") setStep("unavailable");
     else setFailed(true);
   };
   const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); };
@@ -105,7 +109,7 @@ export function PatientChannelFlow({ page, preview, submit, banner }: {
             <p className="mt-1.5 whitespace-pre-line text-sm text-slate-600">{f.answer}</p>
           </details>
         ))}
-        <button type="button" data-testid="pc-faq-solved" onClick={() => setStep("resolved")} className="mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700">{t("faqSolved")}</button>
+        <button type="button" data-testid="pc-faq-solved" onClick={() => { onSelfServe?.("faq_resolved"); setStep("resolved"); }} className="mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700">{t("faqSolved")}</button>
         <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-teal-600 px-4 py-3 text-sm font-bold text-white">{t("faqContinue")}</button>
       </>
     );
@@ -168,7 +172,7 @@ export function PatientChannelFlow({ page, preview, submit, banner }: {
                 ))}
                 {canSkip ? (
                   <>
-                    <button type="button" data-testid="pc-skip" onClick={() => setStep("resolved")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("skip")}</button>
+                    <button type="button" data-testid="pc-skip" onClick={() => { onSelfServe?.("auto_resolved"); setStep("resolved"); }} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("skip")}</button>
                     <p className="text-xs text-slate-500">{t("general")}</p>
                   </>
                 ) : (
@@ -212,6 +216,8 @@ export function PatientChannelFlow({ page, preview, submit, banner }: {
         <button type="button" onClick={restart} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("again")}</button>
       </>
     );
+  } else if (step === "unavailable") {
+    body = <ChannelUnavailableBody emergencyNumber={number} />;
   } else {
     body = (
       <>
@@ -229,6 +235,18 @@ export function PatientChannelFlow({ page, preview, submit, banner }: {
         <div className="min-w-0"><b className="block break-words text-slate-900">{page.doctorName}</b><span className="text-xs text-slate-500">{page.practiceLine}</span></div>
       </div>
       {body}
+    </div>
+  );
+}
+
+// The practice closed or the patient was archived (237): no channel, the emergency
+// notice stays (01).
+export function ChannelUnavailableBody({ emergencyNumber }: { emergencyNumber: string }) {
+  const t = useTranslations("patientChannel.patient");
+  return (
+    <div className="flex flex-col gap-3" data-testid="pc-unavailable">
+      <p className="rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900">{t("entryEmergency", { number: emergencyNumber })}</p>
+      <p className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-800">{t("unavailable")}</p>
     </div>
   );
 }

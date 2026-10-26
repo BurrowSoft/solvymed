@@ -2749,7 +2749,9 @@
         "remove": "Hapus {term}",
         "suggestions": "Saran",
         "hint": "Istilah yang dikenal klinik Anda menjadi label: pilih saran (klik, Enter, Tab, atau \";\") atau ketik kata lengkapnya lalu spasi."
-      }
+      },
+      "entryButton": "Hubungi dokter",
+      "unavailable": "Saluran ini tidak tersedia. Silakan hubungi klinik secara langsung."
     }
   }
 }

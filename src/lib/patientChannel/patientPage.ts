@@ -34,8 +34,11 @@ export type PcPatientPage = {
 export type PcPreview = { warning: boolean; autoMessages: { id: string; text: string; tone: "info" | "attention" }[]; canSkip: boolean };
 export type PcPreviewFn = (reasonId: string, answers: Answers) => Promise<PcPreview>;
 
-export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "error" };
-export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean) => Promise<PcSubmitResult>;
+// unavailable: the practice closed or the patient was archived meanwhile (237).
+export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "unavailable" } | { status: "error" };
+// shownIds: the automatic messages the patient saw (kept with the request, as shown).
+export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean, shownIds: string[]) => Promise<PcSubmitResult>;
+export type PcSelfServeFn = (kind: "faq_resolved" | "auto_resolved") => void;
 
 export const PC_TEXT_MAX = 500;
 

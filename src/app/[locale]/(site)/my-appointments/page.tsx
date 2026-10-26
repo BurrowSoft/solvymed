@@ -14,6 +14,8 @@ import { countryProfile } from "@/lib/country";
 import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
 import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { patientChannelEnabled } from "@/lib/patientChannel/live";
+import { patientPage } from "@/lib/patientChannel/practice";
 import { loadMyDocumentDoctors } from "./document-actions";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
 
@@ -164,7 +166,13 @@ export default async function MyAppointmentsPage({
   // 1.5.0 (behind the flag): the patient's doctors (get_my_doctors, the
   // only doctor list a patient reads) and whether the server lets them add
   // another one yet.
-  const doctors = liveFeatures.multiDoctor ? await loadMyDoctors(supabase) : null;
+  const loadedDoctors = liveFeatures.multiDoctor ? await loadMyDoctors(supabase) : null;
+  // The Patient Channel (M4b): "Fale com o Médico" only where 237 opens it to this patient
+  // (the doctor turned it on; connected; not archived; practice open). Dark otherwise.
+  const channelOn = !!loadedDoctors?.length && (await patientChannelEnabled(supabase, user.id));
+  const doctors = loadedDoctors && channelOn
+    ? await Promise.all(loadedDoctors.map(async (d) => ({ ...d, channel: (await patientPage(supabase, d.id)).ok })))
+    : loadedDoctors;
   const canAddDoctor = liveFeatures.multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
   // 1.8.0 A: empty unless the server's switch is on for this patient (190).
   const docDoctors = await loadMyDocumentDoctors();
