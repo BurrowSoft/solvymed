@@ -2561,7 +2561,9 @@
       "conflict": "Estas regras foram alteradas em outro lugar. Recarregue a página para ver a versão atual.",
       "reload": "Recarregar",
       "invalid": "Confira as regras: há algo para corrigir antes de salvar.",
-      "error": "Não foi possível salvar. Verifique a conexão e tente de novo."
+      "error": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "rulesTitle": "Regras de pontuação",
+      "rulesHelp": "Como cada dúvida do paciente recebe a urgência. Salve com o botão no fim da página."
     },
     "symptoms": {
       "title": "Sintomas: pontos e palavras do paciente",
@@ -2700,6 +2702,102 @@
       "no": "não",
       "again": "Testar de novo",
       "skipped": "O paciente não enviaria: a mensagem automática respondeu à dúvida."
+    },
+    "channel": {
+      "title": "Seu canal",
+      "enabled": "Ativar o canal para os meus pacientes",
+      "enabledHelp": "Enquanto estiver desligado, seus pacientes não veem o canal. Configure os motivos e as regras e depois ative.",
+      "secretarySeesAll": "A secretaria vê todas as solicitações",
+      "secretarySeesAllHelp": "Desligado: a secretaria vê só as solicitações enviadas a ela (administrativas) e a contagem das demais. Ligado: ela também lê as clínicas, sem responder a elas.",
+      "sla": "Prazo de resposta mostrado aos pacientes",
+      "slaDays": "{n, plural, one {# dia útil} other {# dias úteis}}",
+      "hours": "Quando você lê as mensagens",
+      "hoursHelp": "Aparece para o paciente. No fuso horário do seu consultório.",
+      "hoursDays": "Dias",
+      "from": "das",
+      "to": "às",
+      "remove": "Remover",
+      "addHours": "Adicionar horário",
+      "hoursInvalid": "Cada linha precisa de pelo menos um dia, e o fim depois do início.",
+      "readingNote": "Observação sobre o horário (opcional)",
+      "readingNotePlaceholder": "Ex.: Não lemos em feriados.",
+      "welcome": "Mensagem de boas-vindas",
+      "background": "Fundo da página",
+      "bg": {
+        "both": "Faixa no topo + logo de fundo",
+        "cover": "Faixa no topo (a cor da sua marca)",
+        "watermark": "Logo de fundo",
+        "plain": "Simples"
+      },
+      "brandNote": "A cor e o logo vêm de <link>Minha marca</link>.",
+      "alwaysShown": "O aviso de emergência, o prazo e as regras aparecem sempre, iguais para todos: a marca muda a aparência, não as regras.",
+      "save": "Salvar canal",
+      "saved": "Salvo.",
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo."
+    },
+    "reasons": {
+      "title": "Motivos do contato",
+      "help": "O paciente escolhe um; cada motivo vai para você ou para a secretaria. Motivos arquivados continuam nas solicitações antigas.",
+      "none": "Nenhum motivo ainda.",
+      "kind": {
+        "options": "Escolher uma opção",
+        "symptom_form": "Formulário de sintomas",
+        "exam": "Exame"
+      },
+      "to": {
+        "doctor": "Para você",
+        "secretary": "Para a secretaria"
+      },
+      "up": "Mover {title} para cima",
+      "down": "Mover {title} para baixo",
+      "edit": "Editar",
+      "archive": "Arquivar",
+      "newTitle": "Novo motivo",
+      "editTitle": "Editar motivo",
+      "titleLabel": "Título",
+      "titlePlaceholder": "Ex.: Dúvida sobre a medicação",
+      "subtitleLabel": "Descrição curta",
+      "subtitlePlaceholder": "Ex.: Dose, horário, esquecimento",
+      "kindLabel": "Tipo",
+      "destinationLabel": "Vai para",
+      "optionsLabel": "Opções (uma por linha)",
+      "optionsPlaceholder": "Esqueci uma dose\nDúvida sobre o horário",
+      "symptomFormHelp": "O paciente vê a sua lista de sintomas, as três perguntas e o texto livre, e a solicitação recebe a pontuação.",
+      "add": "Adicionar motivo",
+      "update": "Atualizar motivo",
+      "cancel": "Cancelar",
+      "saved": "Salvo.",
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "problem": {
+        "title": "Escreva um título (até 80 caracteres).",
+        "subtitle": "A descrição pode ter até 120 caracteres.",
+        "options": "Escreva de 1 a 12 opções, uma por linha.",
+        "optionLength": "Cada opção pode ter até 80 caracteres."
+      }
+    },
+    "faq": {
+      "title": "Dúvidas frequentes",
+      "help": "Aparecem antes dos motivos: o paciente pode achar a resposta aqui e não precisar escrever.",
+      "none": "Nenhuma dúvida ainda.",
+      "up": "Mover \"{question}\" para cima",
+      "down": "Mover \"{question}\" para baixo",
+      "edit": "Editar",
+      "archive": "Arquivar",
+      "newTitle": "Nova dúvida",
+      "editTitle": "Editar dúvida",
+      "questionLabel": "Pergunta",
+      "questionPlaceholder": "Ex.: Esqueci de tomar o remédio. E agora?",
+      "answerLabel": "Resposta",
+      "answerPlaceholder": "A sua resposta, em palavras simples.",
+      "add": "Adicionar dúvida",
+      "update": "Atualizar dúvida",
+      "cancel": "Cancelar",
+      "saved": "Salvo.",
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "problem": {
+        "question": "Escreva a pergunta (até 160 caracteres).",
+        "answer": "Escreva a resposta (até 1.000 caracteres)."
+      }
     }
   }
 }
