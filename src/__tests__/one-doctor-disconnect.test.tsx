@@ -109,16 +109,17 @@ describe("the one-doctor card's link", () => {
 });
 
 describe("Ver mensagens anteriores com {doctor} (?left=)", () => {
-  it("own rows there → the link with the doctor's name, to the read-only channel", async () => {
+  it("own rows there → the link (no name looked up: #636 ❌, 01), to the read-only channel", async () => {
     h.search = `left=${DOC}`;
     h.myRows = [{ id: "q1", status: "answered", reasonTitle: "R", createdAt: "t" }];
     render(wrap(<LeftDoctorMessages />));
     const link = await screen.findByTestId("pc-left-messages");
-    expect(link).toHaveTextContent(pt.patientChannel.patient.earlierWith.replace("{doctor}", "Dra. Ana Lima"));
+    expect(link).toHaveTextContent(pt.patientChannel.patient.earlierLink);
+    expect(h.rpcCalls.some((c) => c.fn === "get_professional_public_info")).toBe(false);
     expect(link.getAttribute("href")).toBe(`/pt-BR/my-appointments/channel/${DOC}`);
   });
 
-  it("no rows there: nothing, and the doctor's name is never read; a bad id: nothing at all", async () => {
+  it("no rows there: nothing; a bad id: nothing at all", async () => {
     h.search = `left=${DOC}`;
     const { unmount } = render(wrap(<LeftDoctorMessages />));
     await waitFor(() => expect(h.rpcCalls.some((c) => c.fn === "pc_my_requests")).toBe(true));

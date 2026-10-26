@@ -2788,7 +2788,7 @@
       "statusReceived": "Received",
       "notTaking": "The practice isn't taking new messages here right now.",
       "viewMessages": "View my messages",
-      "earlierWith": "See earlier messages with {doctor}"
+      "earlierLink": "See earlier messages"
     },
     "channel": {
       "title": "Your channel",

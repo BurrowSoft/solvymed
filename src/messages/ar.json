@@ -2788,7 +2788,7 @@
       "statusReceived": "تم الاستلام",
       "notTaking": "لا تستقبل العيادة رسائل جديدة من هنا حاليًا.",
       "viewMessages": "عرض رسائلي",
-      "earlierWith": "عرض الرسائل السابقة مع {doctor}"
+      "earlierLink": "عرض الرسائل السابقة"
     },
     "channel": {
       "title": "قناتك",
