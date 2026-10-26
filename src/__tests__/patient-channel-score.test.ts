@@ -38,7 +38,7 @@ const thConfig = cases.handWritten.config as ChannelConfig;
 const ANSWER_PT = {
   when: ["Hoje", "Há 1 a 3 dias", "Há mais de 3 dias"],
   intensity: ["Leve", "Moderada", "Forte"],
-  stillTaking: ["Não", "Sim"],
+  stillTaking: ["Sim", "Parei por conta própria"],
 };
 function labelPt(cfg: ChannelConfig, line: ScoreLine): string {
   const name = "symptomId" in line.label
