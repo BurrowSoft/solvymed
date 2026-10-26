@@ -46,11 +46,12 @@ export function stripeCloseStep(
 export function closeFailureCode(
   step: StripeCloseStep,
   dbError: string | null,
-): "subscription_active" | "cancelled_not_closed" | "generic" {
+): "subscription_active" | "cancelled_not_closed" | "removed_by_practice" | "generic" {
   // Checked first: once the subscription is gone, that's what they need to
   // hear, whatever the database said.
   if (step.kind === "cancel" || step.kind === "ended") return "cancelled_not_closed";
   if (dbError === "subscription_active") return "subscription_active";
+  if (dbError === "removed_by_practice") return "removed_by_practice";
   return "generic";
 }
 
