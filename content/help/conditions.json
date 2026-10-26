@@ -145,7 +145,7 @@
   },
   "whatsapp-auto-live": {
     "met": false,
-    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with mobile 248 (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
+    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with mobile 250 (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   },
   "privacy-th-live": {
     "met": false,
@@ -297,7 +297,7 @@
   },
   "pc-notify-live": {
     "met": false,
-    "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (mobile 248 accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule."
+    "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (mobile 250 accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule."
   },
   "patient-channel-live": {
     "met": false,
@@ -317,7 +317,7 @@
   },
   "reminders-live": {
     "met": false,
-    "what": "The one-time sign-up / practice-setup reminders are live (migration 247, F5 + B2: at most one per account, by e-mail and push, each with an opt-out link). Gates privacy §4's bullet, §5's Resend \"one-time account reminders\" and §6g's push line (Vitor's \"OK privacy reminders\", 10-27). Flipping needs PRIVACY_VERSION 2026-10-28."
+    "what": "The one-time sign-up / practice-setup reminders are live (migration 251, F5 + B2: at most one per account, by e-mail and push, each with an opt-out link). Gates privacy §4's bullet, §5's Resend \"one-time account reminders\" and §6g's push line (Vitor's \"OK privacy reminders\", 10-27). Flipping needs PRIVACY_VERSION 2026-10-28."
   },
   "app-referrer-live": {
     "met": false,

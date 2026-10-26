@@ -236,7 +236,7 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     };
   };
 
-  it("any of its conditions met needs PRIVACY_VERSION 2026-10-28 or later (mobile 248 accepting it applied first)", async () => {
+  it("any of its conditions met needs PRIVACY_VERSION 2026-10-28 or later (mobile 250 accepting it applied first)", async () => {
     const fs = await import("node:fs");
     const conditions = JSON.parse(fs.readFileSync("content/help/conditions.json", "utf8"));
     for (const id of CONDITIONS) {

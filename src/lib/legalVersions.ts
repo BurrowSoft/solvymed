@@ -100,7 +100,7 @@
 // (reminders-live), §3.6's Android install campaign (app-referrer-live), §6h's "or in the
 // Android app" (app-demo-live) and the automatic WhatsApp rows (whatsapp-auto-live). The FIRST
 // of those flips bumps this to "2026-10-28" (and PRIVACY_PUBLISHED to its merge day), only
-// after mobile 248 accepting ('privacy','2026-10-28') is live; a test enforces the pairing.
+// after mobile 250 accepting ('privacy','2026-10-28') is live; a test enforces the pairing.
 export const PRIVACY_VERSION = "2026-10-27";
 export const TERMS_VERSION = "2026-10-01";
 
