@@ -271,16 +271,17 @@ export function scoreRequest(config: ChannelConfig, answers: Answers, opts: { ai
   const lines: ScoreLine[] = [];
 
   // §4.2 rule 4: each effective symptom, then each complete combination; one line per
-  // non-zero part.
-  const addParts = (label: { symptomId: string } | { comboId: string }, points: number, adjust: Adjust, source: ScoreLine["source"]) => {
+  // non-zero part. Safety floor (01, 10-26, TH-1): an immediate-warning symptom's answers
+  // never take points away (its negative adjustments don't apply).
+  const addParts = (label: { symptomId: string } | { comboId: string }, points: number, adjust: Adjust, source: ScoreLine["source"], noLoss = false) => {
     if (points !== 0) lines.push({ label, points, source });
     for (const key of ANSWER_KEYS) {
       const index = answers[key];
       const v = adjustment(adjust, key, index);
-      if (v !== 0) lines.push({ label: { ...label, answerKey: key, answerIndex: index }, points: v, source });
+      if (v !== 0 && !(noLoss && v < 0)) lines.push({ label: { ...label, answerKey: key, answerIndex: index }, points: v, source });
     }
   };
-  for (const { symptom, source } of effective) addParts({ symptomId: symptom.id }, symptom.points, symptom.adjust, source);
+  for (const { symptom, source } of effective) addParts({ symptomId: symptom.id }, symptom.points, symptom.adjust, source, symptom.immediateWarning);
   for (const c of config.combinations) {
     if (c.symptomIds.length > 0 && c.symptomIds.every((id) => effectiveIds.has(id))) {
       addParts({ comboId: c.id }, c.points, c.adjust, "combo");
@@ -324,6 +325,11 @@ export function scoreRequest(config: ChannelConfig, answers: Answers, opts: { ai
 
   const total = sum();
   let band = bandFor(total, config.thresholds);
+
+  // Safety floor (01, 10-26, TH-1): an immediate-warning symptom (box, chip or text; not
+  // the AI, which never drives the warning) puts the request in the top band, whatever
+  // the points: the patient was shown the emergency number.
+  if (effective.some((e) => e.symptom.immediateWarning)) band = "red";
 
   // §4.2 rule 8: text with nothing recognised (not even by the AI) is at least the floor.
   let floorApplied = false;
