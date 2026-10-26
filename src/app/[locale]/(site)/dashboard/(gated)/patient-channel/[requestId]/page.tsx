@@ -13,7 +13,8 @@ import { ReplyBox } from "./ReplyBox";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DETAIL_COLUMNS = "id, professional_id, patient_id, destination, reason_snapshot, answers, text, score_total, band, lines, warning_shown, floor_applied, auto_messages_shown, status, reply_text, replied_at, created_at, patients(full_name, phone)";
-const HISTORY_COLUMNS = "id, patient_id, destination, band, score_total, status, text, created_at, reason_snapshot, patients(full_name)";
+// The earlier requests: no message text (each opens its own access-logged detail).
+const HISTORY_COLUMNS = "id, patient_id, destination, band, score_total, status, created_at, reason_snapshot, patients(full_name)";
 
 // Patient Channel M5 (specs/patient-contact-tech.md §6): one request. The answers, chips and
 // the automatic messages the patient saw; the text with the list's words highlighted; the
