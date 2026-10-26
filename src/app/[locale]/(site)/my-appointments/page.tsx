@@ -15,7 +15,7 @@ import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
 import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { patientChannelEnabled } from "@/lib/patientChannel/live";
-import { patientPage } from "@/lib/patientChannel/practice";
+import { channelEntry } from "@/lib/patientChannel/practice";
 import { loadMyDocumentDoctors } from "./document-actions";
 import { privacyNoticeDue, readAcceptedPrivacy } from "@/lib/privacyNotice";
 
@@ -179,12 +179,19 @@ export default async function MyAppointmentsPage({
   // the doctor card in BOTH layouts (01, TH-1): each of the doctors, or, without the doctors
   // list (www today), the one doctor's card.
   const channelOn = (!!loadedDoctors?.length || !!myProfessionalId) && (await patientChannelEnabled(supabase, user.id));
+  // "open": Fale com o Médico; "view": the doctor's channel is off (or no longer connected) but
+  // the patient has requests there: "Ver minhas mensagens", read-only (01, 10-26).
   const doctors = loadedDoctors && channelOn
-    ? await Promise.all(loadedDoctors.map(async (d) => ({ ...d, channel: (await patientPage(supabase, d.id)).ok })))
+    ? await Promise.all(loadedDoctors.map(async (d) => {
+        const entry = await channelEntry(supabase, d.id);
+        return { ...d, channel: entry === "open", channelView: entry === "view" };
+      }))
     : loadedDoctors;
-  const primaryChannel = !loadedDoctors?.length && !!myProfessionalId && channelOn
-    ? (await patientPage(supabase, myProfessionalId)).ok
-    : false;
+  const primaryEntry = !loadedDoctors?.length && !!myProfessionalId && channelOn
+    ? await channelEntry(supabase, myProfessionalId)
+    : null;
+  const primaryChannel = primaryEntry === "open";
+  const primaryChannelView = primaryEntry === "view";
   const canAddDoctor = multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
   // 1.8.0 A: empty unless the server's switch is on for this patient (190).
   const docDoctors = await loadMyDocumentDoctors();
@@ -217,6 +224,7 @@ export default async function MyAppointmentsPage({
       practices={practices}
       doctors={doctors}
       primaryChannel={primaryChannel}
+      primaryChannelView={primaryChannelView}
       canAddDoctor={canAddDoctor}
       docDoctors={docDoctors}
     />

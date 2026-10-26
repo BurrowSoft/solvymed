@@ -427,6 +427,7 @@ export function MyAppointmentsClient({
   selfPrompts = [],
   doctors = null,
   primaryChannel = false,
+  primaryChannelView = false,
   canAddDoctor = false,
   docDoctors = null,
 }: {
@@ -453,6 +454,8 @@ export function MyAppointmentsClient({
   // The Patient Channel on the one-doctor card (no doctors list; www today): the same
   // "Fale com o Médico" as MyDoctors' cards, where 237 opens it for this doctor.
   primaryChannel?: boolean;
+  // Off for new messages, but the patient has requests there: "Ver minhas mensagens".
+  primaryChannelView?: boolean;
   canAddDoctor?: boolean;
   // 1.8.0 A (flag 'patient_documents'): the doctors with documents for this
   // patient, or a folder that takes uploads; null / empty = no section.
@@ -554,6 +557,12 @@ export function MyAppointmentsClient({
               <a href={`${prefix}/my-appointments/channel/${myProfessionalId}`} data-testid="pc-entry"
                 className="mt-3 inline-block rounded-xl border-2 border-teal-600 px-4 py-1.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50">
                 {tChannel("entryButton")}
+              </a>
+            )}
+            {primaryChannelView && myProfessionalId && (
+              <a href={`${prefix}/my-appointments/channel/${myProfessionalId}`} data-testid="pc-view"
+                className="mt-3 inline-block text-sm font-bold text-teal-700 underline">
+                {tChannel("viewMessages")}
               </a>
             )}
           </section>

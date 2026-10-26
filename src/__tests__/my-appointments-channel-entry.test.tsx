@@ -11,6 +11,7 @@ const h = vi.hoisted(() => ({
   multi: false,
   enabled: true,
   open: true,
+  view: false,
   loadDoctors: vi.fn(async () => [{ id: "doc1", name: "Dra. Ana" }]),
   pageCalls: [] as string[],
 }));
@@ -39,7 +40,7 @@ vi.mock("@/lib/setup", () => ({ getOnboardingFlags: async () => null }));
 vi.mock("@/lib/myDoctors", () => ({ loadMyDoctors: h.loadDoctors, serverFlag: async () => false }));
 vi.mock("@/lib/selfFields", () => ({ loadSelfFieldPrompts: async () => [] }));
 vi.mock("@/lib/patientChannel/live", () => ({ patientChannelEnabled: async () => h.enabled }));
-vi.mock("@/lib/patientChannel/practice", () => ({ patientPage: async (_db: unknown, id: string) => { h.pageCalls.push(id); return h.open ? { ok: true } : { ok: false, code: "channel_off" }; } }));
+vi.mock("@/lib/patientChannel/practice", () => ({ channelEntry: async (_db: unknown, id: string) => { h.pageCalls.push(id); return h.open ? "open" : h.view ? "view" : null; } }));
 vi.mock("@/app/[locale]/(site)/my-appointments/document-actions", () => ({ loadMyDocumentDoctors: async () => null }));
 vi.mock("@/lib/privacyNotice", () => ({ readAcceptedPrivacy: async () => null, privacyNoticeDue: () => false }));
 vi.mock("@/app/[locale]/(site)/my-appointments/MyAppointmentsClient", () => ({ MyAppointmentsClient: () => null }));
@@ -61,6 +62,7 @@ beforeEach(() => {
   h.multi = false;
   h.enabled = true;
   h.open = true;
+  h.view = false;
   h.pageCalls = [];
   h.loadDoctors.mockClear();
   process.env.VERCEL_ENV = "production";
@@ -88,7 +90,7 @@ describe("the Patient Channel entry on My appointments, both layouts", () => {
   it("multiDoctor ON (previews): per doctor in the list, as before; no primary button", async () => {
     h.multi = true;
     const p = await clientProps();
-    expect(p.doctors).toEqual([{ id: "doc1", name: "Dra. Ana", channel: true }]);
+    expect(p.doctors).toEqual([{ id: "doc1", name: "Dra. Ana", channel: true, channelView: false }]);
     expect(p.primaryChannel).toBe(false);
   });
 
@@ -100,5 +102,25 @@ describe("the Patient Channel entry on My appointments, both layouts", () => {
     process.env.VERCEL_ENV = "production";
     const prod = await clientProps({ single_doctor: "1" });
     expect(prod.doctors).not.toBeNull();
+  });
+
+  // 01, 10-26: the doctor's channel off (or no longer connected) but requests there:
+  // "Ver minhas mensagens" instead of "Fale com o Médico", in both layouts.
+  it("channel off for new messages, requests there: the view link, not the entry button", async () => {
+    h.open = false;
+    h.view = true;
+    const single = await clientProps();
+    expect([single.primaryChannel, single.primaryChannelView]).toEqual([false, true]);
+    h.multi = true;
+    const list = await clientProps();
+    expect(list.doctors).toEqual([{ id: "doc1", name: "Dra. Ana", channel: false, channelView: true }]);
+  });
+
+  it("the platform switch off: neither (the emergency stop)", async () => {
+    h.enabled = false;
+    h.view = true;
+    const p = await clientProps();
+    expect([p.primaryChannel, p.primaryChannelView]).toEqual([false, false]);
+    expect(h.pageCalls).toEqual([]);
   });
 });
