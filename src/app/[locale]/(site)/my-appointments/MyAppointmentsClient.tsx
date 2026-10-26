@@ -426,6 +426,7 @@ export function MyAppointmentsClient({
   privacyNotice = false,
   selfPrompts = [],
   doctors = null,
+  primaryChannel = false,
   canAddDoctor = false,
   docDoctors = null,
 }: {
@@ -449,12 +450,16 @@ export function MyAppointmentsClient({
   selfPrompts?: SelfPrompt[];
   // 1.5.0 (behind the flag): the patient's doctors; null = as before.
   doctors?: MyDoctor[] | null;
+  // The Patient Channel on the one-doctor card (no doctors list; www today): the same
+  // "Fale com o Médico" as MyDoctors' cards, where 237 opens it for this doctor.
+  primaryChannel?: boolean;
   canAddDoctor?: boolean;
   // 1.8.0 A (flag 'patient_documents'): the doctors with documents for this
   // patient, or a folder that takes uploads; null / empty = no section.
   docDoctors?: DocDoctor[] | null;
 }) {
   const t = useTranslations("myAppointments");
+  const tChannel = useTranslations("patientChannel.patient");
   const { locale } = useParams<{ locale: string }>();
   const router = useRouter();
   const prefix = locale === "en" ? "" : `/${locale}`;
@@ -544,6 +549,12 @@ export function MyAppointmentsClient({
               <p className="text-sm text-slate-500">
                 {[myProfessionalMeta?.specialty, whoLine(null, myProfessionalMeta?.clinicName) !== doctorName ? myProfessionalMeta?.clinicName : null].filter(Boolean).join(" · ")}
               </p>
+            )}
+            {primaryChannel && myProfessionalId && (
+              <a href={`${prefix}/my-appointments/channel/${myProfessionalId}`} data-testid="pc-entry"
+                className="mt-3 inline-block rounded-xl border-2 border-teal-600 px-4 py-1.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50">
+                {tChannel("entryButton")}
+              </a>
             )}
           </section>
         )}
