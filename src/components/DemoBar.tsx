@@ -135,7 +135,7 @@ export function DemoBar({ locale, country, count = false }: { locale: string; co
         data-testid="demo-signup"
         onClick={signUp}
         disabled={leaving}
-        className="shrink-0 rounded-full bg-[#0D9488] px-3.5 py-2 text-[13px] font-bold text-white shadow-[0_2px_0_rgba(0,0,0,0.15)] transition hover:bg-[#0B7F75] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#116E99] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F59E0B] disabled:opacity-70"
+        className="demo-signup-glow shrink-0 rounded-full bg-[#0D9488] px-3.5 py-2 text-[13px] font-bold text-white transition-colors hover:bg-[#0B7F75] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#116E99] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F59E0B] disabled:opacity-70"
       >
         <span className="hidden min-[380px]:inline">{t("signup")}</span>
         <span className="min-[380px]:hidden">{t("signupShort")}</span>

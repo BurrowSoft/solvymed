@@ -166,6 +166,20 @@ describe("DemoBar", () => {
     expect(h.calls).toEqual(["demo_count({\"p_metric\":\"leave\"})", "end_demo", "signOut", "assign /"]);
     expect(h.track).toHaveBeenCalledWith("demo_exit");
   });
+
+  // Vitor, 10-26: only the bar's sign-up glows (not the tour/value CTAs); a box-shadow
+  // pulse (no layout shift), 2.4 s; reduced motion: a still ring; paused on keyboard focus.
+  it("the sign-up button glows; reduced motion keeps a still ring; focus shows the ring", async () => {
+    render(wrap(<DemoBar locale="pt-BR" country="BR" />));
+    expect(screen.getByTestId("demo-signup").className).toContain("demo-signup-glow");
+    expect(document.querySelectorAll(".demo-signup-glow")).toHaveLength(1);
+    const { readFileSync } = await import("node:fs");
+    const css = readFileSync("src/app/globals.css", "utf8");
+    expect(css).toContain(".demo-signup-glow { box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15); animation: demo-signup-glow 2.4s");
+    expect(css).toMatch(/@keyframes demo-signup-glow \{[^@]*box-shadow/);
+    expect(css).toMatch(/prefers-reduced-motion: reduce\) \{ \.demo-signup-glow \{ animation: none; box-shadow: [^}]*0 0 0 3px/);
+    expect(css).toContain(".demo-signup-glow:focus-visible { animation: none; }");
+  });
 });
 
 describe("/demo", () => {
