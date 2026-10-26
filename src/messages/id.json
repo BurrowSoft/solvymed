@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "Mencari…",
+    "pickerFailed": "Tidak dapat mencari.",
+    "pickerRetry": "Coba lagi",
+    "pickerNoMatch": "Data tidak ditemukan: akan dijadwalkan tanpa data",
+    "pickerAnyway": "Tetap jadwalkan tanpa data",
+    "pickerLinkHint": "Ketuk pasien di daftar untuk menautkan data."
   },
   "payments": {
     "thisWeek": "Minggu ini",

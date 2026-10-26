@@ -55,15 +55,70 @@ describe("PatientPicker", () => {
     vi.useRealTimers();
   });
 
-  it("an exact name hides \"Agendar sem cadastro\"; a failed search still offers it", async () => {
+  it("an exact name hides \"Agendar sem cadastro\"", async () => {
     vi.useFakeTimers();
-    const { unmount } = render(<form><PatientPicker search={async () => PATIENTS} /></form>);
+    render(<form><PatientPicker search={async () => PATIENTS} /></form>);
     await typeIn("tânia lopes");
     expect(screen.queryByText(/Agendar sem cadastro/)).toBeNull();
-    unmount();
-    render(<form><PatientPicker search={async () => { throw new Error("x"); }} /></form>);
+    vi.useRealTimers();
+  });
+
+  // 01, 10-26 (the app the same): no booking by name before the search answers, and a
+  // failed search never silently offers it.
+  it("while the search runs: 'Buscando…', no unregistered row, Save blocked; then unblocked", async () => {
+    vi.useFakeTimers();
+    let answer: (p: typeof PATIENTS) => void = () => {};
+    const blocked = vi.fn();
+    render(<form><PatientPicker search={() => new Promise((r) => { answer = r; })} onStatusChange={(st) => blocked(st.blocked)} /></form>);
+    await typeIn("Tâ");
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["pickerSearching"]);
+    expect(screen.getByTestId("picker-searching").getAttribute("aria-disabled")).toBe("true");
+    expect(blocked).toHaveBeenLastCalledWith(true);
+    await act(async () => { answer([PATIENTS[0]]); });
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Tânia Lopes", "Agendar sem cadastro: Tâ"]);
+    expect(blocked).toHaveBeenLastCalledWith(false);
+    vi.useRealTimers();
+  });
+
+  it("no match: the row says it will be booked without a record, and Save is free", async () => {
+    vi.useFakeTimers();
+    const blocked = vi.fn();
+    render(<form><PatientPicker search={async () => []} onStatusChange={(st) => blocked(st.blocked)} /></form>);
     await typeIn("Zé");
-    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Agendar sem cadastro: Zé"]);
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["pickerNoMatch"]);
+    expect(blocked).toHaveBeenLastCalledWith(false);
+    vi.useRealTimers();
+  });
+
+  it("a failed search: the message, Save blocked until 'mesmo assim' or a retry that works", async () => {
+    vi.useFakeTimers();
+    const blocked = vi.fn();
+    let fail = true;
+    const search = vi.fn(async () => { if (fail) throw new Error("x"); return [PATIENTS[1]]; });
+    render(<form><PatientPicker search={search} onStatusChange={(st) => blocked(st.blocked)} /></form>);
+    await typeIn("Be");
+    expect(screen.getByTestId("picker-failed").textContent).toContain("pickerFailed");
+    expect(screen.queryByText(/Agendar sem cadastro/)).toBeNull();
+    expect(blocked).toHaveBeenLastCalledWith(true);
+    fireEvent.click(screen.getByText("pickerAnyway"));
+    expect(blocked).toHaveBeenLastCalledWith(false);
+    fail = false;
+    await act(async () => { fireEvent.click(screen.getByText("pickerRetry")); });
+    expect(search).toHaveBeenCalledTimes(2);
+    expect(screen.queryByTestId("picker-failed")).toBeNull();
+    expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual(["Beatriz Toledo", "Agendar sem cadastro: Be"]);
+    vi.useRealTimers();
+  });
+
+  it("matches but none picked: Save stays free, the form shows the link hint; never an automatic pick", async () => {
+    vi.useFakeTimers();
+    const status = vi.fn();
+    const { container } = render(<form><PatientPicker search={async () => PATIENTS} onStatusChange={status} /></form>);
+    await typeIn("Tânia Lopes");
+    expect(status).toHaveBeenLastCalledWith({ blocked: false, unlinked: true });
+    expect(container.querySelector("input[name=patient_id]")).toBeNull();
+    fireEvent.mouseDown(screen.getByText("Tânia Lopes"));
+    expect(status).toHaveBeenLastCalledWith({ blocked: false, unlinked: false });
     vi.useRealTimers();
   });
 });

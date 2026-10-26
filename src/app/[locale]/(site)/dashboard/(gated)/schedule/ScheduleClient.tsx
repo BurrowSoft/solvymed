@@ -471,6 +471,9 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
   // In "Todos" (166), for the doctor chosen first; else as before.
   const create = useRowAction("createAppointment", createAppointment);
   const search = useRowAction("searchPatientsForPicker", searchPatientsForPicker);
+  // The picker's state (PatientPicker): blocked = Save waits (a search runs or failed);
+  // unlinked = matches listed but none picked (the hint above Save).
+  const [picker, setPicker] = useState({ blocked: false, unlinked: false });
   const t = useTranslations("schedule");
   const tDate = useTranslations("dateInput");
   const tConsult = useTranslations("consultType");
@@ -633,6 +636,7 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
                 placeholder={t("patientNamePlaceholder")}
                 defaultValue={prefill?.patientName}
                 inputClassName="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
+                onStatusChange={setPicker}
               />
             )}
           </div>
@@ -743,9 +747,10 @@ export function NewAppointmentButton({ defaultDate, procedures, label, autoOpen 
           </div>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
+          {picker.unlinked && <p data-testid="picker-link-hint" className="text-sm text-slate-600">{t("pickerLinkHint")}</p>}
           <div className="flex gap-3 pt-2">
             <button type="button" onClick={discard.requestClose} className="flex-1 rounded-xl border border-slate-200 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition">{t("cancel")}</button>
-            <button type="submit" disabled={pending} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
+            <button type="submit" disabled={pending || picker.blocked} className="flex-1 rounded-xl bg-teal-600 py-2.5 text-sm font-bold text-white hover:bg-teal-700 transition disabled:opacity-60">
               {pending ? t("saving") : recurrence ? t("saveTimes", { n: parseInt(occurrences, 10) || DEFAULT_OCCURRENCES }) : t("saveAppt")}
             </button>
           </div>

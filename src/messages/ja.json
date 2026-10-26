@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "検索中…",
+    "pickerFailed": "検索できませんでした。",
+    "pickerRetry": "もう一度試す",
+    "pickerNoMatch": "登録が見つかりません：登録なしで予約されます",
+    "pickerAnyway": "それでも登録なしで予約",
+    "pickerLinkHint": "リストの患者をタップして登録に紐づけてください。"
   },
   "payments": {
     "thisWeek": "今週",

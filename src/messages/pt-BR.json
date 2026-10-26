@@ -314,7 +314,13 @@
     "showInside": "Só o horário de atendimento",
     "otherTime": "Outro horário…",
     "slotTaken": "Ocupado",
-    "proceduresTip": "Dica: cadastre seus procedimentos em <link>Configurações</link> para preencher duração e valor automaticamente."
+    "proceduresTip": "Dica: cadastre seus procedimentos em <link>Configurações</link> para preencher duração e valor automaticamente.",
+    "pickerSearching": "Buscando…",
+    "pickerFailed": "Não foi possível buscar.",
+    "pickerRetry": "Tentar novamente",
+    "pickerNoMatch": "Nenhum cadastro encontrado: será agendado sem cadastro",
+    "pickerAnyway": "Agendar sem cadastro mesmo assim",
+    "pickerLinkHint": "Toque em um paciente da lista para vincular ao cadastro."
   },
   "payments": {
     "thisWeek": "Esta semana",

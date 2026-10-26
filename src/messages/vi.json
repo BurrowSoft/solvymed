@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "Đang tìm…",
+    "pickerFailed": "Không thể tìm kiếm.",
+    "pickerRetry": "Thử lại",
+    "pickerNoMatch": "Không tìm thấy hồ sơ: sẽ đặt lịch không có hồ sơ",
+    "pickerAnyway": "Vẫn đặt lịch không có hồ sơ",
+    "pickerLinkHint": "Chạm vào một bệnh nhân trong danh sách để liên kết hồ sơ."
   },
   "payments": {
     "thisWeek": "Tuần này",

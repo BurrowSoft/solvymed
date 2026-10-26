@@ -314,7 +314,13 @@
     "showInside": "Working hours only",
     "otherTime": "Other time…",
     "slotTaken": "Taken",
-    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically."
+    "proceduresTip": "Tip: add your procedures in <link>Settings</link> to fill in the length and price automatically.",
+    "pickerSearching": "Searching…",
+    "pickerFailed": "Couldn't search.",
+    "pickerRetry": "Try again",
+    "pickerNoMatch": "No record found: it will be booked without a record",
+    "pickerAnyway": "Book without a record anyway",
+    "pickerLinkHint": "Tap a patient in the list to link the record."
   },
   "payments": {
     "thisWeek": "Esta semana",
