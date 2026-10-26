@@ -127,12 +127,14 @@ export function toShownMessages(raw: unknown): ShownMessage[] {
 // combinations the lines and answers name, and the highlights in the text. The rules
 // themselves (the weights) never reach a secretary's browser (cf's M0 point 4); these
 // are computed on the server.
-export type DetailNames = { symptoms: Record<string, string>; combos: Record<string, string[]> };
+// warnings: the ids (among those) with the immediate warning, for the safety-floor line.
+export type DetailNames = { symptoms: Record<string, string>; combos: Record<string, string[]>; warnings: string[] };
 
 export function detailNames(config: ChannelConfig | null, lines: ScoreLine[], symptomIds: string[]): DetailNames {
   const symptoms: Record<string, string> = {};
   const combos: Record<string, string[]> = {};
-  if (!config) return { symptoms, combos };
+  const warnings: string[] = [];
+  if (!config) return { symptoms, combos, warnings };
   const want = new Set(symptomIds);
   for (const l of lines) {
     if ("comboId" in l.label) {
@@ -145,8 +147,12 @@ export function detailNames(config: ChannelConfig | null, lines: ScoreLine[], sy
       want.add(l.label.symptomId);
     }
   }
-  for (const s of config.symptoms) if (want.has(s.id)) symptoms[s.id] = s.name;
-  return { symptoms, combos };
+  for (const s of config.symptoms) {
+    if (!want.has(s.id)) continue;
+    symptoms[s.id] = s.name;
+    if (s.immediateWarning) warnings.push(s.id);
+  }
+  return { symptoms, combos, warnings };
 }
 
 export function detailHighlights(config: ChannelConfig | null, text: string): Match[] {
@@ -191,3 +197,14 @@ export function highlightParts(text: string, matches: Match[]): { text: string; 
 }
 
 export const REPLY_MAX = 500;
+
+// Why a request is Urgent below the threshold (the safety floor, 01 10-26): a line of a
+// symptom with the immediate warning. "patient" when the patient selected or wrote it,
+// "ai" when only the AI found it; null otherwise.
+export function warningFloorCause(names: DetailNames, lines: ScoreLine[], band: Band): "patient" | "ai" | null {
+  if (band !== "red" || names.warnings.length === 0) return null;
+  const warned = (l: ScoreLine) => "symptomId" in l.label && names.warnings.includes(l.label.symptomId);
+  if (lines.some((l) => l.source !== "ai" && warned(l))) return "patient";
+  if (lines.some((l) => l.source === "ai" && warned(l))) return "ai";
+  return null;
+}

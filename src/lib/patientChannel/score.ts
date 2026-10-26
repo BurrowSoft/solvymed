@@ -306,11 +306,15 @@ export function scoreRequest(config: ChannelConfig, answers: Answers, opts: { ai
     for (const s of config.symptoms) {
       if (!effectiveIds.has(s.id) && (opts.aiSymptomIds ?? []).includes(s.id)) aiIds.add(s.id);
     }
-    const value = (points: number, adjust: Adjust) =>
-      Math.max(0, points + ANSWER_KEYS.reduce((n, key) => n + adjustment(adjust, key, answers[key]), 0));
+    // A warning symptom's negative adjustments don't apply here either (the safety floor).
+    const value = (points: number, adjust: Adjust, noLoss = false) =>
+      Math.max(0, points + ANSWER_KEYS.reduce((n, key) => {
+        const v = adjustment(adjust, key, answers[key]);
+        return n + (noLoss && v < 0 ? 0 : v);
+      }, 0));
     for (const id of aiIds) {
       const s = bySymptomId.get(id)!;
-      const v = value(s.points, s.adjust);
+      const v = value(s.points, s.adjust, s.immediateWarning);
       if (v > 0) lines.push({ label: { symptomId: id }, points: v, source: "ai" });
     }
     for (const c of config.combinations) {
@@ -324,19 +328,21 @@ export function scoreRequest(config: ChannelConfig, answers: Answers, opts: { ai
   }
 
   const total = sum();
-  let band = bandFor(total, config.thresholds);
+  // The AI never lowers (01, 10-26): the final band is the higher of the band without the
+  // AI (bandBeforeAi, with the text-only floor) and the band with it.
+  const bandWithAi = bandFor(total, config.thresholds);
+  let band = maxBand(bandWithAi, bandBeforeAi);
 
-  // Safety floor (01, 10-26, TH-1): an immediate-warning symptom (box, chip or text; not
-  // the AI, which never drives the warning) puts the request in the top band, whatever
-  // the points: the patient was shown the emergency number.
-  if (effective.some((e) => e.symptom.immediateWarning)) band = "red";
+  // Safety floor (01, 10-26, TH-1): an immediate-warning symptom puts the request in the
+  // top band, whatever the points: one the patient selected or wrote (they were shown the
+  // emergency number), or one the AI found (upward only, for the doctor's inbox; the
+  // patient-facing warning above stays patient input only).
+  if (effective.some((e) => e.symptom.immediateWarning) || [...aiIds].some((id) => bySymptomId.get(id)!.immediateWarning)) band = "red";
 
-  // §4.2 rule 8: text with nothing recognised (not even by the AI) is at least the floor.
-  let floorApplied = false;
-  if (hasText && effective.length === 0 && aiIds.size === 0 && BAND_RANK[config.minBandForTextOnly] > BAND_RANK[band]) {
-    band = config.minBandForTextOnly;
-    floorApplied = true;
-  }
+  // §4.2 rule 8: text with nothing recognised is at least the floor, even when the AI found
+  // something (01: never skipped because of the AI). floorApplied: the floor decided the band.
+  const floorApplied = hasText && effective.length === 0 &&
+    BAND_RANK[config.minBandForTextOnly] > BAND_RANK[bandWithAi] && band === config.minBandForTextOnly;
 
   // §4.2 rule 9: ALL terms present (an effective symptom's name, or a medicine found in
   // the text or locked as a chip) and every condition met.

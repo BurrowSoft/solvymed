@@ -82,9 +82,10 @@ describe("the Patient Channel score: Thai, whole words, accents", () => {
 });
 
 // 01, 10-26 (TH-1): an immediate-warning symptom (box, chip or text; never the AI) puts the
-// request in red whatever the points; its own negative answer adjustments don't apply.
+// request in red whatever the points; its own negative answer adjustments don't apply. The AI
+// never lowers the band (the text-only floor still applies when it finds something).
 describe("the Patient Channel score: the safety floor", () => {
-  it("has its 6 cases", () => expect(cases.safetyFloor.cases).toHaveLength(6));
+  it("has its 7 cases", () => expect(cases.safetyFloor.cases).toHaveLength(7));
   for (const c of cases.safetyFloor.cases as Case[]) it(c.id, () => check(floorConfig, c));
 });
 
