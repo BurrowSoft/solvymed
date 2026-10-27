@@ -37,9 +37,9 @@ describe("not_accepting_files (item 39)", () => {
     expect(tab).toContain('case "notAccepting":');
   });
 
-  it("Help P15 and the App Map wait for archived-upload-block-live", () => {
+  it("Help P15 and the App Map show with archived-upload-block-live (met: 260 + patient-document v5, 10-27)", () => {
     const conditions = JSON.parse(readFileSync("content/help/conditions.json", "utf8"));
-    expect(conditions["archived-upload-block-live"].met).toBe(false);
+    expect(conditions["archived-upload-block-live"].met).toBe(true);
     const help = readFileSync("content/help/02-pacientes.md", "utf8");
     expect(help).toContain("{pending:archived-upload-block-live} Pacientes arquivados continuam vendo os documentos já compartilhados, mas não podem enviar novos arquivos.");
     expect(help).toContain("{pending:archived-upload-block-live} Archived patients still see the documents already shared, but can't send new files.");

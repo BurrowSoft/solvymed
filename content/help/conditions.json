@@ -328,8 +328,8 @@
     "what": "LIVE 2026-10-26: mobile #554's production OTA, group 0d051ab0, 18:02:29Z (the mobile developer). The Android app's invite gate (\"Conectar ao seu médico\") offers \"Excluir minha conta\" / \"Pedir exclusão da conta\" (mobile #554, on 243's RPCs; the website has had it since #640). Flip when #554's production OTA is live (the mobile developer says so). Gates Help K4's app line and the App Map's app rule."
   },
   "archived-upload-block-live": {
-    "met": false,
-    "what": "Item 39's migration (launch polish; its number is set when it ships) is applied on production and the patient-document function redeployed: a patient can't upload new files into an ARCHIVED record (code not_accepting_files, the neutral \"Este consultório não está recebendo arquivos no momento.\"); reading, listing, opening and the patient's own removal stay. Flip when the mobile developer reports it live. Gates Help P15's line and the App Map rule."
+    "met": true,
+    "what": "Item 39's migration (launch polish; migration 260, live 10-27 15:23Z; patient-document v5 15:25Z; flipped on 01's GO) is applied on production and the patient-document function redeployed: a patient can't upload new files into an ARCHIVED record (code not_accepting_files, the neutral \"Este consultório não está recebendo arquivos no momento.\"); reading, listing, opening and the patient's own removal stay. Flip when the mobile developer reports it live. Gates Help P15's line and the App Map rule."
   },
   "migration-244": {
     "met": true,
