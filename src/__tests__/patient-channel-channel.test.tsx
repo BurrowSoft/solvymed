@@ -16,7 +16,14 @@ import {
 // Patient Channel M3b-2: the practice settings, reasons and FAQ (237's tables, the
 // doctor's rows under RLS). The cover image comes later.
 
-const h = vi.hoisted(() => ({ calls: [] as { table: string; op: string; payload?: unknown; eq?: [string, unknown] }[], fail: false }));
+const h = vi.hoisted(() => ({
+  calls: [] as { table: string; op: string; payload?: unknown; eq?: [string, unknown] }[],
+  fail: false,
+  // The insert's error (a duplicate key: 23505), and how many updates succeed before one fails.
+  insertError: null as null | { code: string; message: string },
+  updatesOk: Infinity,
+  stored: [] as unknown[],
+}));
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     from: (table: string) => {
@@ -24,12 +31,21 @@ vi.mock("@/lib/supabase/client", () => ({
       return {
         insert: (payload: unknown) => {
           h.calls.push({ table, op: "insert", payload });
-          const r = result();
+          const r = h.insertError ? { data: null, error: h.insertError } : result();
           return { select: () => ({ single: async () => r }), then: (ok: (v: unknown) => void) => ok(r) };
         },
         update: (payload: unknown) => ({
-          eq: async (col: string, val: unknown) => { h.calls.push({ table, op: "update", payload, eq: [col, val] }); return result(); },
+          eq: async (col: string, val: unknown) => {
+            h.calls.push({ table, op: "update", payload, eq: [col, val] });
+            if (h.calls.filter((c) => c.op === "update").length > h.updatesOk) return { data: null, error: { message: "x" } };
+            return result();
+          },
         }),
+        select: (cols: string) => {
+          h.calls.push({ table, op: "select", payload: cols });
+          const chain = { eq: () => chain, is: () => chain, order: () => chain, then: (ok: (v: unknown) => void) => ok({ data: h.stored, error: null }) };
+          return chain;
+        },
       };
     },
   }),
@@ -46,7 +62,7 @@ const mount = (opts: { hasRow?: boolean; reasons?: PcReasonRow[]; onRowCreated?:
       initial={DEFAULT_SETTINGS} reasons={opts.reasons ?? []} faq={[]} brandHref="/pt-BR/dashboard/settings#brand" />,
   ));
 
-beforeEach(() => { h.calls = []; h.fail = false; });
+beforeEach(() => { h.calls = []; h.fail = false; h.insertError = null; h.updatesOk = Infinity; h.stored = []; });
 
 describe("the channel's pure rules (237's checks)", () => {
   it("reading hours: 1+ days in 1..7, HH:MM, end after start, at most 14 rows", () => {
@@ -91,6 +107,32 @@ describe("Seu canal", () => {
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(C.channel.saved));
     expect(h.calls[0]).toMatchObject({ table: "pc_settings", op: "insert", payload: { professional_id: "doc1", enabled: true } });
     expect(onRowCreated).toHaveBeenCalledTimes(1);
+  });
+
+  it("the first save meets a row made elsewhere (23505): updated instead, saved, once", async () => {
+    const onRowCreated = vi.fn();
+    h.insertError = { code: "23505", message: "duplicate key" };
+    mount({ onRowCreated });
+    fireEvent.click(screen.getByRole("checkbox", { name: new RegExp(C.channel.enabled) }));
+    fireEvent.click(screen.getByTestId("pc-channel-save"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(C.channel.saved));
+    expect(h.calls.map((c) => c.op)).toEqual(["insert", "update"]);
+    expect(h.calls[1]).toMatchObject({ table: "pc_settings", payload: { enabled: true }, eq: ["professional_id", "doc1"] });
+    expect(onRowCreated).toHaveBeenCalledTimes(1);
+    // The next save updates, even before the parent passes hasRow.
+    fireEvent.click(screen.getByRole("checkbox", { name: new RegExp(C.channel.enabled) }));
+    fireEvent.click(screen.getByTestId("pc-channel-save"));
+    await waitFor(() => expect(h.calls).toHaveLength(3));
+    expect(h.calls[2].op).toBe("update");
+  });
+
+  it("another insert error is not retried", async () => {
+    h.insertError = { code: "42501", message: "rls" };
+    mount();
+    fireEvent.click(screen.getByRole("checkbox", { name: new RegExp(C.channel.enabled) }));
+    fireEvent.click(screen.getByTestId("pc-channel-save"));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent(C.channel.saveError));
+    expect(h.calls.map((c) => c.op)).toEqual(["insert"]);
   });
 
   it("with a row: an update of the doctor's own row", async () => {
@@ -138,6 +180,17 @@ describe("Motivos do contato", () => {
     await waitFor(() => expect(region.getAllByTestId("pc-reason")).toHaveLength(1));
     expect(h.calls.at(-1)).toMatchObject({ table: "pc_reasons", op: "update", eq: ["id", "r2"] });
     expect((h.calls.at(-1)!.payload as { archived_at?: string }).archived_at).toBeTruthy();
+  });
+
+  it("a failed ↑↓ (one moved, one not): the error, and the list re-read as stored", async () => {
+    h.updatesOk = 1;
+    h.stored = [{ ...reason("r2", 1), subtitle: null }, reason("r1", 1)];
+    mount({ reasons: [reason("r1", 1), reason("r2", 2)] });
+    const region = within(screen.getByRole("region", { name: C.reasons.title }));
+    fireEvent.click(region.getByRole("button", { name: C.reasons.up.replace("{title}", "Motivo r2") }));
+    await waitFor(() => expect(h.calls.some((c) => c.op === "select" && c.table === "pc_reasons")).toBe(true));
+    expect(region.getByRole("status")).toHaveTextContent(C.reasons.saveError);
+    await waitFor(() => expect(region.getAllByTestId("pc-reason")[0]).toHaveTextContent("Motivo r2"));
   });
 });
 

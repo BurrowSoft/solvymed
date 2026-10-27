@@ -58,7 +58,9 @@ export type ChannelEntry = "open" | "view" | null;
 export async function channelEntry(db: SupabaseClient, profId: string): Promise<ChannelEntry> {
   const access = await patientPage(db, profId);
   if (access.ok) return "open";
-  if (access.code !== "channel_off" && access.code !== "not_connected") return null;
+  // A closed practice or an archived record too (01 + cf, 10-27: a patient can always read
+  // what they sent): "view" when they have requests there.
+  if (access.code !== "channel_off" && access.code !== "not_connected" && access.code !== "pc_practice_closed" && access.code !== "pc_patient_archived") return null;
   return (await myRequestsWith(db, profId)).length > 0 ? "view" : null;
 }
 

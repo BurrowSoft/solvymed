@@ -22,14 +22,17 @@ const db = (pageError: string | null, rows: unknown[]) => ({
 }) as never;
 
 describe("channelEntry", () => {
-  it("open; view when off or no longer connected WITH requests; nothing otherwise", async () => {
+  it("open; view when off, no longer connected, closed or archived WITH requests; nothing otherwise", async () => {
     expect(await channelEntry(db(null, []), "d1")).toBe("open");
     expect(await channelEntry(db("channel_off", [ROW]), "d1")).toBe("view");
     expect(await channelEntry(db("not_connected", [ROW]), "d1")).toBe("view");
     expect(await channelEntry(db("channel_off", []), "d1")).toBeNull();
-    // A closed practice / archived patient: not this case (the page says "não disponível").
-    expect(await channelEntry(db("pc_practice_closed", [ROW]), "d1")).toBeNull();
-    expect(await channelEntry(db("pc_patient_archived", [ROW]), "d1")).toBeNull();
+    // 01 + cf (10-27): a patient can always read what they sent, a closed practice or an
+    // archived record included (privacy PC-8′).
+    expect(await channelEntry(db("pc_practice_closed", [ROW]), "d1")).toBe("view");
+    expect(await channelEntry(db("pc_patient_archived", [ROW]), "d1")).toBe("view");
+    expect(await channelEntry(db("pc_practice_closed", []), "d1")).toBeNull();
+    expect(await channelEntry(db("failed", [ROW]), "d1")).toBeNull();
   });
 
   it("myRequestsWith: the rows, or [] on a failed read", async () => {
@@ -52,5 +55,27 @@ describe("the read-only channel", () => {
     expect(screen.getByTestId("pc-my-request-reply")).toHaveTextContent("Enviada por e-mail.");
     expect(screen.queryByTestId("pc-start")).toBeNull();
     expect(screen.queryByRole("textbox")).toBeNull();
+  });
+});
+
+describe("a closed practice or an archived record (01 + cf, 10-27)", () => {
+  it("the messages stay readable, under the 'não disponível' line; no form", () => {
+    render(
+      <NextIntlClientProvider locale="pt-BR" messages={pt}>
+        <ReadOnlyChannel doctorName="Dra. Ana" practiceLine="Clínica" emergencyNumber="192" country="BR" timeZone="America/Sao_Paulo"
+          requests={[{ ...ROW, status: "answered" as const }]} unavailable />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByTestId("pc-read-only-note")).toHaveTextContent(pt.patientChannel.patient.unavailable);
+    expect(screen.getByTestId("pc-my-request-reply")).toBeInTheDocument();
+    expect(screen.queryByTestId("pc-start")).toBeNull();
+    expect(screen.queryByRole("textbox")).toBeNull();
+  });
+
+  it("the page dispatches closed / archived to the read-only view when there are requests", async () => {
+    const fs = await import("node:fs");
+    const page = fs.readFileSync("src/app/[locale]/(site)/my-appointments/channel/[professionalId]/page.tsx", "utf8");
+    expect(page).toContain('access.code === "pc_practice_closed" || access.code === "pc_patient_archived"');
+    expect(page).toContain("unavailable={closedOrArchived}");
   });
 });

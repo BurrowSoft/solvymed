@@ -2579,6 +2579,14 @@
       "errorType": "請使用 PNG、JPEG 或 WebP 檔案。",
       "errorNotSetUp": "上傳封面前請先儲存頻道設定。"
     },
+    "template": {
+      "start": "從現成範本開始：通用 / 副作用",
+      "use": "使用範本",
+      "openRequests": "更換範本前，請先回覆或關閉未處理的請求。",
+      "backTo": "恢復為初始範本",
+      "confirm": "這將以範本取代您的症狀、組合、緊急程度、藥物和自動訊息。是否繼續？",
+      "replace": "取代"
+    },
     "title": "病患頻道",
     "entryText": "病患透過有條理的頻道提問，並依照您設定的分數按緊急程度排序。",
     "entryOpen": "設定",
