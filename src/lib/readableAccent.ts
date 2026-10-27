@@ -83,7 +83,7 @@ export function brandAccent(stored: string | null | undefined): string {
 // "AS", "นพ.สมชาย ใจดี" → "สใ", "หมอซ้อม ใหญ่" → "ซใ"), for the no-logo mark. The
 // Thai "หมอ" / "คุณหมอ" ("doctor") is written without a dot, often without a space
 // (launch polish 35).
-const TITLE = /^(?:(?:dott\.ssa|dott|dra|dr|profa|prof|pr)(?:\.?ª\.?|\.)?\s+|(?:ทพญ|ทพ|นพ|พญ|ภก|ภญ|ดร)\.\s*|(?:คุณหมอ|หมอ)\s*)/i;
+const TITLE = /^(?:(?:dott\.ssa|dott|dra|dr|profa|prof|pr)(?:\.?ª\.?|\.)?\s+|(?:ทพญ|ทพ|ทญ|นพ|พญ|ภก|ภญ|ดร)\.\s*|(?:คุณหมอ|หมอ)\s*)/i;
 export function brandInitials(name: string | null | undefined): string {
   const words = (name ?? "").trim().replace(TITLE, "").split(/\s+/).filter(Boolean);
   const pick = words.length > 1 ? [words[0], words[words.length - 1]] : words;

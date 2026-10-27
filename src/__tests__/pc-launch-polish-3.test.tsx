@@ -53,7 +53,8 @@ describe("35: Thai titles out of the initials", () => {
     expect(brandInitials("หมอซ้อมใหญ่ ทดสอบ")).toBe("ซท");
     expect(brandInitials("หมอ สมชาย ใจดี")).toBe("สใ");
     expect(brandInitials("คุณหมอมาลี สุขใจ")).toBe("มส");
-    expect(brandInitials("นพ.สมชาย ใจดี")).toBe("สใ");
+    // The dotted professional titles too (01): นพ. พญ. ทพ. ทญ. ทพญ. ดร., with or without a space.
+    for (const title of ["นพ.", "พญ.", "ทพ.", "ทญ.", "ทพญ.", "ดร.", "นพ. ", "ดร. "]) expect(brandInitials(`${title}สมชาย ใจดี`), title).toBe("สใ");
     expect(brandInitials("Dra. Ana Souza")).toBe("AS");
   });
 });
