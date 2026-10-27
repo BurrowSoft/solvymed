@@ -2824,7 +2824,8 @@
       "openTextSecretary": "Do you want to update the one the front desk already has? The new one replaces it.",
       "entryButtonNamed": "Contact {doctor}",
       "openExistsNamed": "You already have an open request: {reason} ({date}).",
-      "aiNotice": "This clinic uses AI to organise messages."
+      "aiNotice": "This clinic uses AI to organise messages.",
+      "replacedPrevious": "Replaced your previous message."
     },
     "channel": {
       "title": "Your channel",

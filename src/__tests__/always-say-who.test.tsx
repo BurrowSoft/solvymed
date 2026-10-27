@@ -92,7 +92,10 @@ describe("Minhas Consultas says who", () => {
       </NextIntlClientProvider>,
     );
     expect(screen.queryByTestId("appointment-who")).toBeNull();
-    expect(screen.queryByTestId("your-doctor")).toBeNull();
+    // A connected patient keeps the card even without the doctor's name (launch polish B, web
+    // tester 2): only "Seu médico", no name line, so Desconectar and the channel stay reachable.
+    expect(screen.getByTestId("your-doctor")).toHaveTextContent(pt.myAppointments.yourDoctor);
+    expect(screen.queryByTestId("your-doctor-name")).toBeNull();
   });
 
   it("copy in en / th (e7, as the app)", () => {

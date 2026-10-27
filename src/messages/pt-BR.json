@@ -2824,7 +2824,8 @@
       "openTextSecretary": "Quer atualizar a que já está com a secretaria? A nova substitui a anterior.",
       "entryButtonNamed": "Fale com {doctor}",
       "openExistsNamed": "Você já tem uma solicitação aberta: {reason} ({date}).",
-      "aiNotice": "Esta clínica usa IA para organizar as mensagens."
+      "aiNotice": "Esta clínica usa IA para organizar as mensagens.",
+      "replacedPrevious": "Substituiu a mensagem anterior."
     },
     "channel": {
       "title": "Seu canal",

@@ -2824,7 +2824,8 @@
       "openTextSecretary": "접수처에 이미 있는 요청을 업데이트할까요? 새 요청이 기존 요청을 대체합니다.",
       "entryButtonNamed": "{doctor}에게 연락",
       "openExistsNamed": "이미 열린 요청이 있습니다: {reason} ({date})",
-      "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다."
+      "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다.",
+      "replacedPrevious": "이전 메시지를 대체했습니다."
     },
     "channel": {
       "title": "내 채널",
