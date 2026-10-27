@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // Política de Privacidade em português (Brasil). Autoritativa junto com a
 // versão em inglês; mantenha as duas alinhadas.
-export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false }: { demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false, pcNotify = false, whatsappOptout = false }: { demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; pcNotify?: boolean; whatsappOptout?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; turnstile: boolean; whatsappAuto?: boolean; referrals?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Visão geral">
@@ -47,7 +47,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           {founders
             ? ", ou, se você se inscrever no Programa Fundadores, com a sua inscrição (guardada até 12 meses após a última mudança de status, ou enquanto a sua conta existir, se você for aceito)."
             : "."}
-          {appReferrer && " No app Android, com o mesmo consentimento, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar."}{" "}
+          {appReferrer && " No app Android, com o consentimento opcional do próprio app, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar."}{" "}
           Até você confirmar o e-mail, guardamos esses dados com o seu cadastro pendente (apagados na confirmação ou em no máximo 30 dias).{" "}
           <strong>Dados de pacientes nunca são usados para análise ou marketing.</strong>
         </p>
@@ -93,7 +93,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Supabase", "Banco de dados, autenticação, armazenamento de arquivos", "Brasil (região de São Paulo)"],
             ["Vercel", "Hospedagem do site; processamento no Brasil (São Paulo), conteúdo estático por rede global", "Brasil / global"],
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
-            ["Resend", `E-mails transacionais (confirmações, redefinição de senha${reminders ? ", lembretes únicos sobre a conta" : ""})${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
+            ["Resend", `E-mails transacionais (confirmações, redefinição de senha${reminders ? ", lembretes únicos sobre a conta" : ""}${pcNotify ? ", o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)" : ""})${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
@@ -105,14 +105,14 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             // A verificação contra robôs da demonstração (OK do Vitor): linha própria.
             ...(demo ? [["Cloudflare (Turnstile)", "Verifica que é uma pessoa, e não um robô, que está iniciando a demonstração", "Global"]] : []),
             ...(solvyai
-              ? [["Anthropic (SolvyAI, só profissionais, quando usado)", "Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido", "EUA"]]
+              ? [[pcAi ? "Anthropic (SolvyAI, quando usado)" : "Anthropic (SolvyAI, só profissionais, quando usado)", `Processa as perguntas e pedidos digitados pelo profissional para respondê-los; nas ações que o profissional ativou, o nome e a data de nascimento do paciente e os dados da consulta necessários ao pedido${pcAi ? "; e, quando um profissional ativa a opção de IA do Canal do Paciente, as mensagens que os pacientes dele enviam ali, com os nomes do paciente e do profissional, números de documento, telefones e e-mails mascarados, apenas para sugerir sintomas da própria lista do profissional" : ""}`, "EUA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", "Envia avisos de consulta (os nomes do médico e da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los", "Japão / Tailândia"]]
+              ? [["LY Corporation (LINE), só clínicas na Tailândia, para pacientes que conectam o LINE", `Envia avisos de consulta (os nomes do médico e da clínica, a data e o horário, e o que aconteceu: confirmada, remarcada, lembrete, cancelada); guardamos o identificador LINE do paciente para entregá-los${pcNotify ? "; e, no Canal do Paciente, o aviso de que a clínica respondeu (uma frase fixa e um link, sem informação de saúde)" : ""}`, "Japão / Tailândia"]]
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", "Envia as mensagens automáticas de WhatsApp da clínica pela conta Z-API e pelo número de WhatsApp da própria clínica: confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)", "Brasil"],
+                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", `Envia as mensagens automáticas de WhatsApp da clínica pela conta Z-API e pelo número de WhatsApp da própria clínica: confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta${pcNotify ? ", e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)" : ""}, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)`, "Brasil"],
                   ["WhatsApp (Meta)", "Entrega essas mensagens de WhatsApp", "EUA / global"],
                 ]
               : []),
@@ -146,7 +146,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       {solvyai && (
         <Section title="6b. SolvyAI (só profissionais)">
           <ul className="list-disc space-y-1 pl-5">
-            <li>O SolvyAI é um assistente opcional para profissionais. Ele nunca lê prontuários, receitas, exames ou arquivos.</li>
+            <li>O SolvyAI é um assistente opcional para profissionais. Ele nunca lê prontuários, receitas, exames ou arquivos{pcAi && ", exceto a mensagem de um paciente no Canal do Paciente, quando o profissional ativa essa opção (veja 6i)"}.</li>
             <li>O que você digita no chat é enviado como você escreveu; não digite dados clínicos. Números de CPF e de identidade tailandesa, telefones e e-mails são mascarados antes do envio.</li>
             <li>As ações (marcar, remarcar, cancelar, bloquear horários, cadastrar pacientes, marcar pagamentos) vêm desativadas; quando o profissional as ativa, os dados do paciente necessários para cada pedido são enviados como descrito na seção 5, e nada é salvo sem a confirmação do profissional.</li>
             <li>Não guardamos as conversas depois da sessão. Um 👍/👎 numa resposta é registrado só como voto, nunca a conversa.</li>
@@ -176,7 +176,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       {(notices || whatsapp) && (
         <Section title="6e. Avisos ao paciente">
           <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
-          {whatsappAuto && <p className="mt-2">As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).</p>}
+          {whatsappAuto && <p className="mt-2">As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).{whatsappOptout && " As mensagens automáticas pelo WhatsApp têm um link para não recebê-las mais."}</p>}
         </Section>
       )}
 
@@ -193,13 +193,19 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       <Section title="6g. Notificações">
         <ul>
-          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos{reminders && " e, no máximo uma vez, um lembrete para configurar sua clínica"}. O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
+          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos.{reminders && " No máximo uma vez, também enviamos uma notificação push lembrando de configurar sua clínica."} O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
           <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é e quem a gerou, de qual consulta e tipo de aviso se trata, a data e o horário da consulta, os nomes que aparecem nela e o status de entrega (no aviso geral, o título e a mensagem). Cada uma é apagada no máximo 30 dias depois de criada.</li>
           {closureNotices && (
             <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica (que pode ser o próprio nome do profissional) e o país dela, a data e o horário da consulta (no caso de consultas canceladas) e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
           )}
           {patientDocs && (
             <li>Quando um profissional compartilha um documento, o paciente recebe uma notificação apenas com o nome do profissional. Quando um paciente envia um documento, o profissional recebe uma apenas com o nome do paciente. A notificação nunca inclui o título nem o conteúdo do documento.</li>
+          )}
+          {pcNotify && (
+            <li>Canal do Paciente: quando um paciente envia uma solicitação, o profissional (ou, nas solicitações administrativas, as secretárias da clínica) recebe uma notificação push &ldquo;Nova mensagem de um paciente&rdquo;. Quando a clínica responde, o paciente recebe uma notificação push dizendo que o profissional respondeu ou vai ligar, e no máximo uma mensagem fora do app: pelo LINE, se ele conectou o LINE; senão, pelo WhatsApp, do número da própria clínica, se a clínica ativou as mensagens automáticas de WhatsApp e o cadastro do paciente tem telefone; senão, por e-mail, para o endereço com que ele entra no SolvyMed. Essa mensagem diz apenas &ldquo;Você recebeu uma resposta no Canal do Paciente.&rdquo; com um link para a página do canal. Os e-mails têm um link para não recebê-los mais; guardamos essa escolha na sua conta, e ela é apagada junto com a conta. As respostas continuam no app e no site. Se um aviso não puder ser enviado em até um dia, ele é descartado; a resposta continua visível no canal. Nenhuma notificação do Canal do Paciente inclui a mensagem, os sintomas ou qualquer outra informação de saúde, e a mensagem fora do app não traz o nome do profissional. Mensagens fora do app não são enviadas entre 21h e 8h no fuso horário da clínica: elas aguardam até as 8h. As notificações para a clínica são só push.</li>
+          )}
+          {pcNotify && (
+            <li>Os avisos do Canal do Paciente aguardam numa fila própria só para serem entregues: qual solicitação, para quem é, o tipo de aviso e o canal, o idioma, quando enviar e se foi enviado (com, no máximo, o código de erro do provedor). Ela não guarda mensagem, nome nem informação de saúde, e cada registro é apagado no máximo 30 dias depois de criado, tenha sido enviado ou não. Depois de enviada, a mensagem fica na conversa do LINE ou do WhatsApp ou na caixa de e-mail do paciente, e o LINE, a Z-API, o WhatsApp (Meta), a Resend e a Expo mantêm os próprios registros de entrega (veja a seção 5).</li>
           )}
           <li>Você pode desativar as notificações a qualquer momento nas configurações do seu aparelho.</li>
         </ul>
@@ -231,9 +237,9 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <li>As regras de pontuação (os pontos e os limites) ficam nos nossos servidores e só são mostradas ao profissional; nunca são enviadas ao aparelho do paciente.</li>
             <li>O canal não é para emergências, e o formulário avisa: em uma emergência, ligue para o número de emergência local. O formulário também avisa que a solicitação fica no prontuário do paciente.</li>
             <li>As perguntas frequentes e as orientações automáticas podem responder a uma dúvida sem que nada seja enviado. Quando isso acontece, só contamos para o profissional (quantas dúvidas foram resolvidas assim, por dia), sem quem perguntou nem o quê.</li>
-            <li>O paciente pode ler as próprias solicitações e as respostas na página do canal. Se o profissional desligar o canal, ou o paciente não estiver mais conectado, o paciente ainda pode ler as solicitações que já enviou ali, mas não pode enviar novas. Isso não vale se o consultório foi encerrado ou o profissional arquivou o cadastro do paciente, nem enquanto pausamos o canal.</li>
+            <li>O paciente sempre pode ler as solicitações que enviou e as respostas, mesmo que o profissional desligue o canal, o paciente não esteja mais conectado, o cadastro tenha sido arquivado ou o consultório encerrado; nesses casos não é possível enviar novas. Isso não vale enquanto pausamos o canal.</li>
             {pcCover && <li>O profissional pode adicionar uma imagem de capa à página do canal. Como o logo (veja 6f), a imagem de capa é pública depois de salva.</li>}
-            {pcAi && <li>O SolvyAI lê a mensagem do paciente somente se o profissional ativar a opção de IA do canal, e apenas para sugerir sintomas da própria lista do profissional; usa os créditos de IA do profissional, e nomes e identificadores são mascarados como descrito na seção 6b. Ele nunca responde ao paciente. Com a opção ativada, o formulário avisa ao paciente que a clínica usa IA para organizar as mensagens.</li>}
+            {pcAi && <li>O SolvyAI lê a mensagem do paciente somente se o profissional ativar a opção de IA do canal, e apenas para sugerir sintomas da própria lista do profissional; usa os créditos de IA do profissional. Antes do envio da mensagem, os nomes do paciente e do profissional, números de documento, telefones e e-mails são mascarados; outros nomes escritos na mensagem podem não ser. Ele nunca responde ao paciente. Com a opção ativada, o formulário avisa ao paciente que a clínica usa IA para organizar as mensagens.</li>}
           </ul>
         </Section>
       )}

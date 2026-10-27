@@ -147,6 +147,10 @@
     "met": false,
     "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with the mobile privacy-accept migration (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   },
+  "whatsapp-optout-live": {
+    "met": false,
+    "what": "The WhatsApp opt-out is live: every automatic WhatsApp message (appointments and Patient Channel) ends with a link to stop receiving them, and the opt-out is re-checked before each send (the mobile developer's item; 01 made it required before WhatsApp is switched on). Privacy §6e PC-W1 (with whatsapp-auto-live). Needs PRIVACY_VERSION 2026-10-28."
+  },
   "privacy-th-live": {
     "met": false,
     "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text."

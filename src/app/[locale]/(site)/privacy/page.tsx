@@ -57,6 +57,10 @@ export default async function PrivacyPage({
   const reminders = conditionMet("reminders-live");
   const appReferrer = conditionMet("app-referrer-live");
   const v1028 = { appDemo, patientChannel, pcCover, pcAi, reminders, appReferrer };
+  // Vitor's "OK to all privacies" (01, 10-27), en + pt-BR only: the Patient Channel notices
+  // (PC-N1′/N2′, the PC-N3 row clauses; pc-notify-live = 247's pc_notice_enqueue on) and the
+  // WhatsApp opt-out line (PC-W1, with whatsapp-auto-live).
+  const v1028b = { pcNotify: conditionMet("pc-notify-live"), whatsappOptout: whatsappAuto && conditionMet("whatsapp-optout-live") };
   // The Thai text (a draft until Vitor's first pass): only for /th, only once
   // privacy-th-live is met; until then Thai readers get the English page.
   const thai = conditionMet("privacy-th-live");
@@ -69,11 +73,11 @@ export default async function PrivacyPage({
   }
   return legalLangFor(locale) === "pt-BR" ? (
     <LegalDoc locale={locale} title="Política de Privacidade" updated={`Última atualização: ${legalDateLabel("pt-BR", PRIVACY_PUBLISHED)}`}>
-      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} />
+      <PrivacyPtBR turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} {...v1028b} />
     </LegalDoc>
   ) : (
     <LegalDoc locale={locale} title="Privacy Policy" updated={`Last updated: ${legalDateLabel("en", PRIVACY_PUBLISHED)}`}>
-      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} />
+      <PrivacyEn turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} {...v1028b} />
     </LegalDoc>
   );
 }
