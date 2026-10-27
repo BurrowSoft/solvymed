@@ -33,7 +33,9 @@ for (const locale of LOCALES) {
     // doesn't offer (Thai) lands on the practice's own (#468; ad, 10-01).
     const offered = countryProfile("BR").languages as readonly string[];
     const doctorPrefix = offered.includes(locale.code) ? locale.prefix : `/${offered[0]}`;
-    await expect(page).toHaveURL(new RegExp(`${doctorPrefix}/dashboard`));
+    // The language switch is client-side (LocaleRedirect, after hydration) and, on `next dev`,
+    // its target compiles cold: the default 5 s isn't enough there (www does it in ~1 s).
+    await expect(page).toHaveURL(new RegExp(`${doctorPrefix}/dashboard`), { timeout: 60_000 });
     await skipTour(page);
     await expectNoRawKeys(page);
     await expectNo12h(page);
