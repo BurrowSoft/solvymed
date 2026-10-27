@@ -53,7 +53,8 @@ export default async function PrivacyPage({
   const appDemo = demo && conditionMet("app-demo-live");
   const patientChannel = conditionMet("patient-channel-live");
   const pcCover = conditionMet("pc-cover-live");
-  const pcAi = conditionMet("pc-ai-live");
+  // Only with §6i itself: PC-10b / PC-10c say "see 6i" (cf, #664).
+  const pcAi = patientChannel && conditionMet("pc-ai-live");
   const reminders = conditionMet("reminders-live");
   const appReferrer = conditionMet("app-referrer-live");
   const v1028 = { appDemo, patientChannel, pcCover, pcAi, reminders, appReferrer };
