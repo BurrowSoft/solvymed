@@ -2814,6 +2814,7 @@
       "replyTitle": "병원의 답변",
       "youWrote": "작성한 내용",
       "youChose": "선택: {option}",
+      "youTicked": "선택한 항목: {names}",
       "earlier": "이전 메시지 ({n})",
       "statusReceived": "접수됨",
       "notTaking": "현재 병원에서 이곳으로 새 메시지를 받지 않습니다.",

@@ -2844,6 +2844,7 @@
       "replyTitle": "The practice's reply",
       "youWrote": "You wrote",
       "youChose": "You chose: {option}",
+      "youTicked": "You ticked: {names}",
       "earlier": "Earlier messages ({n})",
       "statusReceived": "Received",
       "notTaking": "The practice isn't taking new messages here right now.",

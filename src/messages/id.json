@@ -2814,6 +2814,7 @@
       "replyTitle": "Balasan klinik",
       "youWrote": "Anda menulis",
       "youChose": "Anda memilih: {option}",
+      "youTicked": "Anda menandai: {names}",
       "earlier": "Pesan sebelumnya ({n})",
       "statusReceived": "Diterima",
       "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",

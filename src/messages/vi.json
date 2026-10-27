@@ -2814,6 +2814,7 @@
       "replyTitle": "Trả lời của phòng khám",
       "youWrote": "Bạn đã viết",
       "youChose": "Bạn đã chọn: {option}",
+      "youTicked": "Bạn đã đánh dấu: {names}",
       "earlier": "Tin nhắn trước đó ({n})",
       "statusReceived": "Đã nhận",
       "notTaking": "Hiện phòng khám không nhận tin nhắn mới tại đây.",

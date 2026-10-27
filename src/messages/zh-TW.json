@@ -2814,6 +2814,7 @@
       "replyTitle": "診所的回覆",
       "youWrote": "您寫道",
       "youChose": "您選擇了：{option}",
+      "youTicked": "您勾選了：{names}",
       "earlier": "較早的訊息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "診所目前不在此接收新訊息。",
