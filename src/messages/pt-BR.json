@@ -2813,7 +2813,8 @@
       "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
       "viewMessages": "Ver minhas mensagens",
       "earlierLink": "Ver mensagens anteriores",
-      "earlierWith": "Ver mensagens anteriores com {doctor}"
+      "earlierWith": "Ver mensagens anteriores com {doctor}",
+      "aiNotice": "Esta clínica usa IA para organizar as mensagens."
     },
     "channel": {
       "title": "Seu canal",
@@ -2845,7 +2846,9 @@
       "alwaysShown": "O aviso de emergência, o prazo e as regras aparecem sempre, iguais para todos: a marca muda a aparência, não as regras.",
       "save": "Salvar canal",
       "saved": "Salvo.",
-      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo."
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "aiMapping": "Leitura por IA (SolvyAI)",
+      "aiMappingHelp": "O SolvyAI lê o texto livre de cada solicitação e sugere sintomas da sua lista; a pontuação só pode subir. Cada mensagem lida usa 1 crédito de IA do dia. Nomes, documentos, telefones e e-mails são mascarados antes. O formulário avisa os pacientes."
     },
     "reasons": {
       "title": "Motivos do contato",
@@ -2961,7 +2964,21 @@
       "readOnly": "Esta mensagem é para {doctor}: você pode ler, mas não responder.",
       "failed": "Não foi possível enviar. Tente de novo.",
       "warningFloor": "Sintoma com aviso de emergência: sempre Urgente.",
-      "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA)."
+      "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA).",
+      "ai": {
+        "title": "Leitura por IA",
+        "intro": "O SolvyAI encontrou na mensagem estes sintomas da sua lista. Confira o texto antes de confirmar.",
+        "confirm": "Confirmar",
+        "undo": "Desfazer",
+        "undoConfirm": "Desfazer a leitura da IA? Os sintomas sugeridos são apagados e a pontuação volta à das palavras-chave.",
+        "cancel": "Cancelar",
+        "confirmed": "Confirmado em {date}",
+        "undone": "Leitura por IA desfeita.",
+        "unavailable": "Leitura por IA indisponível nesta mensagem: só palavras-chave.",
+        "pending": "O SolvyAI está lendo esta mensagem.",
+        "none": "A IA não encontrou outros sintomas da sua lista.",
+        "error": "Não foi possível salvar. Tente de novo."
+      }
     }
   },
   "noticesUnsubscribe": {
