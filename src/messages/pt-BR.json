@@ -2660,7 +2660,9 @@
       "intensity2": "Forte",
       "stillTakingQ": "Continua tomando o remédio?",
       "stillTaking0": "Sim",
-      "stillTaking1": "Parei por conta própria"
+      "stillTaking1": "Parei por conta própria",
+      "choose": "Escolha…",
+      "notAnswered": "Sem resposta"
     },
     "bands": {
       "title": "Faixas de urgência",
@@ -2820,7 +2822,8 @@
       "goesToSecretary": "Para a secretaria",
       "sentSecretary": "Recebido. A secretaria responde em até {n, plural, one {# dia útil} other {# dias úteis}}.",
       "openTextSecretary": "Quer atualizar a que já está com a secretaria? A nova substitui a anterior.",
-      "entryButtonNamed": "Fale com {doctor}"
+      "entryButtonNamed": "Fale com {doctor}",
+      "openExistsNamed": "Você já tem uma solicitação aberta: {reason} ({date})."
     },
     "channel": {
       "title": "Seu canal",

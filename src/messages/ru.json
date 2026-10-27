@@ -2660,7 +2660,9 @@
       "intensity2": "Сильная",
       "stillTakingQ": "Вы всё ещё принимаете лекарство?",
       "stillTaking0": "Да",
-      "stillTaking1": "Приём прекращён по моему решению"
+      "stillTaking1": "Приём прекращён по моему решению",
+      "choose": "Выберите…",
+      "notAnswered": "Нет ответа"
     },
     "bands": {
       "title": "Уровни срочности",
@@ -2820,7 +2822,8 @@
       "goesToSecretary": "В регистратуру",
       "sentSecretary": "Получено. Регистратура ответит в течение {n, plural, one {# рабочего дня} few {# рабочих дней} many {# рабочих дней} other {# рабочего дня}}.",
       "openTextSecretary": "Обновить запрос, который уже есть у регистратуры? Новый заменит его.",
-      "entryButtonNamed": "Связаться: {doctor}"
+      "entryButtonNamed": "Связаться: {doctor}",
+      "openExistsNamed": "У вас уже есть открытый запрос: {reason} ({date})."
     },
     "channel": {
       "title": "Ваш канал",

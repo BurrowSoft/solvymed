@@ -67,7 +67,10 @@ export async function POST(request: NextRequest) {
     }
     const m = error.message ?? "";
     if (m.includes("rules_changed")) continue;
-    if (m.includes("open_exists")) return pcFail("open_exists", 409);
+    // 255: one open request per patient, practice AND destination; its DETAIL names the open
+    // one, so the replace prompt can say which (launch polish 2). Only its title and date go
+    // back to the patient (their own request). NEVER logged: the title can be clinical (cf).
+    if (m.includes("open_exists")) return pcFail("open_exists", 409, { open: openRequest(error.details) });
     // 237+'s limit on pc_submit (cf, #623): every send writes a permanent clinical record.
     if (m.includes("rate_limited")) return pcFail("rate_limited", 429);
     if (m.includes("invalid_answers")) return pcFail("invalid_answers", 422);
@@ -76,4 +79,15 @@ export async function POST(request: NextRequest) {
     return pcFail(code, accessStatus(code));
   }
   return pcFail("retry_later", 503);
+}
+
+// pc_submit's open_exists DETAIL (255): {id, reasonTitle, createdAt, destination}. Only the
+// title and the date leave; anything malformed is null (the prompt then names no request).
+function openRequest(details: string | null | undefined): { reasonTitle: string; createdAt: string } | null {
+  try {
+    const d = JSON.parse(details ?? "") as { reasonTitle?: unknown; createdAt?: unknown };
+    return typeof d.reasonTitle === "string" && typeof d.createdAt === "string" ? { reasonTitle: d.reasonTitle, createdAt: d.createdAt } : null;
+  } catch {
+    return null;
+  }
 }

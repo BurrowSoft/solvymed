@@ -2660,7 +2660,9 @@
       "intensity2": "شديدة",
       "stillTakingQ": "هل ما زلت تتناول الدواء؟",
       "stillTaking0": "نعم",
-      "stillTaking1": "توقفت من تلقاء نفسي"
+      "stillTaking1": "توقفت من تلقاء نفسي",
+      "choose": "اختر…",
+      "notAnswered": "بدون إجابة"
     },
     "bands": {
       "title": "مستويات الأولوية",
@@ -2820,7 +2822,8 @@
       "goesToSecretary": "إلى الاستقبال",
       "sentSecretary": "تم الاستلام. يرد الاستقبال خلال {n, plural, one {يوم عمل واحد} two {يومي عمل} few {# أيام عمل} many {# يوم عمل} other {# يوم عمل}}.",
       "openTextSecretary": "هل تريد تحديث الطلب الموجود لدى الاستقبال؟ الطلب الجديد يحل محله.",
-      "entryButtonNamed": "تواصل مع {doctor}"
+      "entryButtonNamed": "تواصل مع {doctor}",
+      "openExistsNamed": "لديك بالفعل طلب مفتوح: {reason} ({date})."
     },
     "channel": {
       "title": "قناتك",

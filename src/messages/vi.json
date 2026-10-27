@@ -2660,7 +2660,9 @@
       "intensity2": "Nặng",
       "stillTakingQ": "Bạn vẫn đang dùng thuốc chứ?",
       "stillTaking0": "Có",
-      "stillTaking1": "Tôi đã tự ngừng"
+      "stillTaking1": "Tôi đã tự ngừng",
+      "choose": "Chọn…",
+      "notAnswered": "Không trả lời"
     },
     "bands": {
       "title": "Mức độ khẩn cấp",
@@ -2820,7 +2822,8 @@
       "goesToSecretary": "Đến lễ tân",
       "sentSecretary": "Đã nhận. Lễ tân sẽ trả lời trong vòng {n, plural, other {# ngày làm việc}}.",
       "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
-      "entryButtonNamed": "Liên hệ {doctor}"
+      "entryButtonNamed": "Liên hệ {doctor}",
+      "openExistsNamed": "Bạn đã có một yêu cầu đang mở: {reason} ({date})."
     },
     "channel": {
       "title": "Kênh của bạn",

@@ -35,7 +35,9 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "intensity", n: 3 },
   { key: "stillTaking", n: 2 },
 ];
-const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
+// Nothing preselected (launch polish 15): -1 = not answered, which adds 0 points (score.ts) and
+// matches only an automatic message that accepts any answer (255 accepts -1).
+const START: Answers = { symptomIds: [], chips: [], when: -1, intensity: -1, stillTaking: -1, text: "" };
 const PREVIEW_MS = 300;
 
 export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe, loadRequests }: {
@@ -68,10 +70,15 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   // The front desk in a sentence takes its article ("para a secretaria", "A secretaria responde";
   // launch polish 18): its own keys, never {who} = "Secretaria".
   const toSecretary = reason?.destination === "secretary";
-  // "Quer atualizar a que já está com {who}?": the OPEN request's destination (migration 251;
-  // mobile tester 2), not the new one's. Unknown (an older answer): the new one's, as before.
-  const openToSecretary = openRequest?.destination ? openRequest.destination === "secretary" : reason?.destination === "secretary";
+  // One open request per DESTINATION (255): the one to replace always goes where the new one
+  // goes, so "Quer atualizar a que já está com {who}?" names the new reason's destination, and
+  // the prompt names that open request (launch polish 2): from the 409, else the patient's own
+  // list (the open one with this destination).
+  const openToSecretary = toSecretary;
   const openWho = openToSecretary ? t("secretary") : page.doctorName;
+  const [openNamed, setOpenNamed] = useState<{ reasonTitle: string; createdAt: string } | null>(null);
+  const sameDestOpen = requests?.find((r) => r.status === "open" && (r.destination ?? "doctor") === (reason?.destination ?? "doctor")) ?? null;
+  const openShown = openNamed ?? (sameDestOpen ? { reasonTitle: sameDestOpen.reasonTitle, createdAt: sameDestOpen.createdAt } : null);
 
   // /preview, debounced (§10.6); the latest answer wins.
   const seq = useRef(0);
@@ -162,6 +169,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     setSending(false);
     if (r.status === "sent") { setSentWarning(!!warning); setStep("sent"); }
     else if (r.status === "open_exists") {
+      setOpenNamed(r.open ?? null);
       setStep("replace");
       // The open request may be newer than the list read on the first screen.
       void loadRequests?.().then(setRequests).catch(() => undefined);
@@ -182,7 +190,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     return () => { live = false; };
   }, [step, loadRequests]);
 
-  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); setSentWarning(false); };
+  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); setSentWarning(false); setOpenNamed(null); };
 
   const back = (to: Step) => (
     <button type="button" onClick={() => setStep(to)} className="w-max py-1 text-sm font-bold text-teal-700">{t("back")}</button>
@@ -266,6 +274,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                   {ta(`${key}Q`)}
                   <select className="w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" value={answers[key]}
                     onChange={(e) => setAnswers({ ...answers, [key]: Number(e.target.value) })}>
+                    <option value={-1}>{ta("choose")}</option>
                     {Array.from({ length: n }, (_, i) => <option key={i} value={i}>{ta(`${key}${i}`)}</option>)}
                   </select>
                 </label>
@@ -331,6 +340,12 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     body = (
       <div className="flex flex-col gap-3 rounded-xl border border-amber-400 bg-amber-50 p-4" data-testid="pc-replace">
         <h2 className="text-base font-bold text-slate-900">{t("openTitle")}</h2>
+        {/* Which request would be replaced (launch polish 2). */}
+        {openShown && (
+          <p className="text-sm font-semibold text-slate-900" data-testid="pc-replace-open">
+            {t("openExistsNamed", { reason: openShown.reasonTitle, date: formatWhen(openShown.createdAt, locale) })}
+          </p>
+        )}
         <p className="text-sm text-slate-700">{openToSecretary ? t("openTextSecretary") : t("openText", { who: openWho })}</p>
         <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("replace")}</button>
         <button type="button" onClick={() => setStep("form")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("keep")}</button>

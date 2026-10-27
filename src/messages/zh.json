@@ -2660,7 +2660,9 @@
       "intensity2": "严重",
       "stillTakingQ": "您还在服用该药物吗？",
       "stillTaking0": "是",
-      "stillTaking1": "我自行停药了"
+      "stillTaking1": "我自行停药了",
+      "choose": "请选择…",
+      "notAnswered": "未回答"
     },
     "bands": {
       "title": "紧急程度等级",
@@ -2820,7 +2822,8 @@
       "goesToSecretary": "发给前台",
       "sentSecretary": "已收到。前台将在 {n, plural, other {# 个工作日}}内回复。",
       "openTextSecretary": "要更新前台那里已有的请求吗？新请求将替换旧请求。",
-      "entryButtonNamed": "联系{doctor}"
+      "entryButtonNamed": "联系{doctor}",
+      "openExistsNamed": "您已有一个未处理的请求：{reason}（{date}）"
     },
     "channel": {
       "title": "您的频道",
