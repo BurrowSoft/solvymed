@@ -79,6 +79,19 @@ describe("Thai Privacy Policy (privacy-th-live)", () => {
     expect(th).toContain("10b. ประเทศไทย (PDPA)");
   });
 
+  it("PC-W1′ (Vitor's \"OK WhatsApp stop text\"): §6e and PC-N3's Z-API part, only with whatsapp-optout-live", () => {
+    const w = { notices: true, whatsapp: true, whatsappAuto: true, pcNotify: true };
+    const off = render(PrivacyTh, w);
+    const on = render(PrivacyTh, { ...w, whatsappOptout: true });
+    const stop = "ข้อความ WhatsApp อัตโนมัติที่ส่งถึงผู้ป่วยมีลิงก์สำหรับยกเลิกการรับข้อความ หากผู้ป่วยใช้ลิงก์นี้ เราจะเก็บเบอร์โทรศัพท์ไว้เพียงเพื่อหยุดส่งข้อความจากคลินิกนั้น ตราบเท่าที่คลินิกยังใช้ SolvyMed";
+    const zapi = "และการแจ้งในช่องทางผู้ป่วยว่าคลินิกตอบกลับแล้ว (ประโยคคงที่ ลิงก์ และลิงก์สำหรับยกเลิกการรับข้อความเหล่านี้)";
+    expect(on).toContain(stop);
+    expect(on).toContain(zapi);
+    expect(off).not.toContain(stop);
+    expect(off).not.toContain(zapi);
+    expect(off).toContain("และการแจ้งในช่องทางผู้ป่วยว่าคลินิกตอบกลับแล้ว (ประโยคคงที่และลิงก์)");
+  });
+
   it("the Thai date shows the Buddhist-era year", () => {
     expect(legalDateLabel("th", "2026-10-26")).toBe("26 ตุลาคม 2569");
     expect(legalDateLabel("en", "2026-10-26")).toBe("26 October 2026");
