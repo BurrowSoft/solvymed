@@ -2579,6 +2579,14 @@
       "errorType": "Hãy dùng tệp PNG, JPEG hoặc WebP.",
       "errorNotSetUp": "Hãy lưu cài đặt kênh trước khi tải ảnh bìa lên."
     },
+    "template": {
+      "start": "Bắt đầu với mẫu có sẵn: Chung / tác dụng phụ",
+      "use": "Dùng mẫu",
+      "openRequests": "Hãy trả lời hoặc đóng các yêu cầu đang mở trước khi đổi mẫu.",
+      "backTo": "Quay lại mẫu ban đầu",
+      "confirm": "Thao tác này sẽ thay các triệu chứng, tổ hợp, mức độ khẩn cấp, thuốc và tin nhắn tự động của bạn bằng mẫu. Tiếp tục?",
+      "replace": "Thay thế"
+    },
     "title": "Kênh Bệnh nhân",
     "entryText": "Bệnh nhân của bạn gửi câu hỏi qua một kênh có tổ chức, được xếp theo mức độ khẩn cấp dựa trên thang điểm bạn thiết lập.",
     "entryOpen": "Thiết lập",

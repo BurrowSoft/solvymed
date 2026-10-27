@@ -31,6 +31,7 @@ import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest, type PatientView } from "./PatientChannelTest";
 import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
+import { TemplateReset, TemplateStart } from "./TemplateStart";
 import type { PcFaqRow, PcReasonRow, PcSettings } from "@/lib/patientChannel/channel";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
@@ -54,7 +55,7 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
 
 type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
 
-export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, patientView }: {
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, patientView, templateId }: {
   initialRules: ChannelConfig;
   // pc_settings.rules_version; 0 = no row yet (the first save of either part creates it).
   initialVersion: number;
@@ -63,6 +64,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null };
   // How patients see the page (the saved look), for "Testar como paciente".
   patientView?: PatientView;
+  // The practice country's starting template (pc_templates), or null.
+  templateId?: string | null;
   brandHref: string;
 }) {
   const t = useTranslations("patientChannel");
@@ -75,6 +78,12 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   const dirty = JSON.stringify(toStoredRules(rules)) !== savedJson;
   const problems = useMemo(() => validateRules(rules), [rules]);
   useLeaveGuard(dirty);
+  // The starting template replaces the rules wholesale, so it's offered only on blank SAVED
+  // rules (no symptoms, medicines or automatic messages) with nothing unsaved (cf).
+  const blank = useMemo(() => {
+    const saved = JSON.parse(savedJson) as { symptoms?: unknown[]; medicines?: unknown[]; autoMessages?: unknown[] };
+    return !saved.symptoms?.length && !saved.medicines?.length && !saved.autoMessages?.length;
+  }, [savedJson]);
 
   // PUT /api/patient-channel/config with the version read: a newer save elsewhere → 409,
   // and the page asks to reload instead of writing over it.
@@ -151,6 +160,10 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
+      {/* No symptoms yet: start from the ready-made template (01). */}
+      {templateId && blank && !dirty && <TemplateStart templateId={templateId} />}
+      {/* Later: back to the template, rules only, after a confirm (nothing unsaved). */}
+      {templateId && !blank && !dirty && <TemplateReset templateId={templateId} />}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Symptoms rules={rules} setRules={setRules} />
         <div className="flex min-w-0 flex-col gap-4">
