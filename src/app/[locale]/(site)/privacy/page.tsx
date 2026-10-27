@@ -58,7 +58,7 @@ export default async function PrivacyPage({
   const reminders = conditionMet("reminders-live");
   const appReferrer = conditionMet("app-referrer-live");
   const v1028 = { appDemo, patientChannel, pcCover, pcAi, reminders, appReferrer };
-  // Vitor's "OK to all privacies" (01, 10-27), en + pt-BR only: the Patient Channel notices
+  // Vitor's "OK to all privacies" (01, 10-27; the Thai drafts for his read-through): the Patient Channel notices
   // (PC-N1′/N2′, the PC-N3 row clauses; pc-notify-live = 247's pc_notice_enqueue on) and the
   // WhatsApp opt-out line (PC-W1, with whatsapp-auto-live).
   const v1028b = { pcNotify: conditionMet("pc-notify-live"), whatsappOptout: whatsappAuto && conditionMet("whatsapp-optout-live") };
@@ -68,7 +68,7 @@ export default async function PrivacyPage({
   if (legalLangFor(locale, thai) === "th") {
     return (
       <LegalDoc locale={locale} thai title="นโยบายความเป็นส่วนตัว" updated={`ปรับปรุงล่าสุด: ${legalDateLabel("th", PRIVACY_PUBLISHED)}`}>
-        <PrivacyTh turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} />
+        <PrivacyTh turnstile={turnstileEnabled} solvyai={solvyai} line={line} notices={notices} whatsapp={whatsapp} address={address} founders={founders} founderUploads={founderUploads} secretaryInvites={secretaryInvites} closureNotices={closureNotices} whatsappAuto={whatsappAuto} referrals={referrals} clinicalDocs={clinicalDocs} patientDocs={patientDocs} selfFields={selfFields} demo={demo} {...v1028} {...v1028b} />
       </LegalDoc>
     );
   }

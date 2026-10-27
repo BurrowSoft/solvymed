@@ -153,7 +153,7 @@
   },
   "privacy-th-live": {
     "met": false,
-    "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text. BEFORE flipping: the Thai page also gets Vitor's 10-27 lines (#664: PC-8′, PC-10′/b/c/d, PC-N1′/N2′/N3, PC-W1, §3.6 / §6g), translated and read by Vitor (privacy-th.test.tsx pins the lag)."
+    "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text. The Thai page carries Vitor's 10-27 lines too (#664: PC-8′, PC-10′/b/c/d, PC-N1′/N2′/N3, PC-W1, §3.6 / §6g) as Thai drafts; BEFORE flipping: Vitor's single Thai read-through (plus the address and the \"English prevails\" answer)."
   },
   "help-th-live": {
     "met": false,

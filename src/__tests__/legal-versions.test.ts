@@ -356,9 +356,9 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     for (const id of CONDITIONS) expect(page).toContain(`conditionMet("${id}")`);
     expect(page).toContain('demo && conditionMet("app-demo-live")');
     expect(page.match(/\{\.\.\.v1028\}/g)).toHaveLength(3);
-    // The new lines are en + pt-BR only (the Thai page isn't part of Vitor's 10-27 OK).
-    expect(page.match(/\{\.\.\.v1028b\}/g)).toHaveLength(2);
-    expect(page).not.toMatch(/<PrivacyTh[^>]*v1028b/);
+    // The new lines reach all three pages (the Thai ones are drafts for Vitor's read-through).
+    expect(page.match(/\{\.\.\.v1028b\}/g)).toHaveLength(3);
+    expect(page).toMatch(/<PrivacyTh[^>]*\{\.\.\.v1028b\}/);
     expect(page).toContain('whatsappAuto && conditionMet("whatsapp-optout-live")');
     // PC-10b / PC-10c say "see 6i": the AI lines only with §6i itself (cf, #664).
     expect(page).toContain('const pcAi = patientChannel && conditionMet("pc-ai-live")');
