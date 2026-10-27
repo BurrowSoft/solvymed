@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "演示模式",
     "barText": "演示模式 · 虚构数据，24 小时内删除",
@@ -928,7 +928,8 @@
       "deleteAccount": "删除我的账号",
       "deleteConfirm": "这将删除您的账号。您随时可以重新注册。",
       "deletedNotice": "账号已删除。",
-      "requestDeletion": "申请删除账号"
+      "requestDeletion": "申请删除账号",
+      "notConnected": "您目前未连接任何诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -1264,7 +1265,7 @@
     "titleClose": "关闭账户",
     "titleDelete": "删除账户",
     "closeIntro": "您的患者有病历，因此不能直接删除账户。关闭账户后：",
-    "closeLogin": "您的登录信息、联系方式、照片、付款信息和诊所信息将立即删除。",
+    "closeLogin": "您的登录信息、联系方式、照片、付款信息和诊所信息将立即删除或匿名化。",
     "closeRecords": "病历和患者名单将在法定保存期（20 年）内保存且任何人都无法访问，之后永久删除。您的姓名和执业注册号作为作者保留在病历上。",
     "closePatients": "{patients} 位患者将被归档，{appointments, plural, =0 {没有需要取消的后续预约} other {# 个后续预约将被取消}}。使用应用的患者会收到通知。",
     "closeTeam": "{secretaries} 位团队成员将失去访问权限。",
@@ -2250,7 +2251,8 @@
       "patientFull": "您已达到这位医生的 200 MB 上限。",
       "storageFull": "这位医生的文件存储空间已满。",
       "ownStorageFull": "您的文件存储空间已满(5 GB)。请联系支持团队。",
-      "noAccess": "此文件已不可用。"
+      "noAccess": "此文件已不可用。",
+      "notAccepting": "该诊所目前不接收文件。"
     },
     "storageNotice": "文件已使用 {used},共 5 GB。",
     "snapshotNotShared": "已保存,但未共享:您的文件存储空间已满。",
@@ -2575,6 +2577,7 @@
       "remove": "移除",
       "removeConfirm": "要移除封面图片吗？",
       "useThis": "使用此图片",
+      "uploading": "正在上传…",
       "errorSize": "图片不能超过 3 MB。",
       "errorType": "请使用 PNG、JPEG 或 WebP 文件。",
       "errorNotSetUp": "上传封面前请先保存频道设置。"
@@ -2584,8 +2587,9 @@
       "use": "使用模板",
       "openRequests": "更换模板前，请先回复或关闭未处理的请求。",
       "backTo": "恢复为初始模板",
-      "confirm": "这将用模板替换您的症状、组合、紧急程度、药物和自动消息。是否继续？",
-      "replace": "替换"
+      "confirm": "这将用模板替换您的症状、组合、紧急程度、药物和自动消息。您的就诊原因和常见问题会保留。是否继续？",
+      "replace": "替换",
+      "restored": "已恢复模板。您的就诊原因和常见问题已保留。"
     },
     "title": "患者通道",
     "entryText": "患者通过有序的通道提问，并按照您设置的评分依紧急程度排序。",
@@ -2598,6 +2602,7 @@
       "save": "保存规则",
       "saving": "正在保存…",
       "saved": "规则已保存。未处理的请求已按这些规则重新计算。",
+      "savedOnly": "规则已保存。",
       "unsaved": "有未保存的更改",
       "conflict": "这些规则已在其他地方被修改。请刷新页面以查看当前版本。",
       "reload": "刷新",
@@ -2659,7 +2664,9 @@
       "intensity2": "严重",
       "stillTakingQ": "您还在服用该药物吗？",
       "stillTaking0": "是",
-      "stillTaking1": "我自行停药了"
+      "stillTaking1": "我自行停药了",
+      "choose": "请选择…",
+      "notAnswered": "未回答"
     },
     "bands": {
       "title": "紧急程度等级",
@@ -2791,7 +2798,7 @@
         "symptomOf": "症状：{name}",
         "remove": "移除 {term}",
         "suggestions": "建议",
-        "hint": "诊所已知的词语会变成标签：选择一个建议（点击、Enter、Tab 或 \";\"），或输入完整词语后按空格。"
+        "hint": "诊所认识的词会变成标签：选择一个建议，或输入完整的词。"
       },
       "entryButton": "联系医生",
       "unavailable": "此渠道不可用。请直接联系诊所。",
@@ -2808,12 +2815,22 @@
       "replyTitle": "诊所的回复",
       "youWrote": "您写道",
       "youChose": "您选择了：{option}",
+      "youTicked": "您勾选了：{names}",
       "earlier": "较早的消息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "诊所目前不在此接收新消息。",
       "viewMessages": "查看我的消息",
       "earlierLink": "查看早前消息",
-      "earlierWith": "查看与{doctor}的早前消息"
+      "earlierWith": "查看与{doctor}的早前消息",
+      "sentUrgent": "如情况紧急，请不要等待回复：立即就医或拨打 {number}。",
+      "sendSecretary": "发送给前台",
+      "goesToSecretary": "发给前台",
+      "sentSecretary": "已收到。前台将在 {n, plural, other {# 个工作日}}内回复。",
+      "openTextSecretary": "要更新前台那里已有的请求吗？新请求将替换旧请求。",
+      "entryButtonNamed": "联系{doctor}",
+      "openExistsNamed": "您已有一个未处理的请求：{reason}（{date}）",
+      "aiNotice": "本诊所使用 AI 整理消息。",
+      "replacedPrevious": "已替换您之前的消息。"
     },
     "channel": {
       "title": "您的频道",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "紧急情况提示、回复时间和规则始终显示，且对所有人相同：品牌只改变外观，不改变规则。",
       "save": "保存频道",
       "saved": "已保存。",
-      "saveError": "无法保存。请检查网络连接后重试。"
+      "saveError": "无法保存。请检查网络连接后重试。",
+      "needsReason": "请至少添加一个原因才能开启渠道。",
+      "aiMapping": "AI 阅读（SolvyAI）",
+      "aiMappingHelp": "SolvyAI 阅读每条请求的自由文本，并从您的列表中建议症状；分数只会升高。每读一条消息使用当天 1 个 AI 额度。姓名、证件号、电话和电子邮件会先被遮盖。表单会告知您的患者。"
     },
     "reasons": {
       "title": "联系原因",
@@ -2933,7 +2953,8 @@
         "call_back": "将致电",
         "substituted": "已替换"
       },
-      "navOpen": "{n} 条待处理消息"
+      "navOpen": "{n} 条待处理消息",
+      "admin": "行政"
     },
     "detail": {
       "back": "← 消息",
@@ -2949,7 +2970,7 @@
       "warningShown": "患者已看到紧急警告。",
       "autoShown": "患者看到的自动消息",
       "history": "该患者之前的消息",
-      "replyLabel": "您的回复（患者将通过通知收到）",
+      "replyLabel": "您的回复（患者在渠道中查看回复）",
       "reply": "回复并关闭",
       "callBack": "我会致电患者",
       "call": "致电 {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "此消息是发给 {doctor} 的：您可以阅读，但不能回复。",
       "failed": "发送失败，请重试。",
       "warningFloor": "带紧急警告的症状：始终为紧急。",
-      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。"
+      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。",
+      "ai": {
+        "title": "AI 阅读",
+        "intro": "SolvyAI 在消息中找到了您列表中的这些症状。确认前请先核对原文。",
+        "confirm": "确认",
+        "undo": "撤销",
+        "undoConfirm": "撤销 AI 阅读？建议的症状将被删除，分数恢复为关键词分数。",
+        "cancel": "取消",
+        "confirmed": "已于 {date} 确认",
+        "undone": "已撤销 AI 阅读。",
+        "unavailable": "此消息无法使用 AI 阅读：仅按关键词。",
+        "pending": "SolvyAI 正在阅读此消息。",
+        "none": "AI 未从您的列表中找到其他症状。",
+        "error": "保存失败，请重试。"
+      }
     }
   },
   "noticesUnsubscribe": {

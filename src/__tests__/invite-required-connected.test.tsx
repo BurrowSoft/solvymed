@@ -44,7 +44,7 @@ vi.mock("@/lib/supabase/client", () => ({
 // The page's own RPCs only: B's delete option (its own status RPC on load) is tested in
 // unlinked-patient-delete.test.tsx; the past-messages link in one-doctor-disconnect.test.tsx.
 vi.mock("@/components/AccountDeleteOption", () => ({ AccountDeleteOption: () => null }));
-vi.mock("@/components/patientChannel/PastPracticeLinks", () => ({ PastPracticeLinks: () => null }));
+vi.mock("@/components/patientChannel/PastPracticeLinks", () => ({ PastPracticeLinks: () => <div data-testid="past-links-marker" /> }));
 import InviteRequiredPage from "@/app/[locale]/(site)/auth/invite-required/page";
 
 async function submit() {
@@ -146,5 +146,35 @@ describe("invite-required: why the saved code didn't link", () => {
   it("no reason: no message until a try", () => {
     show();
     expect(document.querySelector(".error-banner")).toBeNull();
+  });
+});
+
+describe("after a voluntary disconnect (launch polish 23)", () => {
+  const page = () => render(
+    <NextIntlClientProvider locale="pt-BR" messages={pt}>
+      <InviteRequiredPage />
+    </NextIntlClientProvider>,
+  );
+  it("a patient (the role stays): \"not connected now\", not \"your account was created\"", async () => {
+    h.role = "patient";
+    const { unmount } = page();
+    await waitFor(() => expect(screen.getByTestId("invite-required-body")).toHaveTextContent(pt.auth.inviteRequired.notConnected));
+    expect(screen.getByTestId("invite-required-body").textContent).not.toBe(pt.auth.inviteRequired.body);
+    unmount();
+  });
+  it("a new account (no role yet) keeps the sign-up text", async () => {
+    h.role = null;
+    const { unmount } = page();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(screen.getByTestId("invite-required-body")).toHaveTextContent(pt.auth.inviteRequired.body);
+    unmount();
+  });
+  it("the past-messages links come ABOVE the code form", () => {
+    h.role = "patient";
+    const { unmount } = page();
+    const links = screen.getByTestId("past-links-marker");
+    const field = screen.getByLabelText(pt.auth.inviteRequired.codeLabel);
+    expect(links.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    unmount();
   });
 });

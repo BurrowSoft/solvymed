@@ -928,7 +928,8 @@
       "deleteAccount": "Excluir minha conta",
       "deleteConfirm": "Isso apaga sua conta. Você pode se cadastrar de novo quando quiser.",
       "deletedNotice": "Conta excluída.",
-      "requestDeletion": "Pedir exclusão da conta"
+      "requestDeletion": "Pedir exclusão da conta",
+      "notConnected": "Você não está conectado a nenhum consultório no momento."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",
@@ -1264,7 +1265,7 @@
     "titleClose": "Encerrar conta",
     "titleDelete": "Excluir conta",
     "closeIntro": "Seus pacientes têm prontuários, por isso sua conta não pode ser simplesmente excluída. Ao encerrá-la:",
-    "closeLogin": "Seu acesso, dados de contato, foto e dados de pagamento e do consultório são excluídos imediatamente.",
+    "closeLogin": "Seu acesso, dados de contato, foto e dados de pagamento e do consultório são excluídos ou anonimizados imediatamente.",
     "closeRecords": "Seus prontuários e sua lista de pacientes ficam guardados, sem acesso para ninguém, pelo prazo legal (20 anos) e depois são excluídos definitivamente. Seu nome e registro profissional permanecem nos prontuários como autor.",
     "closePatients": "{patients, plural, =0 {Seus # pacientes são arquivados} one {Seu # paciente é arquivado} other {Seus # pacientes são arquivados}} e {appointments, plural, =0 {não há consultas futuras a cancelar} one {# consulta futura é cancelada} other {# consultas futuras são canceladas}}. Os pacientes que usam o app são avisados.",
     "closeTeam": "{secretaries, plural, =0 {# pessoas da equipe perdem} one {# pessoa da equipe perde} other {# pessoas da equipe perdem}} o acesso.",
@@ -2250,7 +2251,8 @@
       "patientFull": "Você atingiu o limite de 200 MB para este médico.",
       "storageFull": "O espaço de documentos deste médico está cheio.",
       "ownStorageFull": "Seu espaço de documentos está cheio (5 GB). Fale com o suporte.",
-      "noAccess": "Este documento não está mais disponível."
+      "noAccess": "Este documento não está mais disponível.",
+      "notAccepting": "Este consultório não está recebendo arquivos no momento."
     },
     "storageNotice": "Você usou {used} de 5 GB em documentos.",
     "snapshotNotShared": "Salvo, mas não compartilhado: seu espaço de documentos está cheio.",
@@ -2575,6 +2577,7 @@
       "remove": "Remover",
       "removeConfirm": "Remover a imagem de capa?",
       "useThis": "Usar esta imagem",
+      "uploading": "Enviando…",
       "errorSize": "A imagem deve ter no máximo 3 MB.",
       "errorType": "Use um arquivo PNG, JPEG ou WebP.",
       "errorNotSetUp": "Salve as configurações do canal antes de enviar a capa."
@@ -2584,8 +2587,9 @@
       "use": "Usar o modelo",
       "openRequests": "Responda ou feche as solicitações abertas antes de trocar o modelo.",
       "backTo": "Voltar ao modelo inicial",
-      "confirm": "Isso substitui seus sintomas, combinações, faixas de urgência, remédios e mensagens automáticas pelo modelo. Continuar?",
-      "replace": "Substituir"
+      "confirm": "Isso substitui seus sintomas, combinações, faixas de urgência, remédios e mensagens automáticas pelo modelo. Seus motivos e perguntas frequentes são mantidos. Continuar?",
+      "replace": "Substituir",
+      "restored": "Modelo restaurado. Seus motivos e perguntas frequentes foram mantidos."
     },
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
@@ -2598,6 +2602,7 @@
       "save": "Salvar regras",
       "saving": "Salvando…",
       "saved": "Regras salvas. As solicitações em aberto foram recalculadas com elas.",
+      "savedOnly": "Regras salvas.",
       "unsaved": "Alterações não salvas",
       "conflict": "Estas regras foram alteradas em outro lugar. Recarregue a página para ver a versão atual.",
       "reload": "Recarregar",
@@ -2659,7 +2664,9 @@
       "intensity2": "Forte",
       "stillTakingQ": "Continua tomando o remédio?",
       "stillTaking0": "Sim",
-      "stillTaking1": "Parei por conta própria"
+      "stillTaking1": "Parei por conta própria",
+      "choose": "Escolha…",
+      "notAnswered": "Sem resposta"
     },
     "bands": {
       "title": "Faixas de urgência",
@@ -2791,7 +2798,7 @@
         "symptomOf": "sintoma: {name}",
         "remove": "Remover {term}",
         "suggestions": "Sugestões",
-        "hint": "Termos que o consultório conhece viram etiquetas: escolha a sugestão (clique, Enter, Tab ou \";\") ou digite a palavra inteira e um espaço."
+        "hint": "Termos que o consultório conhece viram etiquetas: escolha uma sugestão ou digite a palavra inteira."
       },
       "entryButton": "Fale com o Médico",
       "unavailable": "Este canal não está disponível. Fale diretamente com o consultório.",
@@ -2808,12 +2815,22 @@
       "replyTitle": "Resposta do consultório",
       "youWrote": "Você escreveu",
       "youChose": "Você escolheu: {option}",
+      "youTicked": "Você marcou: {names}",
       "earlier": "Mensagens anteriores ({n})",
       "statusReceived": "Recebida",
       "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
       "viewMessages": "Ver minhas mensagens",
       "earlierLink": "Ver mensagens anteriores",
-      "earlierWith": "Ver mensagens anteriores com {doctor}"
+      "earlierWith": "Ver mensagens anteriores com {doctor}",
+      "sentUrgent": "Se for urgente, não espere a resposta: procure atendimento agora ou ligue {number}.",
+      "sendSecretary": "Enviar para a secretaria",
+      "goesToSecretary": "Para a secretaria",
+      "sentSecretary": "Recebido. A secretaria responde em até {n, plural, one {# dia útil} other {# dias úteis}}.",
+      "openTextSecretary": "Quer atualizar a que já está com a secretaria? A nova substitui a anterior.",
+      "entryButtonNamed": "Fale com {doctor}",
+      "openExistsNamed": "Você já tem uma solicitação aberta: {reason} ({date}).",
+      "aiNotice": "Esta clínica usa IA para organizar as mensagens.",
+      "replacedPrevious": "Substituiu a mensagem anterior."
     },
     "channel": {
       "title": "Seu canal",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "O aviso de emergência, o prazo e as regras aparecem sempre, iguais para todos: a marca muda a aparência, não as regras.",
       "save": "Salvar canal",
       "saved": "Salvo.",
-      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo."
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "needsReason": "Adicione pelo menos um motivo para ativar o canal.",
+      "aiMapping": "Leitura por IA (SolvyAI)",
+      "aiMappingHelp": "O SolvyAI lê o texto livre de cada solicitação e sugere sintomas da sua lista; a pontuação só pode subir. Cada mensagem lida usa 1 crédito de IA do dia. Nomes, documentos, telefones e e-mails são mascarados antes. O formulário avisa os pacientes."
     },
     "reasons": {
       "title": "Motivos do contato",
@@ -2933,7 +2953,8 @@
         "call_back": "Vai ligar",
         "substituted": "Substituída"
       },
-      "navOpen": "{n, plural, one {# mensagem aberta} other {# mensagens abertas}}"
+      "navOpen": "{n, plural, one {# mensagem aberta} other {# mensagens abertas}}",
+      "admin": "Administrativas"
     },
     "detail": {
       "back": "← Mensagens",
@@ -2949,7 +2970,7 @@
       "warningShown": "O paciente viu o aviso de emergência.",
       "autoShown": "Mensagens automáticas que o paciente viu",
       "history": "Mensagens anteriores deste paciente",
-      "replyLabel": "Sua resposta (o paciente recebe por notificação)",
+      "replyLabel": "Sua resposta (o paciente vê a resposta no canal)",
       "reply": "Responder e encerrar",
       "callBack": "Vou ligar para o paciente",
       "call": "Ligar {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "Esta mensagem é para {doctor}: você pode ler, mas não responder.",
       "failed": "Não foi possível enviar. Tente de novo.",
       "warningFloor": "Sintoma com aviso de emergência: sempre Urgente.",
-      "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA)."
+      "warningFloorAi": "Sintoma com aviso de emergência: sempre Urgente (IA).",
+      "ai": {
+        "title": "Leitura por IA",
+        "intro": "O SolvyAI encontrou na mensagem estes sintomas da sua lista. Confira o texto antes de confirmar.",
+        "confirm": "Confirmar",
+        "undo": "Desfazer",
+        "undoConfirm": "Desfazer a leitura da IA? Os sintomas sugeridos são apagados e a pontuação volta à das palavras-chave.",
+        "cancel": "Cancelar",
+        "confirmed": "Confirmado em {date}",
+        "undone": "Leitura por IA desfeita.",
+        "unavailable": "Leitura por IA indisponível nesta mensagem: só palavras-chave.",
+        "pending": "O SolvyAI está lendo esta mensagem.",
+        "none": "A IA não encontrou outros sintomas da sua lista.",
+        "error": "Não foi possível salvar. Tente de novo."
+      }
     }
   },
   "noticesUnsubscribe": {

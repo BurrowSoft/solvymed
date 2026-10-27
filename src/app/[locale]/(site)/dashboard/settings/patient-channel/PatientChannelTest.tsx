@@ -15,7 +15,8 @@ export type PatientView = { doctorName: string; practiceLine: string; look: Page
 // the weights here (§10.9). The smart text box (chips, suggestions) arrives with M4.
 
 const TEXT_MAX = 500;
-const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 1, stillTaking: 0, text: "" };
+// Unanswered, like the patient's form (launch polish 15): the test scores what a patient gets.
+const START: Answers = { symptomIds: [], chips: [], when: -1, intensity: -1, stillTaking: -1, text: "" };
 const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "when", n: 3 },
   { key: "intensity", n: 3 },
@@ -39,7 +40,7 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
 
   if (result) {
     return (
-      <div data-testid="pc-test-result" className="mx-auto flex max-w-xl flex-col gap-4">
+      <div data-testid="pc-test-result" className="flex max-w-xl flex-col gap-4">
         {bar}
         {result === "skipped" ? (
           <p className="rounded-xl border border-green-600 bg-green-50 p-4 text-sm text-green-900">{t("test.skipped")}</p>
@@ -98,6 +99,7 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
                   value={answers[key]}
                   onChange={(e) => setAnswers({ ...answers, [key]: Number(e.target.value) })}
                 >
+                  <option value={-1}>{t("answers.choose")}</option>
                   {Array.from({ length: n }, (_, i) => <option key={i} value={i}>{t(`answers.${key}${i}`)}</option>)}
                 </select>
               </label>

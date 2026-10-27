@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "示範模式",
     "barText": "示範模式 · 虛構資料，24 小時內刪除",
@@ -928,7 +928,8 @@
       "deleteAccount": "刪除我的帳號",
       "deleteConfirm": "這將刪除您的帳號。您隨時可以重新註冊。",
       "deletedNotice": "帳號已刪除。",
-      "requestDeletion": "申請刪除帳號"
+      "requestDeletion": "申請刪除帳號",
+      "notConnected": "您目前未連結任何診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
@@ -1264,7 +1265,7 @@
     "titleClose": "關閉帳戶",
     "titleDelete": "刪除帳戶",
     "closeIntro": "您的病患有病歷，因此無法直接刪除帳戶。關閉帳戶後：",
-    "closeLogin": "您的登入資訊、聯絡資料、照片、付款資訊與診所資訊將立即刪除。",
+    "closeLogin": "您的登入資訊、聯絡資料、照片、付款資訊與診所資訊將立即刪除或匿名化。",
     "closeRecords": "病歷與病患名單將在法定保存期（20 年）內保存且任何人都無法存取，之後永久刪除。您的姓名與執業登記號碼將作為作者保留在病歷上。",
     "closePatients": "{patients} 位病患將被封存，{appointments, plural, =0 {沒有需要取消的後續預約} other {# 個後續預約將被取消}}。使用應用程式的病患會收到通知。",
     "closeTeam": "{secretaries} 位團隊成員將失去存取權限。",
@@ -2250,7 +2251,8 @@
       "patientFull": "您已達到這位醫師的 200 MB 上限。",
       "storageFull": "這位醫師的文件儲存空間已滿。",
       "ownStorageFull": "您的文件儲存空間已滿(5 GB)。請聯絡支援團隊。",
-      "noAccess": "此文件已無法使用。"
+      "noAccess": "此文件已無法使用。",
+      "notAccepting": "這間診所目前不接收檔案。"
     },
     "storageNotice": "文件已使用 {used},共 5 GB。",
     "snapshotNotShared": "已儲存,但未分享:您的文件儲存空間已滿。",
@@ -2575,6 +2577,7 @@
       "remove": "移除",
       "removeConfirm": "要移除封面圖片嗎？",
       "useThis": "使用此圖片",
+      "uploading": "正在上傳…",
       "errorSize": "圖片不能超過 3 MB。",
       "errorType": "請使用 PNG、JPEG 或 WebP 檔案。",
       "errorNotSetUp": "上傳封面前請先儲存頻道設定。"
@@ -2584,8 +2587,9 @@
       "use": "使用範本",
       "openRequests": "更換範本前，請先回覆或關閉未處理的請求。",
       "backTo": "恢復為初始範本",
-      "confirm": "這將以範本取代您的症狀、組合、緊急程度、藥物和自動訊息。是否繼續？",
-      "replace": "取代"
+      "confirm": "這將以範本取代您的症狀、組合、緊急程度、藥物和自動訊息。您的就診原因和常見問題會保留。是否繼續？",
+      "replace": "取代",
+      "restored": "已還原範本。您的就診原因和常見問題已保留。"
     },
     "title": "病患頻道",
     "entryText": "病患透過有條理的頻道提問，並依照您設定的分數按緊急程度排序。",
@@ -2598,6 +2602,7 @@
       "save": "儲存規則",
       "saving": "正在儲存…",
       "saved": "規則已儲存。未處理的請求已依這些規則重新計算。",
+      "savedOnly": "規則已儲存。",
       "unsaved": "有尚未儲存的變更",
       "conflict": "這些規則已在其他地方被修改。請重新整理頁面以查看目前版本。",
       "reload": "重新整理",
@@ -2659,7 +2664,9 @@
       "intensity2": "嚴重",
       "stillTakingQ": "您還在服用這個藥物嗎？",
       "stillTaking0": "是",
-      "stillTaking1": "我自行停藥了"
+      "stillTaking1": "我自行停藥了",
+      "choose": "請選擇…",
+      "notAnswered": "未回答"
     },
     "bands": {
       "title": "緊急程度等級",
@@ -2791,7 +2798,7 @@
         "symptomOf": "症狀：{name}",
         "remove": "移除 {term}",
         "suggestions": "建議",
-        "hint": "診所認得的詞語會變成標籤：選擇一個建議（點按、Enter、Tab 或 \";\"），或輸入完整詞語後按空白鍵。"
+        "hint": "診所認得的詞會變成標籤：選擇一個建議，或輸入完整的詞。"
       },
       "entryButton": "聯絡醫師",
       "unavailable": "此管道目前無法使用。請直接聯絡診所。",
@@ -2808,12 +2815,22 @@
       "replyTitle": "診所的回覆",
       "youWrote": "您寫道",
       "youChose": "您選擇了：{option}",
+      "youTicked": "您勾選了：{names}",
       "earlier": "較早的訊息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "診所目前不在此接收新訊息。",
       "viewMessages": "查看我的訊息",
       "earlierLink": "查看先前訊息",
-      "earlierWith": "查看與{doctor}的先前訊息"
+      "earlierWith": "查看與{doctor}的先前訊息",
+      "sentUrgent": "如情況緊急，請不要等待回覆：立即就醫或撥打 {number}。",
+      "sendSecretary": "傳送給櫃台",
+      "goesToSecretary": "給櫃台",
+      "sentSecretary": "已收到。櫃台將在 {n, plural, other {# 個工作天}}內回覆。",
+      "openTextSecretary": "要更新櫃台那裡已有的請求嗎？新請求將取代舊請求。",
+      "entryButtonNamed": "聯絡{doctor}",
+      "openExistsNamed": "您已有一個未處理的請求：{reason}（{date}）",
+      "aiNotice": "本診所使用 AI 整理訊息。",
+      "replacedPrevious": "已取代您先前的訊息。"
     },
     "channel": {
       "title": "您的頻道",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "緊急狀況提醒、回覆時間和規則一律顯示，且對所有人相同：品牌只改變外觀，不改變規則。",
       "save": "儲存頻道",
       "saved": "已儲存。",
-      "saveError": "無法儲存。請檢查網路連線後再試一次。"
+      "saveError": "無法儲存。請檢查網路連線後再試一次。",
+      "needsReason": "請至少新增一個原因才能開啟管道。",
+      "aiMapping": "AI 閱讀（SolvyAI）",
+      "aiMappingHelp": "SolvyAI 閱讀每則請求的自由文字，並從您的清單中建議症狀；分數只會升高。每讀一則訊息使用當天 1 個 AI 額度。姓名、證件號碼、電話和電子郵件會先被遮蔽。表單會告知您的患者。"
     },
     "reasons": {
       "title": "聯絡原因",
@@ -2933,7 +2953,8 @@
         "call_back": "將致電",
         "substituted": "已取代"
       },
-      "navOpen": "{n} 則待處理訊息"
+      "navOpen": "{n} 則待處理訊息",
+      "admin": "行政"
     },
     "detail": {
       "back": "← 訊息",
@@ -2949,7 +2970,7 @@
       "warningShown": "病患已看到緊急警告。",
       "autoShown": "病患看到的自動訊息",
       "history": "此病患先前的訊息",
-      "replyLabel": "您的回覆（病患會透過通知收到）",
+      "replyLabel": "您的回覆（患者在管道中查看回覆）",
       "reply": "回覆並結案",
       "callBack": "我會致電病患",
       "call": "致電 {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "此訊息是給 {doctor} 的：您可以閱讀，但無法回覆。",
       "failed": "無法傳送，請再試一次。",
       "warningFloor": "帶有緊急警示的症狀：一律為緊急。",
-      "warningFloorAi": "帶有緊急警示的症狀：一律為緊急（AI）。"
+      "warningFloorAi": "帶有緊急警示的症狀：一律為緊急（AI）。",
+      "ai": {
+        "title": "AI 閱讀",
+        "intro": "SolvyAI 在訊息中找到了您清單中的這些症狀。確認前請先核對原文。",
+        "confirm": "確認",
+        "undo": "復原",
+        "undoConfirm": "復原 AI 閱讀？建議的症狀將被刪除，分數回到關鍵字分數。",
+        "cancel": "取消",
+        "confirmed": "已於 {date} 確認",
+        "undone": "已復原 AI 閱讀。",
+        "unavailable": "此訊息無法使用 AI 閱讀：僅依關鍵字。",
+        "pending": "SolvyAI 正在閱讀此訊息。",
+        "none": "AI 未從您的清單中找到其他症狀。",
+        "error": "無法儲存，請再試一次。"
+      }
     }
   },
   "noticesUnsubscribe": {

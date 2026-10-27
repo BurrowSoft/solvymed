@@ -7,6 +7,7 @@ import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientCha
 import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
+import { readingHoursLines } from "@/lib/patientChannel/readingHours";
 import { MyRequests } from "./MyRequests";
 import { PcPageFrame } from "./PcPageFrame";
 
@@ -35,7 +36,9 @@ const QUESTIONS: { key: AnswerKey; n: number }[] = [
   { key: "intensity", n: 3 },
   { key: "stillTaking", n: 2 },
 ];
-const START: Answers = { symptomIds: [], chips: [], when: 0, intensity: 0, stillTaking: 0, text: "" };
+// Nothing preselected (launch polish 15): -1 = not answered, which adds 0 points (score.ts) and
+// matches only an automatic message that accepts any answer (255 accepts -1).
+const START: Answers = { symptomIds: [], chips: [], when: -1, intensity: -1, stillTaking: -1, text: "" };
 const PREVIEW_MS = 300;
 
 export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe, loadRequests }: {
@@ -63,11 +66,21 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const [requests, setRequests] = useState<PcMyRequest[] | null>(null);
   const openRequest = requests?.find((r) => r.status === "open") ?? null;
   const number = page.emergencyNumber ?? t("localNumber");
+  const hoursLines = readingHoursLines(page.readingHours ?? [], locale);
   const symptomForm = reason?.kind === "symptom_form";
   const who = reason?.destination === "secretary" ? t("secretary") : page.doctorName;
-  // "Quer atualizar a que já está com {who}?": the OPEN request's destination (migration 251;
-  // mobile tester 2), not the new one's. Unknown (an older answer): the new one's, as before.
-  const openWho = openRequest?.destination ? (openRequest.destination === "secretary" ? t("secretary") : page.doctorName) : who;
+  // The front desk in a sentence takes its article ("para a secretaria", "A secretaria responde";
+  // launch polish 18): its own keys, never {who} = "Secretaria".
+  const toSecretary = reason?.destination === "secretary";
+  // One open request per DESTINATION (255): the one to replace always goes where the new one
+  // goes, so "Quer atualizar a que já está com {who}?" names the new reason's destination, and
+  // the prompt names that open request (launch polish 2): from the 409, else the patient's own
+  // list (the open one with this destination).
+  const openToSecretary = toSecretary;
+  const openWho = openToSecretary ? t("secretary") : page.doctorName;
+  const [openNamed, setOpenNamed] = useState<{ reasonTitle: string; createdAt: string } | null>(null);
+  const sameDestOpen = requests?.find((r) => r.status === "open" && (r.destination ?? "doctor") === (reason?.destination ?? "doctor")) ?? null;
+  const openShown = openNamed ?? (sameDestOpen ? { reasonTitle: sameDestOpen.reasonTitle, createdAt: sameDestOpen.createdAt } : null);
 
   // /preview, debounced (§10.6); the latest answer wins.
   const seq = useRef(0);
@@ -141,17 +154,26 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
       vv?.removeEventListener("resize", update);
     };
   }, [barOn]);
+  // While the emergency line shows, only "attention" automatic messages stay: an "info" one
+  // ("Enjoo leve é comum…") next to it mixes signals (launch polish 4).
+  const autoShown = warning ? check.autoMessages.filter((m) => m.tone !== "info") : check.autoMessages;
   const canSkip = symptomForm && check.canSkip && !warning && check.autoMessages.length > 0;
+  // An urgent send (the line was shown): the confirmation repeats it (launch polish 1).
+  const [sentWarning, setSentWarning] = useState(false);
+  // The send replaced the open request: the confirmation says so (launch polish 21).
+  const [sentReplaced, setSentReplaced] = useState(false);
 
   const send = async (replace: boolean) => {
     if (!reason || sending) return;
     setSending(true);
     setFailed(false);
-    const shown = symptomForm ? check.autoMessages.map((m) => m.id) : [];
+    // Kept with the request as shown: the ones the patient actually saw.
+    const shown = symptomForm ? autoShown.map((m) => m.id) : [];
     const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
-    if (r.status === "sent") setStep("sent");
+    if (r.status === "sent") { setSentWarning(!!warning); setSentReplaced(replace); setStep("sent"); }
     else if (r.status === "open_exists") {
+      setOpenNamed(r.open ?? null);
       setStep("replace");
       // The open request may be newer than the list read on the first screen.
       void loadRequests?.().then(setRequests).catch(() => undefined);
@@ -172,7 +194,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     return () => { live = false; };
   }, [step, loadRequests]);
 
-  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); };
+  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); setSentWarning(false); setSentReplaced(false); setOpenNamed(null); };
 
   const back = (to: Step) => (
     <button type="button" onClick={() => setStep(to)} className="w-max py-1 text-sm font-bold text-teal-700">{t("back")}</button>
@@ -192,7 +214,17 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {page.welcome && <p className="whitespace-pre-line text-sm text-slate-600">{page.welcome}</p>}
         <ul className="grid grid-cols-2 gap-2 text-sm">
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("sla", { n: page.slaBusinessDays })}</b>{t("slaLabel")}</li>
-          <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("hoursTitle")}</b>{t("hoursLabel")}</li>
+          {/* The doctor's real reading hours when set (launch polish 20), else the general line. */}
+          <li className="rounded-xl bg-teal-50 px-3 py-2" data-testid="pc-hours">
+            <b className="block text-teal-800">{t("hoursTitle")}</b>
+            {/* The time range never breaks at its dash (360 px; the re-run). */}
+            {hoursLines.length > 0 ? hoursLines.map((l) => {
+              const cut = l.lastIndexOf(" · ");
+              return cut < 0 ? <span key={l} className="block">{l}</span>
+                : <span key={l} className="block">{l.slice(0, cut + 3)}<span className="whitespace-nowrap">{l.slice(cut + 3)}</span></span>;
+            }) : t("hoursLabel")}
+            {page.readingNote && <span className="block text-xs text-teal-900/80">{page.readingNote}</span>}
+          </li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("oneTitle")}</b>{t("oneLabel")}</li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("privateTitle")}</b>{t("privateLabel")}</li>
         </ul>
@@ -223,8 +255,10 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {page.reasons.map((r) => (
           <button key={r.id} type="button" data-testid={`pc-reason-${r.id}`} onClick={() => { setReason(r); setAnswers(START); setOption(0); setStep("form"); }}
             className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:border-teal-500">
-            <span className="min-w-0"><b className="block text-sm text-slate-900">{r.title}</b><span className="text-xs text-slate-500">{r.subtitle}</span></span>
-            <span className="shrink-0 rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold uppercase text-teal-700">{t("goesTo", { who: r.destination === "secretary" ? t("secretary") : page.doctorName })}</span>
+            <span className="min-w-0 flex-1"><b className="block text-sm text-slate-900">{r.title}</b><span className="text-xs text-slate-500">{r.subtitle}</span></span>
+            {/* The title keeps the room: the chip is capped and cut with "…", in normal case, so a
+                long doctor's name never pushes the title to 2 lines at 360 (launch polish 22). */}
+            <span className="max-w-[45%] truncate rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700" data-testid={`pc-reason-to-${r.id}`}>{r.destination === "secretary" ? t("goesToSecretary") : t("goesTo", { who: page.doctorName })}</span>
           </button>
         ))}
       </>
@@ -234,7 +268,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
       <form className="flex flex-col gap-3" onSubmit={(e) => { e.preventDefault(); void send(false); }}>
         {back("reason")}
         <h2 className="text-lg font-extrabold text-slate-900">{reason.title}</h2>
-        <span className="w-max rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold uppercase text-teal-700">{t("goesTo", { who })}</span>
+        <span className="w-max rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold uppercase text-teal-700">{toSecretary ? t("goesToSecretary") : t("goesTo", { who })}</span>
         {symptomForm ? (
           <>
             <fieldset className="min-w-0">
@@ -256,6 +290,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                   {ta(`${key}Q`)}
                   <select className="w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm" value={answers[key]}
                     onChange={(e) => setAnswers({ ...answers, [key]: Number(e.target.value) })}>
+                    <option value={-1}>{ta("choose")}</option>
                     {Array.from({ length: n }, (_, i) => <option key={i} value={i}>{ta(`${key}${i}`)}</option>)}
                   </select>
                 </label>
@@ -266,6 +301,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 label={t("textLabel")} placeholder={t("textPlaceholder")}
                 onChange={(text, chips) => setAnswers((a) => ({ ...a, text, chips }))} />
             </div>
+            {/* M7 / PC-10′: with the doctor's AI option on, the form says so. */}
+            {page.aiNotice && <p className="text-xs text-slate-500" data-testid="pc-ai-notice">{t("aiNotice")}</p>}
             {warning && bar && createPortal(
               <button ref={barRef} type="button" aria-hidden="true" tabIndex={-1} data-testid="pc-emergency-bar"
                 onClick={() => emergencyRef.current?.scrollIntoView({ behavior: motion(), block: "center" })}
@@ -279,9 +316,9 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
               </button>,
               document.body,
             )}
-            {check.autoMessages.length > 0 && (
+            {autoShown.length > 0 && (
               <div className="flex flex-col gap-2" data-testid="pc-auto">
-                {check.autoMessages.map((m) => (
+                {autoShown.map((m) => (
                   <div key={m.id} className={`rounded-xl border p-3 text-sm ${m.tone === "attention" ? "border-amber-400 bg-amber-50" : "border-teal-300 bg-teal-50"}`}>
                     <span className="block text-xs font-bold uppercase tracking-wide text-slate-600">{t("autoWho", { doctor: page.doctorName })}</span>
                     <span className="whitespace-pre-line break-words">{m.text}</span>
@@ -313,7 +350,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         )}
         {failed && <p role="alert" className="text-sm font-semibold text-red-600">{t("sendFailed")}</p>}
         <button type="submit" data-testid="pc-send" disabled={sending} className="mt-1 rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)] disabled:opacity-60">
-          {sending ? t("sending") : t("send", { who })}
+          {sending ? t("sending") : toSecretary ? t("sendSecretary") : t("send", { who })}
         </button>
       </form>
     );
@@ -321,7 +358,13 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     body = (
       <div className="flex flex-col gap-3 rounded-xl border border-amber-400 bg-amber-50 p-4" data-testid="pc-replace">
         <h2 className="text-base font-bold text-slate-900">{t("openTitle")}</h2>
-        <p className="text-sm text-slate-700">{t("openText", { who: openWho })}</p>
+        {/* Which request would be replaced (launch polish 2). */}
+        {openShown && (
+          <p className="text-sm font-semibold text-slate-900" data-testid="pc-replace-open">
+            {t("openExistsNamed", { reason: openShown.reasonTitle, date: formatWhen(openShown.createdAt, locale) })}
+          </p>
+        )}
+        <p className="text-sm text-slate-700">{openToSecretary ? t("openTextSecretary") : t("openText", { who: openWho })}</p>
         <button type="button" data-testid="pc-replace-yes" disabled={sending} onClick={() => void send(true)} className="rounded-xl bg-[var(--pc-brand)] px-4 py-2.5 text-sm font-bold text-[var(--pc-ink)]">{t("replace")}</button>
         <button type="button" onClick={() => setStep("form")} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("keep")}</button>
       </div>
@@ -329,7 +372,14 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   } else if (step === "sent") {
     body = (
       <>
-        <p data-testid="pc-sent" className="rounded-xl border border-green-600 bg-green-50 p-3 text-sm text-green-900">{t("sent", { who, n: page.slaBusinessDays })}</p>
+        {/* The last screen the patient reads after an urgent send: don't wait, call (01's line). */}
+        {sentWarning && (
+          <p role="alert" data-testid="pc-sent-urgent" className="rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900">{t("sentUrgent", { number })}</p>
+        )}
+        <p data-testid="pc-sent" className="rounded-xl border border-green-600 bg-green-50 p-3 text-sm text-green-900">
+          {toSecretary ? t("sentSecretary", { n: page.slaBusinessDays }) : t("sent", { who, n: page.slaBusinessDays })}
+          {sentReplaced && <span className="mt-1 block" data-testid="pc-sent-replaced">{t("replacedPrevious")}</span>}
+        </p>
         <button type="button" onClick={restart} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("again")}</button>
       </>
     );

@@ -220,7 +220,9 @@ describe("Acessos in the viewer's zone (cf)", () => {
     );
     fireEvent.click(screen.getByRole("button", { name: en.patientDetail.tabAccessLog }));
     expect(screen.queryByText("SERVER-TEXT")).toBeNull();
-    expect(screen.getByText(/2026/)).toHaveTextContent(/7/);
-    expect(screen.getByText(/2026/)).toHaveTextContent(/(23:30|11:30)/);
+    // The staff lists' short form (launch polish 32): the year only when it isn't this year.
+    const cell = screen.getByText(/(23:30|11:30)/);
+    expect(cell).toHaveTextContent(/7/);
+    if (new Date().getFullYear() !== 2026) expect(cell).toHaveTextContent(/2026/);
   });
 });

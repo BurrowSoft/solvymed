@@ -45,9 +45,13 @@ describe("the patient's flow", () => {
   it("an options reason goes to the front desk; a second send asks to replace the open one", async () => {
     flow();
     toForm("adm");
-    expect(screen.getByText("Para: Secretaria")).toBeInTheDocument();
+    // The front desk with its article (launch polish 18).
+    expect(screen.getByText("Para a secretaria")).toBeInTheDocument();
+    expect(screen.getByTestId("pc-send")).toHaveTextContent("Enviar para a secretaria");
     fireEvent.click(screen.getByTestId("pc-send"));
-    await waitFor(() => expect(screen.getByTestId("pc-sent")).toHaveTextContent("Secretaria responde em até 2 dias úteis"));
+    await waitFor(() => expect(screen.getByTestId("pc-sent")).toHaveTextContent("Recebido. A secretaria responde em até 2 dias úteis."));
+    // Not urgent: no emergency line after sending.
+    expect(screen.queryByTestId("pc-sent-urgent")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: P.again }));
     toForm("adm");
     fireEvent.click(screen.getByTestId("pc-send"));
@@ -56,16 +60,27 @@ describe("the patient's flow", () => {
     await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
   });
 
-  it("the replace prompt names who has the OPEN one (251's destination), not the new reason's", async () => {
-    const loadRequests = vi.fn(async () => [REQ({ destination: "doctor" })]);
+  it("the replace prompt names the open request from the 409 (its reason and date) and who has it (launch polish 2; 255)", async () => {
+    const submit = vi.fn(async () => ({ status: "open_exists" as const, open: { reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T13:05:00Z" } }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} />));
+    toForm("efe");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const prompt = await screen.findByTestId("pc-replace");
+    expect(screen.getByTestId("pc-replace-open")).toHaveTextContent("Você já tem uma solicitação aberta: Possível efeito colateral (");
+    // One open request per destination (255): the one to replace goes where the new one goes.
+    expect(prompt).toHaveTextContent(P.openText.replace("{who}", SAMPLE_PAGE.doctorName));
+    expect(toMyRequests([{ id: "q", status: "open", destination: "elsewhere" }])[0].destination).toBeNull();
+  });
+
+  it("an older server's 409 without the request: named from the patient's own list, the open one with the SAME destination", async () => {
+    const loadRequests = vi.fn(async () => [REQ({ id: "d", destination: "doctor", reasonTitle: "Dúvida clínica" }), REQ({ id: "s", destination: "secretary", reasonTitle: "Recibo" })]);
     const submit = vi.fn(async () => ({ status: "open_exists" as const }));
     render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} loadRequests={loadRequests} />));
     await waitFor(() => expect(loadRequests).toHaveBeenCalled());
     toForm("adm");
     fireEvent.click(screen.getByTestId("pc-send"));
-    const prompt = await screen.findByTestId("pc-replace");
-    await waitFor(() => expect(prompt).toHaveTextContent(P.openText.replace("{who}", SAMPLE_PAGE.doctorName)));
-    expect(toMyRequests([{ id: "q", status: "open", destination: "elsewhere" }])[0].destination).toBeNull();
+    await waitFor(() => expect(screen.getByTestId("pc-replace-open")).toHaveTextContent("Recibo"));
+    expect(screen.getByTestId("pc-replace-open").textContent).not.toContain("Dúvida clínica");
   });
 
   it("each reason says who it goes to: the doctor by name, or the front desk; no score talk after sending (01)", async () => {
@@ -73,7 +88,7 @@ describe("the patient's flow", () => {
     fireEvent.click(screen.getByTestId("pc-start"));
     fireEvent.click(screen.getByTestId("pc-faq-continue"));
     expect(screen.getByTestId("pc-reason-efe")).toHaveTextContent("Para: Dra. Ana Lima");
-    expect(screen.getByTestId("pc-reason-adm")).toHaveTextContent("Para: Secretaria");
+    expect(screen.getByTestId("pc-reason-adm")).toHaveTextContent("Para a secretaria");
     fireEvent.click(screen.getByTestId("pc-reason-med"));
     fireEvent.click(screen.getByTestId("pc-send"));
     await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
@@ -89,17 +104,58 @@ describe("the patient's flow", () => {
     expect(document.body.textContent).not.toMatch(/Urgente|Atenção|pontos/);
   });
 
-  it("an automatic message with the skip button; never the skip with the warning", async () => {
+  it("an automatic message with the skip button; with the warning, no skip and no info-tone message (launch polish 4)", async () => {
     flow();
     toForm("efe");
     fireEvent.click(screen.getByRole("checkbox", { name: "Coceira na pele" }));
     choose(A.whenQ, A.when0);
     choose(A.intensityQ, A.intensity0);
     expect(await screen.findByTestId("pc-skip")).toHaveTextContent(P.skip);
+    expect(screen.getByTestId("pc-auto")).toHaveTextContent("Coceira leve");
     fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
     await waitFor(() => expect(screen.queryByTestId("pc-skip")).toBeNull());
-    expect(screen.getByTestId("pc-auto")).toBeInTheDocument();
     expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+    // "Coceira leve…" is info-tone: it goes while the emergency line shows.
+    expect(screen.queryByTestId("pc-auto")).toBeNull();
+  });
+
+  it("with the warning, an attention-tone message stays", async () => {
+    flow();
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Tontura" }));
+    choose(A.intensityQ, A.intensity2);
+    expect(await screen.findByTestId("pc-auto")).toHaveTextContent("Tontura forte");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
+    expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId("pc-auto")).toHaveTextContent("Tontura forte"));
+  });
+
+  it("after an URGENT send, the confirmation says not to wait, with the number, above \"Recebido\" (launch polish 1)", async () => {
+    flow();
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Falta de ar ou inchaço no rosto" }));
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const urgent = await screen.findByTestId("pc-sent-urgent");
+    expect(urgent).toHaveTextContent(P.sentUrgent.replace("{number}", "192"));
+    expect(urgent.compareDocumentPosition(screen.getByTestId("pc-sent")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // A new, non-urgent request to the front desk starts clean, and (255) doesn't replace the
+    // open clinical one: one open request per destination.
+    fireEvent.click(screen.getByRole("button", { name: P.again }));
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
+    expect(screen.queryByTestId("pc-replace")).toBeNull();
+    expect(screen.queryByTestId("pc-sent-urgent")).toBeNull();
+  });
+
+  it("the replace prompt for the front desk's open request takes the article", async () => {
+    const loadRequests = vi.fn(async () => [REQ({ destination: "secretary" })]);
+    const submit = vi.fn(async () => ({ status: "open_exists" as const }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} loadRequests={loadRequests} />));
+    await waitFor(() => expect(loadRequests).toHaveBeenCalled());
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await waitFor(async () => expect(await screen.findByTestId("pc-replace")).toHaveTextContent(P.openTextSecretary));
   });
 
   it("M4b: the FAQ and the skip are counted for the doctor (no content)", async () => {
@@ -478,5 +534,22 @@ describe("the emergency bar while typing", () => {
     } finally {
       restore();
     }
+  });
+});
+
+describe("launch polish 15: nothing preselected", () => {
+  it("each question starts on \"Escolha…\" and an untouched form sends -1 (adds 0 points)", async () => {
+    const submit = vi.fn(async () => ({ status: "sent" as const }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} />));
+    toForm("efe");
+    for (const q of [A.whenQ, A.intensityQ, A.stillTakingQ]) {
+      const select = screen.getByRole("combobox", { name: q }) as HTMLSelectElement;
+      expect(select.value).toBe("-1");
+      expect(select.selectedOptions[0].textContent).toBe(A.choose);
+    }
+    fireEvent.click(screen.getByRole("checkbox", { name: "Coceira na pele" }));
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await waitFor(() => expect(submit).toHaveBeenCalled());
+    expect((submit.mock.calls[0] as unknown[])[1]).toMatchObject({ when: -1, intensity: -1, stillTaking: -1 });
   });
 });

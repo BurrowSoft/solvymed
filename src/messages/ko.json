@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "데모 모드",
     "barText": "데모 모드 · 가상 데이터, 24시간 이내 삭제",
@@ -928,7 +928,8 @@
       "deleteAccount": "내 계정 삭제",
       "deleteConfirm": "계정이 삭제됩니다. 언제든지 다시 가입할 수 있습니다.",
       "deletedNotice": "계정이 삭제되었습니다.",
-      "requestDeletion": "계정 삭제 요청"
+      "requestDeletion": "계정 삭제 요청",
+      "notConnected": "현재 어떤 진료소에도 연결되어 있지 않습니다."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
@@ -1264,7 +1265,7 @@
     "titleClose": "계정 폐쇄",
     "titleDelete": "계정 삭제",
     "closeIntro": "환자의 진료 기록이 있어 계정을 바로 삭제할 수 없습니다. 계정을 폐쇄하면:",
-    "closeLogin": "로그인, 연락처, 사진, 결제 및 진료소 정보가 즉시 삭제됩니다.",
+    "closeLogin": "로그인, 연락처, 사진, 결제 및 진료소 정보가 즉시 삭제되거나 익명화됩니다.",
     "closeRecords": "진료 기록과 환자 목록은 법정 보존 기간(20년) 동안 누구도 접근할 수 없게 보관된 후 영구 삭제됩니다. 작성자로서 이름과 면허 번호는 기록에 남습니다.",
     "closePatients": "환자 {patients}명이 보관 처리되고 {appointments, plural, =0 {취소할 예정된 예약이 없습니다} other {예정된 예약 #건이 취소됩니다}}. 앱을 사용하는 환자에게는 알림이 전송됩니다.",
     "closeTeam": "팀원 {secretaries}명의 접근 권한이 삭제됩니다.",
@@ -2250,7 +2251,8 @@
       "patientFull": "이 의사에 대한 200MB 한도에 도달했습니다.",
       "storageFull": "이 의사의 문서 저장 공간이 가득 찼습니다.",
       "ownStorageFull": "문서 저장 공간이 가득 찼습니다(5GB). 지원팀에 문의하세요.",
-      "noAccess": "이 문서는 더 이상 사용할 수 없습니다."
+      "noAccess": "이 문서는 더 이상 사용할 수 없습니다.",
+      "notAccepting": "이 진료소는 현재 파일을 받지 않습니다."
     },
     "storageNotice": "문서에 5GB 중 {used}를 사용했습니다.",
     "snapshotNotShared": "저장되었지만 공유되지 않았습니다: 문서 저장 공간이 가득 찼습니다.",
@@ -2575,6 +2577,7 @@
       "remove": "삭제",
       "removeConfirm": "커버 이미지를 삭제할까요?",
       "useThis": "이 이미지 사용",
+      "uploading": "업로드 중…",
       "errorSize": "이미지는 3MB 이하여야 합니다.",
       "errorType": "PNG, JPEG 또는 WebP 파일을 사용하세요.",
       "errorNotSetUp": "커버를 업로드하기 전에 채널 설정을 저장하세요."
@@ -2584,8 +2587,9 @@
       "use": "템플릿 사용",
       "openRequests": "템플릿을 바꾸기 전에 열린 요청에 답하거나 닫으세요.",
       "backTo": "초기 템플릿으로 되돌리기",
-      "confirm": "증상, 조합, 긴급도 구간, 약, 자동 메시지가 템플릿으로 바뀝니다. 계속할까요?",
-      "replace": "바꾸기"
+      "confirm": "증상, 조합, 긴급도 구간, 약, 자동 메시지가 템플릿으로 바뀝니다. 사유와 자주 묻는 질문은 그대로 유지됩니다. 계속할까요?",
+      "replace": "바꾸기",
+      "restored": "템플릿을 복원했습니다. 사유와 자주 묻는 질문은 그대로 유지되었습니다."
     },
     "title": "환자 채널",
     "entryText": "환자가 정리된 채널을 통해 질문을 보내며, 설정하신 점수에 따라 긴급도 순으로 정렬됩니다.",
@@ -2598,6 +2602,7 @@
       "save": "규칙 저장",
       "saving": "저장 중…",
       "saved": "규칙이 저장되었습니다. 열린 요청이 이 규칙으로 다시 계산되었습니다.",
+      "savedOnly": "규칙이 저장되었습니다.",
       "unsaved": "저장되지 않은 변경 사항",
       "conflict": "이 규칙이 다른 곳에서 변경되었습니다. 페이지를 새로고침하여 현재 버전을 확인하세요.",
       "reload": "새로고침",
@@ -2659,7 +2664,9 @@
       "intensity2": "심함",
       "stillTakingQ": "지금도 약을 복용하고 계신가요?",
       "stillTaking0": "예",
-      "stillTaking1": "스스로 중단했어요"
+      "stillTaking1": "스스로 중단했어요",
+      "choose": "선택…",
+      "notAnswered": "답변 없음"
     },
     "bands": {
       "title": "긴급도 단계",
@@ -2791,7 +2798,7 @@
         "symptomOf": "증상: {name}",
         "remove": "{term} 삭제",
         "suggestions": "추천",
-        "hint": "의원에서 아는 용어는 태그가 돼요. 추천 항목을 선택하거나(클릭, Enter, Tab 또는 \";\") 단어 전체를 입력한 뒤 스페이스를 누르세요."
+        "hint": "진료소가 아는 용어는 태그가 됩니다. 제안을 고르거나 단어를 끝까지 입력하세요."
       },
       "entryButton": "의사에게 문의",
       "unavailable": "이 채널은 사용할 수 없습니다. 병원에 직접 문의해 주세요.",
@@ -2808,12 +2815,22 @@
       "replyTitle": "병원의 답변",
       "youWrote": "작성한 내용",
       "youChose": "선택: {option}",
+      "youTicked": "선택한 항목: {names}",
       "earlier": "이전 메시지 ({n})",
       "statusReceived": "접수됨",
       "notTaking": "현재 병원에서 이곳으로 새 메시지를 받지 않습니다.",
       "viewMessages": "내 메시지 보기",
       "earlierLink": "이전 메시지 보기",
-      "earlierWith": "{doctor}와(과)의 이전 메시지 보기"
+      "earlierWith": "{doctor}와(과)의 이전 메시지 보기",
+      "sentUrgent": "급하다면 답변을 기다리지 말고 지금 진료를 받거나 {number}에 전화하세요.",
+      "sendSecretary": "접수처로 보내기",
+      "goesToSecretary": "받는 곳: 접수처",
+      "sentSecretary": "접수되었습니다. 접수처가 {n, plural, other {영업일 기준 #일}} 이내에 답변합니다.",
+      "openTextSecretary": "접수처에 이미 있는 요청을 업데이트할까요? 새 요청이 기존 요청을 대체합니다.",
+      "entryButtonNamed": "{doctor}에게 연락",
+      "openExistsNamed": "이미 열린 요청이 있습니다: {reason} ({date})",
+      "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다.",
+      "replacedPrevious": "이전 메시지를 대체했습니다."
     },
     "channel": {
       "title": "내 채널",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "응급 안내, 응답 시간, 규칙은 항상 모든 사람에게 동일하게 표시됩니다. 브랜드는 디자인만 바꾸며 규칙은 바꾸지 않습니다.",
       "save": "채널 저장",
       "saved": "저장되었습니다.",
-      "saveError": "저장하지 못했습니다. 연결을 확인하고 다시 시도하세요."
+      "saveError": "저장하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
+      "needsReason": "채널을 켜려면 사유를 하나 이상 추가하세요.",
+      "aiMapping": "AI 읽기 (SolvyAI)",
+      "aiMappingHelp": "SolvyAI가 각 요청의 자유 텍스트를 읽고 목록에서 증상을 제안합니다. 점수는 올라가기만 합니다. 읽은 메시지마다 그날의 AI 크레딧 1개를 사용합니다. 이름, 신분증 번호, 전화번호, 이메일은 먼저 가려집니다. 양식에서 환자에게 알립니다."
     },
     "reasons": {
       "title": "문의 사유",
@@ -2933,7 +2953,8 @@
         "call_back": "전화 예정",
         "substituted": "대체됨"
       },
-      "navOpen": "열린 메시지 {n}개"
+      "navOpen": "열린 메시지 {n}개",
+      "admin": "행정"
     },
     "detail": {
       "back": "← 메시지",
@@ -2949,7 +2970,7 @@
       "warningShown": "환자에게 응급 경고가 표시되었습니다.",
       "autoShown": "환자가 본 자동 메시지",
       "history": "이 환자의 이전 메시지",
-      "replyLabel": "답변 (환자에게 알림으로 전달됩니다)",
+      "replyLabel": "내 답변 (환자는 채널에서 답변을 확인합니다)",
       "reply": "답변하고 종료",
       "callBack": "환자에게 전화하겠습니다",
       "call": "{phone}로 전화",
@@ -2961,7 +2982,21 @@
       "readOnly": "{doctor}에게 온 메시지입니다. 읽을 수는 있지만 답변할 수는 없습니다.",
       "failed": "전송하지 못했습니다. 다시 시도하세요.",
       "warningFloor": "응급 경고 증상: 항상 긴급.",
-      "warningFloorAi": "응급 경고 증상: 항상 긴급 (AI)."
+      "warningFloorAi": "응급 경고 증상: 항상 긴급 (AI).",
+      "ai": {
+        "title": "AI 읽기",
+        "intro": "SolvyAI가 메시지에서 목록에 있는 다음 증상을 찾았습니다. 확인하기 전에 본문을 확인하세요.",
+        "confirm": "확인",
+        "undo": "실행 취소",
+        "undoConfirm": "AI 읽기를 실행 취소할까요? 제안된 증상이 삭제되고 점수는 키워드 점수로 돌아갑니다.",
+        "cancel": "취소",
+        "confirmed": "{date}에 확인됨",
+        "undone": "AI 읽기를 실행 취소했습니다.",
+        "unavailable": "이 메시지에는 AI 읽기를 사용할 수 없습니다: 키워드만 사용.",
+        "pending": "SolvyAI가 이 메시지를 읽고 있습니다.",
+        "none": "AI가 목록에서 다른 증상을 찾지 못했습니다.",
+        "error": "저장하지 못했습니다. 다시 시도하세요."
+      }
     }
   },
   "noticesUnsubscribe": {

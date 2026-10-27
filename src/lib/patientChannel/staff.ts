@@ -5,7 +5,7 @@ import { getEffectiveProfId, myPractices } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { countryProfile } from "@/lib/country";
-import { dateLocale, plainSpaces } from "@/lib/dateLabels";
+import { whenShortFormatter } from "@/lib/whenShort";
 import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { patientChannelOnForPractice } from "./live";
 
@@ -31,14 +31,9 @@ export async function staffContext(locale: string) {
   ]);
   const practice = practices?.find((p) => p.professional_id === profId);
   const doctorName = practice ? withBrandTitle(practice.title, shortDoctorName(practice.display_name)) : "";
-  const fmt = new Intl.DateTimeFormat(dateLocale(locale, countryProfile(country).calendar), {
-    day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: zone,
-  });
-  // Rendered on the server only, so the server's text is the page's text.
-  const formatWhen = (iso: string) => {
-    const d = new Date(iso);
-    return Number.isNaN(d.getTime()) ? "" : plainSpaces(fmt.format(d));
-  };
+  // Rendered on the server only, so the server's text is the page's text. The same short form
+  // as the access log (launch polish 32): the year only when it isn't this year.
+  const formatWhen = whenShortFormatter(locale, countryProfile(country).calendar, zone);
   return { supabase, user, prefix, profId, isSecretary, country, doctorName, formatWhen };
 }
 

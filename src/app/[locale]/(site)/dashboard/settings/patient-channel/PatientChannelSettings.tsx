@@ -45,7 +45,7 @@ const H2 = "text-base font-bold text-slate-900";
 const SUB = "text-xs leading-relaxed text-slate-500";
 const NUM = "w-20 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-sm tabular-nums focus:border-teal-500 focus:outline-none";
 const INPUT = "w-full min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:border-teal-500 focus:outline-none";
-const MINI = "rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50";
+const MINI = "shrink-0 whitespace-nowrap rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-50";
 const GHOST = "rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold text-teal-700 hover:bg-teal-50 disabled:opacity-50";
 const ANSWERS: { key: AnswerKey; n: number }[] = [
   { key: "when", n: 3 },
@@ -61,7 +61,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   initialVersion: number;
   emergencyNumber: string | null;
   professionalId: string;
-  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null };
+  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null; ai?: { on: boolean } | null };
   // How patients see the page (the saved look), for "Testar como paciente".
   patientView?: PatientView;
   // The practice country's starting template (pc_templates), or null.
@@ -80,6 +80,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   useLeaveGuard(dirty);
   // The starting template replaces the rules wholesale, so it's offered only on blank SAVED
   // rules (no symptoms, medicines or automatic messages) with nothing unsaved (cf).
+  // How many open requests the last save recalculated: the "recalculated" line only when > 0 (item 9).
+  const [rescored, setRescored] = useState(0);
   const blank = useMemo(() => {
     const saved = JSON.parse(savedJson) as { symptoms?: unknown[]; medicines?: unknown[]; autoMessages?: unknown[] };
     return !saved.symptoms?.length && !saved.medicines?.length && !saved.autoMessages?.length;
@@ -98,8 +100,9 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         body: JSON.stringify({ rules: sent, expectedVersion: version }),
       });
       if (res.ok) {
-        const { version: next } = (await res.json()) as { version: number };
+        const { version: next, rescored: n } = (await res.json()) as { version: number; rescored?: number };
         setVersion(next);
+        setRescored(n ?? 0);
         setSavedJson(JSON.stringify(sent));
         setState("saved");
       } else {
@@ -117,7 +120,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       : state === "error" ? t("settings.error")
       : state === "saving" ? t("settings.saving")
       : dirty ? t("settings.unsaved")
-      : state === "saved" ? t("settings.saved")
+      : state === "saved" ? (rescored > 0 ? t("settings.saved") : t("settings.savedOnly"))
       : "";
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
 
@@ -136,6 +139,9 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       <h1 className="text-2xl font-extrabold text-slate-900">{t("title")}</h1>
       <p className="mt-1 max-w-prose text-sm text-slate-500">{t("settings.intro")}</p>
 
+
+      {/* No symptoms yet: start from the ready-made template, first on the page (01, item 6). */}
+      {templateId && blank && !dirty && <TemplateStart templateId={templateId} />}
 
       <section className={`${CARD} mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between`}>
         <div className="min-w-0">
@@ -156,12 +162,11 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         faq={channel.faq}
         brandHref={brandHref}
         cover={channel.cover}
+        ai={channel.ai}
       />
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>
-      {/* No symptoms yet: start from the ready-made template (01). */}
-      {templateId && blank && !dirty && <TemplateStart templateId={templateId} />}
       {/* Later: back to the template, rules only, after a confirm (nothing unsaved). */}
       {templateId && !blank && !dirty && <TemplateReset templateId={templateId} />}
       <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -175,15 +180,15 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         <AutoMessages rules={rules} setRules={setRules} />
       </div>
       {/* The save bar: stuck to the bottom of the page while scrolling, clear of SolvyAI's opener. */}
-      <div data-testid="pc-save-bar" className="sticky bottom-0 z-20 -mx-4 mt-6 border-t border-slate-200 bg-white/95 px-4 py-3 pr-20 backdrop-blur sm:-mx-6 sm:px-6 sm:pr-20 lg:-mx-8 lg:px-8 lg:pr-20">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2">
-          <p role="status" aria-live="polite" className={`min-w-0 text-sm ${bad ? "font-semibold text-red-700" : "text-slate-600"}`}>{status}</p>
+      <div data-testid="pc-save-bar" className="sticky bottom-0 z-20 -mx-4 mt-6 border-t border-slate-200 bg-white/95 px-4 py-1.5 pr-20 backdrop-blur sm:py-3 sm:-mx-6 sm:px-6 sm:pr-20 lg:-mx-8 lg:px-8 lg:pr-20">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:flex-wrap">
+          <p role="status" aria-live="polite" className={`min-w-0 text-xs leading-snug sm:text-sm ${bad ? "font-semibold text-red-700" : "text-slate-600"}`}>{status}</p>
           <div className="flex shrink-0 gap-2">
             {state === "conflict" && (
-              <button type="button" onClick={() => window.location.reload()} className="rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold text-teal-700">{t("settings.reload")}</button>
+              <button type="button" onClick={() => window.location.reload()} className="rounded-xl border border-teal-600 px-3 py-1.5 text-sm font-bold text-teal-700 sm:px-4 sm:py-2">{t("settings.reload")}</button>
             )}
             <button type="button" data-testid="pc-save" onClick={() => void save()} disabled={!dirty || problems.length > 0 || state === "saving" || state === "conflict"}
-              className="rounded-xl bg-teal-600 px-5 py-2 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50">
+              className="rounded-xl bg-teal-600 px-4 py-1.5 text-sm font-bold text-white hover:bg-teal-700 disabled:opacity-50 sm:px-5 sm:py-2">
               {t("settings.save")}
             </button>
           </div>
@@ -234,7 +239,7 @@ function Symptoms({ rules, setRules }: SectionProps) {
                     aria-label={t("symptoms.renameLabel", { name: s.name })}
                     onChange={(e) => setRenaming({ ...renaming, value: e.target.value, error: null })}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); rename(); } if (e.key === "Escape") setRenaming(null); }} />
-                  <button type="button" className={GHOST} onClick={rename}>{t("symptoms.renameSave")}</button>
+                  <button type="button" className={`${GHOST} shrink-0 whitespace-nowrap`} onClick={rename}>{t("symptoms.renameSave")}</button>
                   <button type="button" className={MINI} onClick={() => setRenaming(null)}>{t("auto.cancel")}</button>
                 </div>
                 {renaming.error && <p role="alert" className="text-xs font-semibold text-red-600">{renaming.error}</p>}
@@ -243,7 +248,8 @@ function Symptoms({ rules, setRules }: SectionProps) {
               <div className="flex items-start justify-between gap-2">
                 <span className="min-w-0 break-words text-sm font-bold text-slate-900">{s.name}</span>
                 <span className="flex shrink-0 gap-1.5">
-                  <button type="button" className={MINI} aria-label={t("symptoms.renameLabel", { name: s.name })} onClick={() => setRenaming({ id: s.id, value: s.name, error: null })}>
+                  {/* The visible word starts the button's name (WCAG 2.5.3). */}
+                  <button type="button" className={MINI} aria-label={`${t("symptoms.rename")} ${s.name}`} onClick={() => setRenaming({ id: s.id, value: s.name, error: null })}>
                     {t("symptoms.rename")}
                   </button>
                   <button type="button" className={MINI} aria-label={t("symptoms.removeNamed", { name: s.name })} onClick={() => setRules(removeSymptom(rules, s.id))}>

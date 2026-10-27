@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Demo mode",
     "barText": "Demo mode · fictional data, deleted within 24 h",
@@ -928,7 +928,8 @@
       "deleteAccount": "Delete my account",
       "deleteConfirm": "This deletes your account. You can sign up again anytime.",
       "deletedNotice": "Account deleted.",
-      "requestDeletion": "Request account deletion"
+      "requestDeletion": "Request account deletion",
+      "notConnected": "You're not connected to any practice right now."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
@@ -1264,7 +1265,7 @@
     "titleClose": "Fermer le compte",
     "titleDelete": "Supprimer le compte",
     "closeIntro": "Vos patients ont des dossiers médicaux : votre compte ne peut donc pas être simplement supprimé. Sa fermeture :",
-    "closeLogin": "Supprime immédiatement votre accès, vos coordonnées, votre photo et vos données de paiement et de cabinet.",
+    "closeLogin": "Supprime ou anonymise immédiatement votre accès, vos coordonnées, votre photo et vos données de paiement et de cabinet.",
     "closeRecords": "Conserve vos dossiers médicaux et votre liste de patients, inaccessibles à tous, pendant la durée légale (20 ans), puis les supprime définitivement. Votre nom et votre numéro d'inscription professionnelle restent sur les dossiers en tant qu'auteur.",
     "closePatients": "Archive {patients, plural, one {votre # patient} other {vos # patients}} et annule {appointments, plural, =0 {aucun rendez-vous à venir} one {# rendez-vous à venir} other {# rendez-vous à venir}}. Les patients qui utilisent l'app sont prévenus.",
     "closeTeam": "Retire l'accès à {secretaries, plural, one {# membre de l'équipe} other {# membres de l'équipe}}.",
@@ -2250,7 +2251,8 @@
       "patientFull": "Vous avez atteint la limite de 200 Mo pour ce médecin.",
       "storageFull": "L’espace documents de ce médecin est plein.",
       "ownStorageFull": "Votre espace documents est plein (5 Go). Contactez le support.",
-      "noAccess": "Ce document n’est plus disponible."
+      "noAccess": "Ce document n’est plus disponible.",
+      "notAccepting": "This practice isn't accepting files right now."
     },
     "storageNotice": "Vous avez utilisé {used} sur 5 Go pour les documents.",
     "snapshotNotShared": "Enregistré, mais non partagé : votre espace documents est plein.",
@@ -2575,6 +2577,7 @@
       "remove": "Remove",
       "removeConfirm": "Remove the cover image?",
       "useThis": "Use this image",
+      "uploading": "Uploading…",
       "errorSize": "The image must be 3 MB or less.",
       "errorType": "Use a PNG, JPEG or WebP file.",
       "errorNotSetUp": "Save the channel settings before uploading the cover."
@@ -2584,8 +2587,9 @@
       "use": "Use the template",
       "openRequests": "Answer or close the open requests before changing the template.",
       "backTo": "Back to the starting template",
-      "confirm": "This replaces your symptoms, combinations, urgency bands, medicines and automatic messages with the template. Continue?",
-      "replace": "Replace"
+      "confirm": "This replaces your symptoms, combinations, urgency bands, medicines and automatic messages with the template. Your reasons and FAQ are kept. Continue?",
+      "replace": "Replace",
+      "restored": "Template restored. Your reasons and FAQ were kept."
     },
     "title": "Patient Channel",
     "entryText": "Your patients ask their questions through an organised channel, ranked by urgency with the score you set up.",
@@ -2598,6 +2602,7 @@
       "save": "Save rules",
       "saving": "Saving…",
       "saved": "Rules saved. Open requests were recalculated with them.",
+      "savedOnly": "Rules saved.",
       "unsaved": "Unsaved changes",
       "conflict": "These rules were changed somewhere else. Reload the page to see the current version.",
       "reload": "Reload",
@@ -2659,7 +2664,9 @@
       "intensity2": "Strong",
       "stillTakingQ": "Are you still taking the medicine?",
       "stillTaking0": "Yes",
-      "stillTaking1": "I stopped on my own"
+      "stillTaking1": "I stopped on my own",
+      "choose": "Choose…",
+      "notAnswered": "Not answered"
     },
     "bands": {
       "title": "Urgency bands",
@@ -2791,7 +2798,7 @@
         "symptomOf": "symptom: {name}",
         "remove": "Remove {term}",
         "suggestions": "Suggestions",
-        "hint": "Terms your practice knows become tags: pick a suggestion (click, Enter, Tab or \";\") or type the whole word and a space."
+        "hint": "Terms your practice knows become tags: pick a suggestion or type the whole word."
       },
       "entryButton": "Contact the doctor",
       "unavailable": "This channel isn’t available. Please contact the practice directly.",
@@ -2808,12 +2815,22 @@
       "replyTitle": "The practice's reply",
       "youWrote": "You wrote",
       "youChose": "You chose: {option}",
+      "youTicked": "You ticked: {names}",
       "earlier": "Earlier messages ({n})",
       "statusReceived": "Received",
       "notTaking": "The practice isn't taking new messages here right now.",
       "viewMessages": "View my messages",
       "earlierLink": "See earlier messages",
-      "earlierWith": "See earlier messages with {doctor}"
+      "earlierWith": "See earlier messages with {doctor}",
+      "sentUrgent": "If it's urgent, don't wait for a reply: seek care now or call {number}.",
+      "sendSecretary": "Send to the front desk",
+      "goesToSecretary": "To the front desk",
+      "sentSecretary": "Received. The front desk replies within {n, plural, one {# business day} other {# business days}}.",
+      "openTextSecretary": "Do you want to update the one the front desk already has? The new one replaces it.",
+      "entryButtonNamed": "Contact {doctor}",
+      "openExistsNamed": "You already have an open request: {reason} ({date}).",
+      "aiNotice": "This clinic uses AI to organise messages.",
+      "replacedPrevious": "Replaced your previous message."
     },
     "channel": {
       "title": "Your channel",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "The emergency warning, the response time and the rules are always shown, the same for everyone: your brand changes the look, not the rules.",
       "save": "Save channel",
       "saved": "Saved.",
-      "saveError": "It couldn't be saved. Check your connection and try again."
+      "saveError": "It couldn't be saved. Check your connection and try again.",
+      "needsReason": "Add at least one reason to turn the channel on.",
+      "aiMapping": "AI reading (SolvyAI)",
+      "aiMappingHelp": "SolvyAI reads each request's free text and suggests symptoms from your list; the score can only go up. Each message read uses 1 of the day's AI credits. Names, ID numbers, phones and e-mails are masked first. The form tells your patients."
     },
     "reasons": {
       "title": "Reasons for contact",
@@ -2933,7 +2953,8 @@
         "call_back": "Will call",
         "substituted": "Replaced"
       },
-      "navOpen": "{n, plural, one {# open message} other {# open messages}}"
+      "navOpen": "{n, plural, one {# open message} other {# open messages}}",
+      "admin": "Administrative"
     },
     "detail": {
       "back": "← Messages",
@@ -2949,7 +2970,7 @@
       "warningShown": "The patient saw the emergency warning.",
       "autoShown": "Automatic messages the patient saw",
       "history": "Earlier messages from this patient",
-      "replyLabel": "Your reply (the patient gets it by notification)",
+      "replyLabel": "Your reply (the patient sees the reply in the channel)",
       "reply": "Reply and close",
       "callBack": "I'll call the patient",
       "call": "Call {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "This message is for {doctor}: you can read it, not reply.",
       "failed": "Couldn't send. Try again.",
       "warningFloor": "Symptom with an emergency warning: always Urgent.",
-      "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI)."
+      "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI).",
+      "ai": {
+        "title": "AI reading",
+        "intro": "SolvyAI found these symptoms from your list in the message. Check the text before you confirm.",
+        "confirm": "Confirm",
+        "undo": "Undo",
+        "undoConfirm": "Undo the AI reading? The suggested symptoms are deleted and the score goes back to the keyword score.",
+        "cancel": "Cancel",
+        "confirmed": "Confirmed on {date}",
+        "undone": "AI reading undone.",
+        "unavailable": "AI reading unavailable for this message: keywords only.",
+        "pending": "SolvyAI is reading this message.",
+        "none": "The AI found no other symptoms from your list.",
+        "error": "Couldn't save. Try again."
+      }
     }
   },
   "noticesUnsubscribe": {

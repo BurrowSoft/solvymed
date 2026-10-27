@@ -89,7 +89,8 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
         )}
         {doctor.channel && (
           <a href={`${prefix}/my-appointments/channel/${doctor.id}`} data-testid="pc-entry" className="rounded-xl border-2 px-4 py-1.5 text-center text-sm font-bold" style={{ borderColor: accent, color: accent }}>
-            {tChannel("entryButton")}
+            {/* The doctor's own name when known (launch polish 17), as the booking button. */}
+            {shortDoctorName(doctor.name) ? tChannel("entryButtonNamed", { doctor: shortDoctorName(doctor.name) }) : tChannel("entryButton")}
           </a>
         )}
         {doctor.channelView && (

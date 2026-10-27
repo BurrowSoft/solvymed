@@ -106,9 +106,12 @@ export function toDocument(r: Record<string, unknown>): PatientDocument {
 }
 
 // Server codes (190 + the edge function) → the docs.err keys the UI shows.
-export type DocErrorKey = "tooLarge" | "type" | "cantShareType" | "dailyLimit" | "patientFull" | "storageFull" | "ownStorageFull" | "noAccess" | "folderNotEmpty" | "maxFolders" | "invalidName" | "generic";
+export type DocErrorKey = "tooLarge" | "type" | "cantShareType" | "dailyLimit" | "patientFull" | "storageFull" | "ownStorageFull" | "noAccess" | "folderNotEmpty" | "maxFolders" | "invalidName" | "notAccepting" | "generic";
 export function docErrorKey(message: string | null | undefined, asDoctor = false): DocErrorKey {
   const m = message ?? "";
+  // Launch polish 39 (its migration): an archived record takes no new uploads; the patient reads a
+  // neutral line (never "archived").
+  if (m.includes("not_accepting_files")) return "notAccepting";
   if (m.includes("too_large")) return "tooLarge";
   if (m.includes("not_allowed_file")) return "type";
   if (m.includes("daily_limit")) return "dailyLimit";

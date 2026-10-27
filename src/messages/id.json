@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Mode demo",
     "barText": "Mode demo · data fiktif, dihapus dalam 24 jam",
@@ -928,7 +928,8 @@
       "deleteAccount": "Hapus akun saya",
       "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
       "deletedNotice": "Akun dihapus.",
-      "requestDeletion": "Minta penghapusan akun"
+      "requestDeletion": "Minta penghapusan akun",
+      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -1264,7 +1265,7 @@
     "titleClose": "Tutup akun",
     "titleDelete": "Hapus akun",
     "closeIntro": "Pasien Anda memiliki rekam medis, jadi akun Anda tidak bisa langsung dihapus. Saat ditutup:",
-    "closeLogin": "Login, detail kontak, foto, serta data pembayaran dan praktik Anda langsung dihapus.",
+    "closeLogin": "Login, detail kontak, foto, serta data pembayaran dan praktik Anda langsung dihapus atau dianonimkan.",
     "closeRecords": "Rekam medis dan daftar pasien disimpan tanpa bisa diakses siapa pun selama masa simpan yang diwajibkan hukum (20 tahun), lalu dihapus permanen. Nama dan nomor registrasi profesi Anda tetap tercantum di rekam medis sebagai penulisnya.",
     "closePatients": "{patients} pasien diarsipkan dan {appointments, plural, =0 {tidak ada janji temu mendatang yang dibatalkan} other {# janji temu mendatang dibatalkan}}. Pasien yang memakai aplikasi akan diberi tahu.",
     "closeTeam": "{secretaries} anggota tim kehilangan akses.",
@@ -2250,7 +2251,8 @@
       "patientFull": "Anda telah mencapai batas 200 MB untuk dokter ini.",
       "storageFull": "Ruang dokumen dokter ini sudah penuh.",
       "ownStorageFull": "Ruang dokumen Anda penuh (5 GB). Hubungi dukungan.",
-      "noAccess": "Dokumen ini tidak lagi tersedia."
+      "noAccess": "Dokumen ini tidak lagi tersedia.",
+      "notAccepting": "Praktik ini sedang tidak menerima file."
     },
     "storageNotice": "Anda telah memakai {used} dari 5 GB untuk dokumen.",
     "snapshotNotShared": "Tersimpan, tetapi tidak dibagikan: ruang dokumen Anda penuh.",
@@ -2575,6 +2577,7 @@
       "remove": "Hapus",
       "removeConfirm": "Hapus gambar sampul?",
       "useThis": "Gunakan gambar ini",
+      "uploading": "Mengunggah…",
       "errorSize": "Ukuran gambar maksimal 3 MB.",
       "errorType": "Gunakan file PNG, JPEG, atau WebP.",
       "errorNotSetUp": "Simpan pengaturan saluran sebelum mengunggah sampul."
@@ -2584,8 +2587,9 @@
       "use": "Gunakan templat",
       "openRequests": "Jawab atau tutup permintaan yang masih terbuka sebelum mengganti templat.",
       "backTo": "Kembali ke templat awal",
-      "confirm": "Ini akan mengganti gejala, kombinasi, tingkat urgensi, obat, dan pesan otomatis Anda dengan templat. Lanjutkan?",
-      "replace": "Ganti"
+      "confirm": "Ini akan mengganti gejala, kombinasi, tingkat urgensi, obat, dan pesan otomatis Anda dengan templat. Alasan dan FAQ Anda tetap disimpan. Lanjutkan?",
+      "replace": "Ganti",
+      "restored": "Templat dipulihkan. Alasan dan FAQ Anda tetap disimpan."
     },
     "title": "Kanal Pasien",
     "entryText": "Pasien Anda mengajukan pertanyaan melalui kanal yang tertata, diurutkan berdasarkan tingkat urgensi dengan skor yang Anda atur.",
@@ -2598,6 +2602,7 @@
       "save": "Simpan aturan",
       "saving": "Menyimpan…",
       "saved": "Aturan disimpan. Permintaan terbuka telah dihitung ulang dengan aturan ini.",
+      "savedOnly": "Aturan disimpan.",
       "unsaved": "Perubahan belum disimpan",
       "conflict": "Aturan ini telah diubah di tempat lain. Muat ulang halaman untuk melihat versi terbaru.",
       "reload": "Muat ulang",
@@ -2659,7 +2664,9 @@
       "intensity2": "Berat",
       "stillTakingQ": "Apakah Anda masih minum obatnya?",
       "stillTaking0": "Ya",
-      "stillTaking1": "Saya berhenti sendiri"
+      "stillTaking1": "Saya berhenti sendiri",
+      "choose": "Pilih…",
+      "notAnswered": "Tidak dijawab"
     },
     "bands": {
       "title": "Tingkat urgensi",
@@ -2791,7 +2798,7 @@
         "symptomOf": "gejala: {name}",
         "remove": "Hapus {term}",
         "suggestions": "Saran",
-        "hint": "Istilah yang dikenal klinik Anda menjadi label: pilih saran (klik, Enter, Tab, atau \";\") atau ketik kata lengkapnya lalu spasi."
+        "hint": "Istilah yang dikenal praktik menjadi tag: pilih saran atau ketik kata lengkapnya."
       },
       "entryButton": "Hubungi dokter",
       "unavailable": "Saluran ini tidak tersedia. Silakan hubungi klinik secara langsung.",
@@ -2808,12 +2815,22 @@
       "replyTitle": "Balasan klinik",
       "youWrote": "Anda menulis",
       "youChose": "Anda memilih: {option}",
+      "youTicked": "Anda menandai: {names}",
       "earlier": "Pesan sebelumnya ({n})",
       "statusReceived": "Diterima",
       "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",
       "viewMessages": "Lihat pesan saya",
       "earlierLink": "Lihat pesan sebelumnya",
-      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}"
+      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}",
+      "sentUrgent": "Jika mendesak, jangan menunggu balasan: segera cari pertolongan atau hubungi {number}.",
+      "sendSecretary": "Kirim ke resepsionis",
+      "goesToSecretary": "Ke resepsionis",
+      "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
+      "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
+      "entryButtonNamed": "Hubungi {doctor}",
+      "openExistsNamed": "Anda sudah punya permintaan terbuka: {reason} ({date}).",
+      "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan.",
+      "replacedPrevious": "Menggantikan pesan Anda sebelumnya."
     },
     "channel": {
       "title": "Kanal Anda",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "Peringatan darurat, waktu respons, dan aturan selalu ditampilkan, sama untuk semua orang: merek Anda mengubah tampilan, bukan aturannya.",
       "save": "Simpan kanal",
       "saved": "Tersimpan.",
-      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi."
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal.",
+      "aiMapping": "Pembacaan AI (SolvyAI)",
+      "aiMappingHelp": "SolvyAI membaca teks bebas setiap permintaan dan menyarankan gejala dari daftar Anda; skor hanya bisa naik. Setiap pesan yang dibaca memakai 1 kredit AI hari itu. Nama, nomor identitas, telepon, dan e-mail disamarkan terlebih dahulu. Formulir memberi tahu pasien Anda."
     },
     "reasons": {
       "title": "Alasan menghubungi",
@@ -2933,7 +2953,8 @@
         "call_back": "Akan menelepon",
         "substituted": "Diganti"
       },
-      "navOpen": "{n} pesan terbuka"
+      "navOpen": "{n} pesan terbuka",
+      "admin": "Administratif"
     },
     "detail": {
       "back": "← Pesan",
@@ -2949,7 +2970,7 @@
       "warningShown": "Pasien melihat peringatan darurat.",
       "autoShown": "Pesan otomatis yang dilihat pasien",
       "history": "Pesan sebelumnya dari pasien ini",
-      "replyLabel": "Balasan Anda (pasien menerimanya lewat notifikasi)",
+      "replyLabel": "Balasan Anda (pasien melihat balasan di kanal)",
       "reply": "Balas dan tutup",
       "callBack": "Saya akan menelepon pasien",
       "call": "Telepon {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "Pesan ini untuk {doctor}: Anda dapat membacanya, tetapi tidak dapat membalas.",
       "failed": "Gagal mengirim. Coba lagi.",
       "warningFloor": "Gejala dengan peringatan darurat: selalu Mendesak.",
-      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI)."
+      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI).",
+      "ai": {
+        "title": "Pembacaan AI",
+        "intro": "SolvyAI menemukan gejala dari daftar Anda ini dalam pesan. Periksa teksnya sebelum mengonfirmasi.",
+        "confirm": "Konfirmasi",
+        "undo": "Urungkan",
+        "undoConfirm": "Urungkan pembacaan AI? Gejala yang disarankan dihapus dan skor kembali ke skor kata kunci.",
+        "cancel": "Batal",
+        "confirmed": "Dikonfirmasi pada {date}",
+        "undone": "Pembacaan AI diurungkan.",
+        "unavailable": "Pembacaan AI tidak tersedia untuk pesan ini: hanya kata kunci.",
+        "pending": "SolvyAI sedang membaca pesan ini.",
+        "none": "AI tidak menemukan gejala lain dari daftar Anda.",
+        "error": "Gagal menyimpan. Coba lagi."
+      }
     }
   },
   "noticesUnsubscribe": {

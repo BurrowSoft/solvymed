@@ -6,6 +6,7 @@
 
 import { scoreRequest, toVocabulary, type Answers, type ChannelConfig, type Chip, type Vocabulary } from "./score";
 import type { PageLook } from "./pageLook";
+import type { ReadingHoursRow } from "./readingHours";
 
 export type PcReason = {
   id: string;
@@ -35,6 +36,11 @@ export type PcPatientPage = {
   country?: string | null;
   // The doctor's page look (prototype v17): the band / cover, the watermark, the brand colour.
   look?: PageLook | null;
+  // M7 / PC-10′: the doctor turned on the AI reading, so the form says the clinic uses AI.
+  aiNotice?: boolean;
+  // When the doctor reads the messages (launch polish 20): shown on the "Horário" tile.
+  readingHours?: ReadingHoursRow[];
+  readingNote?: string | null;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.
@@ -43,7 +49,12 @@ export type PcPreviewFn = (reasonId: string, answers: Answers) => Promise<PcPrev
 
 // unavailable: the practice closed or the patient was archived meanwhile (237).
 // rate_limited: too many sends in the last hour (the database's limit, cf #623).
-export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
+// open_exists: the open request with the SAME destination (255), named in the replace prompt
+// (launch polish 2); absent from an older server.
+export type PcSubmitResult =
+  | { status: "sent" }
+  | { status: "open_exists"; open?: { reasonTitle: string; createdAt: string } }
+  | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
 // The patient's requests with this practice (237's pc_my_requests: their own, newest first;
 // never a score, a band or a breakdown): "Suas mensagens" (P-14) and the open one on the
 // limit screen. null when they couldn't be read (the section just doesn't show).
@@ -61,6 +72,9 @@ export type PcMyRequest = {
   createdAt: string;
   // Who the request went to (migration 251); null from an older answer.
   destination?: "doctor" | "secretary" | null;
+  // The symptoms the patient ticked or tagged, by name from the practice's current rules
+  // (257; launch polish 21). [] from an older answer or a closed practice: no line.
+  symptoms?: string[];
 };
 export type PcMyRequestsFn = () => Promise<PcMyRequest[] | null>;
 
@@ -79,6 +93,7 @@ export function toMyRequests(raw: unknown, onUnknown?: (status: string) => void)
       id: str(o.id), status, reasonTitle: str(o.reasonTitle), option: str(o.option) || null, text: str(o.text),
       replyText: str(o.replyText).trim() || null, repliedAt: str(o.repliedAt) || null, createdAt: str(o.createdAt),
       destination: o.destination === "doctor" || o.destination === "secretary" ? o.destination : null,
+      symptoms: Array.isArray(o.symptoms) ? o.symptoms.map(str).map((n) => n.trim()).filter(Boolean) : [],
     }];
   });
 }
@@ -150,11 +165,15 @@ export function samplePreview(): PcPreviewFn {
   };
 }
 
-export function sampleSubmit(): PcSubmitFn {
-  let open = false;
-  return async (_reasonId, _answers, replace) => {
-    if (open && !replace) return { status: "open_exists" };
-    open = true;
+// One open request per DESTINATION (255): an administrative request never replaces a clinical one.
+export function sampleSubmit(now: () => Date = () => new Date()): PcSubmitFn {
+  const open = new Map<string, { reasonTitle: string; createdAt: string }>();
+  return async (reasonId, _answers, replace) => {
+    const reason = SAMPLE_PAGE.reasons.find((r) => r.id === reasonId);
+    const dest = reason?.destination ?? "doctor";
+    const current = open.get(dest);
+    if (current && !replace) return { status: "open_exists", open: current };
+    open.set(dest, { reasonTitle: reason?.title ?? "", createdAt: now().toISOString() });
     return { status: "sent" };
   };
 }

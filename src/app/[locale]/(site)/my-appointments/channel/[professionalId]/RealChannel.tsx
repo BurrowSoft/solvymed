@@ -24,7 +24,13 @@ export function RealChannel({ page, profId }: { page: PcPatientPage; profId: str
   const submit = useMemo<PcSubmitFn>(() => async (reasonId, answers, replace, shownIds) => {
     const res = await postJson("/api/patient-channel/requests", { profId, reasonId, answers, autoMessagesShown: shownIds, replace });
     if (res.ok) return { status: "sent" };
-    if (res.status === 409) return { status: "open_exists" };
+    // The open request with the same destination (255), named in the prompt (launch polish 2).
+    if (res.status === 409) {
+      const open = ((await res.json().catch(() => ({}))) as { open?: { reasonTitle?: unknown; createdAt?: unknown } | null }).open;
+      return typeof open?.reasonTitle === "string" && typeof open.createdAt === "string"
+        ? { status: "open_exists", open: { reasonTitle: open.reasonTitle, createdAt: open.createdAt } }
+        : { status: "open_exists" };
+    }
     if (res.status === 429) return { status: "rate_limited" };
     const code = ((await res.json().catch(() => ({}))) as { code?: string }).code;
     if (code === "pc_practice_closed" || code === "pc_patient_archived") return { status: "unavailable" };

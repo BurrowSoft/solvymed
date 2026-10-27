@@ -22,6 +22,7 @@ import { PLAIN_CONSULTATION, fixedBookingItem } from "@/lib/consultType";
 import { shortDoctorName } from "@/lib/doctorName";
 import { BrandHeader } from "@/components/BrandHeader";
 import type { PublicBrand } from "@/lib/brand";
+import { brandInitials } from "@/lib/readableAccent";
 import { addressLine, publicLocationForDate, type PublicLocation } from "@/lib/locations";
 import { DemoGate, useDemoSession } from "@/components/DemoGate";
 import { leaveDemo } from "@/lib/demo";
@@ -529,7 +530,8 @@ function BookingClientInner({
         {brand ? <BrandHeader brand={brand} extra={clinicName} /> : (
         <div className="rounded-2xl bg-teal-50 border border-teal-100 p-5 flex items-center gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-600 text-white font-bold text-lg">
-            {professionalName.charAt(0)}
+            {/* No title's letter, in any script (launch polish 35). */}
+            {brandInitials(professionalName) || "•"}
           </div>
           <div>
             <p className="font-bold text-slate-900">{professionalName}</p>

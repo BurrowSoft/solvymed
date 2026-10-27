@@ -13,6 +13,7 @@ import { SampleChannel } from "./SampleChannel";
 import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
 import { ReadOnlyChannel } from "./ReadOnlyChannel";
+import { toReadingHours } from "@/lib/patientChannel/readingHours";
 
 // The patient's Patient Channel with one doctor (specs/patient-contact-tech.md §6; 01's
 // route), from the doctor card's "Fale com o Médico". Dark: 404 unless the channel is on
@@ -95,6 +96,9 @@ export default async function PatientChannelPage({
     // The dates in "Suas mensagens" (P-14): the practice's zone and calendar.
     timeZone: pub?.time_zone || countryProfile(p.country).defaultTimeZone,
     country: p.country ?? null,
+    aiNotice: p.aiNotice === true,
+    readingHours: toReadingHours(p.readingHours),
+    readingNote: p.readingNote?.trim() || null,
     // The doctor's page look (prototype v17; 01): the band (the cover image or the brand
     // colour), the logo watermark, the brand colour. The logo: the doctor's own square
     // logo from My brand (as on the booking page), none without it.

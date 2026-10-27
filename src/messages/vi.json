@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Chế độ demo",
     "barText": "Chế độ demo · dữ liệu giả, xóa trong vòng 24 giờ",
@@ -928,7 +928,8 @@
       "deleteAccount": "Xóa tài khoản của tôi",
       "deleteConfirm": "Thao tác này xóa tài khoản của bạn. Bạn có thể đăng ký lại bất cứ lúc nào.",
       "deletedNotice": "Đã xóa tài khoản.",
-      "requestDeletion": "Yêu cầu xóa tài khoản"
+      "requestDeletion": "Yêu cầu xóa tài khoản",
+      "notConnected": "Hiện bạn chưa kết nối với phòng khám nào."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -1264,7 +1265,7 @@
     "titleClose": "Đóng tài khoản",
     "titleDelete": "Xóa tài khoản",
     "closeIntro": "Bệnh nhân của bạn có hồ sơ bệnh án nên không thể xóa ngay tài khoản. Khi đóng tài khoản:",
-    "closeLogin": "Thông tin đăng nhập, liên hệ, ảnh, thanh toán và phòng khám của bạn bị xóa ngay.",
+    "closeLogin": "Thông tin đăng nhập, liên hệ, ảnh, thanh toán và phòng khám của bạn bị xóa hoặc ẩn danh hóa ngay.",
     "closeRecords": "Hồ sơ bệnh án và danh sách bệnh nhân được lưu giữ, không ai truy cập được, trong thời hạn luật định (20 năm), sau đó bị xóa vĩnh viễn. Tên và số đăng ký hành nghề của bạn vẫn ở trên hồ sơ với tư cách người lập.",
     "closePatients": "{patients} bệnh nhân được lưu trữ và {appointments, plural, =0 {không có lịch hẹn sắp tới nào cần hủy} other {# lịch hẹn sắp tới bị hủy}}. Bệnh nhân dùng ứng dụng sẽ nhận được thông báo.",
     "closeTeam": "{secretaries} thành viên nhóm mất quyền truy cập.",
@@ -2250,7 +2251,8 @@
       "patientFull": "Bạn đã đạt giới hạn 200 MB cho bác sĩ này.",
       "storageFull": "Dung lượng tài liệu của bác sĩ này đã đầy.",
       "ownStorageFull": "Dung lượng tài liệu của bạn đã đầy (5 GB). Hãy liên hệ hỗ trợ.",
-      "noAccess": "Tài liệu này không còn khả dụng."
+      "noAccess": "Tài liệu này không còn khả dụng.",
+      "notAccepting": "Phòng khám này hiện không nhận tệp."
     },
     "storageNotice": "Bạn đã dùng {used} trên 5 GB cho tài liệu.",
     "snapshotNotShared": "Đã lưu nhưng chưa chia sẻ: dung lượng tài liệu của bạn đã đầy.",
@@ -2575,6 +2577,7 @@
       "remove": "Xóa",
       "removeConfirm": "Xóa ảnh bìa?",
       "useThis": "Dùng ảnh này",
+      "uploading": "Đang tải lên…",
       "errorSize": "Ảnh tối đa 3 MB.",
       "errorType": "Hãy dùng tệp PNG, JPEG hoặc WebP.",
       "errorNotSetUp": "Hãy lưu cài đặt kênh trước khi tải ảnh bìa lên."
@@ -2584,8 +2587,9 @@
       "use": "Dùng mẫu",
       "openRequests": "Hãy trả lời hoặc đóng các yêu cầu đang mở trước khi đổi mẫu.",
       "backTo": "Quay lại mẫu ban đầu",
-      "confirm": "Thao tác này sẽ thay các triệu chứng, tổ hợp, mức độ khẩn cấp, thuốc và tin nhắn tự động của bạn bằng mẫu. Tiếp tục?",
-      "replace": "Thay thế"
+      "confirm": "Thao tác này sẽ thay các triệu chứng, tổ hợp, mức độ khẩn cấp, thuốc và tin nhắn tự động của bạn bằng mẫu. Lý do và câu hỏi thường gặp của bạn vẫn được giữ. Tiếp tục?",
+      "replace": "Thay thế",
+      "restored": "Đã khôi phục mẫu. Lý do và câu hỏi thường gặp của bạn vẫn được giữ."
     },
     "title": "Kênh Bệnh nhân",
     "entryText": "Bệnh nhân của bạn gửi câu hỏi qua một kênh có tổ chức, được xếp theo mức độ khẩn cấp dựa trên thang điểm bạn thiết lập.",
@@ -2598,6 +2602,7 @@
       "save": "Lưu quy tắc",
       "saving": "Đang lưu…",
       "saved": "Đã lưu quy tắc. Các yêu cầu đang mở đã được tính lại theo quy tắc này.",
+      "savedOnly": "Đã lưu quy tắc.",
       "unsaved": "Có thay đổi chưa lưu",
       "conflict": "Các quy tắc này đã được thay đổi ở nơi khác. Hãy tải lại trang để xem phiên bản hiện tại.",
       "reload": "Tải lại",
@@ -2659,7 +2664,9 @@
       "intensity2": "Nặng",
       "stillTakingQ": "Bạn vẫn đang dùng thuốc chứ?",
       "stillTaking0": "Có",
-      "stillTaking1": "Tôi đã tự ngừng"
+      "stillTaking1": "Tôi đã tự ngừng",
+      "choose": "Chọn…",
+      "notAnswered": "Không trả lời"
     },
     "bands": {
       "title": "Mức độ khẩn cấp",
@@ -2791,7 +2798,7 @@
         "symptomOf": "triệu chứng: {name}",
         "remove": "Xóa {term}",
         "suggestions": "Gợi ý",
-        "hint": "Các thuật ngữ phòng khám biết sẽ trở thành thẻ: chọn một gợi ý (nhấp, Enter, Tab hoặc \";\") hoặc gõ trọn từ rồi nhấn dấu cách."
+        "hint": "Các từ phòng khám biết sẽ thành nhãn: chọn một gợi ý hoặc gõ đủ cả từ."
       },
       "entryButton": "Liên hệ bác sĩ",
       "unavailable": "Kênh này hiện không khả dụng. Vui lòng liên hệ trực tiếp với phòng khám.",
@@ -2808,12 +2815,22 @@
       "replyTitle": "Trả lời của phòng khám",
       "youWrote": "Bạn đã viết",
       "youChose": "Bạn đã chọn: {option}",
+      "youTicked": "Bạn đã đánh dấu: {names}",
       "earlier": "Tin nhắn trước đó ({n})",
       "statusReceived": "Đã nhận",
       "notTaking": "Hiện phòng khám không nhận tin nhắn mới tại đây.",
       "viewMessages": "Xem tin nhắn của tôi",
       "earlierLink": "Xem tin nhắn trước đây",
-      "earlierWith": "Xem tin nhắn trước đây với {doctor}"
+      "earlierWith": "Xem tin nhắn trước đây với {doctor}",
+      "sentUrgent": "Nếu khẩn cấp, đừng chờ trả lời: hãy đi khám ngay hoặc gọi {number}.",
+      "sendSecretary": "Gửi đến lễ tân",
+      "goesToSecretary": "Đến lễ tân",
+      "sentSecretary": "Đã nhận. Lễ tân sẽ trả lời trong vòng {n, plural, other {# ngày làm việc}}.",
+      "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
+      "entryButtonNamed": "Liên hệ {doctor}",
+      "openExistsNamed": "Bạn đã có một yêu cầu đang mở: {reason} ({date}).",
+      "aiNotice": "Phòng khám này dùng AI để sắp xếp tin nhắn.",
+      "replacedPrevious": "Đã thay thế tin nhắn trước của bạn."
     },
     "channel": {
       "title": "Kênh của bạn",
@@ -2845,7 +2862,10 @@
       "alwaysShown": "Cảnh báo khẩn cấp, thời gian phản hồi và quy tắc luôn được hiển thị, giống nhau cho mọi người: thương hiệu thay đổi giao diện, không thay đổi quy tắc.",
       "save": "Lưu kênh",
       "saved": "Đã lưu.",
-      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại."
+      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
+      "needsReason": "Thêm ít nhất một lý do để bật kênh.",
+      "aiMapping": "Đọc bằng AI (SolvyAI)",
+      "aiMappingHelp": "SolvyAI đọc phần văn bản tự do của mỗi yêu cầu và gợi ý triệu chứng từ danh sách của bạn; điểm chỉ có thể tăng. Mỗi tin nhắn được đọc dùng 1 tín dụng AI của ngày. Tên, số giấy tờ, số điện thoại và e-mail được che trước. Biểu mẫu thông báo cho bệnh nhân của bạn."
     },
     "reasons": {
       "title": "Lý do liên hệ",
@@ -2933,7 +2953,8 @@
         "call_back": "Sẽ gọi lại",
         "substituted": "Đã thay thế"
       },
-      "navOpen": "{n} tin nhắn đang mở"
+      "navOpen": "{n} tin nhắn đang mở",
+      "admin": "Hành chính"
     },
     "detail": {
       "back": "← Tin nhắn",
@@ -2949,7 +2970,7 @@
       "warningShown": "Bệnh nhân đã thấy cảnh báo khẩn cấp.",
       "autoShown": "Tin nhắn tự động bệnh nhân đã thấy",
       "history": "Tin nhắn trước đây của bệnh nhân này",
-      "replyLabel": "Câu trả lời của bạn (bệnh nhân nhận qua thông báo)",
+      "replyLabel": "Câu trả lời của bạn (bệnh nhân xem câu trả lời trong kênh)",
       "reply": "Trả lời và đóng",
       "callBack": "Tôi sẽ gọi cho bệnh nhân",
       "call": "Gọi {phone}",
@@ -2961,7 +2982,21 @@
       "readOnly": "Tin nhắn này gửi cho {doctor}: bạn có thể đọc nhưng không thể trả lời.",
       "failed": "Không gửi được. Hãy thử lại.",
       "warningFloor": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp.",
-      "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI)."
+      "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI).",
+      "ai": {
+        "title": "Đọc bằng AI",
+        "intro": "SolvyAI đã tìm thấy các triệu chứng này trong danh sách của bạn trong tin nhắn. Hãy kiểm tra văn bản trước khi xác nhận.",
+        "confirm": "Xác nhận",
+        "undo": "Hoàn tác",
+        "undoConfirm": "Hoàn tác phần đọc của AI? Các triệu chứng được gợi ý sẽ bị xóa và điểm trở về điểm theo từ khóa.",
+        "cancel": "Hủy",
+        "confirmed": "Đã xác nhận lúc {date}",
+        "undone": "Đã hoàn tác phần đọc của AI.",
+        "unavailable": "Không thể đọc tin nhắn này bằng AI: chỉ dùng từ khóa.",
+        "pending": "SolvyAI đang đọc tin nhắn này.",
+        "none": "AI không tìm thấy triệu chứng nào khác trong danh sách của bạn.",
+        "error": "Không lưu được. Hãy thử lại."
+      }
     }
   },
   "noticesUnsubscribe": {

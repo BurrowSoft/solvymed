@@ -8,11 +8,19 @@ import { fromStoredRules } from "@/lib/patientChannel/rules";
 import {
   detailHighlights, detailLineLabel, detailNames, highlightParts, toDetailAnswers, toInboxRow, toLines, toShownMessages, warningFloorCause,
 } from "@/lib/patientChannel/inbox";
+import { AI_STATUSES, type AiStatus } from "@/lib/patientChannel/aiDb";
+import { toStoredAiLines } from "@/lib/patientChannel/aiRead";
 import { BandTag } from "../../../settings/patient-channel/BandTag";
+import { AiPanel } from "./AiPanel";
 import { ReplyBox } from "./ReplyBox";
+import { formatPhone } from "@/lib/phoneFormat";
+import { isUnscored } from "@/lib/patientChannel/unscored";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DETAIL_COLUMNS = "id, professional_id, patient_id, destination, reason_snapshot, answers, text, score_total, band, lines, warning_shown, floor_applied, auto_messages_shown, status, reply_text, replied_at, created_at, patients(full_name, phone)";
+// M7's columns, read apart: before the M7 migration is live they don't exist, and the detail
+// above must keep working (a failed read = no AI section).
+const AI_COLUMNS = "ai_status, ai_lines, ai_confirmed_at";
 // The earlier requests: no message text (each opens its own access-logged detail).
 const HISTORY_COLUMNS = "id, patient_id, destination, band, score_total, status, created_at, reason_snapshot, patients(full_name)";
 
@@ -43,20 +51,31 @@ export default async function PatientChannelRequestPage({
   const q = raw as Record<string, unknown> | null;
   if (!q || q.professional_id !== profId) notFound();
   const row = toInboxRow(q);
+  // An administrative request: no band, points or breakdown (launch polish 29).
+  const unscored = isUnscored(q.reason_snapshot);
   const patient = (Array.isArray(q.patients) ? q.patients[0] : q.patients) as { phone?: string | null } | null;
 
-  const [, history, settings] = await Promise.all([
+  const [, history, settings, aiRead] = await Promise.all([
     // The patient's Access tab (241; 01, 10-26): who opened this request, and when. Never throws.
     logChannelRequestOpen(supabase, row.patientId, row.id).then(() => null),
     supabase.from("pc_requests").select(HISTORY_COLUMNS).eq("professional_id", profId).eq("patient_id", row.patientId)
       .neq("id", row.id).order("created_at", { ascending: false }).limit(20),
     pcAdmin().from("pc_settings").select("rules, ai_mapping").eq("professional_id", profId).maybeSingle(),
+    // Under RLS like the row above (secretaries who may read it see the lines too).
+    supabase.from("pc_requests").select(AI_COLUMNS).eq("id", requestId).maybeSingle(),
   ]);
+  const ai = aiRead.error ? null : (aiRead.data as { ai_status?: unknown; ai_lines?: unknown; ai_confirmed_at?: unknown } | null);
+  const aiStatus: AiStatus = AI_STATUSES.find((x) => x === ai?.ai_status) ?? "none";
+  const aiConfirmedAt = typeof ai?.ai_confirmed_at === "string" ? ai.ai_confirmed_at : null;
   const s = settings.data as { rules?: unknown; ai_mapping?: boolean } | null;
   const config = s?.rules ? fromStoredRules(s.rules, country, s.ai_mapping === true) : null;
   const answers = toDetailAnswers(q.answers);
   const lines = toLines(q.lines);
-  const names = detailNames(config, lines, answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []);
+  const aiLines = aiStatus === "done" ? toStoredAiLines(ai?.ai_lines) : [];
+  const names = detailNames(config, lines, [
+    ...(answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []),
+    ...aiLines.map((l) => l.symptomId),
+  ]);
   const parts = highlightParts(row.text, detailHighlights(config, row.text));
   const shownMessages = toShownMessages(q.auto_messages_shown);
   // The safety floor's reason: the warning symptoms (ids only, from the rules read above) vs
@@ -68,6 +87,8 @@ export default async function PatientChannelRequestPage({
   const floorCause = warningFloorCause(warningIds, patientIds, lines, row.band);
   const tl = (key: string, values?: Record<string, string | number>) => t(key as never, values as never);
   const symptomName = (id: string) => names.symptoms[id] ?? "?";
+  // -1 = the patient left the question unanswered (launch polish 15).
+  const answerLabel = (key: "when" | "intensity" | "stillTaking", i: number) => (i < 0 ? t("answers.notAnswered") : tl(`answers.${key}${i}`));
   const readOnly = isSecretary && row.destination === "doctor";
   const phone = typeof patient?.phone === "string" ? patient.phone.trim() : "";
 
@@ -76,19 +97,28 @@ export default async function PatientChannelRequestPage({
       <Link href={`${prefix}/dashboard/patient-channel`} className="text-sm font-medium text-teal-700 hover:underline">{t("detail.back")}</Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-extrabold text-slate-900">{row.patientName}</h1>
-        <BandTag band={row.band} />
-        <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>
+        {/* The patient's file (launch polish 31): the same page the patient list opens. */}
+        <h1 className="text-2xl font-extrabold text-slate-900">
+          {row.patientId
+            ? <Link href={`${prefix}/dashboard/patients/${row.patientId}`} className="hover:underline" data-testid="pc-detail-patient">{row.patientName}</Link>
+            : row.patientName}
+        </h1>
+        {!unscored && <BandTag band={row.band} />}
+        {!unscored && <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>}
       </div>
       <p className="mt-1 text-sm text-slate-500">
         {t("detail.sentAt", { date: formatWhen(row.createdAt) })} · {destination(row.destination)} · {t(`inbox.status.${row.status}`)}
       </p>
       {phone && (
         <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="mt-2 inline-block text-sm font-bold text-teal-700 hover:underline" data-testid="pc-detail-call">
-          {t("detail.call", { phone })}
+          {t("detail.call", { phone: formatPhone(phone, country) })}
         </a>
       )}
 
+      {/* A secretary reading the doctor's request: said first (launch polish 30), not at the end. */}
+      {row.status === "open" && readOnly && doctorName && (
+        <p className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-600" data-testid="pc-detail-readonly">{t("detail.readOnly", { doctor: doctorName })}</p>
+      )}
       {q.warning_shown === true && (
         <p className="mt-4 border-l-4 border-red-600 pl-3 text-sm text-slate-700" data-testid="pc-detail-warning">{t("detail.warningShown")}</p>
       )}
@@ -102,9 +132,9 @@ export default async function PatientChannelRequestPage({
           <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
             {answers.symptomIds.length > 0 && (<><dt className="text-slate-500">{t("detail.ticked")}</dt><dd className="text-slate-800">{answers.symptomIds.map(symptomName).join(", ")}</dd></>)}
             {answers.chips.length > 0 && (<><dt className="text-slate-500">{t("detail.chips")}</dt><dd className="text-slate-800">{answers.chips.map((c) => (c.kind === "symptom" ? symptomName(c.ref) : c.text)).join(", ")}</dd></>)}
-            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{tl(`answers.when${answers.when}`)}</dd>
-            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{tl(`answers.intensity${answers.intensity}`)}</dd>
-            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{tl(`answers.stillTaking${answers.stillTaking}`)}</dd>
+            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{answerLabel("when", answers.when)}</dd>
+            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{answerLabel("intensity", answers.intensity)}</dd>
+            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{answerLabel("stillTaking", answers.stillTaking)}</dd>
           </dl>
         )}
         {row.text && (
@@ -131,7 +161,7 @@ export default async function PatientChannelRequestPage({
         </section>
       )}
 
-      <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
+      {!unscored && <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
         <p className="text-sm font-bold text-slate-900">{t("detail.breakdown", { n: row.score })}</p>
         <ul className="mt-2 flex flex-col gap-1 text-sm tabular-nums">
           {lines.length === 0 && <li className="text-xs text-slate-500">{t("test.noSymptom")}</li>}
@@ -145,12 +175,18 @@ export default async function PatientChannelRequestPage({
         {q.floor_applied === true && config && <p className="mt-2 text-xs text-slate-600">{t("detail.floor", { band: t(`bands.${config.minBandForTextOnly}`) })}</p>}
         {/* The safety floor (01, 10-26): Urgent because of a symptom with the immediate warning. */}
         {floorCause && <p className="mt-2 text-xs font-semibold text-red-700" data-testid="pc-detail-warning-floor">{t(floorCause === "ai" ? "detail.warningFloorAi" : "detail.warningFloor")}</p>}
-      </section>
+      </section>}
+
+      {/* M7: the SolvyAI reading. Only the doctor confirms or undoes it (a secretary reads it). */}
+      <AiPanel
+        requestId={row.id}
+        status={aiStatus}
+        lines={aiLines.map((l) => ({ ...l, name: symptomName(l.symptomId) }))}
+        confirmedAt={aiConfirmedAt ? formatWhen(aiConfirmedAt) : null}
+        canAct={!isSecretary}
+      />
 
       {row.status === "open" && !readOnly && <ReplyBox requestId={row.id} />}
-      {row.status === "open" && readOnly && doctorName && (
-        <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600" data-testid="pc-detail-readonly">{t("detail.readOnly", { doctor: doctorName })}</p>
-      )}
       {(row.status === "answered" || row.status === "call_back") && (
         <section className="mt-6 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-replied">
           <p className="text-xs text-slate-500">
