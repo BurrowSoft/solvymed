@@ -2825,7 +2825,8 @@
       "openTextSecretary": "要更新櫃台那裡已有的請求嗎？新請求將取代舊請求。",
       "entryButtonNamed": "聯絡{doctor}",
       "openExistsNamed": "您已有一個未處理的請求：{reason}（{date}）",
-      "aiNotice": "本診所使用 AI 整理訊息。"
+      "aiNotice": "本診所使用 AI 整理訊息。",
+      "replacedPrevious": "已取代您先前的訊息。"
     },
     "channel": {
       "title": "您的頻道",

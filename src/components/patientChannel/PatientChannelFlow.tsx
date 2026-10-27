@@ -7,6 +7,7 @@ import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientCha
 import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
+import { readingHoursLines } from "@/lib/patientChannel/readingHours";
 import { MyRequests } from "./MyRequests";
 import { PcPageFrame } from "./PcPageFrame";
 
@@ -65,6 +66,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const [requests, setRequests] = useState<PcMyRequest[] | null>(null);
   const openRequest = requests?.find((r) => r.status === "open") ?? null;
   const number = page.emergencyNumber ?? t("localNumber");
+  const hoursLines = readingHoursLines(page.readingHours ?? [], locale);
   const symptomForm = reason?.kind === "symptom_form";
   const who = reason?.destination === "secretary" ? t("secretary") : page.doctorName;
   // The front desk in a sentence takes its article ("para a secretaria", "A secretaria responde";
@@ -158,6 +160,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const canSkip = symptomForm && check.canSkip && !warning && check.autoMessages.length > 0;
   // An urgent send (the line was shown): the confirmation repeats it (launch polish 1).
   const [sentWarning, setSentWarning] = useState(false);
+  // The send replaced the open request: the confirmation says so (launch polish 21).
+  const [sentReplaced, setSentReplaced] = useState(false);
 
   const send = async (replace: boolean) => {
     if (!reason || sending) return;
@@ -167,7 +171,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     const shown = symptomForm ? autoShown.map((m) => m.id) : [];
     const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
-    if (r.status === "sent") { setSentWarning(!!warning); setStep("sent"); }
+    if (r.status === "sent") { setSentWarning(!!warning); setSentReplaced(replace); setStep("sent"); }
     else if (r.status === "open_exists") {
       setOpenNamed(r.open ?? null);
       setStep("replace");
@@ -190,7 +194,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     return () => { live = false; };
   }, [step, loadRequests]);
 
-  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); setSentWarning(false); setOpenNamed(null); };
+  const restart = () => { setStep("entry"); setReason(null); setAnswers(START); setOption(0); setCheck({ warning: false, autoMessages: [], canSkip: false }); setSentWarning(false); setSentReplaced(false); setOpenNamed(null); };
 
   const back = (to: Step) => (
     <button type="button" onClick={() => setStep(to)} className="w-max py-1 text-sm font-bold text-teal-700">{t("back")}</button>
@@ -210,7 +214,12 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {page.welcome && <p className="whitespace-pre-line text-sm text-slate-600">{page.welcome}</p>}
         <ul className="grid grid-cols-2 gap-2 text-sm">
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("sla", { n: page.slaBusinessDays })}</b>{t("slaLabel")}</li>
-          <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("hoursTitle")}</b>{t("hoursLabel")}</li>
+          {/* The doctor's real reading hours when set (launch polish 20), else the general line. */}
+          <li className="rounded-xl bg-teal-50 px-3 py-2" data-testid="pc-hours">
+            <b className="block text-teal-800">{t("hoursTitle")}</b>
+            {hoursLines.length > 0 ? hoursLines.map((l) => <span key={l} className="block">{l}</span>) : t("hoursLabel")}
+            {page.readingNote && <span className="block text-xs text-teal-900/80">{page.readingNote}</span>}
+          </li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("oneTitle")}</b>{t("oneLabel")}</li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("privateTitle")}</b>{t("privateLabel")}</li>
         </ul>
@@ -241,8 +250,10 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {page.reasons.map((r) => (
           <button key={r.id} type="button" data-testid={`pc-reason-${r.id}`} onClick={() => { setReason(r); setAnswers(START); setOption(0); setStep("form"); }}
             className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3 text-left hover:border-teal-500">
-            <span className="min-w-0"><b className="block text-sm text-slate-900">{r.title}</b><span className="text-xs text-slate-500">{r.subtitle}</span></span>
-            <span className="shrink-0 rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold uppercase text-teal-700">{r.destination === "secretary" ? t("goesToSecretary") : t("goesTo", { who: page.doctorName })}</span>
+            <span className="min-w-0 flex-1"><b className="block text-sm text-slate-900">{r.title}</b><span className="text-xs text-slate-500">{r.subtitle}</span></span>
+            {/* The title keeps the room: the chip is capped and cut with "…", in normal case, so a
+                long doctor's name never pushes the title to 2 lines at 360 (launch polish 22). */}
+            <span className="max-w-[45%] truncate rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-bold text-teal-700" data-testid={`pc-reason-to-${r.id}`}>{r.destination === "secretary" ? t("goesToSecretary") : t("goesTo", { who: page.doctorName })}</span>
           </button>
         ))}
       </>
@@ -360,7 +371,10 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {sentWarning && (
           <p role="alert" data-testid="pc-sent-urgent" className="rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900">{t("sentUrgent", { number })}</p>
         )}
-        <p data-testid="pc-sent" className="rounded-xl border border-green-600 bg-green-50 p-3 text-sm text-green-900">{toSecretary ? t("sentSecretary", { n: page.slaBusinessDays }) : t("sent", { who, n: page.slaBusinessDays })}</p>
+        <p data-testid="pc-sent" className="rounded-xl border border-green-600 bg-green-50 p-3 text-sm text-green-900">
+          {toSecretary ? t("sentSecretary", { n: page.slaBusinessDays }) : t("sent", { who, n: page.slaBusinessDays })}
+          {sentReplaced && <span className="mt-1 block" data-testid="pc-sent-replaced">{t("replacedPrevious")}</span>}
+        </p>
         <button type="button" onClick={restart} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("again")}</button>
       </>
     );

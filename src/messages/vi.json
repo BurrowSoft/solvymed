@@ -2825,7 +2825,8 @@
       "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
       "entryButtonNamed": "Liên hệ {doctor}",
       "openExistsNamed": "Bạn đã có một yêu cầu đang mở: {reason} ({date}).",
-      "aiNotice": "Phòng khám này dùng AI để sắp xếp tin nhắn."
+      "aiNotice": "Phòng khám này dùng AI để sắp xếp tin nhắn.",
+      "replacedPrevious": "Đã thay thế tin nhắn trước của bạn."
     },
     "channel": {
       "title": "Kênh của bạn",

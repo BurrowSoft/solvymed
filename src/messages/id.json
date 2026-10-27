@@ -2825,7 +2825,8 @@
       "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
       "entryButtonNamed": "Hubungi {doctor}",
       "openExistsNamed": "Anda sudah punya permintaan terbuka: {reason} ({date}).",
-      "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan."
+      "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan.",
+      "replacedPrevious": "Menggantikan pesan Anda sebelumnya."
     },
     "channel": {
       "title": "Kanal Anda",

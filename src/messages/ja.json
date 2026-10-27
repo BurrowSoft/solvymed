@@ -2825,7 +2825,8 @@
       "openTextSecretary": "受付に送信済みのリクエストを更新しますか？新しいリクエストで置き換えられます。",
       "entryButtonNamed": "{doctor}に連絡",
       "openExistsNamed": "すでに受付中のリクエストがあります：{reason}（{date}）",
-      "aiNotice": "このクリニックはメッセージの整理にAIを使用しています。"
+      "aiNotice": "このクリニックはメッセージの整理にAIを使用しています。",
+      "replacedPrevious": "前のメッセージを置き換えました。"
     },
     "channel": {
       "title": "あなたのチャネル",

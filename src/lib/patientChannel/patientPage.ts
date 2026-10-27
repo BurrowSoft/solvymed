@@ -6,6 +6,7 @@
 
 import { scoreRequest, toVocabulary, type Answers, type ChannelConfig, type Chip, type Vocabulary } from "./score";
 import type { PageLook } from "./pageLook";
+import type { ReadingHoursRow } from "./readingHours";
 
 export type PcReason = {
   id: string;
@@ -37,6 +38,9 @@ export type PcPatientPage = {
   look?: PageLook | null;
   // M7 / PC-10′: the doctor turned on the AI reading, so the form says the clinic uses AI.
   aiNotice?: boolean;
+  // When the doctor reads the messages (launch polish 20): shown on the "Horário" tile.
+  readingHours?: ReadingHoursRow[];
+  readingNote?: string | null;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.
