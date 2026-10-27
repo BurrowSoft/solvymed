@@ -38,9 +38,17 @@ export default async function PatientChannelPage({
   if (!UUID.test(professionalId) || !(await patientChannelEnabled(supabase, user.id))) notFound();
 
   const access = await patientPage(supabase, professionalId);
-  if (!access.ok && (access.code === "channel_off" || access.code === "not_connected")) {
+  // Read-only (01, 10-26 / 10-27: a patient can always read what they sent): the channel is
+  // off, they're no longer connected, the practice closed or their record was archived, and
+  // they have requests there. Closed / archived with none: the "não disponível" screen.
+  const closedOrArchived = !access.ok && (access.code === "pc_practice_closed" || access.code === "pc_patient_archived");
+  if (!access.ok && (access.code === "channel_off" || access.code === "not_connected" || closedOrArchived)) {
     const requests = await myRequestsWith(supabase, professionalId);
-    if (requests.length === 0) notFound();
+    if (requests.length === 0 && !closedOrArchived) notFound();
+    if (requests.length === 0) {
+      const { data } = await pcAdmin().from("professionals").select("country").eq("id", professionalId).maybeSingle();
+      return <UnavailableChannel emergencyNumber={countryProfile((data as { country?: string | null } | null)?.country).emergencyNumber} />;
+    }
     // The practice the patient wrote to: its name, country and zone, read with the service
     // role ONLY here, after the patient's own requests there are proven above (01, #636 ❌:
     // the public lookup answers nothing once they're disconnected, and it is not widened).
@@ -59,15 +67,11 @@ export default async function PatientChannelPage({
         requests={requests}
         timeZone={pub?.time_zone || own?.time_zone || countryProfile(country).defaultTimeZone}
         country={country}
+        unavailable={closedOrArchived}
       />
     );
   }
-  if (!access.ok) {
-    if (access.code !== "pc_practice_closed" && access.code !== "pc_patient_archived") notFound();
-    // The practice's country (the right emergency number) without the patient page.
-    const { data } = await pcAdmin().from("professionals").select("country").eq("id", professionalId).maybeSingle();
-    return <UnavailableChannel emergencyNumber={countryProfile((data as { country?: string | null } | null)?.country).emergencyNumber} />;
-  }
+  if (!access.ok) notFound();
 
   const p = access.page;
   const { data: info } = await supabase.rpc("get_professional_public_info", { p_professional_id: professionalId }).maybeSingle();
