@@ -2824,7 +2824,8 @@
       "openTextSecretary": "要更新前台那里已有的请求吗？新请求将替换旧请求。",
       "entryButtonNamed": "联系{doctor}",
       "openExistsNamed": "您已有一个未处理的请求：{reason}（{date}）",
-      "aiNotice": "本诊所使用 AI 整理消息。"
+      "aiNotice": "本诊所使用 AI 整理消息。",
+      "replacedPrevious": "已替换您之前的消息。"
     },
     "channel": {
       "title": "您的频道",

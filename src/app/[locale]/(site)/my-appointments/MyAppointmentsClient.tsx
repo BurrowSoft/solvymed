@@ -487,6 +487,8 @@ export function MyAppointmentsClient({
 
   // "Always say who": with whom the patient books (Vitor, build 25).
   const doctorName = myProfessionalMeta?.name?.trim() || "";
+  // The one-doctor card's name: the display name, else the clinic's; "" = only "Seu médico".
+  const cardName = doctorDisplayName(doctorName) || myProfessionalMeta?.clinicName?.trim() || "";
   // Title + first + last name on buttons (e7: a long name overflowed in the app).
   // With the doctor cards (1.5.0), the same name as the card (the brand's,
   // with its title), not the profile's (f0).
@@ -546,10 +548,12 @@ export function MyAppointmentsClient({
         {/* Your doctor: name · specialty · clinic, and booking with them. */}
         {doctors && doctors.length > 0 ? (
           <MyDoctors doctors={doctors} canAdd={canAddDoctor} />
-        ) : doctorName && (
+        ) : (doctorName || myProfessionalId) && (
+          // The card shows even without a display name (web tester 2): the clinic name, else
+          // only "Seu médico" (01), so the channel entry and Desconectar never disappear.
           <section data-testid="your-doctor" className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-100">
             <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{t("yourDoctor")}</p>
-            <p className="mt-1 font-bold text-slate-900">{doctorDisplayName(doctorName)}</p>
+            {cardName && <p className="mt-1 font-bold text-slate-900" data-testid="your-doctor-name">{cardName}</p>}
             {(myProfessionalMeta?.specialty || myProfessionalMeta?.clinicName) && (
               <p className="text-sm text-slate-500">
                 {[myProfessionalMeta?.specialty, whoLine(null, myProfessionalMeta?.clinicName) !== doctorName ? myProfessionalMeta?.clinicName : null].filter(Boolean).join(" · ")}
@@ -569,7 +573,7 @@ export function MyAppointmentsClient({
               </a>
             )}
             {/* 01, 10-26: a discreet way to leave this doctor (MyDoctors has its own). */}
-            {myProfessionalId && <OneDoctorDisconnect doctorId={myProfessionalId} doctorName={doctorDisplayName(doctorName)} />}
+            {myProfessionalId && <OneDoctorDisconnect doctorId={myProfessionalId} doctorName={cardName || t("yourDoctor")} />}
           </section>
         )}
 
