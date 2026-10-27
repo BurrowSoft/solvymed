@@ -38,7 +38,7 @@ vi.mock("@/lib/patientChannel/staff", () => {
     staffContext: async () => ({
       supabase: {
         from: () => chain(h.rows),
-        rpc: async () => ({ data: { open: 3, urgent: 1, attention: 0, notUrgent: 2, openForDoctor: 1, openForSecretary: 2, faqResolved7d: 4, autoResolved7d: 5 }, error: null }),
+        rpc: async () => ({ data: { open: 3, urgent: 1, attention: 0, notUrgent: 1, admin: 1, openForDoctor: 1, openForSecretary: 2, faqResolved7d: 4, autoResolved7d: 5 }, error: null }),
       },
       prefix: "/pt-BR", profId: "doc1", isSecretary: h.isSecretary, country: "BR", doctorName: "Dra. Ana", formatWhen: (s: string) => s.slice(0, 10),
     }),
@@ -94,6 +94,15 @@ describe("the inbox list (section B)", () => {
     await list();
     expect(screen.getByTestId("pc-inbox-kpis-compact").className).toContain("sm:hidden");
     expect(screen.getByTestId("pc-inbox-kpis").className).toMatch(/\bhidden\b.*\bsm:grid\b/);
+  });
+  it("256: the \"Administrativas\" tile (and its compact twin) shows the admin count and opens the admin filter", async () => {
+    await list();
+    const tile = screen.getByTestId("pc-kpi-admin");
+    expect(tile).toHaveTextContent("Administrativas");
+    expect(tile).toHaveTextContent("1");
+    expect(tile).toHaveAttribute("href", "/pt-BR/dashboard/patient-channel?filter=admin");
+    expect(screen.getByTestId("pc-kpi-admin-compact")).toHaveTextContent("Administrativas 1");
+    expect(screen.getByTestId("pc-kpi-green")).toHaveTextContent("1");
   });
 });
 

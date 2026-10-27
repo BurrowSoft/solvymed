@@ -27,6 +27,9 @@ export type InboxCounts = {
   open: number; urgent: number; attention: number; notUrgent: number;
   openForDoctor: number; openForSecretary: number;
   faqResolved7d: number; autoResolved7d: number;
+  // Open administrative requests (an options / exam reason: no score). With 256 the three band
+  // counts are clinical only, and the four add up to open. 0 from an older answer.
+  admin: number;
 };
 
 // The columns the list reads (with the practice's patient row, also under RLS). Never the
@@ -92,6 +95,7 @@ export function toCounts(raw: unknown): InboxCounts | null {
     open: num(r.open), urgent: num(r.urgent), attention: num(r.attention), notUrgent: num(r.notUrgent),
     openForDoctor: num(r.openForDoctor), openForSecretary: num(r.openForSecretary),
     faqResolved7d: num(r.faqResolved7d), autoResolved7d: num(r.autoResolved7d),
+    admin: num(r.admin),
   };
 }
 

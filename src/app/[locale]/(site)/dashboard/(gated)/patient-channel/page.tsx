@@ -75,10 +75,13 @@ export default async function PatientChannelInboxPage({
               <b className="tabular-nums text-slate-900">{n}</b>
             </span>
           ))}
+          <span className="flex items-center gap-1.5 rounded-full border border-slate-100 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm" data-testid="pc-kpi-admin-compact">
+            {t("inbox.admin")} <b className="tabular-nums text-slate-900">{kpi.admin}</b>
+          </span>
         </div>
       )}
       {kpi && (
-        <div className="mt-6 hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-5" data-testid="pc-inbox-kpis">
+        <div className="mt-6 hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-3 lg:grid-cols-6" data-testid="pc-inbox-kpis">
           {([["red", kpi.urgent], ["amber", kpi.attention], ["green", kpi.notUrgent]] as const).map(([band, n]) => (
             <div key={band} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid={`pc-kpi-${band}`}>
               <BandTag band={band} />
@@ -86,6 +89,12 @@ export default async function PatientChannelInboxPage({
               <p className="text-xs text-slate-500">{t("inbox.kpiOpen")}</p>
             </div>
           ))}
+          {/* The open administrative requests (256): the bands above count clinical ones only. */}
+          <Link href={`${prefix}/dashboard/patient-channel?filter=admin`} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm hover:bg-slate-50" data-testid="pc-kpi-admin">
+            <p className="text-xs font-bold text-slate-700">{t("inbox.admin")}</p>
+            <p className="mt-2 text-2xl font-extrabold tabular-nums text-slate-900">{kpi.admin}</p>
+            <p className="text-xs text-slate-500">{t("inbox.kpiOpen")}</p>
+          </Link>
           {([["faq", t("inbox.kpiFaq"), kpi.faqResolved7d], ["auto", t("inbox.kpiAuto"), kpi.autoResolved7d]] as const).map(([key, label, n]) => (
             <div key={key} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid={`pc-kpi-${key}`}>
               <p className="text-xs font-bold text-slate-700">{label}</p>
