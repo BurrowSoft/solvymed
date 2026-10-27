@@ -61,7 +61,8 @@ export function checkAnswers(
     return x.kind === "medicine";
   };
   if (!chips.every(okChip)) return null;
-  if (!intIn(r.when, 0, 2) || !intIn(r.intensity, 0, 2) || !intIn(r.stillTaking, 0, 1)) return null;
+  // -1 = not answered (launch polish 15; 255's _pc_answers_valid accepts it): adds 0 points.
+  if (!intIn(r.when, -1, 2) || !intIn(r.intensity, -1, 2) || !intIn(r.stillTaking, -1, 1)) return null;
   const text = r.text ?? "";
   if (typeof text !== "string" || [...text].length > ANSWER_LIMITS.text) return null;
   return {

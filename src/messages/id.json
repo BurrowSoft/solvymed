@@ -2660,7 +2660,9 @@
       "intensity2": "Berat",
       "stillTakingQ": "Apakah Anda masih minum obatnya?",
       "stillTaking0": "Ya",
-      "stillTaking1": "Saya berhenti sendiri"
+      "stillTaking1": "Saya berhenti sendiri",
+      "choose": "Pilih…",
+      "notAnswered": "Tidak dijawab"
     },
     "bands": {
       "title": "Tingkat urgensi",
@@ -2821,6 +2823,7 @@
       "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
       "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
       "entryButtonNamed": "Hubungi {doctor}",
+      "openExistsNamed": "Anda sudah punya permintaan terbuka: {reason} ({date}).",
       "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan."
     },
     "channel": {

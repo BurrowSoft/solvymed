@@ -2690,7 +2690,9 @@
       "intensity2": "Strong",
       "stillTakingQ": "Are you still taking the medicine?",
       "stillTaking0": "Yes",
-      "stillTaking1": "I stopped on my own"
+      "stillTaking1": "I stopped on my own",
+      "choose": "Choose…",
+      "notAnswered": "Not answered"
     },
     "bands": {
       "title": "Urgency bands",
@@ -2851,6 +2853,7 @@
       "sentSecretary": "Received. The front desk replies within {n, plural, one {# business day} other {# business days}}.",
       "openTextSecretary": "Do you want to update the one the front desk already has? The new one replaces it.",
       "entryButtonNamed": "Contact {doctor}",
+      "openExistsNamed": "You already have an open request: {reason} ({date}).",
       "aiNotice": "This clinic uses AI to organise messages."
     },
     "channel": {
