@@ -80,6 +80,8 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
   const [saved, setSaved] = useState(JSON.stringify(initial));
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<Status>(null);
+  const [created, setCreated] = useState(false);
+  const exists = hasRow || created;
   const problems = settingsProblems(s);
   const dirty = JSON.stringify(s) !== saved;
 
@@ -89,12 +91,15 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
     setStatus(null);
     const db = createClient();
     const row = { ...settingsRow(s), updated_at: new Date().toISOString() };
-    const { error } = hasRow
-      ? await db.from("pc_settings").update(row).eq("professional_id", professionalId)
+    const update = () => db.from("pc_settings").update(row).eq("professional_id", professionalId);
+    let { error } = exists
+      ? await update()
       : await db.from("pc_settings").insert({ professional_id: professionalId, ...settingsRow(s) });
+    // The row may exist by now (another tab, the app, a template): update it instead.
+    if (!exists && error?.code === "23505") ({ error } = await update());
     setBusy(false);
     if (error) { setStatus({ kind: "error", text: t("saveError") }); return; }
-    if (!hasRow) onRowCreated();
+    if (!exists) { setCreated(true); onRowCreated(); }
     setSaved(JSON.stringify(s));
     setStatus({ kind: "ok", text: t("saved") });
   };
@@ -218,13 +223,20 @@ function Reasons({ professionalId, initial }: { professionalId: string; initial:
     if (editId === id) { setEditId(null); setDraft(NEW_REASON); }
   };
 
+  // After a failed ↑↓ (one of the two may have moved): the list as stored.
+  const reload = async () => {
+    const { data, error } = await createClient().from("pc_reasons").select("id, title, subtitle, kind, options, destination, sort")
+      .eq("professional_id", professionalId).is("archived_at", null).order("sort").order("created_at");
+    if (!error && data) setRows((data as (Omit<PcReasonRow, "subtitle"> & { subtitle: string | null })[]).map((r) => ({ ...r, subtitle: r.subtitle ?? "" })));
+  };
+
   const move = async (id: string, dir: -1 | 1) => {
     const changes = swapSort(rows, id, dir);
     if (changes.length === 0) return;
     const db = createClient();
     for (const c of changes) {
       const { error } = await db.from("pc_reasons").update({ sort: c.sort }).eq("id", c.id);
-      if (error) { setStatus({ kind: "error", text: t("saveError") }); return; }
+      if (error) { setStatus({ kind: "error", text: t("saveError") }); void reload(); return; }
     }
     setRows(rows.map((r) => ({ ...r, sort: changes.find((c) => c.id === r.id)?.sort ?? r.sort })).sort((a, b) => a.sort - b.sort));
   };
@@ -322,13 +334,20 @@ function Faq({ professionalId, initial }: { professionalId: string; initial: PcF
     if (editId === id) { setEditId(null); setDraft({ question: "", answer: "" }); }
   };
 
+  // After a failed ↑↓ (one of the two may have moved): the list as stored.
+  const reload = async () => {
+    const { data, error } = await createClient().from("pc_faq").select("id, question, answer, sort")
+      .eq("professional_id", professionalId).is("archived_at", null).order("sort").order("created_at");
+    if (!error && data) setRows(data as PcFaqRow[]);
+  };
+
   const move = async (id: string, dir: -1 | 1) => {
     const changes = swapSort(rows, id, dir);
     if (changes.length === 0) return;
     const db = createClient();
     for (const c of changes) {
       const { error } = await db.from("pc_faq").update({ sort: c.sort }).eq("id", c.id);
-      if (error) { setStatus({ kind: "error", text: t("saveError") }); return; }
+      if (error) { setStatus({ kind: "error", text: t("saveError") }); void reload(); return; }
     }
     setRows(rows.map((r) => ({ ...r, sort: changes.find((c) => c.id === r.id)?.sort ?? r.sort })).sort((a, b) => a.sort - b.sort));
   };
