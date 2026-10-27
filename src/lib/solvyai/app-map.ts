@@ -478,7 +478,7 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   {
     rule: {
       text: "An archived patient still sees the documents already shared and can remove their own upload, but can't send new files: \"Enviar documento\" / \"Send a document\" answers \"Este consultório não está recebendo arquivos no momento.\" / \"This practice isn't accepting files right now.\" (app and website; it never says \"archived\"). Restoring the patient lets them send again.",
-      pending: ["patient-documents-live", "migration-260"],
+      pending: ["patient-documents-live", "archived-upload-block-live"],
     },
     help: "P15",
   },

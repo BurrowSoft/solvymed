@@ -109,7 +109,7 @@ export function toDocument(r: Record<string, unknown>): PatientDocument {
 export type DocErrorKey = "tooLarge" | "type" | "cantShareType" | "dailyLimit" | "patientFull" | "storageFull" | "ownStorageFull" | "noAccess" | "folderNotEmpty" | "maxFolders" | "invalidName" | "notAccepting" | "generic";
 export function docErrorKey(message: string | null | undefined, asDoctor = false): DocErrorKey {
   const m = message ?? "";
-  // 260 (launch polish 39): an archived record takes no new uploads; the patient reads a
+  // Launch polish 39 (its migration): an archived record takes no new uploads; the patient reads a
   // neutral line (never "archived").
   if (m.includes("not_accepting_files")) return "notAccepting";
   if (m.includes("too_large")) return "tooLarge";
