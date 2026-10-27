@@ -1264,7 +1264,7 @@
     "titleClose": "Konto schließen",
     "titleDelete": "Konto löschen",
     "closeIntro": "Zu Ihren Patienten gibt es Patientenakten, daher kann Ihr Konto nicht einfach gelöscht werden. Beim Schließen:",
-    "closeLogin": "Werden Ihr Zugang, Ihre Kontaktdaten, Ihr Foto sowie Zahlungs- und Praxisdaten sofort gelöscht.",
+    "closeLogin": "Werden Ihr Zugang, Ihre Kontaktdaten, Ihr Foto sowie Zahlungs- und Praxisdaten sofort gelöscht oder anonymisiert.",
     "closeRecords": "Bleiben Ihre Patientenakten und Ihre Patientenliste für die gesetzliche Aufbewahrungsfrist (20 Jahre) für niemanden zugänglich gespeichert und werden danach endgültig gelöscht. Ihr Name und Ihre Berufsregistrierung bleiben als Verfasser bei den Akten.",
     "closePatients": "{patients, plural, one {Wird # Patient archiviert} other {Werden # Patienten archiviert}} und {appointments, plural, =0 {keine anstehenden Termine abgesagt} one {# anstehender Termin abgesagt} other {# anstehende Termine abgesagt}}. Patienten, die die App nutzen, werden benachrichtigt.",
     "closeTeam": "{secretaries, plural, one {# Teammitglied verliert} other {# Teammitglieder verlieren}} den Zugang.",

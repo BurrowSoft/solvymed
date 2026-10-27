@@ -1264,7 +1264,7 @@
     "titleClose": "Chiudi account",
     "titleDelete": "Elimina account",
     "closeIntro": "I tuoi pazienti hanno cartelle cliniche, quindi il tuo account non può essere semplicemente eliminato. Chiudendolo:",
-    "closeLogin": "Il tuo accesso, i dati di contatto, la foto e i dati di pagamento e dello studio vengono eliminati subito.",
+    "closeLogin": "Il tuo accesso, i dati di contatto, la foto e i dati di pagamento e dello studio vengono eliminati o anonimizzati subito.",
     "closeRecords": "Le cartelle cliniche e l'elenco dei pazienti vengono conservati, senza accesso per nessuno, per il periodo previsto dalla legge (20 anni), poi eliminati definitivamente. Il tuo nome e la tua iscrizione professionale restano sulle cartelle come autore.",
     "closePatients": "{patients, plural, one {# paziente viene archiviato} other {# pazienti vengono archiviati}} e {appointments, plural, =0 {non ci sono appuntamenti futuri da annullare} one {# appuntamento futuro viene annullato} other {# appuntamenti futuri vengono annullati}}. I pazienti che usano l'app ricevono un avviso.",
     "closeTeam": "{secretaries, plural, one {# membro del team perde} other {# membri del team perdono}} l'accesso.",
