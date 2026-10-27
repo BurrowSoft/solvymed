@@ -2791,7 +2791,7 @@
         "symptomOf": "症状：{name}",
         "remove": "移除 {term}",
         "suggestions": "建议",
-        "hint": "诊所已知的词语会变成标签：选择一个建议（点击、Enter、Tab 或 \";\"），或输入完整词语后按空格。"
+        "hint": "诊所认识的词会变成标签：选择一个建议，或输入完整的词。"
       },
       "entryButton": "联系医生",
       "unavailable": "此渠道不可用。请直接联系诊所。",

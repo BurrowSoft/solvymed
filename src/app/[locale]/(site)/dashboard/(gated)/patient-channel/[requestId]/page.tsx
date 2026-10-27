@@ -10,6 +10,8 @@ import {
 } from "@/lib/patientChannel/inbox";
 import { BandTag } from "../../../settings/patient-channel/BandTag";
 import { ReplyBox } from "./ReplyBox";
+import { formatPhone } from "@/lib/phoneFormat";
+import { isUnscored } from "@/lib/patientChannel/unscored";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DETAIL_COLUMNS = "id, professional_id, patient_id, destination, reason_snapshot, answers, text, score_total, band, lines, warning_shown, floor_applied, auto_messages_shown, status, reply_text, replied_at, created_at, patients(full_name, phone)";
@@ -43,6 +45,8 @@ export default async function PatientChannelRequestPage({
   const q = raw as Record<string, unknown> | null;
   if (!q || q.professional_id !== profId) notFound();
   const row = toInboxRow(q);
+  // An administrative request: no band, points or breakdown (launch polish 29).
+  const unscored = isUnscored(q.reason_snapshot);
   const patient = (Array.isArray(q.patients) ? q.patients[0] : q.patients) as { phone?: string | null } | null;
 
   const [, history, settings] = await Promise.all([
@@ -77,15 +81,15 @@ export default async function PatientChannelRequestPage({
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-extrabold text-slate-900">{row.patientName}</h1>
-        <BandTag band={row.band} />
-        <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>
+        {!unscored && <BandTag band={row.band} />}
+        {!unscored && <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>}
       </div>
       <p className="mt-1 text-sm text-slate-500">
         {t("detail.sentAt", { date: formatWhen(row.createdAt) })} · {destination(row.destination)} · {t(`inbox.status.${row.status}`)}
       </p>
       {phone && (
         <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="mt-2 inline-block text-sm font-bold text-teal-700 hover:underline" data-testid="pc-detail-call">
-          {t("detail.call", { phone })}
+          {t("detail.call", { phone: formatPhone(phone, country) })}
         </a>
       )}
 
@@ -131,7 +135,7 @@ export default async function PatientChannelRequestPage({
         </section>
       )}
 
-      <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
+      {!unscored && <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
         <p className="text-sm font-bold text-slate-900">{t("detail.breakdown", { n: row.score })}</p>
         <ul className="mt-2 flex flex-col gap-1 text-sm tabular-nums">
           {lines.length === 0 && <li className="text-xs text-slate-500">{t("test.noSymptom")}</li>}
@@ -145,7 +149,7 @@ export default async function PatientChannelRequestPage({
         {q.floor_applied === true && config && <p className="mt-2 text-xs text-slate-600">{t("detail.floor", { band: t(`bands.${config.minBandForTextOnly}`) })}</p>}
         {/* The safety floor (01, 10-26): Urgent because of a symptom with the immediate warning. */}
         {floorCause && <p className="mt-2 text-xs font-semibold text-red-700" data-testid="pc-detail-warning-floor">{t(floorCause === "ai" ? "detail.warningFloorAi" : "detail.warningFloor")}</p>}
-      </section>
+      </section>}
 
       {row.status === "open" && !readOnly && <ReplyBox requestId={row.id} />}
       {row.status === "open" && readOnly && doctorName && (
