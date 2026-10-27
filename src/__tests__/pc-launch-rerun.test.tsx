@@ -40,6 +40,11 @@ describe("35: the patient's avatars skip titles in any script", () => {
     expect(avatar.getAttribute("aria-hidden")).toBe("true");
   });
 
+  it("a blank name: '•', as in the app (cf)", () => {
+    render(<PcPageFrame look={null} doctorName="  " practiceLine="">{null}</PcPageFrame>);
+    expect(screen.getByText("•").getAttribute("aria-hidden")).toBe("true");
+  });
+
   it("the booking page's avatar uses the same helper (not the name's first character)", () => {
     const src = readFileSync("src/app/[locale]/(site)/book/[professionalId]/BookingClient.tsx", "utf8");
     expect(src).toContain('{brandInitials(professionalName) || "•"}');
