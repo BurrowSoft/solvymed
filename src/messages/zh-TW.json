@@ -485,6 +485,8 @@
     "regenerateCode": "重新產生",
     "addedBy": "新增者",
     "addedBySecretary": "{name}（祕書），{date}",
+    "addedBySelf": "由患者本人新增",
+    "addedByOther": "{name}，{date}",
     "allPatients": "所有病歷",
     "archivePatient": "封存病患資料",
     "archiveTitle": "要封存 {name} 嗎？",

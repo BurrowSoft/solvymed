@@ -485,6 +485,8 @@
     "regenerateCode": "Tạo lại",
     "addedBy": "Được thêm bởi",
     "addedBySecretary": "{name} (thư ký), {date}",
+    "addedBySelf": "Bệnh nhân tự đăng ký",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Tất cả hồ sơ",
     "archivePatient": "Lưu trữ hồ sơ",
     "archiveTitle": "Lưu trữ hồ sơ {name}?",

@@ -485,6 +485,8 @@
     "regenerateCode": "Gerar novo",
     "addedBy": "Adicionado por",
     "addedBySecretary": "{name} (secretaria), {date}",
+    "addedBySelf": "Cadastrado pelo próprio paciente",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Todos os pacientes",
     "archivePatient": "Arquivar cadastro",
     "archiveTitle": "Arquivar {name}?",

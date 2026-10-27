@@ -485,6 +485,8 @@
     "regenerateCode": "Régénérer",
     "addedBy": "Ajouté par",
     "addedBySecretary": "{name} (secrétaire), {date}",
+    "addedBySelf": "Added by the patient",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Tous les dossiers",
     "archivePatient": "Archiver le dossier",
     "archiveTitle": "Archiver {name} ?",

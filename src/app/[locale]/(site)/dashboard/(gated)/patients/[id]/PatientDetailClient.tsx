@@ -16,6 +16,7 @@ import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { clinicDate } from "@/lib/clinicTime";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
 import type { PatientIdKind } from "@/lib/patientIds";
+import { addedByLine, type CreatedByKind } from "@/lib/patientCreatedBy";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
@@ -65,6 +66,8 @@ type Patient = {
   booking_blocked?: boolean;
   // Set by a server trigger on insert (migration 088); can't be forged.
   professional_id?: string; created_by?: string | null; created_by_name?: string | null;
+  // Who that creator is, from the server (launch polish 42; null: unknown).
+  created_by_kind?: CreatedByKind | null;
 } & AddressColumns;
 
 // The clinic's time zone for timestamps shown as dates ("Paciente desde",
@@ -487,16 +490,20 @@ function PatientInfoTab({ patient, locale, isArchived, canDelete, hasAppointment
     ] : []),
     { label: t("insurance"), value: patient.convenio_type === "health_plan" ? t("healthPlan") : patient.convenio_type === "particular" ? t("privateInsurance") : null, key: "insurance" },
     { label: t("patientSince"), value: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "long", day: "numeric", timeZone }) },
-    // Only when someone other than the doctor (i.e. a secretary) added
-    // the patient.
+    // Only when someone other than the doctor added the patient: the patient
+    // themselves, a secretary, or anyone else without a role (launch polish 42).
     {
       label: t("addedBy"),
-      value: patient.created_by && patient.created_by !== patient.professional_id && patient.created_by_name
-        ? t("addedBySecretary", {
-            name: patient.created_by_name,
-            date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone }),
-          })
-        : null,
+      value: (() => {
+        const line = addedByLine(patient.created_by_kind, patient);
+        if (line === "self") return t("addedBySelf");
+        if (!line) return null;
+        const vars = {
+          name: patient.created_by_name ?? "",
+          date: new Date(patient.created_at).toLocaleDateString(dateLocale(locale), { year: "numeric", month: "short", day: "numeric", timeZone }),
+        };
+        return line === "secretary" ? t("addedBySecretary", vars) : t("addedByOther", vars);
+      })(),
     },
   ];
 
