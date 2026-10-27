@@ -2251,7 +2251,8 @@
       "patientFull": "Vous avez atteint la limite de 200 Mo pour ce médecin.",
       "storageFull": "L’espace documents de ce médecin est plein.",
       "ownStorageFull": "Votre espace documents est plein (5 Go). Contactez le support.",
-      "noAccess": "Ce document n’est plus disponible."
+      "noAccess": "Ce document n’est plus disponible.",
+      "notAccepting": "This practice isn't accepting files right now."
     },
     "storageNotice": "Vous avez utilisé {used} sur 5 Go pour les documents.",
     "snapshotNotShared": "Enregistré, mais non partagé : votre espace documents est plein.",

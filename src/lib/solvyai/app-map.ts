@@ -477,6 +477,13 @@ export const GENERAL: { rule: Rule; help: string }[] = [
   },
   {
     rule: {
+      text: "An archived patient still sees the documents already shared and can remove their own upload, but can't send new files: \"Enviar documento\" / \"Send a document\" answers \"Este consultório não está recebendo arquivos no momento.\" / \"This practice isn't accepting files right now.\" (app and website; it never says \"archived\"). Restoring the patient lets them send again.",
+      pending: ["patient-documents-live", "archived-upload-block-live"],
+    },
+    help: "P15",
+  },
+  {
+    rule: {
       text: "On the website, saving a prescription, or a certificate, declaration or exam request (Prescriptions & documents tab), has \"Compartilhar com o paciente\" / \"Share with the patient\" (on by default): a PDF copy goes to the patient's folder (prescriptions → \"Prescrições\" / \"Prescriptions\"; certificates, declarations and the Thai certificate → \"Atestados e laudos\" / \"Certificates and reports\"; exam requests → \"Exames\" / \"Exams\"), titled as the document with its date, with the unsigned-copy line in the document's language; an edit (within 24 hours) or a correction replaces the earlier copy: the patient sees \"Atualizado em\" / \"Updated on\" (an edit) or \"Corrigido em\" / \"Corrected on\" (a correction), and in the doctor's Documents tab the earlier copy stays as history marked \"Substituído por uma cópia mais recente\" / \"Replaced by a newer copy\"; deleting the document or prescription (within 24 hours) also removes its copy (the access log stays); while the copy is being made and shared, \"Compartilhando com o paciente…\" / \"Sharing with the patient…\" holds the page (leaving would lose the copy); the special control prescription is never shared; storage full → \"Salvo, mas não compartilhado: seu espaço de documentos está cheio.\"; another failure → \"Salvo, mas não foi possível compartilhar a cópia com o paciente.\" with \"Tentar de novo\" / \"Try again\". Editing or correcting a prescription or document, the switch starts as its copy is now: on while the patient sees it, off when the doctor hid it or it was never shared (switching it on shares again). SolvyAI doesn't share documents; it explains the switch.",
       pending: ["patient-documents-live"],
     },

@@ -2251,7 +2251,8 @@
       "patientFull": "您已達到這位醫師的 200 MB 上限。",
       "storageFull": "這位醫師的文件儲存空間已滿。",
       "ownStorageFull": "您的文件儲存空間已滿(5 GB)。請聯絡支援團隊。",
-      "noAccess": "此文件已無法使用。"
+      "noAccess": "此文件已無法使用。",
+      "notAccepting": "這間診所目前不接收檔案。"
     },
     "storageNotice": "文件已使用 {used},共 5 GB。",
     "snapshotNotShared": "已儲存,但未分享:您的文件儲存空間已滿。",
