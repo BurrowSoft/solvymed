@@ -385,6 +385,10 @@ describe("the emergency bar while typing", () => {
       expect(bar.tabIndex).toBe(-1);
       expect(bar).toHaveTextContent(P.emergencyNow.replace("{number}", "192"));
       expect(bar.querySelector(".line-clamp-2")).not.toBeNull();
+      // The number is never inside the clamped text (cf, #662): it shows however short the bar.
+      const num = screen.getByTestId("pc-emergency-bar-number");
+      expect(num).toHaveTextContent(/^192$/);
+      expect(num.closest(".line-clamp-1, .line-clamp-2")).toBeNull();
       // Outside the form's subtree (a portal), so no transformed parent can move a fixed bar.
       expect(bar.parentElement).toBe(document.body);
       fireEvent.click(bar);
@@ -404,6 +408,8 @@ describe("the emergency bar while typing", () => {
       fireEvent.scroll(window);
       const bar = screen.getByTestId("pc-emergency-bar");
       expect(bar.querySelector(".line-clamp-1")).not.toBeNull();
+      expect(screen.getByTestId("pc-emergency-bar-number").closest(".line-clamp-1")).toBeNull();
+      expect(screen.getByTestId("pc-emergency-bar-number")).toHaveTextContent("192");
       at.bar = 36;
       at.box = 200;
       fireEvent.scroll(window);
