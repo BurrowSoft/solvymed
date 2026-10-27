@@ -2822,7 +2822,7 @@
         "symptomOf": "symptom: {name}",
         "remove": "Remove {term}",
         "suggestions": "Suggestions",
-        "hint": "Terms your practice knows become tags: pick a suggestion (click, Enter, Tab or \";\") or type the whole word and a space."
+        "hint": "Terms your practice knows become tags: pick a suggestion or type the whole word."
       },
       "entryButton": "Contact the doctor",
       "unavailable": "This channel isn’t available. Please contact the practice directly.",

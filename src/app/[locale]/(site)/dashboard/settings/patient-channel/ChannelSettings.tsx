@@ -69,6 +69,25 @@ export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial,
   );
 }
 
+// The reading hours' times (launch polish 16): <input type="time"> follows the device's own
+// 12/24 h setting ("08:00 AM" in pt-BR / th), so a select every 15 minutes, labelled in the
+// page's locale (24 h for pt-BR and th, each locale's own format otherwise). The stored value
+// stays "HH:MM"; a stored time off the 15-minute grid is kept as an option.
+const QUARTERS = Array.from({ length: 96 }, (_, i) => `${String(Math.floor(i / 4)).padStart(2, "0")}:${String((i % 4) * 15).padStart(2, "0")}`);
+function TimeSelect({ locale, value, onChange }: { locale: string; value: string; onChange: (v: string) => void }) {
+  const f = new Intl.DateTimeFormat(dateLocale(locale), { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  const label = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    return f.format(new Date(Date.UTC(2024, 0, 1, h, m)));
+  };
+  const options = QUARTERS.includes(value) || !/^\d{2}:\d{2}$/.test(value) ? QUARTERS : [...QUARTERS, value].sort();
+  return (
+    <select className="rounded-lg border border-slate-200 bg-white px-2 py-1" value={value} onChange={(e) => onChange(e.target.value)}>
+      {options.map((v) => <option key={v} value={v}>{label(v)}</option>)}
+    </select>
+  );
+}
+
 function weekdayNames(locale: string): string[] {
   // Mon = 1 … Sun = 7 (237): 2024-01-01 was a Monday.
   // The app's date locale (lib/dateLabels: th → th-TH with its calendar, en → en-GB).
@@ -150,10 +169,10 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref,
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                 <label className="flex items-center gap-1.5">{t("from")}
-                  <input type="time" className="rounded-lg border border-slate-200 px-2 py-1" value={h.from} onChange={(e) => setHour(i, { from: e.target.value })} />
+                  <TimeSelect locale={locale} value={h.from} onChange={(v) => setHour(i, { from: v })} />
                 </label>
                 <label className="flex items-center gap-1.5">{t("to")}
-                  <input type="time" className="rounded-lg border border-slate-200 px-2 py-1" value={h.to} onChange={(e) => setHour(i, { to: e.target.value })} />
+                  <TimeSelect locale={locale} value={h.to} onChange={(v) => setHour(i, { to: v })} />
                 </label>
                 <button type="button" className={MINI} onClick={() => setS({ ...s, readingHours: s.readingHours.filter((_, j) => j !== i) })}>{t("remove")}</button>
               </div>

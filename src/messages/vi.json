@@ -2792,7 +2792,7 @@
         "symptomOf": "triệu chứng: {name}",
         "remove": "Xóa {term}",
         "suggestions": "Gợi ý",
-        "hint": "Các thuật ngữ phòng khám biết sẽ trở thành thẻ: chọn một gợi ý (nhấp, Enter, Tab hoặc \";\") hoặc gõ trọn từ rồi nhấn dấu cách."
+        "hint": "Các từ phòng khám biết sẽ thành nhãn: chọn một gợi ý hoặc gõ đủ cả từ."
       },
       "entryButton": "Liên hệ bác sĩ",
       "unavailable": "Kênh này hiện không khả dụng. Vui lòng liên hệ trực tiếp với phòng khám.",
