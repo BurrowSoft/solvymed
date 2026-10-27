@@ -19,6 +19,7 @@ import { getClinicTimeZone } from "@/lib/clinicTime";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
 import { serverFlag } from "@/lib/myDoctors";
+import { readCreatedByKind } from "@/lib/patientCreatedBy";
 import { currentRecordSections, parseTemplateSections, type RecordTemplate } from "@/lib/recordTemplates";
 
 export default async function PatientDetailPage({
@@ -58,7 +59,7 @@ export default async function PatientDetailPage({
   // asked for once the flag is on, so the page works before 189 too.
   const templatesOn = !isSecretary && (await serverFlag(supabase, "record_templates"));
   const recordCols: string = `id, date, time, content, record_type, created_at, created_by, created_by_name, corrects_id, correction_reason${templatesOn ? ", template_name, sections" : ""}`;
-  const [patientResult, recordsResult, prescriptionsResult, apptsResult, preview, t, templatesResult] = await Promise.all([
+  const [patientResult, recordsResult, prescriptionsResult, apptsResult, preview, t, templatesResult, createdByKind] = await Promise.all([
     supabase.from("patients").select("*").eq("id", id).eq("professional_id", effectiveProfId).single(),
     isSecretary
       ? noRows
@@ -74,6 +75,8 @@ export default async function PatientDetailPage({
     templatesOn
       ? supabase.from("record_templates").select("id, name, sections, position").eq("professional_id", user.id).order("position").order("created_at")
       : noRows,
+    // Who added the record, for doctor and secretary alike (launch polish 42).
+    readCreatedByKind(supabase, id),
   ]);
 
   if (!patientResult.data) notFound();
@@ -186,7 +189,7 @@ export default async function PatientDetailPage({
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm p-6">
         <MergedNotice />
         <PatientTabs
-          patient={patient}
+          patient={{ ...patient, created_by_kind: createdByKind }}
           records={records}
           prescriptions={prescriptions}
           appointments={appointments}

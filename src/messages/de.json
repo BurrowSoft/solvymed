@@ -485,6 +485,8 @@
     "regenerateCode": "Neu generieren",
     "addedBy": "Hinzugefügt von",
     "addedBySecretary": "{name} (Sekretariat), {date}",
+    "addedBySelf": "The patient",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Alle Patientenakten",
     "archivePatient": "Akte archivieren",
     "archiveTitle": "{name} archivieren?",

@@ -485,6 +485,8 @@
     "regenerateCode": "Rigenera",
     "addedBy": "Aggiunto da",
     "addedBySecretary": "{name} (segreteria), {date}",
+    "addedBySelf": "The patient",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Tutte le schede",
     "archivePatient": "Archivia scheda",
     "archiveTitle": "Archiviare {name}?",

@@ -485,6 +485,8 @@
     "regenerateCode": "إعادة إنشاء",
     "addedBy": "أضافه",
     "addedBySecretary": "{name} (سكرتير)، {date}",
+    "addedBySelf": "المريض نفسه",
+    "addedByOther": "{name}، {date}",
     "allPatients": "جميع الملفات",
     "archivePatient": "أرشفة الملف",
     "archiveTitle": "أرشفة ملف {name}؟",

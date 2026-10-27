@@ -485,6 +485,8 @@
     "regenerateCode": "재생성",
     "addedBy": "추가한 사람",
     "addedBySecretary": "{name}(비서), {date}",
+    "addedBySelf": "환자 본인",
+    "addedByOther": "{name}, {date}",
     "allPatients": "전체 차트",
     "archivePatient": "환자 정보 보관",
     "archiveTitle": "{name} 환자 정보를 보관할까요?",

@@ -485,6 +485,8 @@
     "pendingLabel": "Pending",
     "addedBy": "Added by",
     "addedBySecretary": "{name} (secretary), {date}",
+    "addedBySelf": "The patient",
+    "addedByOther": "{name}, {date}",
     "allPatients": "All Patients",
     "archivePatient": "Archive patient",
     "archiveTitle": "Archive {name}?",

@@ -485,6 +485,8 @@
     "regenerateCode": "Buat ulang",
     "addedBy": "Ditambahkan oleh",
     "addedBySecretary": "{name} (sekretaris), {date}",
+    "addedBySelf": "Pasien sendiri",
+    "addedByOther": "{name}, {date}",
     "allPatients": "Semua rekam medis",
     "archivePatient": "Arsipkan data pasien",
     "archiveTitle": "Arsipkan {name}?",
