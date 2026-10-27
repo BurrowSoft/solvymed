@@ -39,7 +39,7 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
 
   if (result) {
     return (
-      <div data-testid="pc-test-result" className="mx-auto flex max-w-xl flex-col gap-4">
+      <div data-testid="pc-test-result" className="flex max-w-xl flex-col gap-4">
         {bar}
         {result === "skipped" ? (
           <p className="rounded-xl border border-green-600 bg-green-50 p-4 text-sm text-green-900">{t("test.skipped")}</p>

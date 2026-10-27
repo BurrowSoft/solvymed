@@ -79,7 +79,7 @@ describe("the Patient Channel rules editor", () => {
 
   it("renaming a symptom keeps its messages (cf, #614); a duplicate name is refused", () => {
     render(wrap(<PatientChannelSettings {...EXTRA} initialRules={sample} initialVersion={3} emergencyNumber="192" />));
-    fireEvent.click(screen.getByRole("button", { name: P.symptoms.renameLabel.replace("{name}", "Tontura") }));
+    fireEvent.click(screen.getByRole("button", { name: `${P.symptoms.rename} Tontura` }));
     const input = screen.getByRole("textbox", { name: P.symptoms.renameLabel.replace("{name}", "Tontura") });
     fireEvent.change(input, { target: { value: "Febre" } });
     fireEvent.click(screen.getByRole("button", { name: P.symptoms.renameSave }));
