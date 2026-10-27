@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
 import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientChannel/score";
 import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
@@ -8,6 +9,17 @@ import { dateLocale } from "@/lib/dateLabels";
 import { SmartTextBox } from "./SmartTextBox";
 import { MyRequests } from "./MyRequests";
 import { PcPageFrame } from "./PcPageFrame";
+
+// The part of the page the patient sees, in the layout viewport's coordinates: with the
+// keyboard open, iOS keeps the layout viewport and moves the visual one (visualViewport).
+function visibleArea() {
+  const v = typeof window !== "undefined" ? window.visualViewport : null;
+  return v ? { top: v.offsetTop, bottom: v.offsetTop + v.height } : { top: 0, bottom: window.innerHeight };
+}
+const motion = (): ScrollBehavior =>
+  typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+// One line of the bar's text-sm.
+const BAR_LINE = 20;
 
 // The patient's Patient Channel (specs/patient-contact-tech.md §6; the prototype v17's
 // tab 1), phone first: entry (the rules, the response time, the practice country's
@@ -72,21 +84,63 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   // When the emergency line FIRST appears (01; the app does the same), bring it into view if
   // it's off-screen: at phone width it sits below the symptom list. role="alert" announces it
   // as it appears; the motion follows prefers-reduced-motion.
+  // While the patient TYPES (01, 10-27; web tester 1's 320 check): the line sits above the
+  // questions, so scrolling to it would push the text box behind the keyboard. Then nothing
+  // scrolls: a compact bar pinned to the top of the visible area repeats the line while it's
+  // off-screen (aria-hidden: the line's role="alert" already announced it), and a tap goes to
+  // it. The box wins: when the 2-line bar would cover it, the bar shrinks to 1 line. The
+  // emergency number sits outside the clamp, so it always shows.
   const emergencyRef = useRef<HTMLParagraphElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLButtonElement>(null);
+  const [bar, setBar] = useState<{ top: number; lines: 1 | 2 } | null>(null);
   const wasWarning = useRef(false);
   useEffect(() => {
     if (warning && !wasWarning.current) {
       const el = emergencyRef.current;
       if (el) {
         const r = el.getBoundingClientRect();
-        if (r.top < 0 || r.bottom > window.innerHeight) {
-          const reduce = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-          el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+        const area = visibleArea();
+        if (r.top < area.top || r.bottom > area.bottom) {
+          if (textRef.current?.contains(document.activeElement)) setBar({ top: area.top, lines: 2 });
+          else el.scrollIntoView({ behavior: motion(), block: "center" });
         }
       }
     }
+    if (!warning) setBar(null);
     wasWarning.current = !!warning;
   }, [warning]);
+  const barOn = bar !== null;
+  useEffect(() => {
+    if (!barOn) return;
+    const update = () => {
+      const line = emergencyRef.current;
+      const area = visibleArea();
+      const r = line?.getBoundingClientRect();
+      if (!r || (r.top >= area.top && r.bottom <= area.bottom)) { setBar(null); return; }
+      const box = textRef.current?.querySelector("textarea")?.getBoundingClientRect();
+      const height = barRef.current?.getBoundingClientRect().height ?? 0;
+      setBar((cur) => {
+        if (!cur) return cur;
+        // The 2-line height: as measured, or the 1-line bar plus one line of text.
+        const two = cur.lines === 2 ? height : height + BAR_LINE;
+        const lines: 1 | 2 = box && area.top + two > box.top ? 1 : 2;
+        return cur.top === area.top && cur.lines === lines ? cur : { top: area.top, lines };
+      });
+    };
+    update();
+    const vv = window.visualViewport;
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    vv?.addEventListener("scroll", update);
+    vv?.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      vv?.removeEventListener("scroll", update);
+      vv?.removeEventListener("resize", update);
+    };
+  }, [barOn]);
   const canSkip = symptomForm && check.canSkip && !warning && check.autoMessages.length > 0;
 
   const send = async (replace: boolean) => {
@@ -207,9 +261,24 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 </label>
               ))}
             </div>
-            <SmartTextBox vocab={page.vocabulary} text={answers.text} chips={answers.chips} maxLength={PC_TEXT_MAX}
-              label={t("textLabel")} placeholder={t("textPlaceholder")}
-              onChange={(text, chips) => setAnswers((a) => ({ ...a, text, chips }))} />
+            <div ref={textRef} className="min-w-0">
+              <SmartTextBox vocab={page.vocabulary} text={answers.text} chips={answers.chips} maxLength={PC_TEXT_MAX}
+                label={t("textLabel")} placeholder={t("textPlaceholder")}
+                onChange={(text, chips) => setAnswers((a) => ({ ...a, text, chips }))} />
+            </div>
+            {warning && bar && createPortal(
+              <button ref={barRef} type="button" aria-hidden="true" tabIndex={-1} data-testid="pc-emergency-bar"
+                onClick={() => emergencyRef.current?.scrollIntoView({ behavior: motion(), block: "center" })}
+                style={{ top: bar.top }}
+                className="fixed inset-x-0 z-50 flex items-start gap-2 border-b-2 border-red-600 bg-red-50 px-3 py-2 text-left text-sm font-semibold text-red-900 shadow-md">
+                <span className="shrink-0">⚠</span>
+                {/* The number outside the clamp (cf): it shows even when the sentence is cut short.
+                    Only a real number (as the app): the "local emergency number" phrase stays in the sentence. */}
+                {page.emergencyNumber && <b data-testid="pc-emergency-bar-number" className="shrink-0 tabular-nums">{page.emergencyNumber}</b>}
+                <span className={bar.lines === 2 ? "line-clamp-2" : "line-clamp-1"}>{t("emergencyNow", { number })}</span>
+              </button>,
+              document.body,
+            )}
             {check.autoMessages.length > 0 && (
               <div className="flex flex-col gap-2" data-testid="pc-auto">
                 {check.autoMessages.map((m) => (

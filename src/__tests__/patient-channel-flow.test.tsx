@@ -353,3 +353,130 @@ describe("the emergency line comes into view", () => {
     }
   });
 });
+
+// 01 (10-27; web tester 1's 320 check on #657): while the patient TYPES, scrolling to the line
+// would push the text box behind the keyboard. Nothing scrolls; a compact bar pinned to the top
+// of the visible area repeats the line while it's off-screen; the box wins on a short screen.
+describe("the emergency bar while typing", () => {
+  const scroll = vi.fn();
+  const original = { scroll: Element.prototype.scrollIntoView, rect: Element.prototype.getBoundingClientRect };
+  const at = { line: 2000, box: 300, bar: 56 };
+  const rect = (top: number, height: number) => ({ top, bottom: top + height, left: 0, right: 100, width: 100, height, x: 0, y: top, toJSON: () => ({}) }) as DOMRect;
+  const setup = () => {
+    scroll.mockReset();
+    Object.assign(at, { line: 2000, box: 300, bar: 56 });
+    Element.prototype.scrollIntoView = scroll;
+    Element.prototype.getBoundingClientRect = function () {
+      const id = this.getAttribute?.("data-testid");
+      if (id === "pc-emergency") return rect(at.line, 40);
+      if (id === "pc-emergency-bar") return rect(0, at.bar);
+      if (this.tagName === "TEXTAREA") return rect(at.box, 96);
+      return rect(10, 40);
+    };
+  };
+  const restore = () => {
+    Element.prototype.scrollIntoView = original.scroll;
+    Element.prototype.getBoundingClientRect = original.rect;
+  };
+  const type = (text: string) => {
+    const box = screen.getByRole("textbox", { name: P.textLabel });
+    box.focus();
+    fireEvent.change(box, { target: { value: text } });
+  };
+
+  it("typed into the warning, the line off-screen: no scroll; the bar, aria-hidden, the same line (192 shown), 2 lines", () => {
+    setup();
+    try {
+      flow();
+      toForm("efe");
+      type("estou com falta de ar");
+      expect(screen.getByTestId("pc-emergency").getAttribute("role")).toBe("alert");
+      expect(scroll).not.toHaveBeenCalled();
+      const bar = screen.getByTestId("pc-emergency-bar");
+      expect(bar.getAttribute("aria-hidden")).toBe("true");
+      expect(bar.tabIndex).toBe(-1);
+      expect(bar).toHaveTextContent(P.emergencyNow.replace("{number}", "192"));
+      expect(bar.querySelector(".line-clamp-2")).not.toBeNull();
+      // The number is never inside the clamped text (cf, #662): it shows however short the bar.
+      const num = screen.getByTestId("pc-emergency-bar-number");
+      expect(num).toHaveTextContent(/^192$/);
+      expect(num.closest(".line-clamp-1, .line-clamp-2")).toBeNull();
+      // Outside the form's subtree (a portal), so no transformed parent can move a fixed bar.
+      expect(bar.parentElement).toBe(document.body);
+      fireEvent.click(bar);
+      expect(scroll).toHaveBeenCalledWith({ behavior: "smooth", block: "center" });
+    } finally {
+      restore();
+    }
+  });
+
+  it("a short screen: when the 2-line bar would cover the text box, it shrinks to 1 line; back to 2 with room", () => {
+    setup();
+    try {
+      flow();
+      toForm("efe");
+      at.box = 40;
+      type("falta de ar");
+      fireEvent.scroll(window);
+      const bar = screen.getByTestId("pc-emergency-bar");
+      expect(bar.querySelector(".line-clamp-1")).not.toBeNull();
+      expect(screen.getByTestId("pc-emergency-bar-number").closest(".line-clamp-1")).toBeNull();
+      expect(screen.getByTestId("pc-emergency-bar-number")).toHaveTextContent("192");
+      at.bar = 36;
+      at.box = 200;
+      fireEvent.scroll(window);
+      expect(screen.getByTestId("pc-emergency-bar").querySelector(".line-clamp-2")).not.toBeNull();
+    } finally {
+      restore();
+    }
+  });
+
+  it("gone once the line is on screen, or when the warning clears", () => {
+    setup();
+    try {
+      flow();
+      toForm("efe");
+      type("falta de ar");
+      expect(screen.getByTestId("pc-emergency-bar")).toBeInTheDocument();
+      at.line = 100;
+      fireEvent.scroll(window);
+      expect(screen.queryByTestId("pc-emergency-bar")).toBeNull();
+      at.line = 2000;
+      type("estou bem");
+      type("falta de ar");
+      expect(screen.getByTestId("pc-emergency-bar")).toBeInTheDocument();
+      type("estou bem");
+      expect(screen.queryByTestId("pc-emergency")).toBeNull();
+      expect(screen.queryByTestId("pc-emergency-bar")).toBeNull();
+    } finally {
+      restore();
+    }
+  });
+
+  it("no known number (another country): no number element, the local-number phrase stays in the sentence", () => {
+    setup();
+    try {
+      render(wrap(<PatientChannelFlow page={{ ...SAMPLE_PAGE, emergencyNumber: null }} preview={samplePreview()} submit={sampleSubmit()} banner={P.sampleBanner} />));
+      toForm("efe");
+      type("falta de ar");
+      const bar = screen.getByTestId("pc-emergency-bar");
+      expect(screen.queryByTestId("pc-emergency-bar-number")).toBeNull();
+      expect(bar).toHaveTextContent(P.emergencyNow.replace("{number}", P.localNumber));
+    } finally {
+      restore();
+    }
+  });
+
+  it("not typing (a ticked box): no bar, the line is scrolled to as before", () => {
+    setup();
+    try {
+      flow();
+      toForm("efe");
+      fireEvent.click(screen.getByRole("checkbox", { name: "Falta de ar ou inchaço no rosto" }));
+      expect(screen.queryByTestId("pc-emergency-bar")).toBeNull();
+      expect(scroll).toHaveBeenCalledTimes(1);
+    } finally {
+      restore();
+    }
+  });
+});
