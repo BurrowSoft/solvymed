@@ -119,7 +119,7 @@ describe("the patient's flow", () => {
     expect(screen.queryByTestId("pc-auto")).toBeNull();
   });
 
-  it("with the warning, an attention-tone message stays", async () => {
+  it("with the warning, an attention-tone message becomes \"Procure a emergência.\", with no time words (launch polish 40)", async () => {
     flow();
     toForm("efe");
     fireEvent.click(screen.getByRole("checkbox", { name: "Tontura" }));
@@ -127,7 +127,13 @@ describe("the patient's flow", () => {
     expect(await screen.findByTestId("pc-auto")).toHaveTextContent("Tontura forte");
     fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
     expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByTestId("pc-auto")).toHaveTextContent("Tontura forte"));
+    await waitFor(() => expect(screen.getByTestId("pc-auto-emergency")).toHaveTextContent(P.autoEmergency));
+    const auto = screen.getByTestId("pc-auto");
+    expect(auto).not.toHaveTextContent("Tontura forte");
+    expect(auto.textContent).not.toMatch(/hoje|agora|em até/i);
+    expect(within(auto).getAllByText(P.autoEmergency)).toHaveLength(1);
+    // The emergency line itself is unchanged.
+    expect(screen.getByTestId("pc-emergency")).toHaveTextContent(P.emergencyNow.replace("{number}", "192"));
   });
 
   it("after an URGENT send, the confirmation says not to wait, with the number, above \"Recebido\" (launch polish 1)", async () => {

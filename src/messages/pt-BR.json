@@ -2777,6 +2777,7 @@
       "textLabel": "Quer contar com as suas palavras? (opcional)",
       "textPlaceholder": "Ex.: tomei Tylenol e estou com diarreia e febre",
       "autoWho": "Orientação automática de {doctor}",
+      "autoEmergency": "Procure a emergência.",
       "skip": "Isso respondeu minha dúvida, não preciso enviar",
       "general": "Orientação geral, não substitui a consulta. Se ainda precisar, envie a solicitação.",
       "generalSend": "Orientação geral, não substitui a consulta. Envie a solicitação para {doctor} ver.",

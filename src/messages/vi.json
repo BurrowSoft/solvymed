@@ -2777,6 +2777,7 @@
       "textLabel": "Bạn muốn kể bằng lời của mình? (không bắt buộc)",
       "textPlaceholder": "VD: Tôi đã uống Panadol và bị tiêu chảy, sốt",
       "autoWho": "Hướng dẫn tự động từ {doctor}",
+      "autoEmergency": "Hãy đến phòng cấp cứu.",
       "skip": "Điều này đã trả lời câu hỏi của tôi, tôi không cần gửi",
       "general": "Hướng dẫn chung, không thay thế cho buổi khám. Nếu vẫn cần, hãy gửi yêu cầu.",
       "generalSend": "Hướng dẫn chung, không thay thế cho buổi khám. Hãy gửi yêu cầu để {doctor} có thể xem.",

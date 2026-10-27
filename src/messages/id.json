@@ -2777,6 +2777,7 @@
       "textLabel": "Ingin menceritakannya dengan kata-kata Anda sendiri? (opsional)",
       "textPlaceholder": "Mis. saya minum Panadol dan saya diare serta demam",
       "autoWho": "Panduan otomatis dari {doctor}",
+      "autoEmergency": "Pergi ke unit gawat darurat.",
       "skip": "Ini menjawab pertanyaan saya, saya tidak perlu mengirim",
       "general": "Panduan umum, bukan pengganti konsultasi. Jika masih perlu, kirim permintaannya.",
       "generalSend": "Panduan umum, bukan pengganti konsultasi. Kirim permintaannya agar {doctor} dapat melihatnya.",

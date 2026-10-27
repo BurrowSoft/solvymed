@@ -2807,6 +2807,7 @@
       "textLabel": "Want to tell it in your own words? (optional)",
       "textPlaceholder": "E.g. I took Tylenol and I have diarrhoea and a fever",
       "autoWho": "Automatic guidance from {doctor}",
+      "autoEmergency": "Go to the emergency room.",
       "skip": "This answered my question, I don't need to send",
       "general": "General guidance, not a substitute for a consultation. If you still need to, send the request.",
       "generalSend": "General guidance, not a substitute for a consultation. Send the request so {doctor} can see it.",
