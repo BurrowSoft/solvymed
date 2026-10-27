@@ -28,6 +28,8 @@ export type PatientPageRpc = {
   reasons: { id: string; title: string; subtitle: string | null; kind: ReasonKind; options: string[]; destination: "doctor" | "secretary" }[];
   faq: { id: string; question: string; answer: string }[];
   vocabulary: { symptoms: { id: string; name: string; words: string[]; immediateWarning: boolean }[]; medicines: string[] };
+  // pc_settings.ai_mapping (M7); absent from an older answer.
+  aiNotice?: boolean;
 };
 
 export function accessCode(message: string | undefined): AccessCode {

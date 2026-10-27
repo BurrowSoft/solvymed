@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { dateLocale } from "@/lib/dateLabels";
@@ -19,6 +19,7 @@ import {
   type ReasonKind,
 } from "@/lib/patientChannel/channel";
 import { CoverCard } from "./CoverCard";
+import { AiMappingCard } from "./AiMappingCard";
 
 // The Patient Channel's practice settings (M3b-2; 237's pc_settings / pc_reasons /
 // pc_faq, the doctor's own rows under RLS): the channel switch, who reads what, the
@@ -36,7 +37,7 @@ const GHOST = "rounded-xl border border-teal-600 px-4 py-2 text-sm font-bold tex
 
 type Status = { kind: "ok" | "error"; text: string } | null;
 
-export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial, reasons: initialReasons, faq: initialFaq, brandHref, cover }: {
+export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial, reasons: initialReasons, faq: initialFaq, brandHref, cover, ai }: {
   professionalId: string;
   // A pc_settings row exists (the rules were saved, or these settings were).
   hasRow: boolean;
@@ -48,15 +49,20 @@ export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial,
   brandHref: string;
   // The cover card: null while pc_cover_upload is off (246).
   cover?: { path: string | null } | null;
+  // M7's AI switch: null unless pc-ai-live or a tester (it needs the settings row to exist).
+  ai?: { on: boolean } | null;
 }) {
+  // The channel can't be turned on without a reason to pick (launch polish 8).
+  const [reasonCount, setReasonCount] = useState(initialReasons.length);
   return (
     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <div className="flex min-w-0 flex-col gap-4">
-        <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} />
+        <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} reasonCount={reasonCount} />
         {cover && <CoverCard professionalId={professionalId} initialPath={cover.path} />}
+        {ai && hasRow && <AiMappingCard initialOn={ai.on} />}
       </div>
       <div className="flex min-w-0 flex-col gap-4">
-        <Reasons professionalId={professionalId} initial={initialReasons} />
+        <Reasons professionalId={professionalId} initial={initialReasons} onCount={setReasonCount} />
         <Faq professionalId={professionalId} initial={initialFaq} />
       </div>
     </div>
@@ -89,8 +95,8 @@ function weekdayNames(locale: string): string[] {
   return Array.from({ length: 7 }, (_, i) => f.format(new Date(Date.UTC(2024, 0, 1 + i))));
 }
 
-function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref }: {
-  professionalId: string; hasRow: boolean; onRowCreated: () => void; initial: PcSettings; brandHref: string;
+function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref, reasonCount }: {
+  professionalId: string; hasRow: boolean; onRowCreated: () => void; initial: PcSettings; brandHref: string; reasonCount: number;
 }) {
   const t = useTranslations("patientChannel.channel");
   const locale = useLocale();
@@ -130,9 +136,12 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
     <section className={CARD} aria-labelledby="pc-channel">
       <h2 id="pc-channel" className={H2}>{t("title")}</h2>
       <label className="mt-3 flex items-start gap-2 text-sm">
-        <input type="checkbox" className="mt-1" checked={s.enabled} onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
+        {/* Off → on needs a reason; turning it off is always allowed. */}
+        <input type="checkbox" className="mt-1" data-testid="pc-channel-enabled" checked={s.enabled} disabled={!s.enabled && reasonCount === 0}
+          onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
         <span><b>{t("enabled")}</b><span className={`${SUB} block`}>{t("enabledHelp")}</span></span>
       </label>
+      {reasonCount === 0 && <p className="mt-1 text-xs font-semibold text-amber-700" data-testid="pc-channel-needs-reason">{t("needsReason")}</p>}
       <label className="mt-3 flex items-start gap-2 text-sm">
         <input type="checkbox" className="mt-1" checked={s.secretarySeesAll} onChange={(e) => setS({ ...s, secretarySeesAll: e.target.checked })} />
         <span><b>{t("secretarySeesAll")}</b><span className={`${SUB} block`}>{t("secretarySeesAllHelp")}</span></span>
@@ -203,9 +212,10 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
 
 const NEW_REASON = { title: "", subtitle: "", kind: "options" as ReasonKind, options: "", destination: "doctor" as const };
 
-function Reasons({ professionalId, initial }: { professionalId: string; initial: PcReasonRow[] }) {
+function Reasons({ professionalId, initial, onCount }: { professionalId: string; initial: PcReasonRow[]; onCount: (n: number) => void }) {
   const t = useTranslations("patientChannel.reasons");
   const [rows, setRows] = useState([...initial].sort((a, b) => a.sort - b.sort));
+  useEffect(() => onCount(rows.length), [rows.length, onCount]);
   const [draft, setDraft] = useState<{ title: string; subtitle: string; kind: ReasonKind; options: string; destination: "doctor" | "secretary" }>(NEW_REASON);
   const [editId, setEditId] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>(null);

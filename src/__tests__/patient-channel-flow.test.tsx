@@ -45,9 +45,13 @@ describe("the patient's flow", () => {
   it("an options reason goes to the front desk; a second send asks to replace the open one", async () => {
     flow();
     toForm("adm");
-    expect(screen.getByText("Para: Secretaria")).toBeInTheDocument();
+    // The front desk with its article (launch polish 18).
+    expect(screen.getByText("Para a secretaria")).toBeInTheDocument();
+    expect(screen.getByTestId("pc-send")).toHaveTextContent("Enviar para a secretaria");
     fireEvent.click(screen.getByTestId("pc-send"));
-    await waitFor(() => expect(screen.getByTestId("pc-sent")).toHaveTextContent("Secretaria responde em até 2 dias úteis"));
+    await waitFor(() => expect(screen.getByTestId("pc-sent")).toHaveTextContent("Recebido. A secretaria responde em até 2 dias úteis."));
+    // Not urgent: no emergency line after sending.
+    expect(screen.queryByTestId("pc-sent-urgent")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: P.again }));
     toForm("adm");
     fireEvent.click(screen.getByTestId("pc-send"));
@@ -73,7 +77,7 @@ describe("the patient's flow", () => {
     fireEvent.click(screen.getByTestId("pc-start"));
     fireEvent.click(screen.getByTestId("pc-faq-continue"));
     expect(screen.getByTestId("pc-reason-efe")).toHaveTextContent("Para: Dra. Ana Lima");
-    expect(screen.getByTestId("pc-reason-adm")).toHaveTextContent("Para: Secretaria");
+    expect(screen.getByTestId("pc-reason-adm")).toHaveTextContent("Para a secretaria");
     fireEvent.click(screen.getByTestId("pc-reason-med"));
     fireEvent.click(screen.getByTestId("pc-send"));
     await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
@@ -89,17 +93,57 @@ describe("the patient's flow", () => {
     expect(document.body.textContent).not.toMatch(/Urgente|Atenção|pontos/);
   });
 
-  it("an automatic message with the skip button; never the skip with the warning", async () => {
+  it("an automatic message with the skip button; with the warning, no skip and no info-tone message (launch polish 4)", async () => {
     flow();
     toForm("efe");
     fireEvent.click(screen.getByRole("checkbox", { name: "Coceira na pele" }));
     choose(A.whenQ, A.when0);
     choose(A.intensityQ, A.intensity0);
     expect(await screen.findByTestId("pc-skip")).toHaveTextContent(P.skip);
+    expect(screen.getByTestId("pc-auto")).toHaveTextContent("Coceira leve");
     fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
     await waitFor(() => expect(screen.queryByTestId("pc-skip")).toBeNull());
-    expect(screen.getByTestId("pc-auto")).toBeInTheDocument();
     expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+    // "Coceira leve…" is info-tone: it goes while the emergency line shows.
+    expect(screen.queryByTestId("pc-auto")).toBeNull();
+  });
+
+  it("with the warning, an attention-tone message stays", async () => {
+    flow();
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Tontura" }));
+    choose(A.intensityQ, A.intensity2);
+    expect(await screen.findByTestId("pc-auto")).toHaveTextContent("Tontura forte");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
+    expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId("pc-auto")).toHaveTextContent("Tontura forte"));
+  });
+
+  it("after an URGENT send, the confirmation says not to wait, with the number, above \"Recebido\" (launch polish 1)", async () => {
+    flow();
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Falta de ar ou inchaço no rosto" }));
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const urgent = await screen.findByTestId("pc-sent-urgent");
+    expect(urgent).toHaveTextContent(P.sentUrgent.replace("{number}", "192"));
+    expect(urgent.compareDocumentPosition(screen.getByTestId("pc-sent")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // A new, non-urgent request starts clean (it replaces the open one in the sample).
+    fireEvent.click(screen.getByRole("button", { name: P.again }));
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    fireEvent.click(await screen.findByTestId("pc-replace-yes"));
+    await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
+    expect(screen.queryByTestId("pc-sent-urgent")).toBeNull();
+  });
+
+  it("the replace prompt for the front desk's open request takes the article", async () => {
+    const loadRequests = vi.fn(async () => [REQ({ destination: "secretary" })]);
+    const submit = vi.fn(async () => ({ status: "open_exists" as const }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} loadRequests={loadRequests} />));
+    await waitFor(() => expect(loadRequests).toHaveBeenCalled());
+    toForm("efe");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await waitFor(async () => expect(await screen.findByTestId("pc-replace")).toHaveTextContent(P.openTextSecretary));
   });
 
   it("M4b: the FAQ and the skip are counted for the doctor (no content)", async () => {
