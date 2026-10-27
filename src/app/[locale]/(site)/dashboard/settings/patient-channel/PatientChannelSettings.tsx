@@ -61,7 +61,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   initialVersion: number;
   emergencyNumber: string | null;
   professionalId: string;
-  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null };
+  channel: { settings: PcSettings; reasons: PcReasonRow[]; faq: PcFaqRow[]; cover?: { path: string | null } | null; ai?: { on: boolean } | null };
   // How patients see the page (the saved look), for "Testar como paciente".
   patientView?: PatientView;
   // The practice country's starting template (pc_templates), or null.
@@ -156,6 +156,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         faq={channel.faq}
         brandHref={brandHref}
         cover={channel.cover}
+        ai={channel.ai}
       />
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>

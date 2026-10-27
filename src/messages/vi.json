@@ -2823,7 +2823,8 @@
       "sentSecretary": "Đã nhận. Lễ tân sẽ trả lời trong vòng {n, plural, other {# ngày làm việc}}.",
       "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
       "entryButtonNamed": "Liên hệ {doctor}",
-      "openExistsNamed": "Bạn đã có một yêu cầu đang mở: {reason} ({date})."
+      "openExistsNamed": "Bạn đã có một yêu cầu đang mở: {reason} ({date}).",
+      "aiNotice": "Phòng khám này dùng AI để sắp xếp tin nhắn."
     },
     "channel": {
       "title": "Kênh của bạn",
@@ -2856,7 +2857,9 @@
       "save": "Lưu kênh",
       "saved": "Đã lưu.",
       "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
-      "needsReason": "Thêm ít nhất một lý do để bật kênh."
+      "needsReason": "Thêm ít nhất một lý do để bật kênh.",
+      "aiMapping": "Đọc bằng AI (SolvyAI)",
+      "aiMappingHelp": "SolvyAI đọc phần văn bản tự do của mỗi yêu cầu và gợi ý triệu chứng từ danh sách của bạn; điểm chỉ có thể tăng. Mỗi tin nhắn được đọc dùng 1 tín dụng AI của ngày. Tên, số giấy tờ, số điện thoại và e-mail được che trước. Biểu mẫu thông báo cho bệnh nhân của bạn."
     },
     "reasons": {
       "title": "Lý do liên hệ",
@@ -2972,7 +2975,21 @@
       "readOnly": "Tin nhắn này gửi cho {doctor}: bạn có thể đọc nhưng không thể trả lời.",
       "failed": "Không gửi được. Hãy thử lại.",
       "warningFloor": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp.",
-      "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI)."
+      "warningFloorAi": "Triệu chứng có cảnh báo khẩn cấp: luôn Khẩn cấp (AI).",
+      "ai": {
+        "title": "Đọc bằng AI",
+        "intro": "SolvyAI đã tìm thấy các triệu chứng này trong danh sách của bạn trong tin nhắn. Hãy kiểm tra văn bản trước khi xác nhận.",
+        "confirm": "Xác nhận",
+        "undo": "Hoàn tác",
+        "undoConfirm": "Hoàn tác phần đọc của AI? Các triệu chứng được gợi ý sẽ bị xóa và điểm trở về điểm theo từ khóa.",
+        "cancel": "Hủy",
+        "confirmed": "Đã xác nhận lúc {date}",
+        "undone": "Đã hoàn tác phần đọc của AI.",
+        "unavailable": "Không thể đọc tin nhắn này bằng AI: chỉ dùng từ khóa.",
+        "pending": "SolvyAI đang đọc tin nhắn này.",
+        "none": "AI không tìm thấy triệu chứng nào khác trong danh sách của bạn.",
+        "error": "Không lưu được. Hãy thử lại."
+      }
     }
   },
   "noticesUnsubscribe": {

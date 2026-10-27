@@ -1,4 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { aiReaderFromEnv } from "@/lib/patientChannel/aiRead";
+import { runAiReading } from "@/lib/patientChannel/aiRun";
 import { patientChannelEnabled } from "@/lib/patientChannel/live";
 import { UUID, accessCode, accessStatus, patientPage, practiceReason, practiceRules } from "@/lib/patientChannel/practice";
 import { checkAnswers, scoreForRequest } from "@/lib/patientChannel/requestScore";
@@ -63,6 +66,16 @@ export async function POST(request: NextRequest) {
     });
     if (!error) {
       const d = data as { id: string; replaced: string | null };
+      // M7: with the doctor's AI option on, SolvyAI reads the free text AFTER the response,
+      // so the patient never waits; it can only raise the score, never change what they saw.
+      if (reason.kind === "symptom_form" && rules.config.aiMapping && answers.text.trim() !== "") {
+        const { config, version } = rules;
+        const doctorName = access.page.brand?.displayName ?? null;
+        after(async () => {
+          const names = [doctorName, ...(await recordNames(admin, d.id, profId))];
+          await runAiReading({ admin, reader: aiReaderFromEnv(), requestId: d.id, config, rulesVersion: version, answers, names }).catch(() => {});
+        });
+      }
       return NextResponse.json({ id: d.id, replaced: d.replaced ?? null });
     }
     const m = error.message ?? "";
@@ -79,6 +92,17 @@ export async function POST(request: NextRequest) {
     return pcFail(code, accessStatus(code));
   }
   return pcFail("retry_later", 503);
+}
+
+// The names masked before the AI reading (PC-10′): the patient's name on the practice's record
+// and the professional's full name (the brand's display name comes from the page).
+async function recordNames(admin: SupabaseClient, requestId: string, profId: string): Promise<(string | null)[]> {
+  const [req, prof] = await Promise.all([
+    admin.from("pc_requests").select("patients(full_name)").eq("id", requestId).maybeSingle(),
+    admin.from("professionals").select("full_name").eq("id", profId).maybeSingle(),
+  ]);
+  const p = (req.data as { patients?: { full_name?: string | null } | { full_name?: string | null }[] | null } | null)?.patients;
+  return [(Array.isArray(p) ? p[0]?.full_name : p?.full_name) ?? null, (prof.data as { full_name?: string | null } | null)?.full_name ?? null];
 }
 
 // pc_submit's open_exists DETAIL (255): {id, reasonTitle, createdAt, destination}. Only the

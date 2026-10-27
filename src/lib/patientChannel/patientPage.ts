@@ -35,6 +35,8 @@ export type PcPatientPage = {
   country?: string | null;
   // The doctor's page look (prototype v17): the band / cover, the watermark, the brand colour.
   look?: PageLook | null;
+  // M7 / PC-10′: the doctor turned on the AI reading, so the form says the clinic uses AI.
+  aiNotice?: boolean;
 };
 
 // /preview's answer (§4.7): never the score or the band, only what the patient sees.
