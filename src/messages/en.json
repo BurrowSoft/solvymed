@@ -1264,7 +1264,7 @@
     "titleClose": "Close account",
     "titleDelete": "Delete account",
     "closeIntro": "Your patients have medical records, so your account can't simply be deleted. Closing it:",
-    "closeLogin": "Deletes your login, contact details, photo, payment and practice details immediately.",
+    "closeLogin": "Your login, contact details, photo, payment and practice details are deleted or anonymised immediately.",
     "closeRecords": "Keeps your medical records and patient list, inaccessible to anyone, for the legal retention period (20 years), then deletes them permanently. Your name and professional registration stay on the records as their author.",
     "closePatients": "Archives your {patients, plural, one {# patient} other {# patients}} and cancels {appointments, plural, =0 {no upcoming appointments} one {# upcoming appointment} other {# upcoming appointments}}. Patients who use the app are notified.",
     "closeTeam": "Removes access for {secretaries, plural, one {# team member} other {# team members}}.",

@@ -1264,7 +1264,7 @@
     "titleClose": "Cerrar cuenta",
     "titleDelete": "Eliminar cuenta",
     "closeIntro": "Tus pacientes tienen historias clínicas, así que tu cuenta no puede eliminarse sin más. Al cerrarla:",
-    "closeLogin": "Se eliminan de inmediato tu acceso, tus datos de contacto, tu foto y tus datos de pago y del consultorio.",
+    "closeLogin": "Se eliminan o anonimizan de inmediato tu acceso, tus datos de contacto, tu foto y tus datos de pago y del consultorio.",
     "closeRecords": "Tus historias clínicas y tu lista de pacientes se conservan, sin acceso para nadie, durante el plazo legal (20 años) y después se eliminan definitivamente. Tu nombre y tu registro profesional siguen en las historias como autor.",
     "closePatients": "Se {patients, plural, one {archiva # paciente} other {archivan # pacientes}} y {appointments, plural, =0 {no hay citas futuras que cancelar} one {se cancela # cita futura} other {se cancelan # citas futuras}}. Los pacientes que usan la app reciben un aviso.",
     "closeTeam": "{secretaries, plural, one {# persona del equipo pierde} other {# personas del equipo pierden}} el acceso.",

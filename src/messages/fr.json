@@ -1264,7 +1264,7 @@
     "titleClose": "Fermer le compte",
     "titleDelete": "Supprimer le compte",
     "closeIntro": "Vos patients ont des dossiers médicaux : votre compte ne peut donc pas être simplement supprimé. Sa fermeture :",
-    "closeLogin": "Supprime immédiatement votre accès, vos coordonnées, votre photo et vos données de paiement et de cabinet.",
+    "closeLogin": "Supprime ou anonymise immédiatement votre accès, vos coordonnées, votre photo et vos données de paiement et de cabinet.",
     "closeRecords": "Conserve vos dossiers médicaux et votre liste de patients, inaccessibles à tous, pendant la durée légale (20 ans), puis les supprime définitivement. Votre nom et votre numéro d'inscription professionnelle restent sur les dossiers en tant qu'auteur.",
     "closePatients": "Archive {patients, plural, one {votre # patient} other {vos # patients}} et annule {appointments, plural, =0 {aucun rendez-vous à venir} one {# rendez-vous à venir} other {# rendez-vous à venir}}. Les patients qui utilisent l'app sont prévenus.",
     "closeTeam": "Retire l'accès à {secretaries, plural, one {# membre de l'équipe} other {# membres de l'équipe}}.",

@@ -1264,7 +1264,7 @@
     "titleClose": "Tutup akun",
     "titleDelete": "Hapus akun",
     "closeIntro": "Pasien Anda memiliki rekam medis, jadi akun Anda tidak bisa langsung dihapus. Saat ditutup:",
-    "closeLogin": "Login, detail kontak, foto, serta data pembayaran dan praktik Anda langsung dihapus.",
+    "closeLogin": "Login, detail kontak, foto, serta data pembayaran dan praktik Anda langsung dihapus atau dianonimkan.",
     "closeRecords": "Rekam medis dan daftar pasien disimpan tanpa bisa diakses siapa pun selama masa simpan yang diwajibkan hukum (20 tahun), lalu dihapus permanen. Nama dan nomor registrasi profesi Anda tetap tercantum di rekam medis sebagai penulisnya.",
     "closePatients": "{patients} pasien diarsipkan dan {appointments, plural, =0 {tidak ada janji temu mendatang yang dibatalkan} other {# janji temu mendatang dibatalkan}}. Pasien yang memakai aplikasi akan diberi tahu.",
     "closeTeam": "{secretaries} anggota tim kehilangan akses.",
