@@ -120,7 +120,9 @@ describe("the inbox list", () => {
     const r = toInboxRow({ id: "q", patient_id: "p", destination: "secretary", band: "red", score_total: 15, status: "open", text: "dor", created_at: "t", reason_snapshot: { title: "Receita" }, patients: [{ full_name: "Bia" }] });
     expect(r).toMatchObject({ patientName: "Bia", destination: "secretary", band: "red", score: 15, reasonTitle: "Receita" });
     expect(toCounts({ open: 3, urgent: 1, attention: 1, notUrgent: 1, openForDoctor: 2, openForSecretary: 1, faqResolved7d: 4, autoResolved7d: 5 }))
-      .toMatchObject({ urgent: 1, faqResolved7d: 4, autoResolved7d: 5 });
+      .toMatchObject({ urgent: 1, faqResolved7d: 4, autoResolved7d: 5, admin: 0 });
+    // 256: the open administrative requests; an older answer without it reads 0.
+    expect(toCounts({ open: 4, urgent: 1, attention: 1, notUrgent: 1, admin: 1 })).toMatchObject({ admin: 1 });
     expect(toCounts(null)).toBeNull();
   });
 });
