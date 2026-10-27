@@ -59,6 +59,8 @@ export type PcMyRequest = {
   replyText: string | null;
   repliedAt: string | null;
   createdAt: string;
+  // Who the request went to (migration 251); null from an older answer.
+  destination?: "doctor" | "secretary" | null;
 };
 export type PcMyRequestsFn = () => Promise<PcMyRequest[] | null>;
 
@@ -76,6 +78,7 @@ export function toMyRequests(raw: unknown, onUnknown?: (status: string) => void)
     return [{
       id: str(o.id), status, reasonTitle: str(o.reasonTitle), option: str(o.option) || null, text: str(o.text),
       replyText: str(o.replyText).trim() || null, repliedAt: str(o.repliedAt) || null, createdAt: str(o.createdAt),
+      destination: o.destination === "doctor" || o.destination === "secretary" ? o.destination : null,
     }];
   });
 }
@@ -154,4 +157,22 @@ export function sampleSubmit(): PcSubmitFn {
     open = true;
     return { status: "sent" };
   };
+}
+
+// The practices where the patient has their own requests but no connection any more
+// (migration 251's pc_my_past_practices, as the patient; [] while the channel is paused):
+// "Ver mensagens anteriores com {doctor}", read-only. state picks the screen's line: a
+// closed practice or an archived record says the channel isn't available.
+export type PastPracticeState = "closed" | "archived" | "disconnected";
+export type PastPractice = { id: string; displayName: string; state: PastPracticeState };
+const PAST_STATES: PastPracticeState[] = ["closed", "archived", "disconnected"];
+export function toPastPractices(raw: unknown): PastPractice[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((r) => {
+    const o = (r ?? {}) as Record<string, unknown>;
+    const id = str(o.id);
+    if (!/^[0-9a-f-]{36}$/i.test(id)) return [];
+    const state = PAST_STATES.find((s) => s === o.state) ?? "disconnected";
+    return [{ id, displayName: str(o.displayName).trim(), state }];
+  });
 }

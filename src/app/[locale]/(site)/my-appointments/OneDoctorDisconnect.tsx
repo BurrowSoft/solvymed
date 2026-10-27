@@ -11,7 +11,7 @@ import { disconnectDoctor } from "./doctor-actions";
 // disconnect_doctor. Refused while a visit with that doctor is ahead (it says so);
 // otherwise the pending requests are cancelled and the clinic told (the server), and the
 // patient lands on the connect page, which offers "Ver mensagens anteriores com {doctor}"
-// when they have Patient Channel messages there (?left=, their own rows only).
+// when they have Patient Channel messages there (251's pc_my_past_practices, own rows only).
 export function OneDoctorDisconnect({ doctorId, doctorName }: { doctorId: string; doctorName: string }) {
   const t = useTranslations("patientDoctors");
   const tAuth = useTranslations("auth");
@@ -27,7 +27,7 @@ export function OneDoctorDisconnect({ doctorId, doctorName }: { doctorId: string
   const disconnect = () => start(async () => {
     const r = await safeCall(() => disconnectDoctor(doctorId), NETWORK_FAILURE);
     if (r.ok) {
-      window.location.assign(`${prefix}/auth/invite-required?left=${encodeURIComponent(doctorId)}`);
+      window.location.assign(`${prefix}/auth/invite-required`);
       return;
     }
     setConfirming(false);

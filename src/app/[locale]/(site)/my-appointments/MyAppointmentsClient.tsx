@@ -24,6 +24,7 @@ import { whoLine } from "@/lib/whoLine";
 import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { MyDoctors } from "./MyDoctors";
 import { OneDoctorDisconnect } from "./OneDoctorDisconnect";
+import { PastPracticeLinks } from "@/components/patientChannel/PastPracticeLinks";
 import { MyDocuments } from "./MyDocuments";
 import type { DocDoctor } from "./document-actions";
 import type { MyDoctor } from "@/lib/myDoctors";
@@ -570,6 +571,9 @@ export function MyAppointmentsClient({
             {myProfessionalId && <OneDoctorDisconnect doctorId={myProfessionalId} doctorName={doctorDisplayName(doctorName)} />}
           </section>
         )}
+
+        {/* 01, 10-27: earlier practices with their Patient Channel messages (251). */}
+        <PastPracticeLinks className="px-1" />
 
         {docDoctors && docDoctors.length > 0 && <MyDocuments doctors={docDoctors} />}
 

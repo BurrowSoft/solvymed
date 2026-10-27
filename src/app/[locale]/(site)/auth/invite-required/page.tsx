@@ -10,7 +10,7 @@ import { IconBadge } from "@/components/IconBadge";
 import { conditionMet } from "@/lib/conditions";
 import { signOutHere } from "@/lib/signOut";
 import { BecomeProfessional } from "@/components/BecomeProfessional";
-import { LeftDoctorMessages } from "@/components/patientChannel/LeftDoctorMessages";
+import { PastPracticeLinks } from "@/components/patientChannel/PastPracticeLinks";
 import { AccountDeleteOption } from "@/components/AccountDeleteOption";
 
 export default function InviteRequiredPage() {
@@ -265,8 +265,8 @@ export default function InviteRequiredPage() {
           </button>
         </form>
 
-        {/* Just disconnected (?left=): their Patient Channel messages with that doctor, if any. */}
-        <LeftDoctorMessages />
+        {/* Practices they left (or that closed) where they have Patient Channel messages. */}
+        <PastPracticeLinks className="mt-4 items-center text-center" />
 
         {/* A doctor who signed up as a patient by mistake (Vitor, 10-18): switch
             this account to a professional one (migration 231; the app has it). */}

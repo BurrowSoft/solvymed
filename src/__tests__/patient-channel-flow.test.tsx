@@ -56,6 +56,18 @@ describe("the patient's flow", () => {
     await waitFor(() => expect(screen.getByTestId("pc-sent")).toBeInTheDocument());
   });
 
+  it("the replace prompt names who has the OPEN one (251's destination), not the new reason's", async () => {
+    const loadRequests = vi.fn(async () => [REQ({ destination: "doctor" })]);
+    const submit = vi.fn(async () => ({ status: "open_exists" as const }));
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} loadRequests={loadRequests} />));
+    await waitFor(() => expect(loadRequests).toHaveBeenCalled());
+    toForm("adm");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    const prompt = await screen.findByTestId("pc-replace");
+    await waitFor(() => expect(prompt).toHaveTextContent(P.openText.replace("{who}", SAMPLE_PAGE.doctorName)));
+    expect(toMyRequests([{ id: "q", status: "open", destination: "elsewhere" }])[0].destination).toBeNull();
+  });
+
   it("each reason says who it goes to: the doctor by name, or the front desk; no score talk after sending (01)", async () => {
     flow();
     fireEvent.click(screen.getByTestId("pc-start"));
