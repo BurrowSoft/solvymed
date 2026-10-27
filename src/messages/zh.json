@@ -485,7 +485,7 @@
     "regenerateCode": "重新生成",
     "addedBy": "添加人",
     "addedBySecretary": "{name}（秘书），{date}",
-    "addedBySelf": "由患者本人添加",
+    "addedBySelf": "患者本人",
     "addedByOther": "{name}，{date}",
     "allPatients": "全部档案",
     "archivePatient": "归档档案",

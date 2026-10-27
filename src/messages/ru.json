@@ -485,7 +485,7 @@
     "regenerateCode": "Создать новый",
     "addedBy": "Добавил(а)",
     "addedBySecretary": "{name} (секретарь), {date}",
-    "addedBySelf": "Добавлен самим пациентом",
+    "addedBySelf": "Сам пациент",
     "addedByOther": "{name}, {date}",
     "allPatients": "Все карты",
     "archivePatient": "Переместить в архив",

@@ -485,7 +485,7 @@
     "regenerateCode": "再生成",
     "addedBy": "登録者",
     "addedBySecretary": "{name}（受付スタッフ）、{date}",
-    "addedBySelf": "患者本人が登録",
+    "addedBySelf": "患者本人",
     "addedByOther": "{name}、{date}",
     "allPatients": "すべてのカルテ",
     "archivePatient": "患者情報をアーカイブ",

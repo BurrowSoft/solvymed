@@ -485,7 +485,7 @@
     "regenerateCode": "สร้างใหม่",
     "addedBy": "เพิ่มโดย",
     "addedBySecretary": "{name} (เลขานุการ), {date}",
-    "addedBySelf": "ผู้ป่วยลงทะเบียนเอง",
+    "addedBySelf": "ผู้ป่วยเอง",
     "addedByOther": "{name}, {date}",
     "allPatients": "แฟ้มทั้งหมด",
     "archivePatient": "เก็บประวัติผู้ป่วยเข้าคลัง",

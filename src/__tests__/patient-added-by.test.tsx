@@ -26,7 +26,7 @@ const page = (kind: CreatedByKind | null, over: Partial<typeof BASE> | { created
 const D = pt.patientDetail;
 
 describe("42: who added the patient", () => {
-  it("the patient themselves: \"Cadastrado pelo próprio paciente\", never their e-mail as a secretary", () => {
+  it("the patient themselves: \"Adicionado por: O próprio paciente\" (cf's nit, 01), never their e-mail as a secretary", () => {
     page("self");
     expect(screen.getByText(D.addedBySelf)).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/secretaria|ana@example\.invalid/);
@@ -81,6 +81,6 @@ describe("42: who added the patient", () => {
 
   it("01's strings", () => {
     expect([pt.patientDetail.addedBySelf, en.patientDetail.addedBySelf, th.patientDetail.addedBySelf])
-      .toEqual(["Cadastrado pelo próprio paciente", "Added by the patient", "ผู้ป่วยลงทะเบียนเอง"]);
+      .toEqual(["O próprio paciente", "The patient", "ผู้ป่วยเอง"]);
   });
 });
