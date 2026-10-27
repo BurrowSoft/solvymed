@@ -29,7 +29,9 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
   const [result, setResult] = useState<"sent" | "skipped" | null>(null);
   const score = useMemo(() => scoreRequest(rules, answers), [rules, answers]);
   const recognised = useMemo(() => [...new Set(findTerms(rules, answers.text).map((m) => m.term))], [rules, answers.text]);
-  const fired = rules.autoMessages.filter((a) => score.autoMessages.includes(a.id));
+  // As the patient's form: with the emergency line, the "info" messages hide (launch polish 4)
+  // and the rest become one "Go to the emergency room." (launch polish 40).
+  const fired = rules.autoMessages.filter((a) => score.autoMessages.includes(a.id) && !(score.warning && a.tone === "info"));
 
   const bar = (
     <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-amber-400 bg-amber-50 px-3 py-2 text-sm text-amber-900">
@@ -49,7 +51,7 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
             <h2 className="text-base font-bold text-slate-900">{t("test.resultTitle")}</h2>
             <ScorePanel rules={rules} score={score} />
             <p className="mt-3 text-sm text-slate-600">{t("test.resultWarning", { answer: score.warning ? t("test.yes") : t("test.no") })}</p>
-            <p className="text-sm text-slate-600">{t("test.resultAuto", { n: fired.length })}</p>
+            <p className="text-sm text-slate-600">{t("test.resultAuto", { n: score.warning ? 0 : fired.length })}</p>
           </div>
         )}
         <button type="button" onClick={() => setResult(null)} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700">{t("test.again")}</button>
@@ -123,7 +125,12 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
 
           {fired.length > 0 && (
             <div className="mt-3 flex flex-col gap-2">
-              {fired.map((a) => (
+              {score.warning ? (
+                <div data-testid="pc-test-auto-emergency" className="rounded-xl border border-amber-400 bg-amber-50 p-3 text-sm">
+                  <span className="block text-xs font-bold uppercase tracking-wide text-slate-600">{t("test.autoWho")}</span>
+                  <span className="break-words">{t("patient.autoEmergency")}</span>
+                </div>
+              ) : fired.map((a) => (
                 <div key={a.id} data-testid="pc-test-auto" className={`rounded-xl border p-3 text-sm ${a.tone === "attention" ? "border-amber-400 bg-amber-50" : "border-teal-300 bg-teal-50"}`}>
                   <span className="block text-xs font-bold uppercase tracking-wide text-slate-600">{t("test.autoWho")}</span>
                   <span className="break-words">{a.text}</span>

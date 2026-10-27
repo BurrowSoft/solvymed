@@ -149,7 +149,13 @@ describe("Testar como paciente", () => {
     tick("Tontura");
     choose(P.answers.intensityQ, P.answers.intensity2);
     expect(screen.getByTestId("pc-test-emergency")).toHaveTextContent("1669");
-    expect(screen.getAllByTestId("pc-test-auto")).toHaveLength(1);
+    // As the patient's form: the message ("Tontura forte…") becomes "Procure a emergência." (launch polish 40).
+    expect(screen.queryByTestId("pc-test-auto")).toBeNull();
+    expect(screen.getByTestId("pc-test-auto-emergency")).toHaveTextContent(P.patient.autoEmergency);
+    expect(screen.getByTestId("pc-test-auto-emergency")).not.toHaveTextContent("Tontura forte");
+    // The result counts no automatic message: the patient saw none of them (cf on #679).
+    fireEvent.click(screen.getByRole("button", { name: P.test.send }));
+    expect(screen.getByText(P.test.resultAuto.replace("{n}", "0"))).toBeInTheDocument();
     expect(screen.queryByTestId("pc-test-skip")).toBeNull();
   });
 

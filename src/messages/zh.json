@@ -2778,6 +2778,7 @@
       "textLabel": "想用自己的话描述吗？（可选）",
       "textPlaceholder": "例如：我吃了泰诺，现在腹泻并且发烧",
       "autoWho": "来自 {doctor} 的自动指引",
+      "autoEmergency": "请前往急诊室。",
       "skip": "这解答了我的问题，不需要发送",
       "general": "一般性指引，不能代替就诊。如仍有需要，请发送请求。",
       "generalSend": "一般性指引，不能代替就诊。请发送请求，以便 {doctor} 查看。",

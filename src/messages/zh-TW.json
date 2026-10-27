@@ -2778,6 +2778,7 @@
       "textLabel": "想用自己的話描述嗎？（選填）",
       "textPlaceholder": "例如：我吃了普拿疼，現在腹瀉而且發燒",
       "autoWho": "來自 {doctor} 的自動指引",
+      "autoEmergency": "請前往急診室。",
       "skip": "這解答了我的問題，不需要傳送",
       "general": "一般性指引，無法取代看診。如仍有需要，請送出請求。",
       "generalSend": "一般性指引，無法取代看診。請送出請求，讓 {doctor} 查看。",

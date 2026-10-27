@@ -167,8 +167,9 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     if (!reason || sending) return;
     setSending(true);
     setFailed(false);
-    // Kept with the request as shown: the ones the patient actually saw.
-    const shown = symptomForm ? autoShown.map((m) => m.id) : [];
+    // Kept with the request as shown: the ones the patient actually saw. With the emergency
+    // line they saw none of them, only "Procure a emergência." (launch polish 40, cf).
+    const shown = symptomForm && !warning ? autoShown.map((m) => m.id) : [];
     const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
     if (r.status === "sent") { setSentWarning(!!warning); setSentReplaced(replace); setStep("sent"); }
@@ -318,7 +319,14 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
             )}
             {autoShown.length > 0 && (
               <div className="flex flex-col gap-2" data-testid="pc-auto">
-                {autoShown.map((m) => (
+                {/* With the emergency line, no automatic message may give a time ("hoje"): the ones
+                    still shown become one "Go to the emergency room." (launch polish 40). */}
+                {warning ? (
+                  <div data-testid="pc-auto-emergency" className="rounded-xl border border-amber-400 bg-amber-50 p-3 text-sm">
+                    <span className="block text-xs font-bold uppercase tracking-wide text-slate-600">{t("autoWho", { doctor: page.doctorName })}</span>
+                    <span className="break-words">{t("autoEmergency")}</span>
+                  </div>
+                ) : autoShown.map((m) => (
                   <div key={m.id} className={`rounded-xl border p-3 text-sm ${m.tone === "attention" ? "border-amber-400 bg-amber-50" : "border-teal-300 bg-teal-50"}`}>
                     <span className="block text-xs font-bold uppercase tracking-wide text-slate-600">{t("autoWho", { doctor: page.doctorName })}</span>
                     <span className="whitespace-pre-line break-words">{m.text}</span>
