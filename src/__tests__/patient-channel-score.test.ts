@@ -72,7 +72,7 @@ function check(cfg: ChannelConfig, c: Case) {
 
 describe("the Patient Channel score: the prototype's vectors", () => {
   it("has all 19 cases", () => {
-    expect(cases.cases.length + cases.handWritten.cases.length).toBe(19);
+    expect(cases.cases.length + cases.handWritten.cases.length).toBe(20);
   });
   for (const c of cases.cases as Case[]) it(c.id, () => check(config, c));
 });

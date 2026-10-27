@@ -2690,7 +2690,9 @@
       "intensity2": "รุนแรง",
       "stillTakingQ": "ยังใช้ยาอยู่หรือไม่",
       "stillTaking0": "ใช่",
-      "stillTaking1": "หยุดยาเอง"
+      "stillTaking1": "หยุดยาเอง",
+      "choose": "เลือก…",
+      "notAnswered": "ไม่ได้ตอบ"
     },
     "bands": {
       "title": "ระดับความเร่งด่วน",
@@ -2851,6 +2853,7 @@
       "sentSecretary": "ได้รับแล้ว เจ้าหน้าที่จะตอบกลับภายใน {n, plural, other {# วันทำการ}}",
       "openTextSecretary": "ต้องการอัปเดตคำขอที่เจ้าหน้าที่มีอยู่หรือไม่ คำขอใหม่จะแทนที่คำขอเดิม",
       "entryButtonNamed": "ติดต่อ{doctor}",
+      "openExistsNamed": "คุณมีคำขอที่เปิดอยู่แล้ว: {reason} ({date})",
       "aiNotice": "คลินิกนี้ใช้ AI เพื่อจัดระเบียบข้อความ"
     },
     "channel": {

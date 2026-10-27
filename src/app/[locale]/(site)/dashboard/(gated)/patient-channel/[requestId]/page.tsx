@@ -87,6 +87,8 @@ export default async function PatientChannelRequestPage({
   const floorCause = warningFloorCause(warningIds, patientIds, lines, row.band);
   const tl = (key: string, values?: Record<string, string | number>) => t(key as never, values as never);
   const symptomName = (id: string) => names.symptoms[id] ?? "?";
+  // -1 = the patient left the question unanswered (launch polish 15).
+  const answerLabel = (key: "when" | "intensity" | "stillTaking", i: number) => (i < 0 ? t("answers.notAnswered") : tl(`answers.${key}${i}`));
   const readOnly = isSecretary && row.destination === "doctor";
   const phone = typeof patient?.phone === "string" ? patient.phone.trim() : "";
 
@@ -121,9 +123,9 @@ export default async function PatientChannelRequestPage({
           <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
             {answers.symptomIds.length > 0 && (<><dt className="text-slate-500">{t("detail.ticked")}</dt><dd className="text-slate-800">{answers.symptomIds.map(symptomName).join(", ")}</dd></>)}
             {answers.chips.length > 0 && (<><dt className="text-slate-500">{t("detail.chips")}</dt><dd className="text-slate-800">{answers.chips.map((c) => (c.kind === "symptom" ? symptomName(c.ref) : c.text)).join(", ")}</dd></>)}
-            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{tl(`answers.when${answers.when}`)}</dd>
-            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{tl(`answers.intensity${answers.intensity}`)}</dd>
-            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{tl(`answers.stillTaking${answers.stillTaking}`)}</dd>
+            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{answerLabel("when", answers.when)}</dd>
+            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{answerLabel("intensity", answers.intensity)}</dd>
+            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{answerLabel("stillTaking", answers.stillTaking)}</dd>
           </dl>
         )}
         {row.text && (

@@ -45,7 +45,12 @@ export type PcPreviewFn = (reasonId: string, answers: Answers) => Promise<PcPrev
 
 // unavailable: the practice closed or the patient was archived meanwhile (237).
 // rate_limited: too many sends in the last hour (the database's limit, cf #623).
-export type PcSubmitResult = { status: "sent" } | { status: "open_exists" } | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
+// open_exists: the open request with the SAME destination (255), named in the replace prompt
+// (launch polish 2); absent from an older server.
+export type PcSubmitResult =
+  | { status: "sent" }
+  | { status: "open_exists"; open?: { reasonTitle: string; createdAt: string } }
+  | { status: "unavailable" } | { status: "rate_limited" } | { status: "error" };
 // The patient's requests with this practice (237's pc_my_requests: their own, newest first;
 // never a score, a band or a breakdown): "Suas mensagens" (P-14) and the open one on the
 // limit screen. null when they couldn't be read (the section just doesn't show).
@@ -152,11 +157,15 @@ export function samplePreview(): PcPreviewFn {
   };
 }
 
-export function sampleSubmit(): PcSubmitFn {
-  let open = false;
-  return async (_reasonId, _answers, replace) => {
-    if (open && !replace) return { status: "open_exists" };
-    open = true;
+// One open request per DESTINATION (255): an administrative request never replaces a clinical one.
+export function sampleSubmit(now: () => Date = () => new Date()): PcSubmitFn {
+  const open = new Map<string, { reasonTitle: string; createdAt: string }>();
+  return async (reasonId, _answers, replace) => {
+    const reason = SAMPLE_PAGE.reasons.find((r) => r.id === reasonId);
+    const dest = reason?.destination ?? "doctor";
+    const current = open.get(dest);
+    if (current && !replace) return { status: "open_exists", open: current };
+    open.set(dest, { reasonTitle: reason?.title ?? "", createdAt: now().toISOString() });
     return { status: "sent" };
   };
 }

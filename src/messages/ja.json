@@ -2660,7 +2660,9 @@
       "intensity2": "強い",
       "stillTakingQ": "現在もその薬を飲んでいますか？",
       "stillTaking0": "はい",
-      "stillTaking1": "自分の判断でやめました"
+      "stillTaking1": "自分の判断でやめました",
+      "choose": "選択…",
+      "notAnswered": "未回答"
     },
     "bands": {
       "title": "緊急度の区分",
@@ -2821,6 +2823,7 @@
       "sentSecretary": "受け付けました。受付が {n, plural, other {# 営業日}}以内に返信します。",
       "openTextSecretary": "受付に送信済みのリクエストを更新しますか？新しいリクエストで置き換えられます。",
       "entryButtonNamed": "{doctor}に連絡",
+      "openExistsNamed": "すでに受付中のリクエストがあります：{reason}（{date}）",
       "aiNotice": "このクリニックはメッセージの整理にAIを使用しています。"
     },
     "channel": {

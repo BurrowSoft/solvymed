@@ -19,7 +19,7 @@ const h = vi.hoisted(() => ({
   enabled: true,
   pageError: null as null | { message: string },
   reason: { kind: "symptom_form", options: [] as string[] } as { kind: string; options: string[] } | null,
-  submitErrors: [] as { message: string }[],
+  submitErrors: [] as { message: string; details?: string }[],
   calls: [] as { fn: string; args: unknown }[],
   rules: null as unknown,
 }));
@@ -179,5 +179,38 @@ describe("POST /api/patient-channel/selfserve", () => {
     expect((await post(selfserve, { profId: PROF, kind: "faq_resolved" })).status).toBe(204);
     expect(h.calls.at(-1)).toEqual({ fn: "pc_count_selfserve", args: { p_prof: PROF, p_kind: "faq_resolved" } });
     expect((await post(selfserve, { profId: PROF, kind: "x" })).status).toBe(400);
+  });
+});
+
+describe("launch polish 2 / 15 (255: one open request per destination; answers -1)", () => {
+  it("open_exists: 409 with only the open request's title and date (from DETAIL), never logged", async () => {
+    const spies = (["log", "info", "warn", "error", "debug"] as const).map((k) => vi.spyOn(console, k).mockImplementation(() => {}));
+    h.submitErrors = [{ message: "open_exists", details: JSON.stringify({ id: "q-open", reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T13:05:00Z", destination: "doctor" }) }];
+    const res = await post(submit, { profId: PROF, reasonId: REASON, answers: FORM });
+    expect(res.status).toBe(409);
+    expect(await res.json()).toEqual({ code: "open_exists", open: { reasonTitle: "Possível efeito colateral", createdAt: "2026-10-26T13:05:00Z" } });
+    for (const s of spies) {
+      for (const call of s.mock.calls) expect(JSON.stringify(call)).not.toContain("Possível efeito colateral");
+      s.mockRestore();
+    }
+  });
+
+  it("open_exists without a usable DETAIL: 409 with open null", async () => {
+    for (const details of [undefined, "", "not json", JSON.stringify({ id: "x" })]) {
+      h.submitErrors = [{ message: "open_exists", details }];
+      const res = await post(submit, { profId: PROF, reasonId: REASON, answers: FORM });
+      expect([res.status, await res.json()]).toEqual([409, { code: "open_exists", open: null }]);
+    }
+  });
+
+  it("unanswered questions (-1) are accepted and sent as -1; below -1 or above the range is refused", async () => {
+    const reason = { kind: "symptom_form" as const, options: [] };
+    expect(checkAnswers(sample, reason, { ...FORM, when: -1, intensity: -1, stillTaking: -1 })).not.toBeNull();
+    expect(checkAnswers(sample, reason, { ...FORM, when: -2 })).toBeNull();
+    expect(checkAnswers(sample, reason, { ...FORM, stillTaking: 2 })).toBeNull();
+    const res = await post(submit, { profId: PROF, reasonId: REASON, answers: { ...FORM, when: -1, intensity: -1, stillTaking: -1 } });
+    expect(res.status).toBe(200);
+    const p = (h.calls.find((c) => c.fn === "pc_submit")!.args as { p: { answers: Record<string, unknown> } }).p;
+    expect(p.answers).toMatchObject({ when: -1, intensity: -1, stillTaking: -1 });
   });
 });

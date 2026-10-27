@@ -2660,7 +2660,9 @@
       "intensity2": "심함",
       "stillTakingQ": "지금도 약을 복용하고 계신가요?",
       "stillTaking0": "예",
-      "stillTaking1": "스스로 중단했어요"
+      "stillTaking1": "스스로 중단했어요",
+      "choose": "선택…",
+      "notAnswered": "답변 없음"
     },
     "bands": {
       "title": "긴급도 단계",
@@ -2821,6 +2823,7 @@
       "sentSecretary": "접수되었습니다. 접수처가 {n, plural, other {영업일 기준 #일}} 이내에 답변합니다.",
       "openTextSecretary": "접수처에 이미 있는 요청을 업데이트할까요? 새 요청이 기존 요청을 대체합니다.",
       "entryButtonNamed": "{doctor}에게 연락",
+      "openExistsNamed": "이미 열린 요청이 있습니다: {reason} ({date})",
       "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다."
     },
     "channel": {
