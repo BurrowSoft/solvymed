@@ -276,6 +276,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 label={t("textLabel")} placeholder={t("textPlaceholder")}
                 onChange={(text, chips) => setAnswers((a) => ({ ...a, text, chips }))} />
             </div>
+            {/* M7 / PC-10′: with the doctor's AI option on, the form says so. */}
+            {page.aiNotice && <p className="text-xs text-slate-500" data-testid="pc-ai-notice">{t("aiNotice")}</p>}
             {warning && bar && createPortal(
               <button ref={barRef} type="button" aria-hidden="true" tabIndex={-1} data-testid="pc-emergency-bar"
                 onClick={() => emergencyRef.current?.scrollIntoView({ behavior: motion(), block: "center" })}

@@ -2820,7 +2820,8 @@
       "goesToSecretary": "Ke resepsionis",
       "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
       "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
-      "entryButtonNamed": "Hubungi {doctor}"
+      "entryButtonNamed": "Hubungi {doctor}",
+      "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan."
     },
     "channel": {
       "title": "Kanal Anda",
@@ -2853,7 +2854,9 @@
       "save": "Simpan kanal",
       "saved": "Tersimpan.",
       "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
-      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal."
+      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal.",
+      "aiMapping": "Pembacaan AI (SolvyAI)",
+      "aiMappingHelp": "SolvyAI membaca teks bebas setiap permintaan dan menyarankan gejala dari daftar Anda; skor hanya bisa naik. Setiap pesan yang dibaca memakai 1 kredit AI hari itu. Nama, nomor identitas, telepon, dan e-mail disamarkan terlebih dahulu. Formulir memberi tahu pasien Anda."
     },
     "reasons": {
       "title": "Alasan menghubungi",
@@ -2969,7 +2972,21 @@
       "readOnly": "Pesan ini untuk {doctor}: Anda dapat membacanya, tetapi tidak dapat membalas.",
       "failed": "Gagal mengirim. Coba lagi.",
       "warningFloor": "Gejala dengan peringatan darurat: selalu Mendesak.",
-      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI)."
+      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI).",
+      "ai": {
+        "title": "Pembacaan AI",
+        "intro": "SolvyAI menemukan gejala dari daftar Anda ini dalam pesan. Periksa teksnya sebelum mengonfirmasi.",
+        "confirm": "Konfirmasi",
+        "undo": "Urungkan",
+        "undoConfirm": "Urungkan pembacaan AI? Gejala yang disarankan dihapus dan skor kembali ke skor kata kunci.",
+        "cancel": "Batal",
+        "confirmed": "Dikonfirmasi pada {date}",
+        "undone": "Pembacaan AI diurungkan.",
+        "unavailable": "Pembacaan AI tidak tersedia untuk pesan ini: hanya kata kunci.",
+        "pending": "SolvyAI sedang membaca pesan ini.",
+        "none": "AI tidak menemukan gejala lain dari daftar Anda.",
+        "error": "Gagal menyimpan. Coba lagi."
+      }
     }
   },
   "noticesUnsubscribe": {

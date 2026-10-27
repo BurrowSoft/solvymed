@@ -2820,7 +2820,8 @@
       "goesToSecretary": "받는 곳: 접수처",
       "sentSecretary": "접수되었습니다. 접수처가 {n, plural, other {영업일 기준 #일}} 이내에 답변합니다.",
       "openTextSecretary": "접수처에 이미 있는 요청을 업데이트할까요? 새 요청이 기존 요청을 대체합니다.",
-      "entryButtonNamed": "{doctor}에게 연락"
+      "entryButtonNamed": "{doctor}에게 연락",
+      "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다."
     },
     "channel": {
       "title": "내 채널",
@@ -2853,7 +2854,9 @@
       "save": "채널 저장",
       "saved": "저장되었습니다.",
       "saveError": "저장하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
-      "needsReason": "채널을 켜려면 사유를 하나 이상 추가하세요."
+      "needsReason": "채널을 켜려면 사유를 하나 이상 추가하세요.",
+      "aiMapping": "AI 읽기 (SolvyAI)",
+      "aiMappingHelp": "SolvyAI가 각 요청의 자유 텍스트를 읽고 목록에서 증상을 제안합니다. 점수는 올라가기만 합니다. 읽은 메시지마다 그날의 AI 크레딧 1개를 사용합니다. 이름, 신분증 번호, 전화번호, 이메일은 먼저 가려집니다. 양식에서 환자에게 알립니다."
     },
     "reasons": {
       "title": "문의 사유",
@@ -2969,7 +2972,21 @@
       "readOnly": "{doctor}에게 온 메시지입니다. 읽을 수는 있지만 답변할 수는 없습니다.",
       "failed": "전송하지 못했습니다. 다시 시도하세요.",
       "warningFloor": "응급 경고 증상: 항상 긴급.",
-      "warningFloorAi": "응급 경고 증상: 항상 긴급 (AI)."
+      "warningFloorAi": "응급 경고 증상: 항상 긴급 (AI).",
+      "ai": {
+        "title": "AI 읽기",
+        "intro": "SolvyAI가 메시지에서 목록에 있는 다음 증상을 찾았습니다. 확인하기 전에 본문을 확인하세요.",
+        "confirm": "확인",
+        "undo": "실행 취소",
+        "undoConfirm": "AI 읽기를 실행 취소할까요? 제안된 증상이 삭제되고 점수는 키워드 점수로 돌아갑니다.",
+        "cancel": "취소",
+        "confirmed": "{date}에 확인됨",
+        "undone": "AI 읽기를 실행 취소했습니다.",
+        "unavailable": "이 메시지에는 AI 읽기를 사용할 수 없습니다: 키워드만 사용.",
+        "pending": "SolvyAI가 이 메시지를 읽고 있습니다.",
+        "none": "AI가 목록에서 다른 증상을 찾지 못했습니다.",
+        "error": "저장하지 못했습니다. 다시 시도하세요."
+      }
     }
   },
   "noticesUnsubscribe": {

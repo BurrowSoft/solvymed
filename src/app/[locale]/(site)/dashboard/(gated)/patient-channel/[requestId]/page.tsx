@@ -8,11 +8,17 @@ import { fromStoredRules } from "@/lib/patientChannel/rules";
 import {
   detailHighlights, detailLineLabel, detailNames, highlightParts, toDetailAnswers, toInboxRow, toLines, toShownMessages, warningFloorCause,
 } from "@/lib/patientChannel/inbox";
+import { AI_STATUSES, type AiStatus } from "@/lib/patientChannel/aiDb";
+import { toStoredAiLines } from "@/lib/patientChannel/aiRead";
 import { BandTag } from "../../../settings/patient-channel/BandTag";
+import { AiPanel } from "./AiPanel";
 import { ReplyBox } from "./ReplyBox";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DETAIL_COLUMNS = "id, professional_id, patient_id, destination, reason_snapshot, answers, text, score_total, band, lines, warning_shown, floor_applied, auto_messages_shown, status, reply_text, replied_at, created_at, patients(full_name, phone)";
+// M7's columns, read apart: before the M7 migration is live they don't exist, and the detail
+// above must keep working (a failed read = no AI section).
+const AI_COLUMNS = "ai_status, ai_lines, ai_confirmed_at";
 // The earlier requests: no message text (each opens its own access-logged detail).
 const HISTORY_COLUMNS = "id, patient_id, destination, band, score_total, status, created_at, reason_snapshot, patients(full_name)";
 
@@ -45,18 +51,27 @@ export default async function PatientChannelRequestPage({
   const row = toInboxRow(q);
   const patient = (Array.isArray(q.patients) ? q.patients[0] : q.patients) as { phone?: string | null } | null;
 
-  const [, history, settings] = await Promise.all([
+  const [, history, settings, aiRead] = await Promise.all([
     // The patient's Access tab (241; 01, 10-26): who opened this request, and when. Never throws.
     logChannelRequestOpen(supabase, row.patientId, row.id).then(() => null),
     supabase.from("pc_requests").select(HISTORY_COLUMNS).eq("professional_id", profId).eq("patient_id", row.patientId)
       .neq("id", row.id).order("created_at", { ascending: false }).limit(20),
     pcAdmin().from("pc_settings").select("rules, ai_mapping").eq("professional_id", profId).maybeSingle(),
+    // Under RLS like the row above (secretaries who may read it see the lines too).
+    supabase.from("pc_requests").select(AI_COLUMNS).eq("id", requestId).maybeSingle(),
   ]);
+  const ai = aiRead.error ? null : (aiRead.data as { ai_status?: unknown; ai_lines?: unknown; ai_confirmed_at?: unknown } | null);
+  const aiStatus: AiStatus = AI_STATUSES.find((x) => x === ai?.ai_status) ?? "none";
+  const aiConfirmedAt = typeof ai?.ai_confirmed_at === "string" ? ai.ai_confirmed_at : null;
   const s = settings.data as { rules?: unknown; ai_mapping?: boolean } | null;
   const config = s?.rules ? fromStoredRules(s.rules, country, s.ai_mapping === true) : null;
   const answers = toDetailAnswers(q.answers);
   const lines = toLines(q.lines);
-  const names = detailNames(config, lines, answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []);
+  const aiLines = aiStatus === "done" ? toStoredAiLines(ai?.ai_lines) : [];
+  const names = detailNames(config, lines, [
+    ...(answers.kind === "form" ? [...answers.symptomIds, ...answers.chips.filter((c) => c.kind === "symptom").map((c) => c.ref)] : []),
+    ...aiLines.map((l) => l.symptomId),
+  ]);
   const parts = highlightParts(row.text, detailHighlights(config, row.text));
   const shownMessages = toShownMessages(q.auto_messages_shown);
   // The safety floor's reason: the warning symptoms (ids only, from the rules read above) vs
@@ -146,6 +161,15 @@ export default async function PatientChannelRequestPage({
         {/* The safety floor (01, 10-26): Urgent because of a symptom with the immediate warning. */}
         {floorCause && <p className="mt-2 text-xs font-semibold text-red-700" data-testid="pc-detail-warning-floor">{t(floorCause === "ai" ? "detail.warningFloorAi" : "detail.warningFloor")}</p>}
       </section>
+
+      {/* M7: the SolvyAI reading. Only the doctor confirms or undoes it (a secretary reads it). */}
+      <AiPanel
+        requestId={row.id}
+        status={aiStatus}
+        lines={aiLines.map((l) => ({ ...l, name: symptomName(l.symptomId) }))}
+        confirmedAt={aiConfirmedAt ? formatWhen(aiConfirmedAt) : null}
+        canAct={!isSecretary}
+      />
 
       {row.status === "open" && !readOnly && <ReplyBox requestId={row.id} />}
       {row.status === "open" && readOnly && doctorName && (

@@ -2820,7 +2820,8 @@
       "goesToSecretary": "发给前台",
       "sentSecretary": "已收到。前台将在 {n, plural, other {# 个工作日}}内回复。",
       "openTextSecretary": "要更新前台那里已有的请求吗？新请求将替换旧请求。",
-      "entryButtonNamed": "联系{doctor}"
+      "entryButtonNamed": "联系{doctor}",
+      "aiNotice": "本诊所使用 AI 整理消息。"
     },
     "channel": {
       "title": "您的频道",
@@ -2853,7 +2854,9 @@
       "save": "保存频道",
       "saved": "已保存。",
       "saveError": "无法保存。请检查网络连接后重试。",
-      "needsReason": "请至少添加一个原因才能开启渠道。"
+      "needsReason": "请至少添加一个原因才能开启渠道。",
+      "aiMapping": "AI 阅读（SolvyAI）",
+      "aiMappingHelp": "SolvyAI 阅读每条请求的自由文本，并从您的列表中建议症状；分数只会升高。每读一条消息使用当天 1 个 AI 额度。姓名、证件号、电话和电子邮件会先被遮盖。表单会告知您的患者。"
     },
     "reasons": {
       "title": "联系原因",
@@ -2969,7 +2972,21 @@
       "readOnly": "此消息是发给 {doctor} 的：您可以阅读，但不能回复。",
       "failed": "发送失败，请重试。",
       "warningFloor": "带紧急警告的症状：始终为紧急。",
-      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。"
+      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。",
+      "ai": {
+        "title": "AI 阅读",
+        "intro": "SolvyAI 在消息中找到了您列表中的这些症状。确认前请先核对原文。",
+        "confirm": "确认",
+        "undo": "撤销",
+        "undoConfirm": "撤销 AI 阅读？建议的症状将被删除，分数恢复为关键词分数。",
+        "cancel": "取消",
+        "confirmed": "已于 {date} 确认",
+        "undone": "已撤销 AI 阅读。",
+        "unavailable": "此消息无法使用 AI 阅读：仅按关键词。",
+        "pending": "SolvyAI 正在阅读此消息。",
+        "none": "AI 未从您的列表中找到其他症状。",
+        "error": "保存失败，请重试。"
+      }
     }
   },
   "noticesUnsubscribe": {
