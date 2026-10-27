@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { staffContext } from "@/lib/patientChannel/staff";
 import { INBOX_COLUMNS, INBOX_FILTERS, filterInbox, parseFilter, sortInbox, toCounts, toInboxRow, type InboxFilter } from "@/lib/patientChannel/inbox";
 import { BandTag } from "../../settings/patient-channel/BandTag";
+import { isUnscored } from "@/lib/patientChannel/unscored";
 
 // Patient Channel M5 (specs/patient-contact-tech.md §6): the doctor's / secretary's inbox.
 // KPI tiles from 237's pc_inbox_counts (the open ones per band; FAQ- and automatic-message-
@@ -40,7 +41,11 @@ export default async function PatientChannelInboxPage({
   const kpi = toCounts(counts.data);
   const failed = !!(open.error || closed.error || counts.error || !kpi);
 
-  const rows = sortInbox([...(open.data ?? []), ...(closed.data ?? [])].map((r) => toInboxRow(r as Record<string, unknown>)));
+  const raw = [...(open.data ?? []), ...(closed.data ?? [])] as Record<string, unknown>[];
+  const rows = sortInbox(raw.map((r) => toInboxRow(r)));
+  // Administrative requests (an options / exam reason) have no score: no band, no points
+  // (launch polish 29). A snapshot without a kind (older rows) keeps its score.
+  const unscored = new Set(raw.filter((r) => isUnscored(r.reason_snapshot)).map((r) => String(r.id)));
   const shown = filterInbox(rows, filter);
   // What a secretary can't read: the open ones for the doctor (unless the doctor lets her see all).
   const hiddenForDoctor = isSecretary && kpi ? Math.max(0, kpi.openForDoctor - rows.filter((r) => r.status === "open" && r.destination === "doctor").length) : 0;
@@ -99,8 +104,12 @@ export default async function PatientChannelInboxPage({
               className={`flex flex-col gap-1 rounded-2xl border bg-white p-4 shadow-sm hover:bg-slate-50 sm:flex-row sm:items-center sm:gap-4 ${r.status === "open" ? "border-slate-200" : "border-slate-100 opacity-80"}`}
             >
               <div className="flex shrink-0 items-center gap-2 sm:w-40">
-                <BandTag band={r.band} />
-                <span className="text-sm font-bold tabular-nums text-slate-700">{t("inbox.points", { n: r.score })}</span>
+                {!unscored.has(r.id) && (
+                  <>
+                    <BandTag band={r.band} />
+                    <span className="text-sm font-bold tabular-nums text-slate-700">{t("inbox.points", { n: r.score })}</span>
+                  </>
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold text-slate-900">{r.patientName}</p>
