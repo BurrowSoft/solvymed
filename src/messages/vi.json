@@ -928,7 +928,8 @@
       "deleteAccount": "Xóa tài khoản của tôi",
       "deleteConfirm": "Thao tác này xóa tài khoản của bạn. Bạn có thể đăng ký lại bất cứ lúc nào.",
       "deletedNotice": "Đã xóa tài khoản.",
-      "requestDeletion": "Yêu cầu xóa tài khoản"
+      "requestDeletion": "Yêu cầu xóa tài khoản",
+      "notConnected": "Hiện bạn chưa kết nối với phòng khám nào."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -2814,6 +2815,12 @@
       "viewMessages": "Xem tin nhắn của tôi",
       "earlierLink": "Xem tin nhắn trước đây",
       "earlierWith": "Xem tin nhắn trước đây với {doctor}",
+      "sentUrgent": "Nếu khẩn cấp, đừng chờ trả lời: hãy đi khám ngay hoặc gọi {number}.",
+      "sendSecretary": "Gửi đến lễ tân",
+      "goesToSecretary": "Đến lễ tân",
+      "sentSecretary": "Đã nhận. Lễ tân sẽ trả lời trong vòng {n, plural, other {# ngày làm việc}}.",
+      "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
+      "entryButtonNamed": "Liên hệ {doctor}",
       "aiNotice": "Phòng khám này dùng AI để sắp xếp tin nhắn."
     },
     "channel": {
@@ -2847,6 +2854,7 @@
       "save": "Lưu kênh",
       "saved": "Đã lưu.",
       "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
+      "needsReason": "Thêm ít nhất một lý do để bật kênh.",
       "aiMapping": "Đọc bằng AI (SolvyAI)",
       "aiMappingHelp": "SolvyAI đọc phần văn bản tự do của mỗi yêu cầu và gợi ý triệu chứng từ danh sách của bạn; điểm chỉ có thể tăng. Mỗi tin nhắn được đọc dùng 1 tín dụng AI của ngày. Tên, số giấy tờ, số điện thoại và e-mail được che trước. Biểu mẫu thông báo cho bệnh nhân của bạn."
     },
@@ -2952,7 +2960,7 @@
       "warningShown": "Bệnh nhân đã thấy cảnh báo khẩn cấp.",
       "autoShown": "Tin nhắn tự động bệnh nhân đã thấy",
       "history": "Tin nhắn trước đây của bệnh nhân này",
-      "replyLabel": "Câu trả lời của bạn (bệnh nhân nhận qua thông báo)",
+      "replyLabel": "Câu trả lời của bạn (bệnh nhân xem câu trả lời trong kênh)",
       "reply": "Trả lời và đóng",
       "callBack": "Tôi sẽ gọi cho bệnh nhân",
       "call": "Gọi {phone}",

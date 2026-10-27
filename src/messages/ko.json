@@ -928,7 +928,8 @@
       "deleteAccount": "내 계정 삭제",
       "deleteConfirm": "계정이 삭제됩니다. 언제든지 다시 가입할 수 있습니다.",
       "deletedNotice": "계정이 삭제되었습니다.",
-      "requestDeletion": "계정 삭제 요청"
+      "requestDeletion": "계정 삭제 요청",
+      "notConnected": "현재 어떤 진료소에도 연결되어 있지 않습니다."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",
@@ -2814,6 +2815,12 @@
       "viewMessages": "내 메시지 보기",
       "earlierLink": "이전 메시지 보기",
       "earlierWith": "{doctor}와(과)의 이전 메시지 보기",
+      "sentUrgent": "급하다면 답변을 기다리지 말고 지금 진료를 받거나 {number}에 전화하세요.",
+      "sendSecretary": "접수처로 보내기",
+      "goesToSecretary": "받는 곳: 접수처",
+      "sentSecretary": "접수되었습니다. 접수처가 {n, plural, other {영업일 기준 #일}} 이내에 답변합니다.",
+      "openTextSecretary": "접수처에 이미 있는 요청을 업데이트할까요? 새 요청이 기존 요청을 대체합니다.",
+      "entryButtonNamed": "{doctor}에게 연락",
       "aiNotice": "이 클리닉은 메시지를 정리하는 데 AI를 사용합니다."
     },
     "channel": {
@@ -2847,6 +2854,7 @@
       "save": "채널 저장",
       "saved": "저장되었습니다.",
       "saveError": "저장하지 못했습니다. 연결을 확인하고 다시 시도하세요.",
+      "needsReason": "채널을 켜려면 사유를 하나 이상 추가하세요.",
       "aiMapping": "AI 읽기 (SolvyAI)",
       "aiMappingHelp": "SolvyAI가 각 요청의 자유 텍스트를 읽고 목록에서 증상을 제안합니다. 점수는 올라가기만 합니다. 읽은 메시지마다 그날의 AI 크레딧 1개를 사용합니다. 이름, 신분증 번호, 전화번호, 이메일은 먼저 가려집니다. 양식에서 환자에게 알립니다."
     },
@@ -2952,7 +2960,7 @@
       "warningShown": "환자에게 응급 경고가 표시되었습니다.",
       "autoShown": "환자가 본 자동 메시지",
       "history": "이 환자의 이전 메시지",
-      "replyLabel": "답변 (환자에게 알림으로 전달됩니다)",
+      "replyLabel": "내 답변 (환자는 채널에서 답변을 확인합니다)",
       "reply": "답변하고 종료",
       "callBack": "환자에게 전화하겠습니다",
       "call": "{phone}로 전화",

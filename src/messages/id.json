@@ -928,7 +928,8 @@
       "deleteAccount": "Hapus akun saya",
       "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
       "deletedNotice": "Akun dihapus.",
-      "requestDeletion": "Minta penghapusan akun"
+      "requestDeletion": "Minta penghapusan akun",
+      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -2814,6 +2815,12 @@
       "viewMessages": "Lihat pesan saya",
       "earlierLink": "Lihat pesan sebelumnya",
       "earlierWith": "Lihat pesan sebelumnya dengan {doctor}",
+      "sentUrgent": "Jika mendesak, jangan menunggu balasan: segera cari pertolongan atau hubungi {number}.",
+      "sendSecretary": "Kirim ke resepsionis",
+      "goesToSecretary": "Ke resepsionis",
+      "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
+      "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
+      "entryButtonNamed": "Hubungi {doctor}",
       "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan."
     },
     "channel": {
@@ -2847,6 +2854,7 @@
       "save": "Simpan kanal",
       "saved": "Tersimpan.",
       "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal.",
       "aiMapping": "Pembacaan AI (SolvyAI)",
       "aiMappingHelp": "SolvyAI membaca teks bebas setiap permintaan dan menyarankan gejala dari daftar Anda; skor hanya bisa naik. Setiap pesan yang dibaca memakai 1 kredit AI hari itu. Nama, nomor identitas, telepon, dan e-mail disamarkan terlebih dahulu. Formulir memberi tahu pasien Anda."
     },
@@ -2952,7 +2960,7 @@
       "warningShown": "Pasien melihat peringatan darurat.",
       "autoShown": "Pesan otomatis yang dilihat pasien",
       "history": "Pesan sebelumnya dari pasien ini",
-      "replyLabel": "Balasan Anda (pasien menerimanya lewat notifikasi)",
+      "replyLabel": "Balasan Anda (pasien melihat balasan di kanal)",
       "reply": "Balas dan tutup",
       "callBack": "Saya akan menelepon pasien",
       "call": "Telepon {phone}",

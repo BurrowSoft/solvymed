@@ -207,3 +207,31 @@ describe("Dúvidas frequentes", () => {
     expect(h.calls[0]).toMatchObject({ table: "pc_faq", op: "insert", payload: { professional_id: "doc1", question: "Esqueci uma dose?", answer: "Tome assim que lembrar.", sort: 1 } });
   });
 });
+
+describe("the channel switch needs a reason (launch polish 8)", () => {
+  it("no reasons: it can't be turned on, and the hint says why", () => {
+    mount();
+    const box = screen.getByTestId("pc-channel-enabled") as HTMLInputElement;
+    expect(box.disabled).toBe(true);
+    expect(screen.getByTestId("pc-channel-needs-reason")).toHaveTextContent(C.channel.needsReason);
+  });
+  it("with a reason it turns on, and the hint goes", () => {
+    mount({ reasons: [reason("r1", 1)] });
+    const box = screen.getByTestId("pc-channel-enabled") as HTMLInputElement;
+    expect(box.disabled).toBe(false);
+    fireEvent.click(box);
+    expect(box.checked).toBe(true);
+    expect(screen.queryByTestId("pc-channel-needs-reason")).toBeNull();
+  });
+  it("an enabled channel with no reasons left can still be turned off", () => {
+    render(wrap(
+      <ChannelSettings professionalId="doc1" hasRow onRowCreated={() => {}}
+        initial={{ ...DEFAULT_SETTINGS, enabled: true }} reasons={[]} faq={[]} brandHref="/pt-BR/dashboard/settings#brand" />,
+    ));
+    const box = screen.getByTestId("pc-channel-enabled") as HTMLInputElement;
+    expect(box.disabled).toBe(false);
+    fireEvent.click(box);
+    expect(box.checked).toBe(false);
+    expect(box.disabled).toBe(true);
+  });
+});
