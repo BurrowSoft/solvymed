@@ -66,6 +66,24 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   }, [answers, reason, step, symptomForm, preview]);
 
   const warning = symptomForm && (immediateWarning(page.vocabulary, answers) || check.warning);
+  // When the emergency line FIRST appears (01; the app does the same), bring it into view if
+  // it's off-screen: at phone width it sits below the symptom list. role="alert" announces it
+  // as it appears; the motion follows prefers-reduced-motion.
+  const emergencyRef = useRef<HTMLParagraphElement>(null);
+  const wasWarning = useRef(false);
+  useEffect(() => {
+    if (warning && !wasWarning.current) {
+      const el = emergencyRef.current;
+      if (el) {
+        const r = el.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > window.innerHeight) {
+          const reduce = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" });
+        }
+      }
+    }
+    wasWarning.current = !!warning;
+  }, [warning]);
   const canSkip = symptomForm && check.canSkip && !warning && check.autoMessages.length > 0;
 
   const send = async (replace: boolean) => {
@@ -98,8 +116,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const back = (to: Step) => (
     <button type="button" onClick={() => setStep(to)} className="w-max py-1 text-sm font-bold text-teal-700">{t("back")}</button>
   );
-  const emergency = (cls = "") => (
-    <p role="alert" data-testid="pc-emergency" className={`rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900 ${cls}`}>
+  const emergency = (cls = "", ref?: React.Ref<HTMLParagraphElement>) => (
+    <p ref={ref} role="alert" data-testid="pc-emergency" className={`rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900 ${cls}`}>
       {t("emergencyNow", { number })}
     </p>
   );
@@ -170,7 +188,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 ))}
               </div>
             </fieldset>
-            {warning && emergency()}
+            {warning && emergency("", emergencyRef)}
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               {QUESTIONS.map(({ key, n }) => (
                 <label key={key} className="flex min-w-0 flex-col gap-1 text-sm text-slate-700">

@@ -265,3 +265,79 @@ describe("the patient flow's strings", () => {
     }
   });
 });
+
+// 01 (10-27, as the app): when the emergency line first appears off-screen (at phone width it
+// sits below the symptom list), it's scrolled into view; role="alert" announces it.
+describe("the emergency line comes into view", () => {
+  const scroll = vi.fn();
+  const original = { scroll: Element.prototype.scrollIntoView, rect: Element.prototype.getBoundingClientRect, matchMedia: window.matchMedia };
+  const setup = ({ offScreen, reduce }: { offScreen: boolean; reduce: boolean }) => {
+    scroll.mockReset();
+    Element.prototype.scrollIntoView = scroll;
+    Element.prototype.getBoundingClientRect = function () {
+      const top = offScreen && this.getAttribute?.("data-testid") === "pc-emergency" ? 2000 : 10;
+      return { top, bottom: top + 40, left: 0, right: 100, width: 100, height: 40, x: 0, y: top, toJSON: () => ({}) } as DOMRect;
+    };
+    window.matchMedia = ((q: string) => ({ matches: reduce && q.includes("reduce"), media: q, addEventListener: () => {}, removeEventListener: () => {} })) as unknown as typeof window.matchMedia;
+  };
+  const restore = () => {
+    Element.prototype.scrollIntoView = original.scroll;
+    Element.prototype.getBoundingClientRect = original.rect;
+    window.matchMedia = original.matchMedia;
+  };
+  const tick = () => fireEvent.click(screen.getByRole("checkbox", { name: "Falta de ar ou inchaço no rosto" }));
+
+  it("off-screen: scrolled into view once, smoothly, and announced (role=alert)", () => {
+    setup({ offScreen: true, reduce: false });
+    try {
+      flow();
+      toForm("efe");
+      tick();
+      expect(screen.getByTestId("pc-emergency").getAttribute("role")).toBe("alert");
+      expect(scroll).toHaveBeenCalledTimes(1);
+      expect(scroll).toHaveBeenCalledWith({ behavior: "smooth", block: "center" });
+    } finally {
+      restore();
+    }
+  });
+
+  it("reduced motion: no smooth scroll", () => {
+    setup({ offScreen: true, reduce: true });
+    try {
+      flow();
+      toForm("efe");
+      tick();
+      expect(scroll).toHaveBeenCalledWith({ behavior: "auto", block: "center" });
+    } finally {
+      restore();
+    }
+  });
+
+  it("already on screen: left where it is", () => {
+    setup({ offScreen: false, reduce: false });
+    try {
+      flow();
+      toForm("efe");
+      tick();
+      expect(screen.getByTestId("pc-emergency")).toBeInTheDocument();
+      expect(scroll).not.toHaveBeenCalled();
+    } finally {
+      restore();
+    }
+  });
+
+  it("unticked and ticked again: it appears again and comes into view again", () => {
+    setup({ offScreen: true, reduce: false });
+    try {
+      flow();
+      toForm("efe");
+      tick();
+      tick();
+      expect(screen.queryByTestId("pc-emergency")).toBeNull();
+      tick();
+      expect(scroll).toHaveBeenCalledTimes(2);
+    } finally {
+      restore();
+    }
+  });
+});
