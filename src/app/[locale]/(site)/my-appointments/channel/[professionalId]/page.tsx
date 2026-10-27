@@ -95,6 +95,7 @@ export default async function PatientChannelPage({
     // The dates in "Suas mensagens" (P-14): the practice's zone and calendar.
     timeZone: pub?.time_zone || countryProfile(p.country).defaultTimeZone,
     country: p.country ?? null,
+    aiNotice: p.aiNotice === true,
     // The doctor's page look (prototype v17; 01): the band (the cover image or the brand
     // colour), the logo watermark, the brand colour. The logo: the doctor's own square
     // logo from My brand (as on the booking page), none without it.

@@ -2813,7 +2813,8 @@
       "notTaking": "診所目前不在此接收新訊息。",
       "viewMessages": "查看我的訊息",
       "earlierLink": "查看先前訊息",
-      "earlierWith": "查看與{doctor}的先前訊息"
+      "earlierWith": "查看與{doctor}的先前訊息",
+      "aiNotice": "本診所使用 AI 整理訊息。"
     },
     "channel": {
       "title": "您的頻道",
@@ -2845,7 +2846,9 @@
       "alwaysShown": "緊急狀況提醒、回覆時間和規則一律顯示，且對所有人相同：品牌只改變外觀，不改變規則。",
       "save": "儲存頻道",
       "saved": "已儲存。",
-      "saveError": "無法儲存。請檢查網路連線後再試一次。"
+      "saveError": "無法儲存。請檢查網路連線後再試一次。",
+      "aiMapping": "AI 閱讀（SolvyAI）",
+      "aiMappingHelp": "SolvyAI 閱讀每則請求的自由文字，並從您的清單中建議症狀；分數只會升高。每讀一則訊息使用當天 1 個 AI 額度。姓名、證件號碼、電話和電子郵件會先被遮蔽。表單會告知您的患者。"
     },
     "reasons": {
       "title": "聯絡原因",
@@ -2961,7 +2964,21 @@
       "readOnly": "此訊息是給 {doctor} 的：您可以閱讀，但無法回覆。",
       "failed": "無法傳送，請再試一次。",
       "warningFloor": "帶有緊急警示的症狀：一律為緊急。",
-      "warningFloorAi": "帶有緊急警示的症狀：一律為緊急（AI）。"
+      "warningFloorAi": "帶有緊急警示的症狀：一律為緊急（AI）。",
+      "ai": {
+        "title": "AI 閱讀",
+        "intro": "SolvyAI 在訊息中找到了您清單中的這些症狀。確認前請先核對原文。",
+        "confirm": "確認",
+        "undo": "復原",
+        "undoConfirm": "復原 AI 閱讀？建議的症狀將被刪除，分數回到關鍵字分數。",
+        "cancel": "取消",
+        "confirmed": "已於 {date} 確認",
+        "undone": "已復原 AI 閱讀。",
+        "unavailable": "此訊息無法使用 AI 閱讀：僅依關鍵字。",
+        "pending": "SolvyAI 正在閱讀此訊息。",
+        "none": "AI 未從您的清單中找到其他症狀。",
+        "error": "無法儲存，請再試一次。"
+      }
     }
   },
   "noticesUnsubscribe": {

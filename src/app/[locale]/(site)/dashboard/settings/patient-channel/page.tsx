@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
-import { patientChannelEnabled } from "@/lib/patientChannel/live";
+import { isPatientChannelTester, patientChannelEnabled } from "@/lib/patientChannel/live";
+import { conditionMet } from "@/lib/conditions";
 import { EMPTY_RULES, fromStoredRules } from "@/lib/patientChannel/rules";
 import { settingsFromRow, type PcFaqRow, type PcReasonRow } from "@/lib/patientChannel/channel";
 import { serverFlag } from "@/lib/myDoctors";
@@ -30,7 +31,7 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
   const [saved, settings, reasons, faq, coverOn, me, brandRow, template] = await Promise.all([
     supabase.rpc("pc_get_rules"),
     supabase.from("pc_settings")
-      .select("enabled, secretary_sees_all, sla_business_days, reading_hours, reading_note, welcome, page_bg, cover_path")
+      .select("enabled, secretary_sees_all, sla_business_days, reading_hours, reading_note, welcome, page_bg, cover_path, ai_mapping")
       .eq("professional_id", user.id).maybeSingle(),
     supabase.from("pc_reasons").select("id, title, subtitle, kind, options, destination, sort")
       .eq("professional_id", user.id).is("archived_at", null).order("sort").order("created_at"),
@@ -56,6 +57,9 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
     );
   }
   const row = saved.data as { rules?: unknown; rulesVersion?: number } | null;
+  // M7's AI switch (01 + cf, 10-27): with pc-ai-live, or for a practice on the testers allowlist.
+  const aiShown = conditionMet("pc-ai-live") || (await isPatientChannelTester(user.id));
+  const aiOn = (settings.data as { ai_mapping?: boolean } | null)?.ai_mapping === true;
   const initialRules = row?.rules ? fromStoredRules(row.rules, country) : { ...EMPTY_RULES, country };
   const prof = me.data as { full_name?: string | null; clinic_name?: string | null; specialty?: string | null } | null;
   const brand = liveFeatures.myBrand ? publicFromPractice(brandRow, { name: prof?.full_name ?? "", specialty: prof?.specialty ?? "" }) : null;
@@ -77,6 +81,7 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
         reasons: ((reasons.data ?? []) as (Omit<PcReasonRow, "subtitle"> & { subtitle: string | null })[]).map((r) => ({ ...r, subtitle: r.subtitle ?? "" })),
         faq: (faq.data ?? []) as PcFaqRow[],
         cover: coverOn ? { path: ((settings.data as { cover_path?: string | null } | null)?.cover_path) ?? null } : null,
+        ai: aiShown ? { on: aiOn } : null,
       }}
       brandHref={`${prefix}/dashboard/settings#brand`}
       patientView={patientView}
