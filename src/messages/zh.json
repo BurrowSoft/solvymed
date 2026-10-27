@@ -2947,7 +2947,8 @@
         "call_back": "将致电",
         "substituted": "已替换"
       },
-      "navOpen": "{n} 条待处理消息"
+      "navOpen": "{n} 条待处理消息",
+      "admin": "行政"
     },
     "detail": {
       "back": "← 消息",

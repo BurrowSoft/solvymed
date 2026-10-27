@@ -10,7 +10,8 @@ import { useTranslations, useLocale } from "next-intl";
 import { createRecord, deleteRecord, updateRecord, addRecordCorrection, createPrescription, deletePrescription, updatePrescription, addPrescriptionCorrection, updatePatient, deletePatient, toggleBookingBlock, generatePatientInviteCode, getArchivePreview, archivePatient, restorePatient, loadAccessLog } from "../actions";
 import { archivedLabel } from "../PatientsClient";
 import { accessKindLabelKey, fileNameFromRef, type AccessLogPage, type AccessLogRow } from "@/lib/accessLog";
-import { dateLocale, formatDateLabel, formatShortDate, plainSpaces } from "@/lib/dateLabels";
+import { dateLocale, formatDateLabel, formatShortDate } from "@/lib/dateLabels";
+import { whenShortFormatter } from "@/lib/whenShort";
 import { SHARE_CHECK_MS } from "@/lib/patientDocuments";
 import { clinicDate } from "@/lib/clinicTime";
 import { usePatientIdFields } from "@/lib/usePatientIdFields";
@@ -175,7 +176,9 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
     <TimeZoneContext.Provider value={timeZone}>
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-slate-100 mb-6 overflow-x-auto">
+      {/* Phones scroll the tabs; wider screens wrap them, so the strip never opens scrolled
+          with the first tab cut ("…ões" at 1280; launch polish 32). */}
+      <div className="flex border-b border-slate-100 mb-6 overflow-x-auto sm:flex-wrap sm:overflow-visible">
         {TABS.map(tab_item => (
           <button
             key={tab_item.key}
@@ -261,11 +264,9 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   // When, in the VIEWER's time zone and the reader's calendar (cf: system
   // dates, one zone per page, as the documents list). The tab renders only
   // after a click, in the browser, so this never differs from a server render.
-  const fmtWhen = new Intl.DateTimeFormat(dateLocale(locale), { dateStyle: "medium", timeStyle: "short" });
-  const whenLocal = (r: AccessLogRow) => {
-    const d = new Date(r.at);
-    return Number.isNaN(d.getTime()) ? r.when : plainSpaces(fmtWhen.format(d));
-  };
+  // The same short form as the inbox (launch polish 32): the year only when it isn't this year.
+  const fmtWhen = whenShortFormatter(locale);
+  const whenLocal = (r: AccessLogRow) => fmtWhen(r.at) || r.when;
 
   const who = (r: AccessLogRow) =>
     r.actorRole === "patient" ? t("accessRolePatient")

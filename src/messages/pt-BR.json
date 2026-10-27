@@ -2947,7 +2947,8 @@
         "call_back": "Vai ligar",
         "substituted": "Substituída"
       },
-      "navOpen": "{n, plural, one {# mensagem aberta} other {# mensagens abertas}}"
+      "navOpen": "{n, plural, one {# mensagem aberta} other {# mensagens abertas}}",
+      "admin": "Administrativas"
     },
     "detail": {
       "back": "← Mensagens",

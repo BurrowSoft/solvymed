@@ -2947,7 +2947,8 @@
         "call_back": "Sẽ gọi lại",
         "substituted": "Đã thay thế"
       },
-      "navOpen": "{n} tin nhắn đang mở"
+      "navOpen": "{n} tin nhắn đang mở",
+      "admin": "Hành chính"
     },
     "detail": {
       "back": "← Tin nhắn",
