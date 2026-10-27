@@ -12,7 +12,8 @@ import type { PcMyRequest } from "@/lib/patientChannel/patientPage";
 // and, once answered, "Resposta do consultório"); the earlier ones behind a toggle, each
 // opening to the same card. Dates in the practice's zone and calendar, as the doctor sees
 // them. Every status has a line; one the page doesn't know shows "Recebida" (01: never
-// drop a request the patient sent).
+// drop a request the patient sent). "Você marcou: …" lists the symptoms they ticked (257),
+// only when there are some.
 export function MyRequests({ requests, timeZone, country }: { requests: PcMyRequest[]; timeZone?: string; country?: string | null }) {
   const t = useTranslations("patientChannel.patient");
   const locale = useLocale();
@@ -82,6 +83,9 @@ function RequestCard({ r, when, bare = false }: { r: PcMyRequest; when: (iso: st
           <p className="whitespace-pre-wrap break-words">{r.text}</p>
         </div>
       ) : null}
+      {r.symptoms && r.symptoms.length > 0 && (
+        <p data-testid="pc-my-request-ticks" className="break-words text-sm text-slate-700">{t("youTicked", { names: r.symptoms.join(", ") })}</p>
+      )}
       <p data-testid="pc-my-request-status" className={`text-sm font-semibold ${tone}`}>{statusLine(r, t, when)}</p>
       {r.replyText && (
         <div data-testid="pc-my-request-reply" className="rounded-xl border-l-4 border-teal-600 bg-teal-50 p-3 text-sm text-slate-800">

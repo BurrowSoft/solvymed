@@ -2811,6 +2811,7 @@
       "replyTitle": "诊所的回复",
       "youWrote": "您写道",
       "youChose": "您选择了：{option}",
+      "youTicked": "您勾选了：{names}",
       "earlier": "较早的消息（{n}）",
       "statusReceived": "已收到",
       "notTaking": "诊所目前不在此接收新消息。",

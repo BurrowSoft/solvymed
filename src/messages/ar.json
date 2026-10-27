@@ -2811,6 +2811,7 @@
       "replyTitle": "رد العيادة",
       "youWrote": "كتبت",
       "youChose": "اخترت: {option}",
+      "youTicked": "حددت: {names}",
       "earlier": "رسائل سابقة ({n})",
       "statusReceived": "تم الاستلام",
       "notTaking": "لا تستقبل العيادة رسائل جديدة من هنا حاليًا.",

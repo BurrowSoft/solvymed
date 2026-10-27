@@ -68,6 +68,9 @@ export type PcMyRequest = {
   createdAt: string;
   // Who the request went to (migration 251); null from an older answer.
   destination?: "doctor" | "secretary" | null;
+  // The symptoms the patient ticked or tagged, by name from the practice's current rules
+  // (257; launch polish 21). [] from an older answer or a closed practice: no line.
+  symptoms?: string[];
 };
 export type PcMyRequestsFn = () => Promise<PcMyRequest[] | null>;
 
@@ -86,6 +89,7 @@ export function toMyRequests(raw: unknown, onUnknown?: (status: string) => void)
       id: str(o.id), status, reasonTitle: str(o.reasonTitle), option: str(o.option) || null, text: str(o.text),
       replyText: str(o.replyText).trim() || null, repliedAt: str(o.repliedAt) || null, createdAt: str(o.createdAt),
       destination: o.destination === "doctor" || o.destination === "secretary" ? o.destination : null,
+      symptoms: Array.isArray(o.symptoms) ? o.symptoms.map(str).map((n) => n.trim()).filter(Boolean) : [],
     }];
   });
 }

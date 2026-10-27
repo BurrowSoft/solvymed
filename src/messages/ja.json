@@ -2811,6 +2811,7 @@
       "replyTitle": "クリニックからの回答",
       "youWrote": "あなたの記入内容",
       "youChose": "選択：{option}",
+      "youTicked": "選んだ症状: {names}",
       "earlier": "以前のメッセージ（{n}）",
       "statusReceived": "受付済み",
       "notTaking": "現在、クリニックはここで新しいメッセージを受け付けていません。",

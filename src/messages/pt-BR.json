@@ -2811,6 +2811,7 @@
       "replyTitle": "Resposta do consultório",
       "youWrote": "Você escreveu",
       "youChose": "Você escolheu: {option}",
+      "youTicked": "Você marcou: {names}",
       "earlier": "Mensagens anteriores ({n})",
       "statusReceived": "Recebida",
       "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
