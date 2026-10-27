@@ -2251,7 +2251,8 @@
       "patientFull": "Bạn đã đạt giới hạn 200 MB cho bác sĩ này.",
       "storageFull": "Dung lượng tài liệu của bác sĩ này đã đầy.",
       "ownStorageFull": "Dung lượng tài liệu của bạn đã đầy (5 GB). Hãy liên hệ hỗ trợ.",
-      "noAccess": "Tài liệu này không còn khả dụng."
+      "noAccess": "Tài liệu này không còn khả dụng.",
+      "notAccepting": "Phòng khám này hiện không nhận tệp."
     },
     "storageNotice": "Bạn đã dùng {used} trên 5 GB cho tài liệu.",
     "snapshotNotShared": "Đã lưu nhưng chưa chia sẻ: dung lượng tài liệu của bạn đã đầy.",

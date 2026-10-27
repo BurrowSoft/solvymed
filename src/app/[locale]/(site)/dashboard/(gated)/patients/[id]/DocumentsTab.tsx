@@ -45,7 +45,7 @@ export function DocumentsTab({ patientId, doctorId, isArchived, locale }: {
   const folderName = useCallback((f: DocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}`) : ""), [t]);
   const errText = useCallback((k: DocErrorKey | "network") => {
     switch (k) {
-      case "tooLarge": case "type": case "cantShareType": case "dailyLimit": case "patientFull": case "storageFull": case "ownStorageFull": case "noAccess":
+      case "tooLarge": case "type": case "cantShareType": case "dailyLimit": case "patientFull": case "storageFull": case "ownStorageFull": case "noAccess": case "notAccepting":
         return t(`err.${k}`);
       default: return tp("filesError");
     }

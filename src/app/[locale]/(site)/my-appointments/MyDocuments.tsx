@@ -29,7 +29,7 @@ export function MyDocuments({ doctors }: { doctors: DocDoctor[] }) {
   const input = useRef<HTMLInputElement>(null);
 
   const errText = (k: DocErrorKey | "network") =>
-    k === "tooLarge" || k === "type" || k === "dailyLimit" || k === "patientFull" || k === "storageFull" || k === "noAccess" ? t(`err.${k}`) : tp("filesError");
+    k === "tooLarge" || k === "type" || k === "dailyLimit" || k === "patientFull" || k === "storageFull" || k === "noAccess" || k === "notAccepting" ? t(`err.${k}`) : tp("filesError");
   const folderName = (f: MyDocFolder) => f.name ?? (f.defaultKey ? t(`folder.${f.defaultKey}` as "folder.start") : "");
 
   async function load(id: string) {

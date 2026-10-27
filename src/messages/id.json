@@ -2251,7 +2251,8 @@
       "patientFull": "Anda telah mencapai batas 200 MB untuk dokter ini.",
       "storageFull": "Ruang dokumen dokter ini sudah penuh.",
       "ownStorageFull": "Ruang dokumen Anda penuh (5 GB). Hubungi dukungan.",
-      "noAccess": "Dokumen ini tidak lagi tersedia."
+      "noAccess": "Dokumen ini tidak lagi tersedia.",
+      "notAccepting": "Praktik ini sedang tidak menerima file."
     },
     "storageNotice": "Anda telah memakai {used} dari 5 GB untuk dokumen.",
     "snapshotNotShared": "Tersimpan, tetapi tidak dibagikan: ruang dokumen Anda penuh.",
