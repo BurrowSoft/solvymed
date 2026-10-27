@@ -51,7 +51,7 @@ export function PatientChannelTest({ rules, emergencyNumber, onBack, patientView
             <h2 className="text-base font-bold text-slate-900">{t("test.resultTitle")}</h2>
             <ScorePanel rules={rules} score={score} />
             <p className="mt-3 text-sm text-slate-600">{t("test.resultWarning", { answer: score.warning ? t("test.yes") : t("test.no") })}</p>
-            <p className="text-sm text-slate-600">{t("test.resultAuto", { n: fired.length })}</p>
+            <p className="text-sm text-slate-600">{t("test.resultAuto", { n: score.warning ? 0 : fired.length })}</p>
           </div>
         )}
         <button type="button" onClick={() => setResult(null)} className="rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white hover:bg-teal-700">{t("test.again")}</button>

@@ -136,6 +136,28 @@ describe("the patient's flow", () => {
     expect(screen.getByTestId("pc-emergency")).toHaveTextContent(P.emergencyNow.replace("{number}", "192"));
   });
 
+  it("with the warning, the request keeps no automatic message as seen; without it, the ones shown (cf on #679)", async () => {
+    const submit = vi.fn(sampleSubmit());
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={submit} />));
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Tontura" }));
+    choose(A.intensityQ, A.intensity2);
+    await screen.findByTestId("pc-auto");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    await screen.findByTestId("pc-sent");
+    expect((submit.mock.calls[0][3] as string[]).length).toBeGreaterThan(0);
+    fireEvent.click(screen.getByRole("button", { name: P.again }));
+    toForm("efe");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Tontura" }));
+    choose(A.intensityQ, A.intensity2);
+    fireEvent.click(screen.getByRole("checkbox", { name: "Dor no peito ou desmaio" }));
+    await screen.findByTestId("pc-auto-emergency");
+    fireEvent.click(screen.getByTestId("pc-send"));
+    fireEvent.click(await screen.findByTestId("pc-replace-yes"));
+    await screen.findByTestId("pc-sent");
+    expect(submit.mock.calls.at(-1)?.[3]).toEqual([]);
+  });
+
   it("after an URGENT send, the confirmation says not to wait, with the number, above \"Recebido\" (launch polish 1)", async () => {
     flow();
     toForm("efe");

@@ -167,8 +167,9 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     if (!reason || sending) return;
     setSending(true);
     setFailed(false);
-    // Kept with the request as shown: the ones the patient actually saw.
-    const shown = symptomForm ? autoShown.map((m) => m.id) : [];
+    // Kept with the request as shown: the ones the patient actually saw. With the emergency
+    // line they saw none of them, only "Procure a emergência." (launch polish 40, cf).
+    const shown = symptomForm && !warning ? autoShown.map((m) => m.id) : [];
     const r = await submit(reason.id, symptomForm ? answers : { option: reason.options[option] ?? "" }, replace, shown).catch(() => ({ status: "error" as const }));
     setSending(false);
     if (r.status === "sent") { setSentWarning(!!warning); setSentReplaced(replace); setStep("sent"); }

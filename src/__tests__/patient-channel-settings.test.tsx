@@ -153,6 +153,9 @@ describe("Testar como paciente", () => {
     expect(screen.queryByTestId("pc-test-auto")).toBeNull();
     expect(screen.getByTestId("pc-test-auto-emergency")).toHaveTextContent(P.patient.autoEmergency);
     expect(screen.getByTestId("pc-test-auto-emergency")).not.toHaveTextContent("Tontura forte");
+    // The result counts no automatic message: the patient saw none of them (cf on #679).
+    fireEvent.click(screen.getByRole("button", { name: P.test.send }));
+    expect(screen.getByText(P.test.resultAuto.replace("{n}", "0"))).toBeInTheDocument();
     expect(screen.queryByTestId("pc-test-skip")).toBeNull();
   });
 
