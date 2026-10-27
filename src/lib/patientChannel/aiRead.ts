@@ -21,13 +21,31 @@ export const AI_QUOTE_MAX = 200;
 
 const fold = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 
-// Every word (2+ letters) of the given names, as whole words, accents and case ignored. Other
-// names a patient types can't be found reliably, and PC-10′ says so.
+// Name particles (Portuguese / Spanish / Italian / Dutch / German): never masked on their own,
+// or "dor da cabeça" would lose its "da" (cf, #665).
+const PARTICLES = new Set(["da", "das", "de", "del", "della", "den", "der", "di", "do", "dos", "du", "e", "la", "le", "van", "von", "y"]);
+// A part written in Latin letters is matched as a whole word; any other script (Thai, CJK…)
+// is written without spaces, so it's found inside the text instead (cf's B1, #665).
+const LATIN_ONLY = /^[\p{Script=Latin}\p{M}'’-]+$/u;
+
+// Every part (2+ letters, not a particle) of the given names, accents and case ignored: Latin
+// parts as whole words, other scripts anywhere in the text (longest first). Other names a
+// patient types can't be found reliably, and PC-10′ says so.
 export function maskNames(text: string, names: (string | null | undefined)[]): string {
   const words = new Set<string>();
-  for (const n of names) for (const w of (n ?? "").split(/[^\p{L}\p{M}'’-]+/u)) if ([...w].length >= 2) words.add(fold(w));
-  if (words.size === 0) return text;
-  return text.replace(/[\p{L}\p{M}'’-]+/gu, (w) => (words.has(fold(w)) ? "[name]" : w));
+  const runs = new Set<string>();
+  for (const n of names) {
+    for (const w of (n ?? "").normalize("NFC").split(/[^\p{L}\p{M}'’-]+/u)) {
+      if ([...w].length < 2 || PARTICLES.has(fold(w))) continue;
+      if (LATIN_ONLY.test(w)) words.add(fold(w));
+      else runs.add(w);
+    }
+  }
+  let out = text.normalize("NFC");
+  for (const r of [...runs].sort((a, b) => b.length - a.length)) out = out.split(r).join("[name]");
+  if (words.size === 0) return out;
+  // Runs of Latin letters only, so a Latin name next to Thai text ("หมอAna") is still a word.
+  return out.replace(/[\p{Script=Latin}'’-][\p{Script=Latin}\p{M}'’-]*/gu, (w) => (words.has(fold(w)) ? "[name]" : w));
 }
 
 export function maskForAi(text: string, names: (string | null | undefined)[]): string {

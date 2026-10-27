@@ -28,11 +28,12 @@ export function rescoreOne(
   // The keyword score never counts AI symptoms, whatever the doctor's switch says now.
   const kw = scoreForRequest({ ...config, aiMapping: false }, q.kind, q.answers);
   const base = { id: q.id, total: kw.total, band: kw.band, lines: kw.lines, floorApplied: kw.floorApplied };
-  // Only a symptom form has free text, so only it can have been read.
-  if (q.aiStatus !== "done" || q.kind !== "symptom_form") return base;
+  if (q.aiStatus !== "done") return base;
 
-  const keep = q.aiLines.filter((l) => config.symptoms.some((s) => s.id === l.symptomId));
+  // Every 'done' row carries kw (253 refuses a save otherwise; cf, #665). Only a symptom form has
+  // free text, so any other kind can't keep AI lines: 'undone' with the keyword score.
   const kwPart = { total: kw.total, band: kw.band, lines: kw.lines };
+  const keep = q.kind === "symptom_form" ? q.aiLines.filter((l) => config.symptoms.some((s) => s.id === l.symptomId)) : [];
   if (keep.length === 0) return { ...base, kw: kwPart, aiLines: [], aiStatus: "undone" };
 
   // The AI pass: the reading happened, so its symptoms count even if the switch is off now.

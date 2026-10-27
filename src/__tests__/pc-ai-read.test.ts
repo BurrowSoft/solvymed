@@ -23,6 +23,15 @@ describe("masking before the reading (PC-10′)", () => {
     expect(maskForAi("Estou tonta e com enjoo desde ontem", ["A B Costa"])).toBe("Estou tonta e com enjoo desde ontem");
     expect(maskForAi("Costa doendo", ["A B Costa"])).toBe("[name] doendo");
   });
+  it("Thai names inside unspaced Thai text are masked (cf's B1, #665): every name part, longest first", () => {
+    expect(maskForAi("สวัสดีค่ะหมอสมชายดิฉันชื่อมาลีปวดหัวมากค่ะ", ["สมชาย ใจดี", "มาลี สุขใจ"])).toBe("สวัสดีค่ะหมอ[name]ดิฉันชื่อ[name]ปวดหัวมากค่ะ");
+    expect(maskForAi("ใจดีมากค่ะ", ["สมชาย ใจดี"])).toBe("[name]มากค่ะ");
+    // A Latin name glued to Thai text is still found.
+    expect(maskForAi("หมอAnaค่ะ", ["Ana Souza"])).toBe("หมอ[name]ค่ะ");
+  });
+  it("name particles are never masked on their own", () => {
+    expect(maskForAi("Dor da cabeça, falei com a Dra. Maria da Silva", ["Maria da Silva", "João dos Santos"])).toBe("Dor da cabeça, falei com a Dra. [name] da [name]");
+  });
   it("no names: only the 6b patterns", () => {
     expect(maskForAi("ligue 0812345678", [null, undefined, ""])).toBe("ligue [phone]");
   });
@@ -117,10 +126,10 @@ describe("runAiReading: one reading per request", () => {
     expect(reader.read).not.toHaveBeenCalled();
   });
 
-  it("no AI key on this deployment: marked failed, no credit taken", async () => {
+  it("no AI key on this deployment (a preview): nothing at all, so no credit and no testers-phase slot", async () => {
     const { admin, calls } = fakeAdmin();
     expect(await runAiReading({ ...base, admin, reader: null, answers: answers("aperto no peito") })).toBe("no_reader");
-    expect(calls).toEqual([{ fn: "pc_ai_mark", args: { p_request_id: base.requestId, p_status: "failed" } }]);
+    expect(calls).toEqual([]);
   });
 
   it("the database refuses the reserve (off, demo, out of credits, already read): no model call", async () => {
@@ -210,6 +219,12 @@ describe("a rules save's rescore with M7 (contract 3b / 4b)", () => {
     // New rules: s7 now worth 20 → the stored line follows.
     const heavier = { ...config, symptoms: config.symptoms.map((s) => (s.id === "s7" ? { ...s, points: 20 } : s)) };
     expect(rescoreOne(heavier, { id: "r1", kind: "symptom_form", answers: a, aiStatus: "done", aiLines: stored }).aiLines![0].points).toBe(22);
+  });
+
+  it("every 'done' row carries kw (253 refuses a save otherwise), even a kind that can't keep AI lines", () => {
+    const r = rescoreOne(config, { id: "r1", kind: "options", answers: a, aiStatus: "done", aiLines: stored });
+    expect(r).toMatchObject({ aiStatus: "undone", aiLines: [] });
+    expect(r.kw).toEqual({ total: r.total, band: r.band, lines: r.lines });
   });
 
   it("the AI symptoms still count after the doctor turned the switch off (the reading happened)", () => {

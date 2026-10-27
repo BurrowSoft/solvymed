@@ -1,6 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { scoreRequest, type Answers, type ChannelConfig } from "./score";
-import { aiApply, aiMark, aiRelease, aiReserve, type ApplyOutcome } from "./aiDb";
+import { aiApply, aiRelease, aiReserve, type ApplyOutcome } from "./aiDb";
 import { aiSystem, aiUserMessage, maskForAi, toAiLines, validateAiOutput, type AiReader } from "./aiRead";
 
 // One reading of one request, after pc_submit saved it with its keyword score (M7 plan §1–§5).
@@ -8,7 +8,8 @@ import { aiSystem, aiUserMessage, maskForAi, toAiLines, validateAiOutput, type A
 // what the patient was shown. Every outcome ends in a final ai_status (contract §2):
 // - toggle off / no text / demo / already read → the database refuses the reserve: nothing.
 // - out of credits → the reserve marks 'no_credits'.
-// - no AI key on this deployment → 'failed' (no credit taken).
+// - no AI key on this deployment (a preview) → nothing: the request stays 'none', so it uses no
+//   credit and no testers-phase slot (cf, #665).
 // - an error or the 8 s timeout → release: 'failed', the credit back.
 // - else apply: 'done' (upward only, enforced again by the database), 'stale' (a rules save
 //   or a reply in between; the credit is kept) or 'refused'.
@@ -26,10 +27,7 @@ export async function runAiReading(p: {
   const { admin, reader, requestId, config, answers } = p;
   // The same gates as the reserve, checked first so a channel without the AI costs no call.
   if (!config.aiMapping || answers.text.trim() === "") return "skipped";
-  if (!reader) {
-    await aiMark(admin, requestId, "failed").catch(() => {});
-    return "no_reader";
-  }
+  if (!reader) return "no_reader";
   if (!(await aiReserve(admin, requestId))) return "not_allowed";
   try {
     const base = scoreRequest(config, answers);
