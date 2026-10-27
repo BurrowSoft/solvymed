@@ -265,8 +265,9 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 style={{ top: bar.top }}
                 className="fixed inset-x-0 z-50 flex items-start gap-2 border-b-2 border-red-600 bg-red-50 px-3 py-2 text-left text-sm font-semibold text-red-900 shadow-md">
                 <span className="shrink-0">⚠</span>
-                {/* The number outside the clamp (cf): it shows even when the sentence is cut short. */}
-                <b data-testid="pc-emergency-bar-number" className="shrink-0 tabular-nums">{number}</b>
+                {/* The number outside the clamp (cf): it shows even when the sentence is cut short.
+                    Only a real number (as the app): the "local emergency number" phrase stays in the sentence. */}
+                {page.emergencyNumber && <b data-testid="pc-emergency-bar-number" className="shrink-0 tabular-nums">{page.emergencyNumber}</b>}
                 <span className={bar.lines === 2 ? "line-clamp-2" : "line-clamp-1"}>{t("emergencyNow", { number })}</span>
               </button>,
               document.body,

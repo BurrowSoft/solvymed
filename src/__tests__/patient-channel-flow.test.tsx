@@ -441,6 +441,20 @@ describe("the emergency bar while typing", () => {
     }
   });
 
+  it("no known number (another country): no number element, the local-number phrase stays in the sentence", () => {
+    setup();
+    try {
+      render(wrap(<PatientChannelFlow page={{ ...SAMPLE_PAGE, emergencyNumber: null }} preview={samplePreview()} submit={sampleSubmit()} banner={P.sampleBanner} />));
+      toForm("efe");
+      type("falta de ar");
+      const bar = screen.getByTestId("pc-emergency-bar");
+      expect(screen.queryByTestId("pc-emergency-bar-number")).toBeNull();
+      expect(bar).toHaveTextContent(P.emergencyNow.replace("{number}", P.localNumber));
+    } finally {
+      restore();
+    }
+  });
+
   it("not typing (a ticked box): no bar, the line is scrolled to as before", () => {
     setup();
     try {
