@@ -2576,6 +2576,7 @@
       "remove": "Remover",
       "removeConfirm": "Remover a imagem de capa?",
       "useThis": "Usar esta imagem",
+      "uploading": "Enviando…",
       "errorSize": "A imagem deve ter no máximo 3 MB.",
       "errorType": "Use um arquivo PNG, JPEG ou WebP.",
       "errorNotSetUp": "Salve as configurações do canal antes de enviar a capa."
@@ -2585,8 +2586,9 @@
       "use": "Usar o modelo",
       "openRequests": "Responda ou feche as solicitações abertas antes de trocar o modelo.",
       "backTo": "Voltar ao modelo inicial",
-      "confirm": "Isso substitui seus sintomas, combinações, faixas de urgência, remédios e mensagens automáticas pelo modelo. Continuar?",
-      "replace": "Substituir"
+      "confirm": "Isso substitui seus sintomas, combinações, faixas de urgência, remédios e mensagens automáticas pelo modelo. Seus motivos e perguntas frequentes são mantidos. Continuar?",
+      "replace": "Substituir",
+      "restored": "Modelo restaurado. Seus motivos e perguntas frequentes foram mantidos."
     },
     "title": "Canal do Paciente",
     "entryText": "Seus pacientes tiram dúvidas por um canal organizado, com a urgência pela pontuação que você configura.",
@@ -2599,6 +2601,7 @@
       "save": "Salvar regras",
       "saving": "Salvando…",
       "saved": "Regras salvas. As solicitações em aberto foram recalculadas com elas.",
+      "savedOnly": "Regras salvas.",
       "unsaved": "Alterações não salvas",
       "conflict": "Estas regras foram alteradas em outro lugar. Recarregue a página para ver a versão atual.",
       "reload": "Recarregar",

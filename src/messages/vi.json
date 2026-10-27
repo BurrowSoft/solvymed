@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Chế độ demo",
     "barText": "Chế độ demo · dữ liệu giả, xóa trong vòng 24 giờ",
@@ -2576,6 +2576,7 @@
       "remove": "Xóa",
       "removeConfirm": "Xóa ảnh bìa?",
       "useThis": "Dùng ảnh này",
+      "uploading": "Đang tải lên…",
       "errorSize": "Ảnh tối đa 3 MB.",
       "errorType": "Hãy dùng tệp PNG, JPEG hoặc WebP.",
       "errorNotSetUp": "Hãy lưu cài đặt kênh trước khi tải ảnh bìa lên."
@@ -2585,8 +2586,9 @@
       "use": "Dùng mẫu",
       "openRequests": "Hãy trả lời hoặc đóng các yêu cầu đang mở trước khi đổi mẫu.",
       "backTo": "Quay lại mẫu ban đầu",
-      "confirm": "Thao tác này sẽ thay các triệu chứng, tổ hợp, mức độ khẩn cấp, thuốc và tin nhắn tự động của bạn bằng mẫu. Tiếp tục?",
-      "replace": "Thay thế"
+      "confirm": "Thao tác này sẽ thay các triệu chứng, tổ hợp, mức độ khẩn cấp, thuốc và tin nhắn tự động của bạn bằng mẫu. Lý do và câu hỏi thường gặp của bạn vẫn được giữ. Tiếp tục?",
+      "replace": "Thay thế",
+      "restored": "Đã khôi phục mẫu. Lý do và câu hỏi thường gặp của bạn vẫn được giữ."
     },
     "title": "Kênh Bệnh nhân",
     "entryText": "Bệnh nhân của bạn gửi câu hỏi qua một kênh có tổ chức, được xếp theo mức độ khẩn cấp dựa trên thang điểm bạn thiết lập.",
@@ -2599,6 +2601,7 @@
       "save": "Lưu quy tắc",
       "saving": "Đang lưu…",
       "saved": "Đã lưu quy tắc. Các yêu cầu đang mở đã được tính lại theo quy tắc này.",
+      "savedOnly": "Đã lưu quy tắc.",
       "unsaved": "Có thay đổi chưa lưu",
       "conflict": "Các quy tắc này đã được thay đổi ở nơi khác. Hãy tải lại trang để xem phiên bản hiện tại.",
       "reload": "Tải lại",

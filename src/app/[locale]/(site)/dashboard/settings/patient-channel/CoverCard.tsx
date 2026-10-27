@@ -91,7 +91,9 @@ export function CoverCard({ professionalId, initialPath }: { professionalId: str
 
       {preview ? (
         <div className="mt-3 flex flex-wrap gap-2">
-          <button type="button" className={PRIMARY} disabled={busy} onClick={() => void send()}>{t("useThis")}</button>
+          <button type="button" className={PRIMARY} disabled={busy} onClick={() => void send()}>
+            {busy ? <span className="flex items-center gap-2"><span className="spinner-white" />{t("uploading")}</span> : t("useThis")}
+          </button>
           <button type="button" className={GHOST} disabled={busy} onClick={() => setPreview(null)}>{tReasons("cancel")}</button>
         </div>
       ) : confirmRemove ? (

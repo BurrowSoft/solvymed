@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Demo mode",
     "barText": "Demo mode · fictional data, deleted within 24 h",
@@ -2606,6 +2606,7 @@
       "remove": "Remove",
       "removeConfirm": "Remove the cover image?",
       "useThis": "Use this image",
+      "uploading": "Uploading…",
       "errorSize": "The image must be 3 MB or less.",
       "errorType": "Use a PNG, JPEG or WebP file.",
       "errorNotSetUp": "Save the channel settings before uploading the cover."
@@ -2615,8 +2616,9 @@
       "use": "Use the template",
       "openRequests": "Answer or close the open requests before changing the template.",
       "backTo": "Back to the starting template",
-      "confirm": "This replaces your symptoms, combinations, urgency bands, medicines and automatic messages with the template. Continue?",
-      "replace": "Replace"
+      "confirm": "This replaces your symptoms, combinations, urgency bands, medicines and automatic messages with the template. Your reasons and FAQ are kept. Continue?",
+      "replace": "Replace",
+      "restored": "Template restored. Your reasons and FAQ were kept."
     },
     "title": "Patient Channel",
     "entryText": "Your patients ask their questions through an organised channel, ranked by urgency with the score you set up.",
@@ -2629,6 +2631,7 @@
       "save": "Save rules",
       "saving": "Saving…",
       "saved": "Rules saved. Open requests were recalculated with them.",
+      "savedOnly": "Rules saved.",
       "unsaved": "Unsaved changes",
       "conflict": "These rules were changed somewhere else. Reload the page to see the current version.",
       "reload": "Reload",

@@ -1,4 +1,4 @@
-﻿{
+{
   "demo": {
     "barLabel": "Mode demo",
     "barText": "Mode demo · data fiktif, dihapus dalam 24 jam",
@@ -2576,6 +2576,7 @@
       "remove": "Hapus",
       "removeConfirm": "Hapus gambar sampul?",
       "useThis": "Gunakan gambar ini",
+      "uploading": "Mengunggah…",
       "errorSize": "Ukuran gambar maksimal 3 MB.",
       "errorType": "Gunakan file PNG, JPEG, atau WebP.",
       "errorNotSetUp": "Simpan pengaturan saluran sebelum mengunggah sampul."
@@ -2585,8 +2586,9 @@
       "use": "Gunakan templat",
       "openRequests": "Jawab atau tutup permintaan yang masih terbuka sebelum mengganti templat.",
       "backTo": "Kembali ke templat awal",
-      "confirm": "Ini akan mengganti gejala, kombinasi, tingkat urgensi, obat, dan pesan otomatis Anda dengan templat. Lanjutkan?",
-      "replace": "Ganti"
+      "confirm": "Ini akan mengganti gejala, kombinasi, tingkat urgensi, obat, dan pesan otomatis Anda dengan templat. Alasan dan FAQ Anda tetap disimpan. Lanjutkan?",
+      "replace": "Ganti",
+      "restored": "Templat dipulihkan. Alasan dan FAQ Anda tetap disimpan."
     },
     "title": "Kanal Pasien",
     "entryText": "Pasien Anda mengajukan pertanyaan melalui kanal yang tertata, diurutkan berdasarkan tingkat urgensi dengan skor yang Anda atur.",
@@ -2599,6 +2601,7 @@
       "save": "Simpan aturan",
       "saving": "Menyimpan…",
       "saved": "Aturan disimpan. Permintaan terbuka telah dihitung ulang dengan aturan ini.",
+      "savedOnly": "Aturan disimpan.",
       "unsaved": "Perubahan belum disimpan",
       "conflict": "Aturan ini telah diubah di tempat lain. Muat ulang halaman untuk melihat versi terbaru.",
       "reload": "Muat ulang",
