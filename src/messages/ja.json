@@ -928,7 +928,8 @@
       "deleteAccount": "アカウントを削除",
       "deleteConfirm": "アカウントが削除されます。いつでも再登録できます。",
       "deletedNotice": "アカウントを削除しました。",
-      "requestDeletion": "アカウント削除を依頼"
+      "requestDeletion": "アカウント削除を依頼",
+      "notConnected": "現在、どの医療機関にも接続されていません。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -2813,7 +2814,13 @@
       "notTaking": "現在、クリニックはここで新しいメッセージを受け付けていません。",
       "viewMessages": "メッセージを見る",
       "earlierLink": "以前のメッセージを見る",
-      "earlierWith": "{doctor}との以前のメッセージを見る"
+      "earlierWith": "{doctor}との以前のメッセージを見る",
+      "sentUrgent": "急ぐ場合は返信を待たずに、今すぐ受診するか {number} に電話してください。",
+      "sendSecretary": "受付に送信",
+      "goesToSecretary": "宛先：受付",
+      "sentSecretary": "受け付けました。受付が {n, plural, other {# 営業日}}以内に返信します。",
+      "openTextSecretary": "受付に送信済みのリクエストを更新しますか？新しいリクエストで置き換えられます。",
+      "entryButtonNamed": "{doctor}に連絡"
     },
     "channel": {
       "title": "あなたのチャネル",
@@ -2845,7 +2852,8 @@
       "alwaysShown": "緊急時の注意、回答目安、ルールは常に表示され、すべての方に同じ内容です。ブランドで変わるのは見た目で、ルールは変わりません。",
       "save": "チャネルを保存",
       "saved": "保存しました。",
-      "saveError": "保存できませんでした。接続を確認して、もう一度お試しください。"
+      "saveError": "保存できませんでした。接続を確認して、もう一度お試しください。",
+      "needsReason": "チャンネルを有効にするには、理由を1つ以上追加してください。"
     },
     "reasons": {
       "title": "連絡理由",
@@ -2949,7 +2957,7 @@
       "warningShown": "患者に緊急時の警告が表示されました。",
       "autoShown": "患者に表示された自動メッセージ",
       "history": "この患者からの過去のメッセージ",
-      "replyLabel": "返信（患者に通知で届きます）",
+      "replyLabel": "あなたの返信（患者はチャンネルで返信を確認します）",
       "reply": "返信して完了",
       "callBack": "患者に電話する",
       "call": "{phone} に電話",

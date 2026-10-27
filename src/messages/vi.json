@@ -928,7 +928,8 @@
       "deleteAccount": "Xóa tài khoản của tôi",
       "deleteConfirm": "Thao tác này xóa tài khoản của bạn. Bạn có thể đăng ký lại bất cứ lúc nào.",
       "deletedNotice": "Đã xóa tài khoản.",
-      "requestDeletion": "Yêu cầu xóa tài khoản"
+      "requestDeletion": "Yêu cầu xóa tài khoản",
+      "notConnected": "Hiện bạn chưa kết nối với phòng khám nào."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",
@@ -2813,7 +2814,13 @@
       "notTaking": "Hiện phòng khám không nhận tin nhắn mới tại đây.",
       "viewMessages": "Xem tin nhắn của tôi",
       "earlierLink": "Xem tin nhắn trước đây",
-      "earlierWith": "Xem tin nhắn trước đây với {doctor}"
+      "earlierWith": "Xem tin nhắn trước đây với {doctor}",
+      "sentUrgent": "Nếu khẩn cấp, đừng chờ trả lời: hãy đi khám ngay hoặc gọi {number}.",
+      "sendSecretary": "Gửi đến lễ tân",
+      "goesToSecretary": "Đến lễ tân",
+      "sentSecretary": "Đã nhận. Lễ tân sẽ trả lời trong vòng {n, plural, other {# ngày làm việc}}.",
+      "openTextSecretary": "Bạn muốn cập nhật yêu cầu mà lễ tân đang có? Yêu cầu mới sẽ thay thế yêu cầu cũ.",
+      "entryButtonNamed": "Liên hệ {doctor}"
     },
     "channel": {
       "title": "Kênh của bạn",
@@ -2845,7 +2852,8 @@
       "alwaysShown": "Cảnh báo khẩn cấp, thời gian phản hồi và quy tắc luôn được hiển thị, giống nhau cho mọi người: thương hiệu thay đổi giao diện, không thay đổi quy tắc.",
       "save": "Lưu kênh",
       "saved": "Đã lưu.",
-      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại."
+      "saveError": "Không thể lưu. Vui lòng kiểm tra kết nối và thử lại.",
+      "needsReason": "Thêm ít nhất một lý do để bật kênh."
     },
     "reasons": {
       "title": "Lý do liên hệ",
@@ -2949,7 +2957,7 @@
       "warningShown": "Bệnh nhân đã thấy cảnh báo khẩn cấp.",
       "autoShown": "Tin nhắn tự động bệnh nhân đã thấy",
       "history": "Tin nhắn trước đây của bệnh nhân này",
-      "replyLabel": "Câu trả lời của bạn (bệnh nhân nhận qua thông báo)",
+      "replyLabel": "Câu trả lời của bạn (bệnh nhân xem câu trả lời trong kênh)",
       "reply": "Trả lời và đóng",
       "callBack": "Tôi sẽ gọi cho bệnh nhân",
       "call": "Gọi {phone}",

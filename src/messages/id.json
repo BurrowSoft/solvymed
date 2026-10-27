@@ -928,7 +928,8 @@
       "deleteAccount": "Hapus akun saya",
       "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
       "deletedNotice": "Akun dihapus.",
-      "requestDeletion": "Minta penghapusan akun"
+      "requestDeletion": "Minta penghapusan akun",
+      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -2813,7 +2814,13 @@
       "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",
       "viewMessages": "Lihat pesan saya",
       "earlierLink": "Lihat pesan sebelumnya",
-      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}"
+      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}",
+      "sentUrgent": "Jika mendesak, jangan menunggu balasan: segera cari pertolongan atau hubungi {number}.",
+      "sendSecretary": "Kirim ke resepsionis",
+      "goesToSecretary": "Ke resepsionis",
+      "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
+      "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
+      "entryButtonNamed": "Hubungi {doctor}"
     },
     "channel": {
       "title": "Kanal Anda",
@@ -2845,7 +2852,8 @@
       "alwaysShown": "Peringatan darurat, waktu respons, dan aturan selalu ditampilkan, sama untuk semua orang: merek Anda mengubah tampilan, bukan aturannya.",
       "save": "Simpan kanal",
       "saved": "Tersimpan.",
-      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi."
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal."
     },
     "reasons": {
       "title": "Alasan menghubungi",
@@ -2949,7 +2957,7 @@
       "warningShown": "Pasien melihat peringatan darurat.",
       "autoShown": "Pesan otomatis yang dilihat pasien",
       "history": "Pesan sebelumnya dari pasien ini",
-      "replyLabel": "Balasan Anda (pasien menerimanya lewat notifikasi)",
+      "replyLabel": "Balasan Anda (pasien melihat balasan di kanal)",
       "reply": "Balas dan tutup",
       "callBack": "Saya akan menelepon pasien",
       "call": "Telepon {phone}",

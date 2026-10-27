@@ -928,7 +928,8 @@
       "deleteAccount": "Excluir minha conta",
       "deleteConfirm": "Isso apaga sua conta. Você pode se cadastrar de novo quando quiser.",
       "deletedNotice": "Conta excluída.",
-      "requestDeletion": "Pedir exclusão da conta"
+      "requestDeletion": "Pedir exclusão da conta",
+      "notConnected": "Você não está conectado a nenhum consultório no momento."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",
@@ -2813,7 +2814,13 @@
       "notTaking": "O consultório não está recebendo novas mensagens por aqui no momento.",
       "viewMessages": "Ver minhas mensagens",
       "earlierLink": "Ver mensagens anteriores",
-      "earlierWith": "Ver mensagens anteriores com {doctor}"
+      "earlierWith": "Ver mensagens anteriores com {doctor}",
+      "sentUrgent": "Se for urgente, não espere a resposta: procure atendimento agora ou ligue {number}.",
+      "sendSecretary": "Enviar para a secretaria",
+      "goesToSecretary": "Para a secretaria",
+      "sentSecretary": "Recebido. A secretaria responde em até {n, plural, one {# dia útil} other {# dias úteis}}.",
+      "openTextSecretary": "Quer atualizar a que já está com a secretaria? A nova substitui a anterior.",
+      "entryButtonNamed": "Fale com {doctor}"
     },
     "channel": {
       "title": "Seu canal",
@@ -2845,7 +2852,8 @@
       "alwaysShown": "O aviso de emergência, o prazo e as regras aparecem sempre, iguais para todos: a marca muda a aparência, não as regras.",
       "save": "Salvar canal",
       "saved": "Salvo.",
-      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo."
+      "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "needsReason": "Adicione pelo menos um motivo para ativar o canal."
     },
     "reasons": {
       "title": "Motivos do contato",
@@ -2949,7 +2957,7 @@
       "warningShown": "O paciente viu o aviso de emergência.",
       "autoShown": "Mensagens automáticas que o paciente viu",
       "history": "Mensagens anteriores deste paciente",
-      "replyLabel": "Sua resposta (o paciente recebe por notificação)",
+      "replyLabel": "Sua resposta (o paciente vê a resposta no canal)",
       "reply": "Responder e encerrar",
       "callBack": "Vou ligar para o paciente",
       "call": "Ligar {phone}",
