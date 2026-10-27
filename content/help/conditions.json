@@ -147,9 +147,13 @@
     "met": false,
     "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with the mobile privacy-accept migration (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   },
+  "whatsapp-optout-live": {
+    "met": false,
+    "what": "The WhatsApp opt-out is live: every automatic WhatsApp message (appointments and Patient Channel) ends with a link to stop receiving them, and the opt-out is re-checked before each send (the mobile developer's item; 01 made it required before WhatsApp is switched on). Privacy §6e PC-W1 (with whatsapp-auto-live). Needs PRIVACY_VERSION 2026-10-28."
+  },
   "privacy-th-live": {
     "met": false,
-    "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text."
+    "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text. BEFORE flipping: the Thai page also gets Vitor's 10-27 lines (#664: PC-8′, PC-10′/b/c/d, PC-N1′/N2′/N3, PC-W1, §3.6 / §6g), translated and read by Vitor (privacy-th.test.tsx pins the lag)."
   },
   "help-th-live": {
     "met": false,
@@ -297,7 +301,7 @@
   },
   "pc-notify-live": {
     "met": false,
-    "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (the mobile privacy-accept migration accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule."
+    "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (the mobile privacy-accept migration accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule. BEFORE flipping (cf, #664 B1): the mobile fix that stops storing the doctor's name in pc_notice_outbox.prefix (computed at claim time instead) is live, so PC-N2′ (\"holds no message, name or health information\") is true."
   },
   "patient-channel-live": {
     "met": false,
@@ -313,7 +317,7 @@
   },
   "pc-ai-live": {
     "met": false,
-    "what": "Patient Channel M7 is live: SolvyAI reads a request only when the professional turns on the channel's AI option (pc_settings.ai_mapping, off by default), only to suggest symptoms from their own list, on their AI credits, with the 6b masking, upward only (score.ts rule 7), and the form tells the patient. Gates privacy §6i PC-10. Flipping needs PRIVACY_VERSION 2026-10-28."
+    "what": "Patient Channel M7 is live: SolvyAI reads a request only when the professional turns on the channel's AI option (pc_settings.ai_mapping, off by default), only to suggest symptoms from their own list, on their AI credits, with the masking of PC-10′ (the 6b patterns + the patient's and the professional's names), upward only (score.ts rule 7), and the form tells the patient. Gates privacy §6i PC-10′ and PC-10d (the AI lines' retention), the §5 Anthropic row (PC-10b) and §6b's exception (PC-10c), only together with patient-channel-live. BEFORE flipping: the migration that drops 237's ai_mapping CHECK (or the tester gate) is live. Flipping needs PRIVACY_VERSION 2026-10-28."
   },
   "reminders-live": {
     "met": false,

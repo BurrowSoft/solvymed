@@ -4,7 +4,7 @@ import { noticeChannels } from "@/lib/noticeChannels";
 
 // English Privacy Policy (authoritative with pt-BR; keep both in step).
 // Every statement here must match what the Service enforces today.
-export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false }: { turnstile: boolean; demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
+export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false, pcNotify = false, whatsappOptout = false }: { turnstile: boolean; demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; pcNotify?: boolean; whatsappOptout?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
       <Section title="1. Overview">
@@ -47,7 +47,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           {founders
             ? ", or, if you apply to the Founders Program, with your application (kept up to 12 months after its last status change, or while your account exists if you're accepted)."
             : "."}
-          {appReferrer && " In the Android app, with the same consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up."}{" "}
+          {appReferrer && " In the Android app, with the app's own optional consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up."}{" "}
           Until you confirm your email, we keep these details with your pending signup (deleted when you confirm, or after 30 days at most).{" "}
           <strong>Patient data is never used for analytics or marketing.</strong>
         </p>
@@ -93,7 +93,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             ["Supabase", "Database, authentication, file storage", "Brazil (São Paulo region)"],
             ["Vercel", "Website hosting; server processing in Brazil (São Paulo), static content via a global edge network", "Brazil / global"],
             ["Stripe", "Subscription payments", "USA / global"],
-            ["Resend", `Transactional email (confirmations, password resets${reminders ? ", one-time account reminders" : ""})${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
+            ["Resend", `Transactional email (confirmations, password resets${reminders ? ", one-time account reminders" : ""}${pcNotify ? ", the Patient Channel notice that the clinic replied (a fixed sentence and a link)" : ""})${secretaryInvites ? ", invitations sent at a professional's request" : ""} and alerts to our support team about an account (for example, a deletion request or a clinic setting that needs our action)`, "USA"],
             ["Expo", "Push notification delivery", "USA"],
             ["Sentry", "Error monitoring for the app and website (no patient data)", "USA"],
             ["PostHog", "Website usage statistics, only with your consent", "EU"],
@@ -106,14 +106,14 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             // while the sign-up row above stays dormant.
             ...(demo ? [["Cloudflare (Turnstile)", "Checks that a person, not a bot, is starting the demo", "Global"]] : []),
             ...(solvyai
-              ? [["Anthropic (SolvyAI, professionals only, when used)", "Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request", "USA"]]
+              ? [[pcAi ? "Anthropic (SolvyAI, when used)" : "Anthropic (SolvyAI, professionals only, when used)", `Processes the professional's typed questions and requests to answer them; for actions the professional has switched on, the patient's name, date of birth and the appointment details needed for the request${pcAi ? "; and, when a professional turns on the Patient Channel's AI option, the messages their patients send there, with the patient's and the professional's names, ID numbers, phone numbers and e-mails masked, only to suggest symptoms from the professional's own list" : ""}`, "USA"]]
               : []),
             ...(line
-              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", "Sends appointment notices (the doctor's and the clinic's names, the date and time, and what happened: confirmed, moved, reminder, cancelled); we store the patient's LINE user ID to deliver them", "Japan / Thailand"]]
+              ? [["LY Corporation (LINE), Thai clinics only, for patients who connect LINE", `Sends appointment notices (the doctor's and the clinic's names, the date and time, and what happened: confirmed, moved, reminder, cancelled); we store the patient's LINE user ID to deliver them${pcNotify ? "; and, for the Patient Channel, the notice that the clinic replied (a fixed sentence and a link, with no health information)" : ""}`, "Japan / Thailand"]]
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", "Sends the clinic's automatic WhatsApp messages from the clinic's own Z-API account and WhatsApp number: appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)", "Brazil"],
+                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", `Sends the clinic's automatic WhatsApp messages from the clinic's own Z-API account and WhatsApp number: appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect${pcNotify ? ", and the Patient Channel notice that the clinic replied (a fixed sentence and a link)" : ""}, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)`, "Brazil"],
                   ["WhatsApp (Meta)", "Delivers those WhatsApp messages", "USA / global"],
                 ]
               : []),
@@ -147,7 +147,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
       {solvyai && (
         <Section title="6b. SolvyAI (professionals only)">
           <ul className="list-disc space-y-1 pl-5">
-            <li>SolvyAI is an optional assistant for professionals. It never reads medical records, prescriptions, exams or files.</li>
+            <li>SolvyAI is an optional assistant for professionals. It never reads medical records, prescriptions, exams or files{pcAi && ", except a patient's Patient Channel message when the professional turns on that option (see 6i)"}.</li>
             <li>What you type in the chat is sent as you write it; don&rsquo;t type clinical details. CPF and Thai ID numbers, phone numbers and emails are masked before sending.</li>
             <li>Actions (booking, moving, cancelling, blocking time, adding patients, marking payments) are off by default; when a professional turns them on, the patient data needed for each request is sent as described in section 5, and nothing is saved without the professional&rsquo;s confirmation.</li>
             <li>We don&rsquo;t keep chat conversations after the session. A 👍/👎 on an answer is recorded as a vote only, never the conversation.</li>
@@ -177,7 +177,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
       {(notices || whatsapp) && (
         <Section title="6e. Patient notices">
           <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
-          {whatsappAuto && <p className="mt-2">Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic&rsquo;s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).</p>}
+          {whatsappAuto && <p className="mt-2">Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic&rsquo;s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).{whatsappOptout && " The automatic WhatsApp messages have a link to stop receiving them."}</p>}
         </Section>
       )}
 
@@ -194,13 +194,19 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
 
       <Section title="6g. Notifications">
         <ul>
-          <li>We send push notifications about appointments: requests and their answers, confirmations, changes and cancellations{reminders && " and, at most once, a reminder to set up your practice"}. A professional can also send a general notice to the patients connected to them (a title and a message). Notifications reach your device through Expo (see section 5).</li>
+          <li>We send push notifications about appointments: requests and their answers, confirmations, changes and cancellations.{reminders && " At most once, we also send a push reminder to set up your practice."} A professional can also send a general notice to the patients connected to them (a title and a message). Notifications reach your device through Expo (see section 5).</li>
           <li>When our servers send a notification, we keep it in a queue only to deliver it: who it is for and who caused it, which appointment and kind of notice it is, the visit&rsquo;s date and time, the names shown in it, and its delivery status (for a general notice, its title and message). Each one is deleted at most 30 days after it was created.</li>
           {closureNotices && (
             <li>When a professional closes their account, our server sends their patients a notice that the practice closed or that an appointment was cancelled. To do this we keep only the clinic&rsquo;s name (which can be the professional&rsquo;s own name) and country, the appointment date and time (for cancelled appointments), and the delivery status, and we delete the notice as soon as it&rsquo;s sent (at most 30 days).</li>
           )}
           {patientDocs && (
             <li>When a professional shares a document, the patient gets a notification with the professional&rsquo;s name only. When a patient sends a document, the professional gets one with the patient&rsquo;s name only. A notification never includes a document&rsquo;s title or content.</li>
+          )}
+          {pcNotify && (
+            <li>Patient Channel: when a patient sends a request, the professional (or, for administrative requests, the clinic&rsquo;s secretaries) gets a push notification &ldquo;New message from a patient&rdquo;. When the clinic replies, the patient gets a push notification saying the professional replied or will call, and at most one message outside the app: by LINE if they connected LINE; otherwise by WhatsApp, from the clinic&rsquo;s own number, if the clinic turned on automatic WhatsApp messages and the patient&rsquo;s record has a phone number; otherwise by e-mail to the address they sign in with. That message says only &ldquo;You received a reply in the Patient Channel.&rdquo; with a link to the channel page. The e-mails have a link to stop receiving them; we keep that choice with your account, and it&rsquo;s deleted with the account. Replies still appear in the app and on the website. If a notice can&rsquo;t be sent within a day, it is dropped; the reply stays visible in the channel. No notification about the Patient Channel includes the message, symptoms or any other health information, and the message outside the app doesn&rsquo;t name the professional. Messages outside the app aren&rsquo;t sent between 21:00 and 08:00 in the clinic&rsquo;s time zone: they wait until 08:00. Notifications to the clinic are push only.</li>
+          )}
+          {pcNotify && (
+            <li>Patient Channel notices wait in their own queue only to deliver them: which request, who it is for, the kind of notice and the channel, the language, when to send it and whether it was sent (with, at most, the provider&rsquo;s error code). It holds no message, name or health information, and each entry is deleted at most 30 days after it was created, whether it was sent or not. Once sent, the message stays in the patient&rsquo;s LINE or WhatsApp chat or mailbox, and LINE, Z-API, WhatsApp (Meta), Resend and Expo keep their own delivery records (see section 5).</li>
           )}
           <li>You can turn notifications off at any time in your device&rsquo;s settings.</li>
         </ul>
@@ -232,9 +238,10 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <li>The scoring rules (the points and thresholds) stay on our servers and are only shown to the professional; they are never sent to the patient&rsquo;s device.</li>
             <li>The channel is not for emergencies, and the form says so: in an emergency, call the local emergency number. The form also tells the patient that the request goes into their record.</li>
             <li>The FAQ and the automatic guidance can answer a question without sending anything. When they do, we only count it for the professional (how many questions were solved this way, per day), without who asked or what.</li>
-            <li>A patient can read their own requests and the replies on the channel page. If the professional turns the channel off, or the patient is no longer connected, the patient can still read the requests they already sent there but can&rsquo;t send new ones. This doesn&rsquo;t apply if the practice has closed or the professional archived the patient&rsquo;s record, or while we pause the channel.</li>
+            <li>A patient can always read the requests they sent and the replies, even if the professional turns the channel off, the patient is no longer connected, their record was archived or the practice closed; in those cases they can&rsquo;t send new ones. This doesn&rsquo;t apply while we pause the channel.</li>
             {pcCover && <li>The professional can add a cover image to their channel page. Like the logo (see 6f), the cover image is public once saved.</li>}
-            {pcAi && <li>SolvyAI reads the patient&rsquo;s message only if the professional turns on the AI option for the channel, and then only to suggest symptoms from the professional&rsquo;s own list; it uses the professional&rsquo;s AI credits, and names and identifiers are masked as described in section 6b. It never answers the patient. If the option is on, the form tells the patient that the clinic uses AI to organise messages.</li>}
+            {pcAi && <li>SolvyAI reads the patient&rsquo;s message only if the professional turns on the AI option for the channel, and then only to suggest symptoms from the professional&rsquo;s own list; it uses the professional&rsquo;s AI credits. Before the message is sent, the patient&rsquo;s and the professional&rsquo;s names, ID numbers, phone numbers and e-mails are masked; other names written in the message may not be. It never answers the patient. If the option is on, the form tells the patient that the clinic uses AI to organise messages.</li>}
+            {pcAi && <li>The symptoms SolvyAI suggests, with the words from the message they were based on, are saved with the request as part of the medical record and kept for the same period (see 9), unless the professional undoes them, or removes that symptom from their list while the request is still open, which deletes them. The record also notes who confirmed or undid the suggestions, and when. SolvyAI&rsquo;s use is counted only as daily totals for the professional&rsquo;s AI credits, without the request or the patient.</li>}
           </ul>
         </Section>
       )}

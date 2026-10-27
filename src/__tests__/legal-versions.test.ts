@@ -224,7 +224,7 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
 });
 
 describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo, automatic WhatsApp (Vitor's OKs, 10-27)", () => {
-  const CONDITIONS = ["patient-channel-live", "pc-cover-live", "pc-ai-live", "reminders-live", "app-referrer-live", "app-demo-live", "whatsapp-auto-live"];
+  const CONDITIONS = ["patient-channel-live", "pc-cover-live", "pc-ai-live", "reminders-live", "app-referrer-live", "app-demo-live", "whatsapp-auto-live", "pc-notify-live", "whatsapp-optout-live"];
   const render = async (props: Record<string, boolean>) => {
     const { renderToStaticMarkup } = await import("react-dom/server");
     const { createElement } = await import("react");
@@ -260,13 +260,22 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     expect(pc.en).toContain("The exception is Patient Channel requests: secretaries see the administrative ones");
     expect(pc.pt).toContain("A abertura de uma solicitação fica registrada no log de acessos.");
     expect(pc.en).toContain("Patient Channel requests and replies are part of the medical record");
-    // PC-9 and PC-10 wait for their own features. (PC-N1/N2, the channel's
-    // notices, come with their 247 rewrite and Vitor's OK: not in this text.)
+    // PC-8′ (Vitor, 10-27): a patient can always read what they sent; only the pause stops it.
+    expect(pc.en).toContain("A patient can always read the requests they sent and the replies, even if the professional turns the channel off, the patient is no longer connected, their record was archived or the practice closed; in those cases they can&rsquo;t send new ones. This doesn&rsquo;t apply while we pause the channel.".replace(/&rsquo;/g, "’"));
+    expect(pc.pt).toContain("O paciente sempre pode ler as solicitações que enviou e as respostas, mesmo que o profissional desligue o canal, o paciente não esteja mais conectado, o cadastro tenha sido arquivado ou o consultório encerrado; nesses casos não é possível enviar novas. Isso não vale enquanto pausamos o canal.");
+    for (const s of ["can still read the requests they already sent", "This doesn’t apply if the practice has closed"]) expect(pc.en).not.toContain(s);
+    // PC-9, PC-10′ and the notices wait for their own features.
     for (const s of ["cover image", "SolvyAI reads the patient", "New message from a patient"]) expect(pc.en).not.toContain(s);
     const pcAll = await render({ patientChannel: true, pcCover: true, pcAi: true });
     expect(pcAll.en).toContain("the cover image is public once saved");
-    expect(pcAll.en).toContain("It never answers the patient.");
-    expect(pcAll.pt).toContain("Ele nunca responde ao paciente.");
+    // PC-10′: the masking named exactly (Vitor, 10-27), not "as described in section 6b".
+    expect(pcAll.en).toContain("it uses the professional’s AI credits. Before the message is sent, the patient’s and the professional’s names, ID numbers, phone numbers and e-mails are masked; other names written in the message may not be. It never answers the patient.");
+    expect(pcAll.pt).toContain("usa os créditos de IA do profissional. Antes do envio da mensagem, os nomes do paciente e do profissional, números de documento, telefones e e-mails são mascarados; outros nomes escritos na mensagem podem não ser. Ele nunca responde ao paciente.");
+    expect(pcAll.en).not.toContain("names and identifiers are masked as described in section 6b");
+    // PC-10d (Vitor's "OK AI retention", 10-27): the AI lines' retention, with PC-10′.
+    expect(pcAll.en).toContain("The symptoms SolvyAI suggests, with the words from the message they were based on, are saved with the request as part of the medical record and kept for the same period (see 9), unless the professional undoes them, or removes that symptom from their list while the request is still open, which deletes them. The record also notes who confirmed or undid the suggestions, and when. SolvyAI’s use is counted only as daily totals for the professional’s AI credits, without the request or the patient.");
+    expect(pcAll.pt).toContain("Os sintomas sugeridos pelo SolvyAI, com as palavras da mensagem em que se basearam, ficam salvos com a solicitação como parte do prontuário e são mantidos pelo mesmo período (veja 9), a menos que o profissional os desfaça, ou remova aquele sintoma da sua lista enquanto a solicitação ainda está aberta, o que os apaga. O prontuário também registra quem confirmou ou desfez as sugestões, e quando. O uso do SolvyAI é contado apenas como totais diários para os créditos de IA do profissional, sem a solicitação nem o paciente.");
+    expect(pc.en).not.toContain("The symptoms SolvyAI suggests");
     expect(pcAll.en).toContain("which appointment and kind of notice it is");
     // The sub-parts never show without the section's own condition.
     expect((await render({ pcCover: true, pcAi: true })).en).not.toMatch(/cover image|SolvyAI reads the patient/);
@@ -276,16 +285,69 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     expect(rem.pt).toContain("Para enviar, no máximo uma vez, um lembrete para concluir o cadastro ou configurar sua clínica (por e-mail e, se você usa o app, por notificação push). Todo lembrete tem um link para não recebê-los mais.");
     expect(rem.en).toContain("password resets, one-time account reminders)");
     expect(rem.pt).toContain("redefinição de senha, lembretes únicos sobre a conta)");
-    expect(rem.en).toContain("changes and cancellations and, at most once, a reminder to set up your practice.");
-    expect(rem.pt).toContain("alterações e cancelamentos e, no máximo uma vez, um lembrete para configurar sua clínica.");
+    // cf's §6g rewording (Vitor, 10-27): the setup reminder is its own sentence.
+    expect(rem.en).toContain("changes and cancellations. At most once, we also send a push reminder to set up your practice. A professional can also send");
+    expect(rem.pt).toContain("alterações e cancelamentos. No máximo uma vez, também enviamos uma notificação push lembrando de configurar sua clínica. O profissional também pode");
+    expect((await render({})).en).toContain("changes and cancellations. A professional can also send");
 
+    // cf's §3.6 rewording (Vitor, 10-27): the app's own optional consent, not the cookie banner's.
     const ref = await render({ appReferrer: true });
-    expect(ref.en).toContain("In the Android app, with the same consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up.");
-    expect(ref.pt).toContain("No app Android, com o mesmo consentimento, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar.");
+    expect(ref.en).toContain("In the Android app, with the app's own optional consent, we save the campaign that led to the install (UTM tags from Google Play) with your account when you sign up.".replace("'", "&#x27;"));
+    expect(ref.pt).toContain("No app Android, com o consentimento opcional do próprio app, salvamos a campanha que levou à instalação (tags UTM do Google Play) com a sua conta ao se cadastrar.");
+    expect(ref.en).not.toContain("with the same consent");
 
     const demo = await render({ appDemo: true });
     expect(demo.en).toContain("without an account at solvymed.com/demo or in the Android app.");
     expect(demo.pt).toContain("sem conta em solvymed.com/demo ou no app Android.");
+  });
+
+  it("the AI reading (pc-ai-live): the Anthropic row (PC-10b) and §6b's exception (PC-10c), only with it", async () => {
+    const off = await render({ solvyai: true });
+    expect(off.en).toContain("Anthropic (SolvyAI, professionals only, when used)");
+    expect(off.en).toContain("It never reads medical records, prescriptions, exams or files.</li>");
+    expect(off.en).not.toContain("Patient Channel&#x27;s AI option");
+    const on = await render({ solvyai: true, pcAi: true });
+    expect(on.en).toContain("Anthropic (SolvyAI, when used)");
+    expect(on.en).not.toContain("professionals only, when used");
+    expect(on.en).toContain("the appointment details needed for the request; and, when a professional turns on the Patient Channel&#x27;s AI option, the messages their patients send there, with the patient&#x27;s and the professional&#x27;s names, ID numbers, phone numbers and e-mails masked, only to suggest symptoms from the professional&#x27;s own list");
+    expect(on.pt).toContain("Anthropic (SolvyAI, quando usado)");
+    expect(on.pt).toContain("os dados da consulta necessários ao pedido; e, quando um profissional ativa a opção de IA do Canal do Paciente, as mensagens que os pacientes dele enviam ali, com os nomes do paciente e do profissional, números de documento, telefones e e-mails mascarados, apenas para sugerir sintomas da própria lista do profissional");
+    expect(on.en).toContain("It never reads medical records, prescriptions, exams or files, except a patient&#x27;s Patient Channel message when the professional turns on that option (see 6i).</li>");
+    expect(on.pt).toContain("Ele nunca lê prontuários, receitas, exames ou arquivos, exceto a mensagem de um paciente no Canal do Paciente, quando o profissional ativa essa opção (veja 6i).</li>");
+  });
+
+  it("the Patient Channel notices (pc-notify-live): PC-N1′ and PC-N2′ in §6g, PC-N3 in the rows that are shown", async () => {
+    const all = { line: true, whatsappAuto: true, notices: true };
+    const off = await render(all);
+    for (const s of ["New message from a patient", "Patient Channel notices wait", "the Patient Channel notice that the clinic replied", "for the Patient Channel, the notice"]) expect(off.en).not.toContain(s);
+    const on = await render({ ...all, pcNotify: true });
+    expect(on.en).toContain("gets a push notification “New message from a patient”. When the clinic replies, the patient gets a push notification saying the professional replied or will call, and at most one message outside the app: by LINE if they connected LINE;");
+    expect(on.en).toContain("Messages outside the app aren’t sent between 21:00 and 08:00 in the clinic’s time zone: they wait until 08:00. Notifications to the clinic are push only.</li>");
+    expect(on.pt).toContain("recebe uma notificação push “Nova mensagem de um paciente”. Quando a clínica responde,");
+    expect(on.pt).toContain("Mensagens fora do app não são enviadas entre 21h e 8h no fuso horário da clínica: elas aguardam até as 8h. As notificações para a clínica são só push.</li>");
+    expect(on.en).toContain("Patient Channel notices wait in their own queue only to deliver them:");
+    expect(on.pt).toContain("Os avisos do Canal do Paciente aguardam numa fila própria só para serem entregues:");
+    // Today's queue sentence stays as it is (PC-N2′ is a new bullet, not an edit).
+    expect(on.en).toContain("which appointment and kind of notice it is");
+    // PC-N3: the LINE, Z-API and Resend rows.
+    expect(on.en).toContain("to deliver them; and, for the Patient Channel, the notice that the clinic replied (a fixed sentence and a link, with no health information)");
+    expect(on.en).toContain("a welcome message when they connect, and the Patient Channel notice that the clinic replied (a fixed sentence and a link), to the patient");
+    expect(on.en).toContain("password resets, the Patient Channel notice that the clinic replied (a fixed sentence and a link))");
+    expect(on.pt).toContain("para entregá-los; e, no Canal do Paciente, o aviso de que a clínica respondeu (uma frase fixa e um link, sem informação de saúde)");
+    expect(on.pt).toContain("quando ele se conecta, e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link), ao paciente");
+    expect(on.pt).toContain("redefinição de senha, o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link))");
+    // Each row clause only where its own row shows.
+    const bare = await render({ pcNotify: true });
+    expect(bare.en).not.toMatch(/LY Corporation|Z-API, Brazilian/);
+    expect(bare.en).toContain("password resets, the Patient Channel notice that the clinic replied");
+  });
+
+  it("the WhatsApp opt-out line (PC-W1): with whatsapp-optout-live, inside §6e's automatic WhatsApp line", async () => {
+    const base = { notices: true, whatsapp: true, whatsappAuto: true };
+    expect((await render(base)).en).not.toContain("have a link to stop receiving them");
+    const on = await render({ ...base, whatsappOptout: true });
+    expect(on.en).toContain("and delivered by WhatsApp (Meta). The automatic WhatsApp messages have a link to stop receiving them.</p>");
+    expect(on.pt).toContain("e são entregues pelo WhatsApp (Meta). As mensagens automáticas pelo WhatsApp têm um link para não recebê-las mais.</p>");
   });
 
   it("the page passes each condition (app-demo-live only with demo-mode-live)", async () => {
@@ -294,5 +356,11 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     for (const id of CONDITIONS) expect(page).toContain(`conditionMet("${id}")`);
     expect(page).toContain('demo && conditionMet("app-demo-live")');
     expect(page.match(/\{\.\.\.v1028\}/g)).toHaveLength(3);
+    // The new lines are en + pt-BR only (the Thai page isn't part of Vitor's 10-27 OK).
+    expect(page.match(/\{\.\.\.v1028b\}/g)).toHaveLength(2);
+    expect(page).not.toMatch(/<PrivacyTh[^>]*v1028b/);
+    expect(page).toContain('whatsappAuto && conditionMet("whatsapp-optout-live")');
+    // PC-10b / PC-10c say "see 6i": the AI lines only with §6i itself (cf, #664).
+    expect(page).toContain('const pcAi = patientChannel && conditionMet("pc-ai-live")');
   });
 });

@@ -98,7 +98,10 @@
 // §6i Patient Channel with its §6g / §7 / §9 lines (patient-channel-live; PC-9 pc-cover-live,
 // PC-10 pc-ai-live; PC-N1/N2 wait for their 247 rewrite), the one-time reminders in §4 / §5 / §6g
 // (reminders-live), §3.6's Android install campaign (app-referrer-live), §6h's "or in the
-// Android app" (app-demo-live) and the automatic WhatsApp rows (whatsapp-auto-live). The FIRST
+// Android app" (app-demo-live) and the automatic WhatsApp rows (whatsapp-auto-live). Vitor's
+// "OK to all privacies" (01, 10-27), en + pt-BR: PC-8′ and PC-10′ replace PC-8 / PC-10, PC-10b (§5
+// Anthropic) and PC-10c (§6b) with pc-ai-live, PC-N1′/N2′ (§6g) and PC-N3 (the LINE / Z-API / Resend
+// rows) with pc-notify-live, PC-W1 (§6e) with whatsapp-optout-live, and cf's §3.6 / §6g rewordings. The FIRST
 // of those flips bumps this to "2026-10-28" (and PRIVACY_PUBLISHED to its merge day), only
 // after the mobile privacy-accept migration (accepting ('privacy','2026-10-28')) is live; a test enforces the pairing.
 export const PRIVACY_VERSION = "2026-10-27";
