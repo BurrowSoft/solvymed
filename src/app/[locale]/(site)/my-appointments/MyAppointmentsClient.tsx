@@ -558,7 +558,8 @@ export function MyAppointmentsClient({
             {primaryChannel && myProfessionalId && (
               <a href={`${prefix}/my-appointments/channel/${myProfessionalId}`} data-testid="pc-entry"
                 className="mt-3 inline-block rounded-xl border-2 border-teal-600 px-4 py-1.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50">
-                {tChannel("entryButton")}
+                {/* The doctor's own name when known (launch polish 17). */}
+                {doctorDisplayName(doctorName) ? tChannel("entryButtonNamed", { doctor: doctorDisplayName(doctorName) }) : tChannel("entryButton")}
               </a>
             )}
             {primaryChannelView && myProfessionalId && (

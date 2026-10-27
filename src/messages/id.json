@@ -928,7 +928,8 @@
       "deleteAccount": "Hapus akun saya",
       "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
       "deletedNotice": "Akun dihapus.",
-      "requestDeletion": "Minta penghapusan akun"
+      "requestDeletion": "Minta penghapusan akun",
+      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",
@@ -2813,7 +2814,14 @@
       "notTaking": "Klinik sedang tidak menerima pesan baru di sini.",
       "viewMessages": "Lihat pesan saya",
       "earlierLink": "Lihat pesan sebelumnya",
-      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}"
+      "earlierWith": "Lihat pesan sebelumnya dengan {doctor}",
+      "sentUrgent": "Jika mendesak, jangan menunggu balasan: segera cari pertolongan atau hubungi {number}.",
+      "sendSecretary": "Kirim ke resepsionis",
+      "goesToSecretary": "Ke resepsionis",
+      "sentSecretary": "Diterima. Resepsionis membalas dalam {n, plural, other {# hari kerja}}.",
+      "openTextSecretary": "Perbarui permintaan yang sudah ada di resepsionis? Permintaan baru menggantikannya.",
+      "entryButtonNamed": "Hubungi {doctor}",
+      "aiNotice": "Klinik ini menggunakan AI untuk mengatur pesan."
     },
     "channel": {
       "title": "Kanal Anda",
@@ -2845,7 +2853,10 @@
       "alwaysShown": "Peringatan darurat, waktu respons, dan aturan selalu ditampilkan, sama untuk semua orang: merek Anda mengubah tampilan, bukan aturannya.",
       "save": "Simpan kanal",
       "saved": "Tersimpan.",
-      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi."
+      "saveError": "Tidak dapat disimpan. Periksa koneksi Anda dan coba lagi.",
+      "needsReason": "Tambahkan setidaknya satu alasan untuk mengaktifkan kanal.",
+      "aiMapping": "Pembacaan AI (SolvyAI)",
+      "aiMappingHelp": "SolvyAI membaca teks bebas setiap permintaan dan menyarankan gejala dari daftar Anda; skor hanya bisa naik. Setiap pesan yang dibaca memakai 1 kredit AI hari itu. Nama, nomor identitas, telepon, dan e-mail disamarkan terlebih dahulu. Formulir memberi tahu pasien Anda."
     },
     "reasons": {
       "title": "Alasan menghubungi",
@@ -2950,7 +2961,7 @@
       "warningShown": "Pasien melihat peringatan darurat.",
       "autoShown": "Pesan otomatis yang dilihat pasien",
       "history": "Pesan sebelumnya dari pasien ini",
-      "replyLabel": "Balasan Anda (pasien menerimanya lewat notifikasi)",
+      "replyLabel": "Balasan Anda (pasien melihat balasan di kanal)",
       "reply": "Balas dan tutup",
       "callBack": "Saya akan menelepon pasien",
       "call": "Telepon {phone}",
@@ -2962,7 +2973,21 @@
       "readOnly": "Pesan ini untuk {doctor}: Anda dapat membacanya, tetapi tidak dapat membalas.",
       "failed": "Gagal mengirim. Coba lagi.",
       "warningFloor": "Gejala dengan peringatan darurat: selalu Mendesak.",
-      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI)."
+      "warningFloorAi": "Gejala dengan peringatan darurat: selalu Mendesak (AI).",
+      "ai": {
+        "title": "Pembacaan AI",
+        "intro": "SolvyAI menemukan gejala dari daftar Anda ini dalam pesan. Periksa teksnya sebelum mengonfirmasi.",
+        "confirm": "Konfirmasi",
+        "undo": "Urungkan",
+        "undoConfirm": "Urungkan pembacaan AI? Gejala yang disarankan dihapus dan skor kembali ke skor kata kunci.",
+        "cancel": "Batal",
+        "confirmed": "Dikonfirmasi pada {date}",
+        "undone": "Pembacaan AI diurungkan.",
+        "unavailable": "Pembacaan AI tidak tersedia untuk pesan ini: hanya kata kunci.",
+        "pending": "SolvyAI sedang membaca pesan ini.",
+        "none": "AI tidak menemukan gejala lain dari daftar Anda.",
+        "error": "Gagal menyimpan. Coba lagi."
+      }
     }
   },
   "noticesUnsubscribe": {
