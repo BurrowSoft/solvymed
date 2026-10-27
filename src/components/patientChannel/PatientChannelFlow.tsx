@@ -217,7 +217,12 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
           {/* The doctor's real reading hours when set (launch polish 20), else the general line. */}
           <li className="rounded-xl bg-teal-50 px-3 py-2" data-testid="pc-hours">
             <b className="block text-teal-800">{t("hoursTitle")}</b>
-            {hoursLines.length > 0 ? hoursLines.map((l) => <span key={l} className="block">{l}</span>) : t("hoursLabel")}
+            {/* The time range never breaks at its dash (360 px; the re-run). */}
+            {hoursLines.length > 0 ? hoursLines.map((l) => {
+              const cut = l.lastIndexOf(" · ");
+              return cut < 0 ? <span key={l} className="block">{l}</span>
+                : <span key={l} className="block">{l.slice(0, cut + 3)}<span className="whitespace-nowrap">{l.slice(cut + 3)}</span></span>;
+            }) : t("hoursLabel")}
             {page.readingNote && <span className="block text-xs text-teal-900/80">{page.readingNote}</span>}
           </li>
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("oneTitle")}</b>{t("oneLabel")}</li>

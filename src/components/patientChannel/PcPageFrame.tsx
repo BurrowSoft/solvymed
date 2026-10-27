@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { PageLook } from "@/lib/patientChannel/pageLook";
+import { brandInitials } from "@/lib/readableAccent";
 
 // The doctor's page look around the patient's channel (prototype v17; the real page and
 // the doctor's "Testar como paciente" share it): the band on top (the 3:1 cover, or a
@@ -39,7 +40,7 @@ export function PcPageFrame({ look, doctorName, practiceLine, banner, className 
       <div className={look?.band ? "relative z-10 -mt-12 flex items-start gap-3 pb-3" : "flex items-center gap-3 border-b border-slate-100 pb-3"}>
         <span aria-hidden="true" className={`grid shrink-0 place-items-center overflow-hidden rounded-full font-bold text-[var(--pc-brand)] ${look?.band ? "h-16 w-16 border-[3px] border-white bg-white text-xl shadow-sm" : "h-10 w-10 bg-teal-50"}`}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {logo ? <img src={logo} alt="" className="h-full w-full rounded-full object-contain" /> : initials(doctorName)}
+          {logo ? <img src={logo} alt="" className="h-full w-full rounded-full object-contain" /> : brandInitials(doctorName)}
         </span>
         <div className={look?.band ? "min-w-0 pt-12" : "min-w-0"}><b className="block break-words text-slate-900">{doctorName}</b><span className="text-xs text-slate-500">{practiceLine}</span></div>
       </div>
@@ -48,6 +49,3 @@ export function PcPageFrame({ look, doctorName, practiceLine, banner, className 
   );
 }
 
-export function initials(name: string): string {
-  return name.replace(/^(dra?|dr|prof)\.?\s+/i, "").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
-}
