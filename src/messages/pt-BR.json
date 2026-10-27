@@ -928,7 +928,8 @@
       "deleteAccount": "Excluir minha conta",
       "deleteConfirm": "Isso apaga sua conta. Você pode se cadastrar de novo quando quiser.",
       "deletedNotice": "Conta excluída.",
-      "requestDeletion": "Pedir exclusão da conta"
+      "requestDeletion": "Pedir exclusão da conta",
+      "notConnected": "Você não está conectado a nenhum consultório no momento."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",
@@ -2659,7 +2660,9 @@
       "intensity2": "Forte",
       "stillTakingQ": "Continua tomando o remédio?",
       "stillTaking0": "Sim",
-      "stillTaking1": "Parei por conta própria"
+      "stillTaking1": "Parei por conta própria",
+      "choose": "Escolha…",
+      "notAnswered": "Sem resposta"
     },
     "bands": {
       "title": "Faixas de urgência",
@@ -2791,7 +2794,7 @@
         "symptomOf": "sintoma: {name}",
         "remove": "Remover {term}",
         "suggestions": "Sugestões",
-        "hint": "Termos que o consultório conhece viram etiquetas: escolha a sugestão (clique, Enter, Tab ou \";\") ou digite a palavra inteira e um espaço."
+        "hint": "Termos que o consultório conhece viram etiquetas: escolha uma sugestão ou digite a palavra inteira."
       },
       "entryButton": "Fale com o Médico",
       "unavailable": "Este canal não está disponível. Fale diretamente com o consultório.",
@@ -2814,6 +2817,13 @@
       "viewMessages": "Ver minhas mensagens",
       "earlierLink": "Ver mensagens anteriores",
       "earlierWith": "Ver mensagens anteriores com {doctor}",
+      "sentUrgent": "Se for urgente, não espere a resposta: procure atendimento agora ou ligue {number}.",
+      "sendSecretary": "Enviar para a secretaria",
+      "goesToSecretary": "Para a secretaria",
+      "sentSecretary": "Recebido. A secretaria responde em até {n, plural, one {# dia útil} other {# dias úteis}}.",
+      "openTextSecretary": "Quer atualizar a que já está com a secretaria? A nova substitui a anterior.",
+      "entryButtonNamed": "Fale com {doctor}",
+      "openExistsNamed": "Você já tem uma solicitação aberta: {reason} ({date}).",
       "aiNotice": "Esta clínica usa IA para organizar as mensagens."
     },
     "channel": {
@@ -2847,6 +2857,7 @@
       "save": "Salvar canal",
       "saved": "Salvo.",
       "saveError": "Não foi possível salvar. Verifique a conexão e tente de novo.",
+      "needsReason": "Adicione pelo menos um motivo para ativar o canal.",
       "aiMapping": "Leitura por IA (SolvyAI)",
       "aiMappingHelp": "O SolvyAI lê o texto livre de cada solicitação e sugere sintomas da sua lista; a pontuação só pode subir. Cada mensagem lida usa 1 crédito de IA do dia. Nomes, documentos, telefones e e-mails são mascarados antes. O formulário avisa os pacientes."
     },
@@ -2952,7 +2963,7 @@
       "warningShown": "O paciente viu o aviso de emergência.",
       "autoShown": "Mensagens automáticas que o paciente viu",
       "history": "Mensagens anteriores deste paciente",
-      "replyLabel": "Sua resposta (o paciente recebe por notificação)",
+      "replyLabel": "Sua resposta (o paciente vê a resposta no canal)",
       "reply": "Responder e encerrar",
       "callBack": "Vou ligar para o paciente",
       "call": "Ligar {phone}",

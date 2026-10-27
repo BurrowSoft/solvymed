@@ -928,7 +928,8 @@
       "deleteAccount": "Delete my account",
       "deleteConfirm": "This deletes your account. You can sign up again anytime.",
       "deletedNotice": "Account deleted.",
-      "requestDeletion": "Request account deletion"
+      "requestDeletion": "Request account deletion",
+      "notConnected": "You're not connected to any practice right now."
     },
     "pendingConfirmation": {
       "loading": "Vérification de votre statut…",
@@ -2659,7 +2660,9 @@
       "intensity2": "Strong",
       "stillTakingQ": "Are you still taking the medicine?",
       "stillTaking0": "Yes",
-      "stillTaking1": "I stopped on my own"
+      "stillTaking1": "I stopped on my own",
+      "choose": "Choose…",
+      "notAnswered": "Not answered"
     },
     "bands": {
       "title": "Urgency bands",
@@ -2791,7 +2794,7 @@
         "symptomOf": "symptom: {name}",
         "remove": "Remove {term}",
         "suggestions": "Suggestions",
-        "hint": "Terms your practice knows become tags: pick a suggestion (click, Enter, Tab or \";\") or type the whole word and a space."
+        "hint": "Terms your practice knows become tags: pick a suggestion or type the whole word."
       },
       "entryButton": "Contact the doctor",
       "unavailable": "This channel isn’t available. Please contact the practice directly.",
@@ -2814,6 +2817,13 @@
       "viewMessages": "View my messages",
       "earlierLink": "See earlier messages",
       "earlierWith": "See earlier messages with {doctor}",
+      "sentUrgent": "If it's urgent, don't wait for a reply: seek care now or call {number}.",
+      "sendSecretary": "Send to the front desk",
+      "goesToSecretary": "To the front desk",
+      "sentSecretary": "Received. The front desk replies within {n, plural, one {# business day} other {# business days}}.",
+      "openTextSecretary": "Do you want to update the one the front desk already has? The new one replaces it.",
+      "entryButtonNamed": "Contact {doctor}",
+      "openExistsNamed": "You already have an open request: {reason} ({date}).",
       "aiNotice": "This clinic uses AI to organise messages."
     },
     "channel": {
@@ -2847,6 +2857,7 @@
       "save": "Save channel",
       "saved": "Saved.",
       "saveError": "It couldn't be saved. Check your connection and try again.",
+      "needsReason": "Add at least one reason to turn the channel on.",
       "aiMapping": "AI reading (SolvyAI)",
       "aiMappingHelp": "SolvyAI reads each request's free text and suggests symptoms from your list; the score can only go up. Each message read uses 1 of the day's AI credits. Names, ID numbers, phones and e-mails are masked first. The form tells your patients."
     },
@@ -2952,7 +2963,7 @@
       "warningShown": "The patient saw the emergency warning.",
       "autoShown": "Automatic messages the patient saw",
       "history": "Earlier messages from this patient",
-      "replyLabel": "Your reply (the patient gets it by notification)",
+      "replyLabel": "Your reply (the patient sees the reply in the channel)",
       "reply": "Reply and close",
       "callBack": "I'll call the patient",
       "call": "Call {phone}",

@@ -13,6 +13,8 @@ import { toStoredAiLines } from "@/lib/patientChannel/aiRead";
 import { BandTag } from "../../../settings/patient-channel/BandTag";
 import { AiPanel } from "./AiPanel";
 import { ReplyBox } from "./ReplyBox";
+import { formatPhone } from "@/lib/phoneFormat";
+import { isUnscored } from "@/lib/patientChannel/unscored";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DETAIL_COLUMNS = "id, professional_id, patient_id, destination, reason_snapshot, answers, text, score_total, band, lines, warning_shown, floor_applied, auto_messages_shown, status, reply_text, replied_at, created_at, patients(full_name, phone)";
@@ -49,6 +51,8 @@ export default async function PatientChannelRequestPage({
   const q = raw as Record<string, unknown> | null;
   if (!q || q.professional_id !== profId) notFound();
   const row = toInboxRow(q);
+  // An administrative request: no band, points or breakdown (launch polish 29).
+  const unscored = isUnscored(q.reason_snapshot);
   const patient = (Array.isArray(q.patients) ? q.patients[0] : q.patients) as { phone?: string | null } | null;
 
   const [, history, settings, aiRead] = await Promise.all([
@@ -83,6 +87,8 @@ export default async function PatientChannelRequestPage({
   const floorCause = warningFloorCause(warningIds, patientIds, lines, row.band);
   const tl = (key: string, values?: Record<string, string | number>) => t(key as never, values as never);
   const symptomName = (id: string) => names.symptoms[id] ?? "?";
+  // -1 = the patient left the question unanswered (launch polish 15).
+  const answerLabel = (key: "when" | "intensity" | "stillTaking", i: number) => (i < 0 ? t("answers.notAnswered") : tl(`answers.${key}${i}`));
   const readOnly = isSecretary && row.destination === "doctor";
   const phone = typeof patient?.phone === "string" ? patient.phone.trim() : "";
 
@@ -92,15 +98,15 @@ export default async function PatientChannelRequestPage({
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <h1 className="text-2xl font-extrabold text-slate-900">{row.patientName}</h1>
-        <BandTag band={row.band} />
-        <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>
+        {!unscored && <BandTag band={row.band} />}
+        {!unscored && <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>}
       </div>
       <p className="mt-1 text-sm text-slate-500">
         {t("detail.sentAt", { date: formatWhen(row.createdAt) })} · {destination(row.destination)} · {t(`inbox.status.${row.status}`)}
       </p>
       {phone && (
         <a href={`tel:${phone.replace(/[^\d+]/g, "")}`} className="mt-2 inline-block text-sm font-bold text-teal-700 hover:underline" data-testid="pc-detail-call">
-          {t("detail.call", { phone })}
+          {t("detail.call", { phone: formatPhone(phone, country) })}
         </a>
       )}
 
@@ -117,9 +123,9 @@ export default async function PatientChannelRequestPage({
           <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-[auto_1fr] sm:gap-x-4">
             {answers.symptomIds.length > 0 && (<><dt className="text-slate-500">{t("detail.ticked")}</dt><dd className="text-slate-800">{answers.symptomIds.map(symptomName).join(", ")}</dd></>)}
             {answers.chips.length > 0 && (<><dt className="text-slate-500">{t("detail.chips")}</dt><dd className="text-slate-800">{answers.chips.map((c) => (c.kind === "symptom" ? symptomName(c.ref) : c.text)).join(", ")}</dd></>)}
-            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{tl(`answers.when${answers.when}`)}</dd>
-            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{tl(`answers.intensity${answers.intensity}`)}</dd>
-            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{tl(`answers.stillTaking${answers.stillTaking}`)}</dd>
+            <dt className="text-slate-500">{t("answers.whenQ")}</dt><dd className="text-slate-800">{answerLabel("when", answers.when)}</dd>
+            <dt className="text-slate-500">{t("answers.intensityQ")}</dt><dd className="text-slate-800">{answerLabel("intensity", answers.intensity)}</dd>
+            <dt className="text-slate-500">{t("answers.stillTakingQ")}</dt><dd className="text-slate-800">{answerLabel("stillTaking", answers.stillTaking)}</dd>
           </dl>
         )}
         {row.text && (
@@ -146,7 +152,7 @@ export default async function PatientChannelRequestPage({
         </section>
       )}
 
-      <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
+      {!unscored && <section className="mt-4 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-breakdown">
         <p className="text-sm font-bold text-slate-900">{t("detail.breakdown", { n: row.score })}</p>
         <ul className="mt-2 flex flex-col gap-1 text-sm tabular-nums">
           {lines.length === 0 && <li className="text-xs text-slate-500">{t("test.noSymptom")}</li>}
@@ -160,7 +166,7 @@ export default async function PatientChannelRequestPage({
         {q.floor_applied === true && config && <p className="mt-2 text-xs text-slate-600">{t("detail.floor", { band: t(`bands.${config.minBandForTextOnly}`) })}</p>}
         {/* The safety floor (01, 10-26): Urgent because of a symptom with the immediate warning. */}
         {floorCause && <p className="mt-2 text-xs font-semibold text-red-700" data-testid="pc-detail-warning-floor">{t(floorCause === "ai" ? "detail.warningFloorAi" : "detail.warningFloor")}</p>}
-      </section>
+      </section>}
 
       {/* M7: the SolvyAI reading. Only the doctor confirms or undoes it (a secretary reads it). */}
       <AiPanel

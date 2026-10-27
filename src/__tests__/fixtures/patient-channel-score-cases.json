@@ -973,6 +973,33 @@
           }
         ]
       }
+    },
+    {
+      "id": "unanswered",
+      "title": "Questions left unanswered (-1): no adjustment, nothing preselected (launch polish 15)",
+      "answers": {
+        "symptomIds": [
+          "s1"
+        ],
+        "chips": [],
+        "when": -1,
+        "intensity": -1,
+        "stillTaking": -1,
+        "text": ""
+      },
+      "expected": {
+        "total": 3,
+        "band": "green",
+        "warning": false,
+        "floorApplied": false,
+        "lines": [
+          {
+            "points": 3,
+            "source": "box",
+            "labelPt": "Pele esverdeada"
+          }
+        ]
+      }
     }
   ],
   "handWritten": {

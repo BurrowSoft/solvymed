@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { dateLocale } from "@/lib/dateLabels";
@@ -52,18 +52,39 @@ export function ChannelSettings({ professionalId, hasRow, onRowCreated, initial,
   // M7's AI switch: null unless pc-ai-live or a tester (it needs the settings row to exist).
   ai?: { on: boolean } | null;
 }) {
+  // The channel can't be turned on without a reason to pick (launch polish 8).
+  const [reasonCount, setReasonCount] = useState(initialReasons.length);
   return (
     <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
       <div className="flex min-w-0 flex-col gap-4">
-        <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} />
+        <ChannelCard professionalId={professionalId} hasRow={hasRow} onRowCreated={onRowCreated} initial={initial} brandHref={brandHref} reasonCount={reasonCount} />
         {cover && <CoverCard professionalId={professionalId} initialPath={cover.path} />}
         {ai && hasRow && <AiMappingCard initialOn={ai.on} />}
       </div>
       <div className="flex min-w-0 flex-col gap-4">
-        <Reasons professionalId={professionalId} initial={initialReasons} />
+        <Reasons professionalId={professionalId} initial={initialReasons} onCount={setReasonCount} />
         <Faq professionalId={professionalId} initial={initialFaq} />
       </div>
     </div>
+  );
+}
+
+// The reading hours' times (launch polish 16): <input type="time"> follows the device's own
+// 12/24 h setting ("08:00 AM" in pt-BR / th), so a select every 15 minutes, labelled in the
+// page's locale (24 h for pt-BR and th, each locale's own format otherwise). The stored value
+// stays "HH:MM"; a stored time off the 15-minute grid is kept as an option.
+const QUARTERS = Array.from({ length: 96 }, (_, i) => `${String(Math.floor(i / 4)).padStart(2, "0")}:${String((i % 4) * 15).padStart(2, "0")}`);
+function TimeSelect({ locale, value, onChange }: { locale: string; value: string; onChange: (v: string) => void }) {
+  const f = new Intl.DateTimeFormat(dateLocale(locale), { hour: "2-digit", minute: "2-digit", timeZone: "UTC" });
+  const label = (hhmm: string) => {
+    const [h, m] = hhmm.split(":").map(Number);
+    return f.format(new Date(Date.UTC(2024, 0, 1, h, m)));
+  };
+  const options = QUARTERS.includes(value) || !/^\d{2}:\d{2}$/.test(value) ? QUARTERS : [...QUARTERS, value].sort();
+  return (
+    <select className="rounded-lg border border-slate-200 bg-white px-2 py-1" value={value} onChange={(e) => onChange(e.target.value)}>
+      {options.map((v) => <option key={v} value={v}>{label(v)}</option>)}
+    </select>
   );
 }
 
@@ -74,8 +95,8 @@ function weekdayNames(locale: string): string[] {
   return Array.from({ length: 7 }, (_, i) => f.format(new Date(Date.UTC(2024, 0, 1 + i))));
 }
 
-function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref }: {
-  professionalId: string; hasRow: boolean; onRowCreated: () => void; initial: PcSettings; brandHref: string;
+function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref, reasonCount }: {
+  professionalId: string; hasRow: boolean; onRowCreated: () => void; initial: PcSettings; brandHref: string; reasonCount: number;
 }) {
   const t = useTranslations("patientChannel.channel");
   const locale = useLocale();
@@ -115,9 +136,12 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
     <section className={CARD} aria-labelledby="pc-channel">
       <h2 id="pc-channel" className={H2}>{t("title")}</h2>
       <label className="mt-3 flex items-start gap-2 text-sm">
-        <input type="checkbox" className="mt-1" checked={s.enabled} onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
+        {/* Off → on needs a reason; turning it off is always allowed. */}
+        <input type="checkbox" className="mt-1" data-testid="pc-channel-enabled" checked={s.enabled} disabled={!s.enabled && reasonCount === 0}
+          onChange={(e) => setS({ ...s, enabled: e.target.checked })} />
         <span><b>{t("enabled")}</b><span className={`${SUB} block`}>{t("enabledHelp")}</span></span>
       </label>
+      {reasonCount === 0 && <p className="mt-1 text-xs font-semibold text-amber-700" data-testid="pc-channel-needs-reason">{t("needsReason")}</p>}
       <label className="mt-3 flex items-start gap-2 text-sm">
         <input type="checkbox" className="mt-1" checked={s.secretarySeesAll} onChange={(e) => setS({ ...s, secretarySeesAll: e.target.checked })} />
         <span><b>{t("secretarySeesAll")}</b><span className={`${SUB} block`}>{t("secretarySeesAllHelp")}</span></span>
@@ -145,10 +169,10 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
               </div>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
                 <label className="flex items-center gap-1.5">{t("from")}
-                  <input type="time" className="rounded-lg border border-slate-200 px-2 py-1" value={h.from} onChange={(e) => setHour(i, { from: e.target.value })} />
+                  <TimeSelect locale={locale} value={h.from} onChange={(v) => setHour(i, { from: v })} />
                 </label>
                 <label className="flex items-center gap-1.5">{t("to")}
-                  <input type="time" className="rounded-lg border border-slate-200 px-2 py-1" value={h.to} onChange={(e) => setHour(i, { to: e.target.value })} />
+                  <TimeSelect locale={locale} value={h.to} onChange={(v) => setHour(i, { to: v })} />
                 </label>
                 <button type="button" className={MINI} onClick={() => setS({ ...s, readingHours: s.readingHours.filter((_, j) => j !== i) })}>{t("remove")}</button>
               </div>
@@ -188,9 +212,10 @@ function ChannelCard({ professionalId, hasRow, onRowCreated, initial, brandHref 
 
 const NEW_REASON = { title: "", subtitle: "", kind: "options" as ReasonKind, options: "", destination: "doctor" as const };
 
-function Reasons({ professionalId, initial }: { professionalId: string; initial: PcReasonRow[] }) {
+function Reasons({ professionalId, initial, onCount }: { professionalId: string; initial: PcReasonRow[]; onCount: (n: number) => void }) {
   const t = useTranslations("patientChannel.reasons");
   const [rows, setRows] = useState([...initial].sort((a, b) => a.sort - b.sort));
+  useEffect(() => onCount(rows.length), [rows.length, onCount]);
   const [draft, setDraft] = useState<{ title: string; subtitle: string; kind: ReasonKind; options: string; destination: "doctor" | "secretary" }>(NEW_REASON);
   const [editId, setEditId] = useState<string | null>(null);
   const [status, setStatus] = useState<Status>(null);

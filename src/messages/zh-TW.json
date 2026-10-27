@@ -928,7 +928,8 @@
       "deleteAccount": "刪除我的帳號",
       "deleteConfirm": "這將刪除您的帳號。您隨時可以重新註冊。",
       "deletedNotice": "帳號已刪除。",
-      "requestDeletion": "申請刪除帳號"
+      "requestDeletion": "申請刪除帳號",
+      "notConnected": "您目前未連結任何診所。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",
@@ -2659,7 +2660,9 @@
       "intensity2": "嚴重",
       "stillTakingQ": "您還在服用這個藥物嗎？",
       "stillTaking0": "是",
-      "stillTaking1": "我自行停藥了"
+      "stillTaking1": "我自行停藥了",
+      "choose": "請選擇…",
+      "notAnswered": "未回答"
     },
     "bands": {
       "title": "緊急程度等級",
@@ -2791,7 +2794,7 @@
         "symptomOf": "症狀：{name}",
         "remove": "移除 {term}",
         "suggestions": "建議",
-        "hint": "診所認得的詞語會變成標籤：選擇一個建議（點按、Enter、Tab 或 \";\"），或輸入完整詞語後按空白鍵。"
+        "hint": "診所認得的詞會變成標籤：選擇一個建議，或輸入完整的詞。"
       },
       "entryButton": "聯絡醫師",
       "unavailable": "此管道目前無法使用。請直接聯絡診所。",
@@ -2814,6 +2817,13 @@
       "viewMessages": "查看我的訊息",
       "earlierLink": "查看先前訊息",
       "earlierWith": "查看與{doctor}的先前訊息",
+      "sentUrgent": "如情況緊急，請不要等待回覆：立即就醫或撥打 {number}。",
+      "sendSecretary": "傳送給櫃台",
+      "goesToSecretary": "給櫃台",
+      "sentSecretary": "已收到。櫃台將在 {n, plural, other {# 個工作天}}內回覆。",
+      "openTextSecretary": "要更新櫃台那裡已有的請求嗎？新請求將取代舊請求。",
+      "entryButtonNamed": "聯絡{doctor}",
+      "openExistsNamed": "您已有一個未處理的請求：{reason}（{date}）",
       "aiNotice": "本診所使用 AI 整理訊息。"
     },
     "channel": {
@@ -2847,6 +2857,7 @@
       "save": "儲存頻道",
       "saved": "已儲存。",
       "saveError": "無法儲存。請檢查網路連線後再試一次。",
+      "needsReason": "請至少新增一個原因才能開啟管道。",
       "aiMapping": "AI 閱讀（SolvyAI）",
       "aiMappingHelp": "SolvyAI 閱讀每則請求的自由文字，並從您的清單中建議症狀；分數只會升高。每讀一則訊息使用當天 1 個 AI 額度。姓名、證件號碼、電話和電子郵件會先被遮蔽。表單會告知您的患者。"
     },
@@ -2952,7 +2963,7 @@
       "warningShown": "病患已看到緊急警告。",
       "autoShown": "病患看到的自動訊息",
       "history": "此病患先前的訊息",
-      "replyLabel": "您的回覆（病患會透過通知收到）",
+      "replyLabel": "您的回覆（患者在管道中查看回覆）",
       "reply": "回覆並結案",
       "callBack": "我會致電病患",
       "call": "致電 {phone}",
