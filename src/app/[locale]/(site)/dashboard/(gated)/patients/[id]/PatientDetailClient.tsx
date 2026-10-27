@@ -265,7 +265,7 @@ function AccessLogTab({ patientId, initial, records, prescriptions, locale, docu
   // dates, one zone per page, as the documents list). The tab renders only
   // after a click, in the browser, so this never differs from a server render.
   // The same short form as the inbox (launch polish 32): the year only when it isn't this year.
-  const fmtWhen = whenShortFormatter(dateLocale(locale));
+  const fmtWhen = whenShortFormatter(locale);
   const whenLocal = (r: AccessLogRow) => fmtWhen(r.at) || r.when;
 
   const who = (r: AccessLogRow) =>

@@ -5,7 +5,6 @@ import { getEffectiveProfId, myPractices } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { getClinicTimeZone } from "@/lib/clinicTime";
 import { countryProfile } from "@/lib/country";
-import { dateLocale } from "@/lib/dateLabels";
 import { whenShortFormatter } from "@/lib/whenShort";
 import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { patientChannelOnForPractice } from "./live";
@@ -34,7 +33,7 @@ export async function staffContext(locale: string) {
   const doctorName = practice ? withBrandTitle(practice.title, shortDoctorName(practice.display_name)) : "";
   // Rendered on the server only, so the server's text is the page's text. The same short form
   // as the access log (launch polish 32): the year only when it isn't this year.
-  const formatWhen = whenShortFormatter(dateLocale(locale, countryProfile(country).calendar), zone);
+  const formatWhen = whenShortFormatter(locale, countryProfile(country).calendar, zone);
   return { supabase, user, prefix, profId, isSecretary, country, doctorName, formatWhen };
 }
 

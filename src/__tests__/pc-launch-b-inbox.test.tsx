@@ -117,10 +117,16 @@ describe("the request detail (section B)", () => {
 
 describe("32: one short date form for the staff lists", () => {
   it("day, short month and time; the year only when it isn't this year", () => {
-    const f = whenShortFormatter("pt-BR", "America/Sao_Paulo");
+    const f = whenShortFormatter("pt-BR", undefined, "America/Sao_Paulo");
     const thisYear = `${new Date().getUTCFullYear()}-03-05T15:07:00Z`;
     expect(f(thisYear)).toMatch(/^5 de mar\.?, 12:07$/);
     expect(f("2019-03-05T15:07:00Z")).toMatch(/2019/);
     expect(f("nope")).toBe("");
+  });
+  it("Thai: through dateLocale, so an earlier year shows in the Buddhist era (2019 → 2562); this year shows none", () => {
+    const th = whenShortFormatter("th", undefined, "Asia/Bangkok");
+    expect(th("2019-03-05T15:07:00Z")).toContain("2562");
+    expect(th("2019-03-05T15:07:00Z")).not.toContain("2019");
+    expect(th(`${new Date().getUTCFullYear()}-03-05T05:07:00Z`)).not.toMatch(/25\d\d|20\d\d/);
   });
 });
