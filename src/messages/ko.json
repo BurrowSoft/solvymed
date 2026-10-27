@@ -2933,7 +2933,8 @@
         "call_back": "전화 예정",
         "substituted": "대체됨"
       },
-      "navOpen": "열린 메시지 {n}개"
+      "navOpen": "열린 메시지 {n}개",
+      "admin": "행정"
     },
     "detail": {
       "back": "← 메시지",

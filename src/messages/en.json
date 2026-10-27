@@ -2963,7 +2963,8 @@
         "call_back": "Will call",
         "substituted": "Replaced"
       },
-      "navOpen": "{n, plural, one {# open message} other {# open messages}}"
+      "navOpen": "{n, plural, one {# open message} other {# open messages}}",
+      "admin": "Administrative"
     },
     "detail": {
       "back": "← Messages",

@@ -80,7 +80,12 @@ export default async function PatientChannelRequestPage({
       <Link href={`${prefix}/dashboard/patient-channel`} className="text-sm font-medium text-teal-700 hover:underline">{t("detail.back")}</Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-2xl font-extrabold text-slate-900">{row.patientName}</h1>
+        {/* The patient's file (launch polish 31): the same page the patient list opens. */}
+        <h1 className="text-2xl font-extrabold text-slate-900">
+          {row.patientId
+            ? <Link href={`${prefix}/dashboard/patients/${row.patientId}`} className="hover:underline" data-testid="pc-detail-patient">{row.patientName}</Link>
+            : row.patientName}
+        </h1>
         {!unscored && <BandTag band={row.band} />}
         {!unscored && <span className="font-bold tabular-nums text-slate-700" data-testid="pc-detail-total">{t("inbox.points", { n: row.score })}</span>}
       </div>
@@ -93,6 +98,10 @@ export default async function PatientChannelRequestPage({
         </a>
       )}
 
+      {/* A secretary reading the doctor's request: said first (launch polish 30), not at the end. */}
+      {row.status === "open" && readOnly && doctorName && (
+        <p className="mt-4 rounded-xl bg-slate-50 p-3 text-sm text-slate-600" data-testid="pc-detail-readonly">{t("detail.readOnly", { doctor: doctorName })}</p>
+      )}
       {q.warning_shown === true && (
         <p className="mt-4 border-l-4 border-red-600 pl-3 text-sm text-slate-700" data-testid="pc-detail-warning">{t("detail.warningShown")}</p>
       )}
@@ -152,9 +161,6 @@ export default async function PatientChannelRequestPage({
       </section>}
 
       {row.status === "open" && !readOnly && <ReplyBox requestId={row.id} />}
-      {row.status === "open" && readOnly && doctorName && (
-        <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600" data-testid="pc-detail-readonly">{t("detail.readOnly", { doctor: doctorName })}</p>
-      )}
       {(row.status === "answered" || row.status === "call_back") && (
         <section className="mt-6 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" data-testid="pc-detail-replied">
           <p className="text-xs text-slate-500">

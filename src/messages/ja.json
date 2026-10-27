@@ -2933,7 +2933,8 @@
         "call_back": "電話予定",
         "substituted": "置き換え済み"
       },
-      "navOpen": "未対応のメッセージ {n} 件"
+      "navOpen": "未対応のメッセージ {n} 件",
+      "admin": "事務"
     },
     "detail": {
       "back": "← メッセージ",
