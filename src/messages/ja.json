@@ -928,7 +928,8 @@
       "deleteAccount": "アカウントを削除",
       "deleteConfirm": "アカウントが削除されます。いつでも再登録できます。",
       "deletedNotice": "アカウントを削除しました。",
-      "requestDeletion": "アカウント削除を依頼"
+      "requestDeletion": "アカウント削除を依頼",
+      "notConnected": "現在、どの医療機関にも接続されていません。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",
@@ -2813,7 +2814,14 @@
       "notTaking": "現在、クリニックはここで新しいメッセージを受け付けていません。",
       "viewMessages": "メッセージを見る",
       "earlierLink": "以前のメッセージを見る",
-      "earlierWith": "{doctor}との以前のメッセージを見る"
+      "earlierWith": "{doctor}との以前のメッセージを見る",
+      "sentUrgent": "急ぐ場合は返信を待たずに、今すぐ受診するか {number} に電話してください。",
+      "sendSecretary": "受付に送信",
+      "goesToSecretary": "宛先：受付",
+      "sentSecretary": "受け付けました。受付が {n, plural, other {# 営業日}}以内に返信します。",
+      "openTextSecretary": "受付に送信済みのリクエストを更新しますか？新しいリクエストで置き換えられます。",
+      "entryButtonNamed": "{doctor}に連絡",
+      "aiNotice": "このクリニックはメッセージの整理にAIを使用しています。"
     },
     "channel": {
       "title": "あなたのチャネル",
@@ -2845,7 +2853,10 @@
       "alwaysShown": "緊急時の注意、回答目安、ルールは常に表示され、すべての方に同じ内容です。ブランドで変わるのは見た目で、ルールは変わりません。",
       "save": "チャネルを保存",
       "saved": "保存しました。",
-      "saveError": "保存できませんでした。接続を確認して、もう一度お試しください。"
+      "saveError": "保存できませんでした。接続を確認して、もう一度お試しください。",
+      "needsReason": "チャンネルを有効にするには、理由を1つ以上追加してください。",
+      "aiMapping": "AIによる読み取り（SolvyAI）",
+      "aiMappingHelp": "SolvyAIが各リクエストの自由記述を読み、あなたのリストから症状を提案します。スコアは上がるだけです。読み取った1件ごとに、その日のAIクレジットを1つ使います。名前、ID番号、電話番号、メールアドレスは先に伏せられます。フォームで患者に知らされます。"
     },
     "reasons": {
       "title": "連絡理由",
@@ -2950,7 +2961,7 @@
       "warningShown": "患者に緊急時の警告が表示されました。",
       "autoShown": "患者に表示された自動メッセージ",
       "history": "この患者からの過去のメッセージ",
-      "replyLabel": "返信（患者に通知で届きます）",
+      "replyLabel": "あなたの返信（患者はチャンネルで返信を確認します）",
       "reply": "返信して完了",
       "callBack": "患者に電話する",
       "call": "{phone} に電話",
@@ -2962,7 +2973,21 @@
       "readOnly": "このメッセージは{doctor}宛てです。閲覧はできますが、返信はできません。",
       "failed": "送信できませんでした。もう一度お試しください。",
       "warningFloor": "緊急警告のある症状：常に緊急。",
-      "warningFloorAi": "緊急警告のある症状：常に緊急（AI）。"
+      "warningFloorAi": "緊急警告のある症状：常に緊急（AI）。",
+      "ai": {
+        "title": "AIによる読み取り",
+        "intro": "SolvyAIがメッセージの中から、あなたのリストにあるこれらの症状を見つけました。確定する前に本文を確認してください。",
+        "confirm": "確定",
+        "undo": "元に戻す",
+        "undoConfirm": "AIによる読み取りを元に戻しますか？提案された症状は削除され、スコアはキーワードのスコアに戻ります。",
+        "cancel": "キャンセル",
+        "confirmed": "{date}に確定",
+        "undone": "AIによる読み取りを元に戻しました。",
+        "unavailable": "このメッセージではAIによる読み取りを利用できません：キーワードのみ。",
+        "pending": "SolvyAIがこのメッセージを読んでいます。",
+        "none": "AIはあなたのリストから他の症状を見つけませんでした。",
+        "error": "保存できませんでした。もう一度お試しください。"
+      }
     }
   },
   "noticesUnsubscribe": {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -28,6 +28,19 @@ export default function InviteRequiredPage() {
     reason === "notfound" ? t("inviteRequired.storedCodeNotFound") : reason === "unavailable" ? t("inviteRequired.codeUnavailable") : "",
   );
   const [loading, setLoading] = useState(false);
+  // A patient who was connected and left (or was removed) keeps the patient role: "Sua conta foi
+  // criada…" is wrong for them, so they read that they're not connected now (launch polish 23).
+  const [wasPatient, setWasPatient] = useState(false);
+  useEffect(() => {
+    const supabase = createClient();
+    let live = true;
+    void supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", user.id).maybeSingle();
+      if (live && (data as { role?: string } | null)?.role === "patient") setWasPatient(true);
+    }).catch(() => undefined);
+    return () => { live = false; };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -229,9 +242,13 @@ export default function InviteRequiredPage() {
         </IconBadge>
 
         <h1 className="auth-heading text-center">{t("inviteRequired.heading")}</h1>
-        <p className="mb-6 text-center text-slate-500">
-          {t("inviteRequired.body")}
+        <p className="mb-6 text-center text-slate-500" data-testid="invite-required-body">
+          {wasPatient ? t("inviteRequired.notConnected") : t("inviteRequired.body")}
         </p>
+
+        {/* Practices they left (or that closed) where they have Patient Channel messages: above
+            the code form, the first thing a returning patient looks for (launch polish 23). */}
+        <PastPracticeLinks className="mb-4 items-center text-center" />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -264,9 +281,6 @@ export default function InviteRequiredPage() {
             )}
           </button>
         </form>
-
-        {/* Practices they left (or that closed) where they have Patient Channel messages. */}
-        <PastPracticeLinks className="mt-4 items-center text-center" />
 
         {/* A doctor who signed up as a patient by mistake (Vitor, 10-18): switch
             this account to a professional one (migration 231; the app has it). */}

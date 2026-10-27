@@ -4,7 +4,10 @@ import { isProfessionalRole } from "@/lib/effectiveProfId";
 import { getPracticeCountry } from "@/lib/practiceCountry";
 import { patientChannelEnabled } from "@/lib/patientChannel/live";
 import { fromStoredRules, toStoredRules, validateRules } from "@/lib/patientChannel/rules";
-import { scoreForRequest, storedAnswers, type ReasonKind } from "@/lib/patientChannel/requestScore";
+import { storedAnswers, type ReasonKind } from "@/lib/patientChannel/requestScore";
+import { rescoreOne } from "@/lib/patientChannel/aiRescore";
+import { toStoredAiLines } from "@/lib/patientChannel/aiRead";
+import { AI_STATUSES } from "@/lib/patientChannel/aiDb";
 import { pcAdmin, pcBody, pcCaller, pcFail } from "@/lib/patientChannel/server";
 
 export const runtime = "nodejs";
@@ -54,18 +57,27 @@ export async function PUT(request: NextRequest) {
   const config = fromStoredRules(stored, country);
   let rescored = 0;
   try {
-    const { data: open, error: readError } = await admin
+    const readOpen = (columns: string) => admin
       .from("pc_requests")
-      .select("id, answers, text, reason_snapshot")
+      .select(columns)
       .eq("professional_id", user.id)
       .eq("status", "open")
       .lt("rules_version", version as number);
+    // With M7's columns (the AI reading's status and lines); before the M7 migration they don't
+    // exist (42703), and every request is keyword-only.
+    let { data: open, error: readError } = await readOpen("id, answers, text, reason_snapshot, ai_status, ai_lines");
+    if (readError?.code === "42703") ({ data: open, error: readError } = await readOpen("id, answers, text, reason_snapshot"));
     if (readError) throw readError;
-    // The same scoring as the submit (lib/patientChannel/requestScore), per reason kind.
-    const scores = (open ?? []).map((q: { id: string; answers: unknown; text: string | null; reason_snapshot: { kind?: ReasonKind } | null }) => {
-      const r = scoreForRequest(config, q.reason_snapshot?.kind ?? "symptom_form", storedAnswers(q.answers, q.text));
-      return { id: q.id, total: r.total, band: r.band, lines: r.lines, floorApplied: r.floorApplied };
-    });
+    // The same scoring as the submit (lib/patientChannel/requestScore), per reason kind; an AI
+    // reading ('done') also sends its keyword score and the AI lines still in the rules (M7, 3b).
+    type OpenRow = { id: string; answers: unknown; text: string | null; reason_snapshot: { kind?: ReasonKind } | null; ai_status?: unknown; ai_lines?: unknown };
+    const scores = ((open ?? []) as unknown as OpenRow[]).map((q) => rescoreOne(config, {
+      id: q.id,
+      kind: q.reason_snapshot?.kind ?? "symptom_form",
+      answers: storedAnswers(q.answers, q.text),
+      aiStatus: AI_STATUSES.find((s) => s === q.ai_status) ?? "none",
+      aiLines: toStoredAiLines(q.ai_lines),
+    }));
     if (scores.length > 0) {
       const { data: n, error: rescoreError } = await admin.rpc("pc_rescore_open", { p_prof: user.id, p_version: version, p_scores: scores });
       if (rescoreError) throw rescoreError;

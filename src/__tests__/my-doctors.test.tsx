@@ -17,6 +17,7 @@ vi.mock("@/app/[locale]/(site)/my-appointments/doctor-actions", () => ({ connect
 
 import { MyDoctors } from "@/app/[locale]/(site)/my-appointments/MyDoctors";
 import type { MyDoctor } from "@/lib/myDoctors";
+import { shortDoctorName } from "@/lib/doctorName";
 
 const d = (id: string, name: string, over: Partial<MyDoctor> = {}): MyDoctor => ({
   id, name, specialty: "Dermatologia", accentColor: null, logoUrl: null, photoUrl: null, isPrimary: false, acceptsBookings: true, ...over,
@@ -41,12 +42,15 @@ describe("Meus médicos", () => {
     expect(within(cards[1]).getByRole("link")).toHaveAttribute("href", "/pt-BR/book/d-2");
   });
 
-  it("Patient Channel (M4b): \"Fale com o Médico\" only where the channel is open to this patient", () => {
-    show([d("d-1", "Dra. Ana Souza", { channel: true }), PAULO]);
+  it("Patient Channel (M4b): the entry only where the channel is open, naming the doctor when known (launch polish 17)", () => {
+    show([d("d-1", "Dra. Ana Souza", { channel: true }), PAULO, d("d-4", "", { channel: true })]);
     const cards = screen.getAllByTestId("doctor-card");
     expect(within(cards[0]).getByTestId("pc-entry")).toHaveAttribute("href", "/pt-BR/my-appointments/channel/d-1");
-    expect(within(cards[0]).getByTestId("pc-entry")).toHaveTextContent(pt.patientChannel.patient.entryButton);
+    expect(within(cards[0]).getByTestId("pc-entry")).toHaveTextContent(pt.patientChannel.patient.entryButtonNamed.replace("{doctor}", shortDoctorName("Dra. Ana Souza")));
+    expect(within(cards[0]).getByTestId("pc-entry").textContent).not.toContain("o Médico");
     expect(within(cards[1]).queryByTestId("pc-entry")).toBeNull();
+    // No known name: the generic button.
+    expect(within(cards[2]).getByTestId("pc-entry")).toHaveTextContent(pt.patientChannel.patient.entryButton);
   });
 
   it("no book link for a doctor not taking bookings", () => {

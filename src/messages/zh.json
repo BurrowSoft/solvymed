@@ -928,7 +928,8 @@
       "deleteAccount": "删除我的账号",
       "deleteConfirm": "这将删除您的账号。您随时可以重新注册。",
       "deletedNotice": "账号已删除。",
-      "requestDeletion": "申请删除账号"
+      "requestDeletion": "申请删除账号",
+      "notConnected": "您目前未连接任何诊所。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",
@@ -2813,7 +2814,14 @@
       "notTaking": "诊所目前不在此接收新消息。",
       "viewMessages": "查看我的消息",
       "earlierLink": "查看早前消息",
-      "earlierWith": "查看与{doctor}的早前消息"
+      "earlierWith": "查看与{doctor}的早前消息",
+      "sentUrgent": "如情况紧急，请不要等待回复：立即就医或拨打 {number}。",
+      "sendSecretary": "发送给前台",
+      "goesToSecretary": "发给前台",
+      "sentSecretary": "已收到。前台将在 {n, plural, other {# 个工作日}}内回复。",
+      "openTextSecretary": "要更新前台那里已有的请求吗？新请求将替换旧请求。",
+      "entryButtonNamed": "联系{doctor}",
+      "aiNotice": "本诊所使用 AI 整理消息。"
     },
     "channel": {
       "title": "您的频道",
@@ -2845,7 +2853,10 @@
       "alwaysShown": "紧急情况提示、回复时间和规则始终显示，且对所有人相同：品牌只改变外观，不改变规则。",
       "save": "保存频道",
       "saved": "已保存。",
-      "saveError": "无法保存。请检查网络连接后重试。"
+      "saveError": "无法保存。请检查网络连接后重试。",
+      "needsReason": "请至少添加一个原因才能开启渠道。",
+      "aiMapping": "AI 阅读（SolvyAI）",
+      "aiMappingHelp": "SolvyAI 阅读每条请求的自由文本，并从您的列表中建议症状；分数只会升高。每读一条消息使用当天 1 个 AI 额度。姓名、证件号、电话和电子邮件会先被遮盖。表单会告知您的患者。"
     },
     "reasons": {
       "title": "联系原因",
@@ -2950,7 +2961,7 @@
       "warningShown": "患者已看到紧急警告。",
       "autoShown": "患者看到的自动消息",
       "history": "该患者之前的消息",
-      "replyLabel": "您的回复（患者将通过通知收到）",
+      "replyLabel": "您的回复（患者在渠道中查看回复）",
       "reply": "回复并关闭",
       "callBack": "我会致电患者",
       "call": "致电 {phone}",
@@ -2962,7 +2973,21 @@
       "readOnly": "此消息是发给 {doctor} 的：您可以阅读，但不能回复。",
       "failed": "发送失败，请重试。",
       "warningFloor": "带紧急警告的症状：始终为紧急。",
-      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。"
+      "warningFloorAi": "带紧急警告的症状：始终为紧急（AI）。",
+      "ai": {
+        "title": "AI 阅读",
+        "intro": "SolvyAI 在消息中找到了您列表中的这些症状。确认前请先核对原文。",
+        "confirm": "确认",
+        "undo": "撤销",
+        "undoConfirm": "撤销 AI 阅读？建议的症状将被删除，分数恢复为关键词分数。",
+        "cancel": "取消",
+        "confirmed": "已于 {date} 确认",
+        "undone": "已撤销 AI 阅读。",
+        "unavailable": "此消息无法使用 AI 阅读：仅按关键词。",
+        "pending": "SolvyAI 正在阅读此消息。",
+        "none": "AI 未从您的列表中找到其他症状。",
+        "error": "保存失败，请重试。"
+      }
     }
   },
   "noticesUnsubscribe": {

@@ -928,7 +928,8 @@
       "deleteAccount": "Delete my account",
       "deleteConfirm": "This deletes your account. You can sign up again anytime.",
       "deletedNotice": "Account deleted.",
-      "requestDeletion": "Request account deletion"
+      "requestDeletion": "Request account deletion",
+      "notConnected": "You're not connected to any practice right now."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
@@ -2813,7 +2814,14 @@
       "notTaking": "The practice isn't taking new messages here right now.",
       "viewMessages": "View my messages",
       "earlierLink": "See earlier messages",
-      "earlierWith": "See earlier messages with {doctor}"
+      "earlierWith": "See earlier messages with {doctor}",
+      "sentUrgent": "If it's urgent, don't wait for a reply: seek care now or call {number}.",
+      "sendSecretary": "Send to the front desk",
+      "goesToSecretary": "To the front desk",
+      "sentSecretary": "Received. The front desk replies within {n, plural, one {# business day} other {# business days}}.",
+      "openTextSecretary": "Do you want to update the one the front desk already has? The new one replaces it.",
+      "entryButtonNamed": "Contact {doctor}",
+      "aiNotice": "This clinic uses AI to organise messages."
     },
     "channel": {
       "title": "Your channel",
@@ -2845,7 +2853,10 @@
       "alwaysShown": "The emergency warning, the response time and the rules are always shown, the same for everyone: your brand changes the look, not the rules.",
       "save": "Save channel",
       "saved": "Saved.",
-      "saveError": "It couldn't be saved. Check your connection and try again."
+      "saveError": "It couldn't be saved. Check your connection and try again.",
+      "needsReason": "Add at least one reason to turn the channel on.",
+      "aiMapping": "AI reading (SolvyAI)",
+      "aiMappingHelp": "SolvyAI reads each request's free text and suggests symptoms from your list; the score can only go up. Each message read uses 1 of the day's AI credits. Names, ID numbers, phones and e-mails are masked first. The form tells your patients."
     },
     "reasons": {
       "title": "Reasons for contact",
@@ -2950,7 +2961,7 @@
       "warningShown": "The patient saw the emergency warning.",
       "autoShown": "Automatic messages the patient saw",
       "history": "Earlier messages from this patient",
-      "replyLabel": "Your reply (the patient gets it by notification)",
+      "replyLabel": "Your reply (the patient sees the reply in the channel)",
       "reply": "Reply and close",
       "callBack": "I'll call the patient",
       "call": "Call {phone}",
@@ -2962,7 +2973,21 @@
       "readOnly": "This message is for {doctor}: you can read it, not reply.",
       "failed": "Couldn't send. Try again.",
       "warningFloor": "Symptom with an emergency warning: always Urgent.",
-      "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI)."
+      "warningFloorAi": "Symptom with an emergency warning: always Urgent (AI).",
+      "ai": {
+        "title": "AI reading",
+        "intro": "SolvyAI found these symptoms from your list in the message. Check the text before you confirm.",
+        "confirm": "Confirm",
+        "undo": "Undo",
+        "undoConfirm": "Undo the AI reading? The suggested symptoms are deleted and the score goes back to the keyword score.",
+        "cancel": "Cancel",
+        "confirmed": "Confirmed on {date}",
+        "undone": "AI reading undone.",
+        "unavailable": "AI reading unavailable for this message: keywords only.",
+        "pending": "SolvyAI is reading this message.",
+        "none": "The AI found no other symptoms from your list.",
+        "error": "Couldn't save. Try again."
+      }
     }
   },
   "noticesUnsubscribe": {
