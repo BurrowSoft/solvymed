@@ -145,7 +145,11 @@
   },
   "whatsapp-auto-live": {
     "met": true,
-    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with the mobile privacy-accept migration (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
+    "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with the mobile privacy-accept migration (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue). Met with the 2026-10-28 step (01, 10-28: the privacy text goes first, cf: fine early); the Help and App Map follow whatsapp-auto-on."
+  },
+  "whatsapp-auto-on": {
+    "met": false,
+    "what": "Help / App Map only (01 + cf, 10-28): the server flag whatsapp_auto is ON, so Brazilian practices can really turn on automatic WhatsApp. Gates the App Map's auto-WhatsApp rule, the retirement of \"automatic WhatsApp messages are off\" (the old reminders rule shows until then), the App Map's stop-link rule and Help C7's \"In Brazil…\" stop paragraph. The privacy lines stay on whatsapp-auto-live. Flipped by its own small web PR in the WhatsApp window (runbook §5, W3), with the flag."
   },
   "whatsapp-optout-live": {
     "met": true,

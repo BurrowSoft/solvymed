@@ -157,13 +157,13 @@ Thai title: "ล็อกแอป"
 {pending:app-reminder-no-name-live} Os lembretes de consulta não mostram o nome do paciente; abra o app para ver com quem é a consulta.
 {pending:clinic-push-no-name-live} As notificações da clínica (novos pedidos de consulta, cancelamentos, horários propostos aceitos ou recusados, pedidos de remarcação e documentos enviados pelo paciente) não mostram o nome do paciente.
 {pending:invite-joined-push-live,clinic-push-no-name-live} O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome.
-{pending:whatsapp-auto-live,whatsapp-optout-live} No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número.
+{pending:whatsapp-auto-on,whatsapp-optout-live} No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número.
 **en**
 **Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
 {pending:app-reminder-no-name-live} Appointment reminders don't show the patient's name; open the app to see who the visit is with.
 {pending:clinic-push-no-name-live} Clinic notifications (new booking requests, cancellations, accepted or declined time proposals, reschedule requests and documents a patient sends) don't show patient names.
 {pending:invite-joined-push-live,clinic-push-no-name-live} The notice that a new patient joined with your invite code doesn't show the name either.
-{pending:whatsapp-auto-live,whatsapp-optout-live} In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number.
+{pending:whatsapp-auto-on,whatsapp-optout-live} In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number.
 **No site:** Os lembretes e notificações são do app; o site não envia notificações.
 **On the website:** Reminders and notifications are app features; the website doesn't send notifications.
 Thai title: "การเตือนและการแจ้งเตือน"
@@ -172,7 +172,7 @@ Thai title: "การเตือนและการแจ้งเตือ�
 {pending:app-reminder-no-name-live} การเตือนนัดหมายจะไม่แสดงชื่อผู้ป่วย เปิดแอปเพื่อดูว่านัดกับใคร
 {pending:clinic-push-no-name-live} การแจ้งเตือนของคลินิก (คำขอนัดหมายใหม่ การยกเลิก การตอบรับหรือปฏิเสธเวลาที่เสนอ คำขอเลื่อนนัด และเอกสารที่ผู้ป่วยส่ง) จะไม่แสดงชื่อผู้ป่วย
 {pending:invite-joined-push-live,clinic-push-no-name-live} การแจ้งเตือนว่ามีผู้ป่วยใหม่เข้าร่วมด้วยรหัสคำเชิญของคุณก็ไม่แสดงชื่อเช่นกัน
-{pending:whatsapp-auto-live,whatsapp-optout-live} ในบราซิล ข้อความ WhatsApp อัตโนมัติที่ส่งถึงผู้ป่วยแต่ละข้อความมีลิงก์สำหรับหยุดรับข้อความ หลังจากมีผู้ใช้ลิงก์นี้ คลินิกของคุณจะไม่ส่งข้อความ WhatsApp อัตโนมัติไปยังหมายเลขโทรศัพท์นั้นอีก
+{pending:whatsapp-auto-on,whatsapp-optout-live} ในบราซิล ข้อความ WhatsApp อัตโนมัติที่ส่งถึงผู้ป่วยแต่ละข้อความมีลิงก์สำหรับหยุดรับข้อความ หลังจากมีผู้ใช้ลิงก์นี้ คลินิกของคุณจะไม่ส่งข้อความ WhatsApp อัตโนมัติไปยังหมายเลขโทรศัพท์นั้นอีก
 **ในเว็บไซต์:** การเตือนและการแจ้งเตือนเป็นฟีเจอร์ของแอป เว็บไซต์ไม่ส่งการแจ้งเตือน
 `open:settings-notifications`
 

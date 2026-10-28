@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
 import { practiceLine } from "@/lib/assistant/server/handle";
-import { appMapText } from "@/lib/solvyai/app-map";
+import { GENERAL, appMapText, ruleText } from "@/lib/solvyai/app-map";
 
 // 53's go-live audit (#429), cf's facts (6 Oct): Pix named to a Thai doctor,
 // "patients get reminders", "the website can't send the Pix message",
@@ -31,10 +31,25 @@ describe("the App Map states the corrected facts", () => {
   const text = appMapText();
   it("no automatic patient reminders; the reminders are the clinic's own phone", () => {
     expect(text).toContain("Patients get NO automatic appointment reminders");
-    // With automatic WhatsApp live (2026-10-28): still no reminders, and never "WhatsApp is off".
-    expect(text).toContain("automatic WhatsApp messages never include reminders");
-    expect(text).not.toContain("automatic WhatsApp messages are off");
-    expect(text).toContain("about a minute after the practice books (confirms) or cancels their appointment");
+    // The privacy text is live (whatsapp-auto-live) but the flag isn't (whatsapp-auto-on, 01 + cf,
+    // 10-28): the map still says automatic WhatsApp is off, and offers no way to turn it on.
+    expect(text).toContain("automatic WhatsApp messages are off");
+    expect(text).not.toContain("automatic WhatsApp messages never include reminders");
+    expect(text).not.toContain("about a minute after the practice books (confirms) or cancels their appointment");
+  });
+
+  it("the auto-WhatsApp rules follow whatsapp-auto-on (the flag), not the privacy text's whatsapp-auto-live", () => {
+    const gate = (needle: string) => {
+      const r = GENERAL.find((g) => ruleText(g.rule).includes(needle))?.rule;
+      return typeof r === "string" || !r ? null : { pending: r.pending, until: r.until ?? [] };
+    };
+    expect(gate("automatic WhatsApp messages are off")).toEqual({ pending: [], until: ["whatsapp-auto-on"] });
+    expect(gate("automatic WhatsApp messages never include reminders")).toEqual({ pending: ["whatsapp-auto-on"], until: [] });
+    expect(gate("Brazilian practices can turn on automatic WhatsApp messages")).toEqual({ pending: ["whatsapp-auto-on"], until: [] });
+    expect(gate("Automatic WhatsApp messages to patients (Brazilian practices) end with")).toEqual({ pending: ["whatsapp-auto-on", "whatsapp-optout-live"], until: [] });
+    for (const g of GENERAL) {
+      if (typeof g.rule !== "string") expect([...g.rule.pending, ...(g.rule.until ?? [])], ruleText(g.rule).slice(0, 60)).not.toContain("whatsapp-auto-live");
+    }
   });
   it("the website can send the Pix message by WhatsApp", () => {
     expect(text).toContain("Never say the website can't send it.");
