@@ -3009,5 +3009,13 @@
     "done": "Pronto. Você não receberá mais estes e-mails. As respostas continuam no app e no site.",
     "incomplete": "Este link está incompleto. Abra o link do e-mail novamente.",
     "error": "Algo deu errado. Tente novamente."
+  },
+  "whatsappStop": {
+    "title": "Parar as mensagens automáticas pelo WhatsApp",
+    "lead": "Se você confirmar, vai deixar de receber as mensagens automáticas deste consultório pelo WhatsApp.",
+    "button": "Parar estas mensagens",
+    "done": "Pronto. Você não vai mais receber mensagens automáticas deste consultório pelo WhatsApp.",
+    "invalid": "Este link não funcionou. Confira se você abriu o link completo da mensagem do WhatsApp.",
+    "error": "Algo deu errado. Tente novamente."
   }
 }

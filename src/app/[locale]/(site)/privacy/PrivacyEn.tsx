@@ -113,7 +113,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", `Sends the clinic's automatic WhatsApp messages from the clinic's own Z-API account and WhatsApp number: appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect${pcNotify ? ", and the Patient Channel notice that the clinic replied (a fixed sentence and a link)" : ""}, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)`, "Brazil"],
+                  ["Z-API, Brazilian clinics that turn on automatic WhatsApp messages", `Sends the clinic's automatic WhatsApp messages from the clinic's own Z-API account and WhatsApp number: appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect${pcNotify ? (whatsappOptout ? ", and the Patient Channel notice that the clinic replied (a fixed sentence, a link, and a link to stop these messages)" : ", and the Patient Channel notice that the clinic replied (a fixed sentence and a link)") : ""}, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)`, "Brazil"],
                   ["WhatsApp (Meta)", "Delivers those WhatsApp messages", "USA / global"],
                 ]
               : []),
@@ -177,7 +177,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
       {(notices || whatsapp) && (
         <Section title="6e. Patient notices">
           <p>Patient notices: when the clinic books, moves or cancels an appointment, the notice to the patient{whatsapp && ` (${noticeChannels(notices, "or")})`} waits about 1 minute before it&rsquo;s sent, so the clinic can undo a mistake. We keep a record of each notice (which appointment, the kind of notice, the time slot and whether it was sent), with no names or clinical data, for 30 days, and then delete it.</p>
-          {whatsappAuto && <p className="mt-2">Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic&rsquo;s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).{whatsappOptout && " The automatic WhatsApp messages have a link to stop receiving them."}</p>}
+          {whatsappAuto && <p className="mt-2">Automatic WhatsApp messages are sent from our servers through Z-API, using the clinic&rsquo;s own Z-API account and WhatsApp number, and delivered by WhatsApp (Meta).{whatsappOptout && " The automatic WhatsApp messages to patients have a link to stop receiving them. If a patient uses it, we keep their phone number only to stop further messages from that practice, for as long as the practice uses SolvyMed."}</p>}
         </Section>
       )}
 
