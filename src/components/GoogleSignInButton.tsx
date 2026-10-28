@@ -7,6 +7,7 @@ import { publicFlag } from "@/lib/publicFlags";
 import { GOOGLE_TEST_PARAM, googleRedirectTo, startGoogleSignIn, type GoogleRole, type GoogleSource } from "@/lib/googleSignIn";
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
+import { RETURN_COOKIE, returnPath } from "@/lib/authReturn";
 
 // "Continuar com Google" (specs/google-sign-in.md). Google's sign-in button
 // rules: white, the official multi-colour G, "Continue with Google" wording.
@@ -17,11 +18,15 @@ export function GoogleSignInButton({
   source,
   country = null,
   role = null,
+  returnTo = null,
 }: {
   locale: string;
   source: GoogleSource;
   country?: CountryChoice | null;
   role?: GoogleRole | null;
+  // The sign-in page's ?next= (lib/authReturn): only a checked return page goes through
+  // Google's round trip, in a short cookie the callback reads and clears.
+  returnTo?: string | null;
 }) {
   const t = useTranslations("auth.google");
   const [on, setOn] = useState(false);
@@ -49,6 +54,8 @@ export function GoogleSignInButton({
     setWorking(true);
     setFailed(false);
     track("signup_google_start", { source });
+    const back = returnPath(returnTo);
+    if (back) document.cookie = `${RETURN_COOKIE}=${encodeURIComponent(back)}; path=/; max-age=600; samesite=lax; secure`;
     const { error } = await startGoogleSignIn(createClient(), googleRedirectTo(location.origin, { locale, country, role, source }));
     if (error) {
       setWorking(false);

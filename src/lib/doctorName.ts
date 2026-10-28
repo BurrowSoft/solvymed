@@ -101,10 +101,14 @@ export function shortDoctorName(name: string | null | undefined): string {
 }
 
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",
-// "Prof. Dr. carlos" → "C"); a bare title keeps its own letter.
+// "Prof. Dr. carlos" → "C"); a bare title keeps its own letter. The Thai
+// honorific หมอ / คุณหมอ (typed with the name, "หมอสมชาย") is skipped too, as
+// brandInitials does (launch polish 35; WT1's TH rehearsal, 10-28). Only for
+// the letter: greetings keep the name as typed.
 export function nameInitial(name: string | null | undefined): string {
   const { titles, rest } = splitTitles(name);
-  return (rest || titles[0]?.text || "").charAt(0).toUpperCase();
+  const bare = rest.replace(/^(?:คุณหมอ|หมอ)\s*/, "");
+  return Array.from(bare || rest || titles[0]?.text || "")[0]?.toUpperCase() ?? "";
 }
 
 // The first name to greet the signed-in user with: their own, or none

@@ -7,6 +7,7 @@ import { GOOGLE_RETURN_PARAM, onboardingPending, parseGoogleRole } from "@/lib/g
 import { parseCountryChoice } from "@/lib/signupCountry";
 import { OAUTH_SIGN_IN } from "@/lib/firstConfirmation";
 import { demoCountServer } from "@/lib/demoMetricsServer";
+import { RETURN_COOKIE, returnFromCookie, withReturn } from "@/lib/authReturn";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -106,13 +107,19 @@ export async function GET(request: NextRequest) {
       if (searchParams.get("via") === "demo") await demoCountServer("signup_from_demo", c ?? "??", locale);
     } else {
       // An existing account back from Google: a sign-in, never the welcome.
-      redirectUrl = new URL(await routeAfterAuth(supabase, data.user, localePrefix, fromGoogle ? OAUTH_SIGN_IN : type), origin);
-      if (fromGoogle) redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "existing");
+      const dest = await routeAfterAuth(supabase, data.user, localePrefix, fromGoogle ? OAUTH_SIGN_IN : type);
+      // Signed in with Google from a Patient Channel notice's link (the sign-in page's
+      // ?next=, checked again here): back to that page where it fits (lib/authReturn).
+      const back = fromGoogle ? withReturn(dest, returnFromCookie(request.cookies.get(RETURN_COOKIE)?.value)) : dest;
+      redirectUrl = new URL(back, origin);
+      if (fromGoogle && back === dest) redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "existing");
     }
   }
 
   const response = NextResponse.redirect(redirectUrl);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   pendingCookies.forEach(({ name, value, ...rest }) => response.cookies.set(name, value, rest as any));
+  // Used once (or never): a later sign-in must not reuse it.
+  if (request.cookies.has(RETURN_COOKIE)) response.cookies.delete(RETURN_COOKIE);
   return pinLocale(response);
 }
