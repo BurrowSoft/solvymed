@@ -3039,5 +3039,13 @@
     "done": "Done. You won't get these e-mails anymore. Replies still appear in the app and on the website.",
     "incomplete": "This link is incomplete. Open the link in the e-mail again.",
     "error": "Something went wrong. Please try again."
+  },
+  "whatsappStop": {
+    "title": "Stop automatic WhatsApp messages",
+    "lead": "If you confirm, you'll stop getting automatic WhatsApp messages from this practice.",
+    "button": "Stop these messages",
+    "done": "Done. You won't get automatic WhatsApp messages from this practice anymore.",
+    "invalid": "This link didn't work. Check that you opened the full link from the WhatsApp message.",
+    "error": "Something went wrong. Please try again."
   }
 }

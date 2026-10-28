@@ -112,7 +112,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
               : []),
             ...(whatsappAuto
               ? [
-                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", `Envia as mensagens automáticas de WhatsApp da clínica pela conta Z-API e pelo número de WhatsApp da própria clínica: confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta${pcNotify ? ", e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)" : ""}, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)`, "Brasil"],
+                  ["Z-API, clínicas no Brasil que ativam mensagens automáticas de WhatsApp", `Envia as mensagens automáticas de WhatsApp da clínica pela conta Z-API e pelo número de WhatsApp da própria clínica: confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta${pcNotify ? (whatsappOptout ? ", e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa, um link e um link para não receber mais estas mensagens)" : ", e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)") : ""}, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)`, "Brasil"],
                   ["WhatsApp (Meta)", "Entrega essas mensagens de WhatsApp", "EUA / global"],
                 ]
               : []),
@@ -176,7 +176,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
       {(notices || whatsapp) && (
         <Section title="6e. Avisos ao paciente">
           <p>Avisos ao paciente: quando a clínica marca, remarca ou cancela uma consulta, o aviso ao paciente{whatsapp && ` (${noticeChannels(notices, "ou")})`} espera cerca de 1 minuto antes de ser enviado, para a clínica poder desfazer um engano. Guardamos um registro de cada aviso (qual consulta, o tipo de aviso, o horário e se foi enviado), sem nomes nem dados clínicos, por 30 dias, e depois o apagamos.</p>
-          {whatsappAuto && <p className="mt-2">As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).{whatsappOptout && " As mensagens automáticas pelo WhatsApp têm um link para não recebê-las mais."}</p>}
+          {whatsappAuto && <p className="mt-2">As mensagens automáticas de WhatsApp saem dos nossos servidores pela Z-API, com a conta Z-API e o número de WhatsApp da própria clínica, e são entregues pelo WhatsApp (Meta).{whatsappOptout && " As mensagens automáticas pelo WhatsApp para pacientes têm um link para não recebê-las mais. Se o paciente usar o link, guardamos o número de telefone apenas para não enviar mais mensagens daquele consultório, enquanto o consultório usar o SolvyMed."}</p>}
         </Section>
       )}
 

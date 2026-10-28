@@ -149,7 +149,7 @@
   },
   "whatsapp-optout-live": {
     "met": false,
-    "what": "The WhatsApp opt-out is live: every automatic WhatsApp message (appointments and Patient Channel) ends with a link to stop receiving them, and the opt-out is re-checked before each send (the mobile developer's item; 01 made it required before WhatsApp is switched on). Privacy §6e PC-W1 (with whatsapp-auto-live). Needs PRIVACY_VERSION 2026-10-28."
+    "what": "The WhatsApp opt-out is live (contract v2, specs/whatsapp-optout-contract.md): every automatic WhatsApp message TO A PATIENT (appointment messages and Patient Channel notices; not the messages to the practice's own phone) ends with a stop link; the web page /<locale>/whatsapp/stop opts out only on its button POST to the whatsapp-optout edge function; only opted-out numbers are stored, re-checked before each patient-facing send, and deleted when the practice closes (the close path) or is deleted. Privacy §6e PC-W1′ and PC-N3's Z-API clause (with whatsapp-auto-live). Before it is met: the endpoint, the senders and the close-path deletion live on prod, and PC-W1′ + PC-N3 (en/pt) on master. Needs PRIVACY_VERSION 2026-10-28."
   },
   "privacy-th-live": {
     "met": false,

@@ -342,12 +342,18 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     expect(bare.en).toContain("password resets, the Patient Channel notice that the clinic replied");
   });
 
-  it("the WhatsApp opt-out line (PC-W1): with whatsapp-optout-live, inside §6e's automatic WhatsApp line", async () => {
+  it("the WhatsApp opt-out line (PC-W1′): with whatsapp-optout-live, inside §6e's automatic WhatsApp line, and PC-N3's Z-API part", async () => {
     const base = { notices: true, whatsapp: true, whatsappAuto: true };
     expect((await render(base)).en).not.toContain("have a link to stop receiving them");
     const on = await render({ ...base, whatsappOptout: true });
-    expect(on.en).toContain("and delivered by WhatsApp (Meta). The automatic WhatsApp messages have a link to stop receiving them.</p>");
-    expect(on.pt).toContain("e são entregues pelo WhatsApp (Meta). As mensagens automáticas pelo WhatsApp têm um link para não recebê-las mais.</p>");
+    expect(on.en).toContain("and delivered by WhatsApp (Meta). The automatic WhatsApp messages to patients have a link to stop receiving them. If a patient uses it, we keep their phone number only to stop further messages from that practice, for as long as the practice uses SolvyMed.</p>");
+    expect(on.pt).toContain("e são entregues pelo WhatsApp (Meta). As mensagens automáticas pelo WhatsApp para pacientes têm um link para não recebê-las mais. Se o paciente usar o link, guardamos o número de telefone apenas para não enviar mais mensagens daquele consultório, enquanto o consultório usar o SolvyMed.</p>");
+    // PC-N3: the Z-API row names the stop link only with the opt-out live (and pc-notify-live).
+    const zOff = await render({ ...base, pcNotify: true });
+    const zOn = await render({ ...base, pcNotify: true, whatsappOptout: true });
+    expect(zOff.en).toContain("the Patient Channel notice that the clinic replied (a fixed sentence and a link), to the patient");
+    expect(zOn.en).toContain("the Patient Channel notice that the clinic replied (a fixed sentence, a link, and a link to stop these messages), to the patient");
+    expect(zOn.pt).toContain("o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa, um link e um link para não receber mais estas mensagens)");
   });
 
   it("the page passes each condition (app-demo-live only with demo-mode-live)", async () => {

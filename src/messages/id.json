@@ -3009,5 +3009,13 @@
     "done": "Selesai. Anda tidak akan menerima email ini lagi. Balasan tetap tampil di aplikasi dan di situs web.",
     "incomplete": "Tautan ini tidak lengkap. Buka lagi tautan dari email.",
     "error": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "whatsappStop": {
+    "title": "Hentikan pesan WhatsApp otomatis",
+    "lead": "Jika Anda mengonfirmasi, Anda tidak akan lagi menerima pesan WhatsApp otomatis dari praktik ini.",
+    "button": "Hentikan pesan ini",
+    "done": "Selesai. Anda tidak akan lagi menerima pesan WhatsApp otomatis dari praktik ini.",
+    "invalid": "Tautan ini tidak berfungsi. Pastikan Anda membuka tautan lengkap dari pesan WhatsApp.",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

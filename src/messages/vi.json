@@ -3009,5 +3009,13 @@
     "done": "Xong. Bạn sẽ không nhận các email này nữa. Câu trả lời vẫn hiển thị trong ứng dụng và trên trang web.",
     "incomplete": "Liên kết này không đầy đủ. Hãy mở lại liên kết trong email.",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "whatsappStop": {
+    "title": "Dừng tin nhắn WhatsApp tự động",
+    "lead": "Nếu bạn xác nhận, bạn sẽ không nhận tin nhắn WhatsApp tự động từ phòng khám này nữa.",
+    "button": "Dừng các tin nhắn này",
+    "done": "Xong. Bạn sẽ không nhận tin nhắn WhatsApp tự động từ phòng khám này nữa.",
+    "invalid": "Liên kết này không hoạt động. Hãy kiểm tra xem bạn đã mở đầy đủ liên kết trong tin nhắn WhatsApp chưa.",
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại."
   }
 }
