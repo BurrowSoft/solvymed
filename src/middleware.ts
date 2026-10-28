@@ -13,6 +13,7 @@ import { BROWSER_LANGUAGES_HEADER, LOCALE_REDIRECT_PARAM } from "./lib/signupCou
 import { appShortlinkPlayTarget, isAndroidPhone, isAppShortlink, storeLinkForAgent } from "./lib/appStores";
 import { CONSENT_COOKIE, parseConsent } from "./lib/consent";
 import { onboardingPending } from "./lib/googleSignIn";
+import { loginWithReturn } from "./lib/authReturn";
 
 // Automatic language guesses (browser language, country, an /en/ link) are
 // remembered for 30 days, so a wrong first guess doesn't stick for a year.
@@ -85,7 +86,8 @@ export async function middleware(req: NextRequest) {
   if (pathname.includes("/dashboard") && !user) {
     const segments = pathname.split("/");
     const locale = (routing.locales as readonly string[]).includes(segments[1]) ? segments[1] : "en";
-    return withAuthCookies(NextResponse.redirect(new URL(`/${locale}/auth/login`, req.url)));
+    // A Patient Channel request's link (the practice's notice): sign in, then back to it.
+    return withAuthCookies(NextResponse.redirect(new URL(loginWithReturn(`/${locale}`, pathname), req.url)));
   }
   // A secretary removed from her last practice (Vitor, 6 Oct). The dashboard
   // layout already sends her away on a full load, but a client navigation

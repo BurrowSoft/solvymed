@@ -19,6 +19,7 @@ import { fieldValue } from "@/lib/formField";
 import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 import { autoLocaleArrival } from "@/lib/localeArrival";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { withReturn } from "@/lib/authReturn";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -140,6 +141,9 @@ export default function LoginPage() {
       // arbitrary URL, so this can't become an open redirect.
       const next = searchParams.get("next");
       if (next && /^(\/[a-zA-Z-]{2,5})?\/join\/secretary\/S-[A-Z0-9]+$/.test(next)) dest = next;
+      // A Patient Channel notice's link (lib/authReturn: two exact shapes, each only
+      // where this account was going anyway).
+      dest = withReturn(dest, next);
       router.push(dest);
       router.refresh();
     }
@@ -178,7 +182,7 @@ export default function LoginPage() {
         )}
         {unconfirmed && <ResendConfirmation email={unconfirmed} locale={locale} captchaToken={captchaToken} />}
 
-        <GoogleSignInButton locale={locale} source="login" />
+        <GoogleSignInButton locale={locale} source="login" returnTo={searchParams.get("next")} />
         <form method="post" onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="login-email" className="field-label">

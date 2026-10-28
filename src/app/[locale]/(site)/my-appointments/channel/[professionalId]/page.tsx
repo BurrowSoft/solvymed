@@ -14,6 +14,7 @@ import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
 import { ReadOnlyChannel } from "./ReadOnlyChannel";
 import { toReadingHours } from "@/lib/patientChannel/readingHours";
+import { loginWithReturn } from "@/lib/authReturn";
 
 // The patient's Patient Channel with one doctor (specs/patient-contact-tech.md §6; 01's
 // route), from the doctor card's "Fale com o Médico". Dark: 404 unless the channel is on
@@ -34,7 +35,9 @@ export default async function PatientChannelPage({
   const { pc_test } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect(`${locale === "en" ? "" : `/${locale}`}/auth/login`);
+  // Signed out (e.g. the reply notice's e-mail link): sign in, then straight back here.
+  const prefix = locale === "en" ? "" : `/${locale}`;
+  if (!user) redirect(loginWithReturn(prefix, `${prefix}/my-appointments/channel/${professionalId}`));
   if (patientChannelPreviewTest(pc_test)) return <SampleChannel />;
   if (!UUID.test(professionalId) || !(await patientChannelEnabled(supabase, user.id))) notFound();
 
