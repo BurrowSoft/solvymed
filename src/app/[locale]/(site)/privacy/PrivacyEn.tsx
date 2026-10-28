@@ -293,8 +293,10 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
             <strong>Medical records</strong> (clinical notes, prescriptions,{" "}
             {clinicalDocs && "medical certificates, declarations, exam requests, "}exams, files,{" "}
             {patientDocs && "documents shared with or sent by the patient, "}appointment history) are
-            kept for at least <strong>20 years</strong>, the period Brazilian law sets for patient records (Lei n.º
-            13.787/2018), even if the clinic archives the patient or closes its SolvyMed account. A patient with
+            kept for at least <strong>20 years</strong> (for clinics in Brazil, the period Brazilian law sets for
+            patient records, Lei n.º 13.787/2018), even if the clinic archives the patient or closes its SolvyMed
+            account. For clinics in Thailand, the same 20-year period applies: the clinic is responsible for its
+            patients&rsquo; records, and we keep them on the clinic&rsquo;s behalf for that period. A patient with
             medical records can be archived but not deleted.
           </li>
           <li>
