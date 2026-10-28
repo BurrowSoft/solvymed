@@ -11,7 +11,7 @@ import { PrivacyTh } from "@/app/[locale]/(site)/privacy/PrivacyTh";
 
 // Retention A (Vitor, 10-28): §9's 20 years cites Lei 13.787 for clinics in Brazil only;
 // for clinics in Thailand the basis is the clinic's own responsibility for its records.
-// The pt-BR page (Brazil) keeps its citation as it was.
+// The pt-BR page says the same (one version, every language).
 
 const text = (C: typeof PrivacyEn) => renderToStaticMarkup(createElement(C, { turnstile: false })).replace(/\s+/g, " ");
 
@@ -29,10 +29,11 @@ describe("privacy §9: the 20-year retention per country", () => {
     expect(th).not.toContain("ซึ่งเป็นระยะเวลาที่กฎหมายบราซิลกำหนด");
   });
 
-  it("pt-BR keeps the citation and has no Thailand sentence", () => {
+  it("pt-BR says the same as en/th (the same version, every language; cf's R1, 01)", () => {
     const pt = text(PrivacyPtBR);
-    expect(pt).toContain("o prazo que a lei brasileira estabelece para prontuários (Lei n.º 13.787/2018)");
-    expect(pt).not.toMatch(/mesmo prazo de 20 anos|20-year period/);
+    expect(pt).toContain("(para clínicas no Brasil, o prazo que a lei brasileira estabelece para prontuários, Lei n.º 13.787/2018)");
+    expect(pt).toContain("Para clínicas na Tailândia, vale o mesmo prazo de 20 anos: a clínica é responsável pelos prontuários dos seus pacientes, e nós os guardamos em nome da clínica durante esse prazo.");
+    expect(pt).not.toContain("<strong>20 anos</strong>, o prazo que a lei brasileira");
   });
 
   it("the account strings say the retention period, not the law", () => {

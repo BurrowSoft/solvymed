@@ -292,8 +292,10 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             <strong>Prontuários</strong> (anotações clínicas, receitas,{" "}
             {clinicalDocs && "atestados, declarações, solicitações de exames, "}exames, arquivos,{" "}
             {patientDocs && "documentos compartilhados com o paciente ou enviados por ele, "}histórico de consultas) são
-            guardados por no mínimo <strong>20 anos</strong>, o prazo que a lei brasileira estabelece para prontuários
-            (Lei n.º 13.787/2018), mesmo que a clínica arquive o paciente ou encerre a conta no SolvyMed. Um paciente com
+            guardados por no mínimo <strong>20 anos</strong> (para clínicas no Brasil, o prazo que a lei brasileira
+            estabelece para prontuários, Lei n.º 13.787/2018), mesmo que a clínica arquive o paciente ou encerre a conta
+            no SolvyMed. Para clínicas na Tailândia, vale o mesmo prazo de 20 anos: a clínica é responsável pelos
+            prontuários dos seus pacientes, e nós os guardamos em nome da clínica durante esse prazo. Um paciente com
             prontuário pode ser arquivado, mas não excluído.
           </li>
           <li>
