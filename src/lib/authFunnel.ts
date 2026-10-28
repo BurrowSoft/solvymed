@@ -13,6 +13,41 @@ export function isVerifyMetric(v: unknown): v is VerifyMetric {
   return typeof v === "string" && (VERIFY_METRICS as readonly string[]).includes(v);
 }
 
+// Where a count comes from (the contract's platform column, 01: platform parity). The
+// app's confirm panel reports through the website's route with "android" / "ios";
+// anything else is the website. Self-reported, so the totals are approximate.
+export type FunnelPlatform = "web" | "android" | "ios";
+
+export function funnelPlatform(v: unknown): FunnelPlatform {
+  return v === "android" || v === "ios" ? v : "web";
+}
+
+// A per-IP limit on the unauthenticated counting route (cf's item 6): enough for a
+// person's confirm screen, not for inflating the totals. In this server instance's
+// memory (best effort; each instance counts on its own).
+const WINDOW_MS = 10 * 60 * 1000;
+const MAX_PER_WINDOW = 30;
+const hits = new Map<string, number[]>();
+
+export function allowFunnelCount(ip: string, now = Date.now()): boolean {
+  const recent = (hits.get(ip) ?? []).filter((at) => now - at < WINDOW_MS);
+  if (recent.length >= MAX_PER_WINDOW) {
+    hits.set(ip, recent);
+    return false;
+  }
+  recent.push(now);
+  hits.set(ip, recent);
+  if (hits.size > 5000) {
+    for (const [key, times] of hits) if (!times.some((at) => now - at < WINDOW_MS)) hits.delete(key);
+  }
+  return true;
+}
+
+// Tests only.
+export function resetFunnelLimit() {
+  hits.clear();
+}
+
 // The login page's line after a Google round trip that didn't finish (the callback's
 // ?google=failed).
 export const GOOGLE_FAILED_PARAM = "google";

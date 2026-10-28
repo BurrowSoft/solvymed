@@ -28,6 +28,8 @@ vi.mock("@/lib/authRouting", () => ({ routeAfterAuth: async (_s: unknown, _u: un
 type Handler = (req: NextRequest) => Promise<Response>;
 let GET: Handler;
 let FUNNEL: Handler;
+// The route's own instance (after resetModules), so the test resets the limit it counts.
+let resetFunnelLimit: () => void;
 
 beforeAll(async () => {
   vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "http://localhost:54321");
@@ -35,11 +37,13 @@ beforeAll(async () => {
   vi.resetModules();
   ({ GET } = (await import("@/app/api/auth/callback/route")) as { GET: Handler });
   ({ POST: FUNNEL } = (await import("@/app/api/auth/funnel/route")) as { POST: Handler });
+  ({ resetFunnelLimit } = await import("@/lib/authFunnel"));
 });
 beforeEach(() => {
   h.exchange = { data: { session: null, user: null }, error: { code: "flow_state_not_found", message: "invalid flow state" } };
   h.counts = [];
   h.sentry = [];
+  resetFunnelLimit();
 });
 
 const site = "https://www.solvymed.com";
@@ -130,10 +134,14 @@ describe("(b) app browsers where Google refuses sign-in", () => {
 });
 
 describe("(c) the verify page's totals", () => {
-  const post = (body: unknown, origin = site) =>
-    FUNNEL(new NextRequest(new URL("/api/auth/funnel", site), { method: "POST", body: JSON.stringify(body), headers: { origin, "content-type": "application/json" } }));
+  const post = (body: unknown, origin: string | null = site, ip = "203.0.113.7") =>
+    FUNNEL(new NextRequest(new URL("/api/auth/funnel", site), {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { ...(origin ? { origin } : {}), "content-type": "application/json", "x-forwarded-for": ip },
+    }));
 
-  it("counts the listed metrics only, from this site only, with the locale and no country", async () => {
+  it("counts the listed metrics only, from this site only, with the locale, no country, platform web", async () => {
     expect(VERIFY_METRICS).toEqual(["verify_view", "verify_continue_ok", "verify_expired", "verify_resend"]);
     for (const m of ["verify_view", "verify_expired", "verify_resend"]) expect((await post({ metric: m, locale: "th" })).status).toBe(204);
     await post({ metric: "verify_view", locale: "xx" });
@@ -141,8 +149,25 @@ describe("(c) the verify page's totals", () => {
     await post({ metric: "verify_continue_ok", locale: "th" });
     await post({ metric: "anything", locale: "th" });
     await post({ metric: "verify_view", locale: "th" }, "https://evil.example");
-    expect(h.counts).toEqual(["verify_view - th", "verify_expired - th", "verify_resend - th", "verify_view - en"]);
+    expect(h.counts).toEqual(["verify_view - th web", "verify_expired - th web", "verify_resend - th web", "verify_view - en web"]);
     expect(isVerifyMetric("google_exchange_failed")).toBe(false);
+  });
+
+  it("the app's confirm panel (no Origin): platform android / ios, all four metrics; any other platform is web", async () => {
+    await post({ metric: "verify_continue_ok", locale: "pt-BR", platform: "android" }, null);
+    await post({ metric: "verify_view", locale: "th", platform: "ios" }, null);
+    await post({ metric: "verify_expired", locale: "th", platform: "windows" }, null);
+    await post({ metric: "verify_continue_ok", locale: "th", platform: "desktop" }, null);
+    expect(h.counts).toEqual(["verify_continue_ok - pt-BR android", "verify_view - th ios", "verify_expired - th web"]);
+  });
+
+  it("a per-IP limit (30 per 10 minutes; cf's item 6), and nothing without an address", async () => {
+    for (let i = 0; i < 35; i++) await post({ metric: "verify_view", locale: "th" });
+    expect(h.counts).toHaveLength(30);
+    await post({ metric: "verify_view", locale: "th" }, site, "198.51.100.9");
+    expect(h.counts).toHaveLength(31);
+    await post({ metric: "verify_view", locale: "th" }, site, "");
+    expect(h.counts).toHaveLength(31);
   });
 
   it("after-verify counts verify_continue_ok for a sign-up confirmation only", () => {
