@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
         source,
         headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'none'" }],
       })),
+      // Pages opened from a personal link with a token in ?t= (the WhatsApp stop
+      // link, the Patient Channel e-mails' unsubscribe): no Referer at all, as a
+      // header too, not only the page's meta tag (WT1). A later rule with the
+      // same key overrides the site-wide one.
+      ...["/whatsapp/stop", "/:locale/whatsapp/stop", "/notices/unsubscribe", "/:locale/notices/unsubscribe"].map((source) => ({
+        source,
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      })),
       // iOS Universal Links: Apple reads this extension-less file only as
       // application/json (public/.well-known; no redirect, the middleware
       // skips paths with a dot).
