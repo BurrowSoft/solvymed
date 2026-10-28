@@ -192,4 +192,18 @@ describe("the page", () => {
     const { metadata } = await import("@/app/[locale]/(site)/whatsapp/stop/layout");
     expect(metadata).toMatchObject({ robots: { index: false, follow: false }, referrer: "no-referrer" });
   });
+
+  it("the token never reaches the logs, Sentry or analytics", async () => {
+    const fs = await import("node:fs");
+    const route = fs.readFileSync("src/app/api/whatsapp/stop/route.ts", "utf8");
+    // The route logs only a status code, never the body or the token.
+    const logs = route.split("\n").filter((l) => l.includes("console."));
+    expect(logs.length).toBeGreaterThan(0);
+    for (const line of logs) expect(line.trim()).toMatch(/^console\.error\("[^"]*"(, res\.status)?\);$/);
+    const { scrubEvent } = await import("@/lib/sentryScrub");
+    const { redactAnalyticsUrl } = await import("@/lib/analyticsRedact");
+    const url = `https://www.solvymed.com/pt-BR/whatsapp/stop?t=${TOKEN}`;
+    expect(JSON.stringify(scrubEvent({ request: { url }, breadcrumbs: [{ category: "navigation", data: { to: `/pt-BR/whatsapp/stop?t=${TOKEN}` } }] }))).not.toContain(TOKEN);
+    expect(redactAnalyticsUrl(url)).not.toContain(TOKEN);
+  });
 });
