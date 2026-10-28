@@ -30,7 +30,11 @@ describe("the practice country's facts reach every answer", () => {
 describe("the App Map states the corrected facts", () => {
   const text = appMapText();
   it("no automatic patient reminders; the reminders are the clinic's own phone", () => {
-    expect(text).toContain("Patients get NO automatic appointment reminders today");
+    expect(text).toContain("Patients get NO automatic appointment reminders");
+    // With automatic WhatsApp live (2026-10-28): still no reminders, and never "WhatsApp is off".
+    expect(text).toContain("automatic WhatsApp messages never include reminders");
+    expect(text).not.toContain("automatic WhatsApp messages are off");
+    expect(text).toContain("about a minute after the practice books (confirms) or cancels their appointment");
   });
   it("the website can send the Pix message by WhatsApp", () => {
     expect(text).toContain("Never say the website can't send it.");
