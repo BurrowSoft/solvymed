@@ -8,6 +8,7 @@ import { GOOGLE_TEST_PARAM, googleRedirectTo, startGoogleSignIn, type GoogleRole
 import type { CountryChoice } from "@/lib/signupCountry";
 import { track } from "@/lib/track";
 import { RETURN_COOKIE, returnPath } from "@/lib/authReturn";
+import { isInAppBrowser } from "@/lib/authFunnel";
 
 // "Continuar com Google" (specs/google-sign-in.md). Google's sign-in button
 // rules: white, the official multi-colour G, "Continue with Google" wording.
@@ -32,9 +33,14 @@ export function GoogleSignInButton({
   const [on, setOn] = useState(false);
   const [working, setWorking] = useState(false);
   const [failed, setFailed] = useState(false);
+  // Google refuses sign-in in Instagram's, Facebook's and LINE's own browsers (funnel
+  // fix (b)): there, how to open the page in the phone's browser instead of the button.
+  const [inApp, setInApp] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let live = true;
+    setInApp(isInAppBrowser(navigator.userAgent));
     // The test window (01): with the Supabase provider on and the switch
     // still off, ?google_test=1 shows the button for the tester's round
     // trips. Safe by 232: any Google sign-up waits for "Complete your
@@ -48,6 +54,39 @@ export function GoogleSignInButton({
   }, []);
 
   if (!on) return null;
+
+  if (inApp) {
+    const copy = async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        setCopied(true);
+      } catch {
+        // No clipboard here: the how-to above still works.
+      }
+    };
+    return (
+      <div className="mb-5">
+        <div data-testid="google-in-app" data-source={source} className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-slate-700">
+          <p className="font-bold text-slate-900">{t("inApp.title")}</p>
+          <p className="mt-1">{t("inApp.body")}</p>
+          <button
+            type="button"
+            onClick={copy}
+            data-testid="google-in-app-copy"
+            className="mt-3 w-full rounded-xl border border-teal-200 bg-white px-4 py-2.5 font-semibold text-teal-700 transition hover:bg-teal-50"
+          >
+            {t("inApp.copy")}
+          </button>
+          <p role="status" aria-live="polite" className="mt-2 text-slate-600">{copied ? t("inApp.copied") : ""}</p>
+        </div>
+        <div className="mt-5 flex items-center gap-3 text-xs font-semibold uppercase text-slate-400" aria-hidden="true">
+          <span className="h-px flex-1 bg-slate-200" />
+          {t("or")}
+          <span className="h-px flex-1 bg-slate-200" />
+        </div>
+      </div>
+    );
+  }
 
   async function go() {
     if (working) return;

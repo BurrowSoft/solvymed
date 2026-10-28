@@ -20,6 +20,7 @@ import { isAccessAllowed, type EffectiveSub } from "@/lib/subscription";
 import { autoLocaleArrival } from "@/lib/localeArrival";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { withReturn } from "@/lib/authReturn";
+import { GOOGLE_FAILED_PARAM, GOOGLE_FAILED_VALUE } from "@/lib/authFunnel";
 
 export default function LoginPage() {
   const t = useTranslations("auth");
@@ -29,7 +30,9 @@ export default function LoginPage() {
   const locale = (params.locale as string) ?? "en";
   const router = useRouter();
 
-  const [error, setError] = useState("");
+  // Back from a Google round trip that didn't finish (the callback's ?google=failed;
+  // funnel fix (a)): say so, with both ways to try again.
+  const [error, setError] = useState(() => (searchParams.get(GOOGLE_FAILED_PARAM) === GOOGLE_FAILED_VALUE ? t("google.exchangeFailed") : ""));
   // A sign-in refused for an unconfirmed e-mail: that address, for "Resend
   // the confirmation e-mail" (01; it was a dead end).
   const [unconfirmed, setUnconfirmed] = useState("");

@@ -15,9 +15,22 @@ import { endOtherSessions } from "@/lib/endOtherSessions";
 import { useAuthErrorText } from "@/lib/useAuthErrorText";
 import ConfirmClient from "../confirm/ConfirmClient";
 import { OpenInApp } from "@/components/OpenInApp";
+import { ResendConfirmation } from "@/components/ResendConfirmation";
+import type { VerifyMetric } from "@/lib/authFunnel";
 
 
 type State = "ready" | "working" | "expired" | "resetDone";
+
+// The funnel's daily totals (lib/authFunnel, funnel fix (c)): a count only, sent without
+// the token, the address or anything else about the visitor.
+function countFunnel(metric: VerifyMetric, locale: string) {
+  void fetch("/api/auth/funnel", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ metric, locale }),
+    keepalive: true,
+  }).catch(() => {});
+}
 
 // appHandoff (used by /auth/confirm): an account created in the mobile app
 // goes back to the app after the click, with its session in the deep link,
@@ -33,6 +46,18 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
   const otpType = otpTypeFor(type);
   const [state, setState] = useState<State>(tokenHash && otpType ? "ready" : "expired");
   const [appDeepLink, setAppDeepLink] = useState<string | null>(null);
+  const [resendEmail, setResendEmail] = useState("");
+  const isSignup = otpType === "signup" || otpType === "email";
+
+  // A sign-up link's page: shown once (verify_view), and the expired card once
+  // (verify_expired). A password reset isn't the sign-up funnel; a link with no
+  // usable type counts as expired (it can't be confirmed).
+  useEffect(() => {
+    if (state === "ready" && isSignup) countFunnel("verify_view", locale);
+    if (state === "expired" && (isSignup || !otpType)) countFunnel("verify_expired", locale);
+    // Only the first state and each switch to expired.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state === "expired"]);
 
   // The token now lives only in this component: take it out of the address
   // bar before anything else (history, analytics, error reports) can read it.
@@ -53,6 +78,24 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
           <BrandMark />
           <h1 className="auth-heading">{t("verify.expiredTitle")}</h1>
           <p className="mb-8 text-slate-500">{t("verify.expiredBody")}</p>
+          {/* Still unconfirmed? A new link to the address typed here. Neutral, as on
+              forgot-password: the answer never tells whether the address has an account
+              or is already confirmed (funnel fix (c); 01). */}
+          {otpType !== "recovery" && (
+            <div data-testid="verify-expired-resend" className="mb-6 text-left">
+              <p className="mb-2 text-sm text-slate-600">{t("verify.resendHint")}</p>
+              <label htmlFor="verify-resend-email" className="field-label">{t("login.email")}</label>
+              <input
+                id="verify-resend-email"
+                type="email"
+                autoComplete="email"
+                value={resendEmail}
+                onChange={(e) => setResendEmail(e.target.value.trim())}
+                className="text-input"
+              />
+              <ResendConfirmation email={resendEmail} locale={locale} neutral onSend={() => countFunnel("verify_resend", locale)} />
+            </div>
+          )}
           <OpenInApp />
           <Link
             href={localePath("/auth/login")}
@@ -75,8 +118,6 @@ export function VerifyClient({ locale, tokenHash, type, appHandoff = false }: {
       />
     );
   }
-
-  const isSignup = otpType === "signup" || otpType === "email";
 
   async function handleContinue() {
     setState("working");
