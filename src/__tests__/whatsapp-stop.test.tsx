@@ -193,6 +193,18 @@ describe("the page", () => {
     expect(metadata).toMatchObject({ robots: { index: false, follow: false }, referrer: "no-referrer" });
   });
 
+  it("the HTTP Referrer-Policy is no-referrer on the token pages, after (so overriding) the site-wide rule (WT1)", async () => {
+    const { default: config } = await import("../../next.config");
+    const rules = await (config as { headers: () => Promise<{ source: string; headers: { key: string; value: string }[] }[]> }).headers();
+    const site = rules.findIndex((r) => r.source === "/(.*)");
+    expect(rules[site].headers).toContainEqual({ key: "Referrer-Policy", value: "strict-origin-when-cross-origin" });
+    for (const source of ["/whatsapp/stop", "/:locale/whatsapp/stop", "/notices/unsubscribe", "/:locale/notices/unsubscribe"]) {
+      const i = rules.findIndex((r) => r.source === source);
+      expect(i, source).toBeGreaterThan(site);
+      expect(rules[i].headers).toEqual([{ key: "Referrer-Policy", value: "no-referrer" }]);
+    }
+  }, 30_000);
+
   it("the token never reaches the logs, Sentry or analytics", async () => {
     const fs = await import("node:fs");
     const route = fs.readFileSync("src/app/api/whatsapp/stop/route.ts", "utf8");
