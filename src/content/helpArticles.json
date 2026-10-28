@@ -1789,7 +1789,7 @@
             },
             {
               "type": "p",
-              "text": "Cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número."
+              "text": "No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número."
             }
           ],
           "en": [
@@ -1811,7 +1811,7 @@
             },
             {
               "type": "p",
-              "text": "Each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number."
+              "text": "In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number."
             }
           ]
         },

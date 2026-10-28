@@ -205,6 +205,19 @@ describe("the page", () => {
     }
   }, 30_000);
 
+  it("Help C7's stop-link paragraph says it's Brazil only (no Help scoping by country; Thai practices read it too; 01)", async () => {
+    const fs = await import("node:fs");
+    const md = fs.readFileSync("content/help/04-configuracoes.md", "utf8");
+    const lines = md.split(/\r?\n/).filter((l) => l.startsWith("{pending:whatsapp-auto-live,whatsapp-optout-live}"));
+    expect(lines).toHaveLength(3);
+    expect(lines[0]).toContain("} No Brasil, cada mensagem automática pelo WhatsApp");
+    expect(lines[1]).toContain("} In Brazil, each automatic WhatsApp message");
+    expect(lines[2]).toContain("} ในบราซิล ข้อความ WhatsApp อัตโนมัติ");
+    const built = fs.readFileSync("src/content/helpArticles.json", "utf8");
+    expect(built).toContain("In Brazil, each automatic WhatsApp message to a patient has a link to stop them.");
+    expect(built).toContain("No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las.");
+  });
+
   it("the token never reaches the logs, Sentry or analytics", async () => {
     const fs = await import("node:fs");
     const route = fs.readFileSync("src/app/api/whatsapp/stop/route.ts", "utf8");
