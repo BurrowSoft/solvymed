@@ -104,7 +104,12 @@
 // rows) with pc-notify-live, PC-W1 (§6e) with whatsapp-optout-live, and cf's §3.6 / §6g rewordings. The FIRST
 // of those flips bumps this to "2026-10-28" (and PRIVACY_PUBLISHED to its merge day), only
 // after the mobile privacy-accept migration (accepting ('privacy','2026-10-28')) is live; a test enforces the pairing.
-export const PRIVACY_VERSION = "2026-10-27";
+// The first flip is automatic WhatsApp (whatsapp-auto-live + whatsapp-optout-live: §5's Z-API and
+// WhatsApp (Meta) rows, §6e's line with PC-W1′, PC-N3's Z-API clause once pc-notify-live), merged
+// right after retention A (§9's 20 years per country; Vitor's "OK retention lines").
+// ONE bump (01, 10-28): the Patient Channel (patient-channel-live: §6i, §7, §9; pc-notify-live:
+// PC-N1′/N2′ in §6g, PC-N3 in the rows) flips in the same release step, so users re-accept once.
+export const PRIVACY_VERSION = "2026-10-28";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -116,7 +121,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-26"; // 2026-10-27 (§6h demo counters) goes live when this PR merges; re-set it to the merge day (UTC) if the merge slips past 2026-10-26
+export const PRIVACY_PUBLISHED = "2026-10-28"; // 2026-10-28 (automatic WhatsApp + retention A + the Patient Channel) goes live when this PR merges; re-set it to the merge day (UTC) if the merge slips past 2026-10-28
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only

@@ -147,8 +147,9 @@ describe("privacy 2026-10-09: §3.6 marketing attribution, signups and Founders 
 });
 
 describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {
-  it("hidden today; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
-    expect(conditionMet("whatsapp-auto-live")).toBe(false);
+  it("live with privacy 2026-10-28 (the WhatsApp flip); without it, hidden; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
+    expect(conditionMet("whatsapp-auto-live")).toBe(true);
+    expect(conditionMet("whatsapp-optout-live")).toBe(true);
     let r = render(<PrivacyEn turnstile={false} notices whatsapp />);
     expect(r.container.textContent).not.toMatch(/Z-API|Meta/);
     r.unmount();
@@ -164,13 +165,13 @@ describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", (
   });
 });
 
-describe("Z-API row lists every send-whatsapp message (c6 B1)", () => {
-  it("reminders, payment reminders and reschedule requests to the clinic, in both languages", () => {
+describe("Z-API row lists exactly the WhatsApp messages really sent (c6 B1; narrowed for the flip, 01 / the mobile developer, 10-28)", () => {
+  it("confirmations and cancellations to the patient, reschedule requests to the clinic; never reminders, payment reminders or a welcome", () => {
     let r = render(<PrivacyEn turnstile={false} notices whatsapp whatsappAuto />);
-    expect(r.container.textContent).toContain("appointment confirmations, changes, cancellations, reminders, payment reminders and a welcome message when they connect, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)");
+    expect(r.container.textContent).toContain("appointment confirmations and cancellations, to the patient (their phone number and the message), and reschedule requests to the clinic (the patient's name and the proposed time)");
     r.unmount();
     r = render(<PrivacyPtBR turnstile={false} notices whatsapp whatsappAuto />);
-    expect(r.container.textContent).toContain("confirmações, alterações, cancelamentos, lembretes, lembretes de pagamento e uma mensagem de boas-vindas quando ele se conecta, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)");
+    expect(r.container.textContent).toContain("confirmações e cancelamentos de consultas, ao paciente (o telefone dele e a mensagem), e pedidos de remarcação à clínica (o nome do paciente e o horário proposto)");
     r.unmount();
   });
 });

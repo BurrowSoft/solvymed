@@ -331,10 +331,10 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     expect(on.en).toContain("which appointment and kind of notice it is");
     // PC-N3: the LINE, Z-API and Resend rows.
     expect(on.en).toContain("to deliver them; and, for the Patient Channel, the notice that the clinic replied (a fixed sentence and a link, with no health information)");
-    expect(on.en).toContain("a welcome message when they connect, and the Patient Channel notice that the clinic replied (a fixed sentence and a link), to the patient");
+    expect(on.en).toContain("appointment confirmations and cancellations, and the Patient Channel notice that the clinic replied (a fixed sentence and a link), to the patient");
     expect(on.en).toContain("password resets, the Patient Channel notice that the clinic replied (a fixed sentence and a link))");
     expect(on.pt).toContain("para entregá-los; e, no Canal do Paciente, o aviso de que a clínica respondeu (uma frase fixa e um link, sem informação de saúde)");
-    expect(on.pt).toContain("quando ele se conecta, e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link), ao paciente");
+    expect(on.pt).toContain("confirmações e cancelamentos de consultas, e o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link), ao paciente");
     expect(on.pt).toContain("redefinição de senha, o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link))");
     // Each row clause only where its own row shows.
     const bare = await render({ pcNotify: true });
