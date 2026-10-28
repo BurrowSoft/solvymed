@@ -300,11 +300,11 @@
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
   },
   "pc-notify-live": {
-    "met": false,
+    "met": true,
     "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (the mobile privacy-accept migration accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule. BEFORE flipping (cf, #664 B1): the mobile fix that stops storing the doctor's name in pc_notice_outbox.prefix (computed at claim time instead) is live, so PC-N2′ (\"holds no message, name or health information\") is true."
   },
   "patient-channel-live": {
-    "met": false,
+    "met": true,
     "what": "The Patient Channel (specs/patient-contact-tech.md) is live: the server flag patient_channel ON for everyone (lib/patientChannel/live; testers get it first through get_server_flags), migration 237 applied, the doctor can save the rules (M3b), and the patient flow, inbox and notices shipped on the website and the app. Flag and condition flip in the same window. Gates Help C18 and the App Map rule for Settings → Canal do Paciente."
   },
   "app-demo-live": {
