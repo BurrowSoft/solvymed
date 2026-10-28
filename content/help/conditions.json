@@ -144,11 +144,11 @@
     "what": "App 1.6.0 with mobile #348 (no receipt without an amount: the Agenda's receipt action asks to set the amount first, \"Definir valor\" / \"Set amount\"; web #352 parity) is RELEASED on Google Play. Gates Help G5's app line and the App Map's app receipt-amount rule."
   },
   "whatsapp-auto-live": {
-    "met": false,
+    "met": true,
     "what": "Automatic WhatsApp messages are allowed for real practices: the server guard (server flag whatsapp_auto, default off) turned on with Vitor's OK. They go from our send-whatsapp function through Z-API (the clinic's own Z-API account and number) and are delivered by WhatsApp (Meta). Reveals privacy §5's Z-API + WhatsApp (Meta) rows and §6e's line (Vitor's \"ok for whatsapp privacy text\", 10-27: part of privacy 2026-10-28), so flipping needs PRIVACY_VERSION 2026-10-28 with the mobile privacy-accept migration (accepting it) applied first. No practice gets automatic WhatsApp before this is met (launch queue)."
   },
   "whatsapp-optout-live": {
-    "met": false,
+    "met": true,
     "what": "The WhatsApp opt-out is live (contract v2, specs/whatsapp-optout-contract.md): every automatic WhatsApp message TO A PATIENT (appointment messages and Patient Channel notices; not the messages to the practice's own phone) ends with a stop link; the web page /<locale>/whatsapp/stop opts out only on its button POST to the whatsapp-optout edge function; only opted-out numbers are stored, re-checked before each patient-facing send, and deleted when the practice closes (the close path) or is deleted. Privacy §6e PC-W1′ and PC-N3's Z-API clause (with whatsapp-auto-live). Before it is met: the endpoint, the senders and the close-path deletion live on prod, and PC-W1′ + PC-N3 (en/pt) on master. Needs PRIVACY_VERSION 2026-10-28."
   },
   "privacy-th-live": {

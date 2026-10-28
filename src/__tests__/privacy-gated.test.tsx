@@ -147,8 +147,9 @@ describe("privacy 2026-10-09: §3.6 marketing attribution, signups and Founders 
 });
 
 describe("privacy policy: automatic WhatsApp processors (whatsapp-auto-live)", () => {
-  it("hidden today; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
-    expect(conditionMet("whatsapp-auto-live")).toBe(false);
+  it("live with privacy 2026-10-28 (the WhatsApp flip); without it, hidden; with it, the Z-API and WhatsApp (Meta) rows + §6e's line, in both languages", () => {
+    expect(conditionMet("whatsapp-auto-live")).toBe(true);
+    expect(conditionMet("whatsapp-optout-live")).toBe(true);
     let r = render(<PrivacyEn turnstile={false} notices whatsapp />);
     expect(r.container.textContent).not.toMatch(/Z-API|Meta/);
     r.unmount();

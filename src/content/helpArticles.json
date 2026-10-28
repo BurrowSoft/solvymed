@@ -1786,6 +1786,10 @@
             {
               "type": "p",
               "text": "O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome."
+            },
+            {
+              "type": "p",
+              "text": "Cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número."
             }
           ],
           "en": [
@@ -1804,6 +1808,10 @@
             {
               "type": "p",
               "text": "The notice that a new patient joined with your invite code doesn't show the name either."
+            },
+            {
+              "type": "p",
+              "text": "Each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number."
             }
           ]
         },
