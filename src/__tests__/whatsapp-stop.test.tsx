@@ -215,10 +215,10 @@ describe("the page", () => {
     expect(lines[1]).toContain("} In Brazil, each automatic WhatsApp message");
     expect(lines[2]).toContain("} ในบราซิล ข้อความ WhatsApp อัตโนมัติ");
     expect(md).not.toContain("{pending:whatsapp-auto-live");
-    // Hidden until whatsapp-auto-on is met (its own web PR in the WhatsApp window).
+    // Shown once whatsapp-auto-on is met (its own web PR in the WhatsApp window, W3).
     const built = fs.readFileSync("src/content/helpArticles.json", "utf8");
-    expect(built).not.toContain("In Brazil, each automatic WhatsApp message to a patient has a link to stop them.");
-    expect(built).not.toContain("No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las.");
+    expect(built).toContain("In Brazil, each automatic WhatsApp message to a patient has a link to stop them.");
+    expect(built).toContain("No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las.");
   });
 
   it("the token never reaches the logs, Sentry or analytics", async () => {
