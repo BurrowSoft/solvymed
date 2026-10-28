@@ -2667,6 +2667,7 @@
       "stillTakingQ": "您還在服用這個藥物嗎？",
       "stillTaking0": "是",
       "stillTaking1": "我自行停藥了",
+      "stillTakingShort": "仍在服藥",
       "choose": "請選擇…",
       "notAnswered": "未回答"
     },

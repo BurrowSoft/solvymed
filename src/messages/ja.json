@@ -2667,6 +2667,7 @@
       "stillTakingQ": "現在もその薬を飲んでいますか？",
       "stillTaking0": "はい",
       "stillTaking1": "自分の判断でやめました",
+      "stillTakingShort": "薬を服用中",
       "choose": "選択…",
       "notAnswered": "未回答"
     },

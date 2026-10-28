@@ -2667,6 +2667,7 @@
       "stillTakingQ": "지금도 약을 복용하고 계신가요?",
       "stillTaking0": "예",
       "stillTaking1": "스스로 중단했어요",
+      "stillTakingShort": "약 복용 중",
       "choose": "선택…",
       "notAnswered": "답변 없음"
     },
