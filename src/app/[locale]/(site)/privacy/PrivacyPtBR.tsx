@@ -76,7 +76,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
         <ul>
           <li>Para prestar o Serviço (agenda, prontuários, receitas, pagamentos, acesso de secretárias).</li>
           <li>Para enviar notificações de consultas (notificações push) e e-mails do serviço (como confirmação de conta, redefinição de senha e avisos sobre a conta).</li>
-          {reminders && <li>Para enviar, no máximo uma vez, um lembrete para concluir o cadastro ou configurar sua clínica (por e-mail e, se você usa o app, por notificação push). Todo lembrete tem um link para não recebê-los mais.</li>}
+          {reminders && <li>Para enviar lembretes para concluir o cadastro ou configurar sua clínica e, de vez em quando, dicas sobre o uso da sua conta (por e-mail e, se você usa o app, por notificação push). Todo e-mail tem um link para não recebê-los mais, e as dicas também podem ser desligadas em Configurações → Notificações.</li>}
           <li>Para cobrar assinaturas e gerenciar contas.</li>
           <li>Para detectar e corrigir erros e manter o Serviço seguro. Os relatórios de erro não contêm dados de pacientes e trazem no máximo um identificador interno do usuário.</li>
           <li>Com o seu consentimento: para medir quais campanhas trazem novos profissionais ao SolvyMed e melhorar o cadastro.</li>
@@ -93,7 +93,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
             ["Supabase", "Banco de dados, autenticação, armazenamento de arquivos", "Brasil (região de São Paulo)"],
             ["Vercel", "Hospedagem do site; processamento no Brasil (São Paulo), conteúdo estático por rede global", "Brasil / global"],
             ["Stripe", "Pagamento de assinaturas", "EUA / global"],
-            ["Resend", `E-mails transacionais (confirmações, redefinição de senha${reminders ? ", lembretes únicos sobre a conta" : ""}${pcNotify ? ", o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)" : ""})${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
+            ["Resend", `E-mails transacionais (confirmações, redefinição de senha${reminders ? ", lembretes sobre a conta, dicas sobre o uso da conta (que você pode desligar)" : ""}${pcNotify ? ", o aviso do Canal do Paciente de que a clínica respondeu (uma frase fixa e um link)" : ""})${secretaryInvites ? ", convites enviados a pedido de um profissional" : ""} e alertas à nossa equipe de suporte sobre uma conta (por exemplo, um pedido de exclusão ou uma configuração da clínica que precisa de ação nossa)`, "EUA"],
             ["Expo", "Envio de notificações push", "EUA"],
             ["Sentry", "Monitoramento de erros do aplicativo e do site (sem dados de pacientes)", "EUA"],
             ["PostHog", "Estatísticas de uso do site, somente com o seu consentimento", "UE"],
@@ -193,7 +193,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
 
       <Section title="6g. Notificações">
         <ul>
-          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos.{reminders && " No máximo uma vez, também enviamos uma notificação push lembrando de configurar sua clínica."} O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
+          <li>Enviamos notificações (push) sobre consultas: pedidos e suas respostas, confirmações, alterações e cancelamentos.{reminders && " Também enviamos notificações push lembrando de configurar sua clínica e, de vez em quando, com dicas sobre o uso da sua conta (veja abaixo)."} O profissional também pode enviar um aviso geral aos pacientes conectados a ele (um título e uma mensagem). As notificações chegam ao seu aparelho pela Expo (veja a seção 5).</li>
           <li>Quando nossos servidores enviam uma notificação, nós a guardamos numa fila só para entregá-la: para quem é e quem a gerou, de qual consulta e tipo de aviso se trata, a data e o horário da consulta, os nomes que aparecem nela e o status de entrega (no aviso geral, o título e a mensagem). Cada uma é apagada no máximo 30 dias depois de criada.</li>
           {closureNotices && (
             <li>Quando um profissional encerra a conta, nosso servidor envia aos pacientes dele um aviso de que o consultório foi encerrado ou de que uma consulta foi cancelada. Para isso, guardamos apenas o nome da clínica (que pode ser o próprio nome do profissional) e o país dela, a data e o horário da consulta (no caso de consultas canceladas) e o status de entrega, e apagamos o aviso assim que ele é enviado (no máximo 30 dias).</li>
