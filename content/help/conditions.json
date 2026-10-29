@@ -316,8 +316,8 @@
     "what": "LIVE 2026-10-29 07:41:12Z: OTA B on production runtime 1.9.0 (01). Mobile #617 (1.9.0 line only, JS-only): its OTA is live on production runtime 1.9.0, so patients on app 1.9.0 (Android) see \"Atualize o app para ter as novidades, como o Canal do Paciente\" on their home with \"Atualizar\" (Play Store) and \"Agora não\" (back after 7 days). Flip only on 01's word after the mobile developer reports the production OTA. Gates Help C18's line and the App Map rule."
   },
   "app-code-hint-live": {
-    "met": false,
-    "what": "Mobile #625 (01 + Vitor, 10-29) is live on production: after 2 refused patient codes (invite_not_found / code_unavailable) the app's Google complete-account step and patient code gate show \"Esse código não funcionou. Peça um código novo ao seu consultório.\" (+ \"Sou profissional de saúde\" on complete-account). Flip on 01's word after the mobile developer reports the OTA. Gates Help K3's \"No app também\" and the App Map's app half; the website's lines show from the web twin's merge."
+    "met": true,
+    "what": "LIVE 2026-10-29 15:03:04Z: mobile #625 on production runtime 1.9.1 (group 433505f2; 01); not on 1.9.0, so the user-facing lines say \"version 1.9.1 or later\". Mobile #625 (01 + Vitor, 10-29) is live on production: after 2 refused patient codes (invite_not_found / code_unavailable) the app's Google complete-account step and patient code gate show \"Esse código não funcionou. Peça um código novo ao seu consultório.\" (+ \"Sou profissional de saúde\" on complete-account). Flip on 01's word after the mobile developer reports the OTA. Gates Help K3's \"No app também\" and the App Map's app half; the website's lines show from the web twin's merge."
   },
   "pc-notify-live": {
     "met": true,

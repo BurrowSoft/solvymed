@@ -2552,6 +2552,10 @@
             },
             {
               "type": "p",
+              "text": "No app (versão 1.9.1 ou mais recente), depois de dois códigos recusados, aparece o mesmo aviso (com **Sou profissional de saúde** na etapa da conta Google)."
+            },
+            {
+              "type": "p",
               "text": "Se você é profissional de saúde e se cadastrou como paciente por engano, na tela do código de convite toque em **Sou profissional de saúde** e confirme o país do consultório: a conta passa a ser de profissional e seu teste gratuito começa."
             },
             {
@@ -2603,6 +2607,10 @@
             {
               "type": "p",
               "text": "On the website, after two refused invite codes (not found, or no longer accepted), you see **That code didn't work. Ask your practice for a new code.**; on the **Complete your account** screen, with **I'm a health professional**, which switches the sign-up to a professional one."
+            },
+            {
+              "type": "p",
+              "text": "In the app (version 1.9.1 or later), after two refused codes, you see the same line (with **I'm a health professional** on the Google account step)."
             },
             {
               "type": "p",
