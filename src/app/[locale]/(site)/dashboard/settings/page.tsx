@@ -10,7 +10,7 @@ import { JoinPracticeCard } from "./JoinPracticeCard";
 import { canJoinAnotherPractice } from "@/lib/secretaryJoin";
 import { NotifyPrefsCard, type NotifyPref } from "./NotifyPrefsCard";
 import { NotificationsCard } from "./NotificationsCard";
-import { tipsTogglesLive } from "@/lib/tips";
+import { TIPS_TOGGLES_FLAG } from "@/lib/tips";
 import { ShowSetupRow } from "./ShowSetupRow";
 import { NewsSettingsCard, TourSettingsCard } from "@/components/tour/TourProvider";
 import { liveFeatures } from "@/lib/liveFeatures";
@@ -278,8 +278,9 @@ export default async function SettingsPage({
         <TourSettingsCard />
         {liveFeatures.news && <NewsSettingsCard />}
         {liveFeatures.solvyAi && <SolvyAiSettingsCard prefix={locale === "en" ? "" : `/${locale}`} />}
-        {/* Configurações → Notificações: the tips switches (the re-engagement contract §3; 276). */}
-        {tipsTogglesLive() && <NotificationsCard />}
+        {/* Configurações → Notificações: the tips switches (the re-engagement contract §3; 276),
+            behind the server flag tips_toggles (280), as the app. */}
+        {(await serverFlag(supabase, TIPS_TOGGLES_FLAG)) && <NotificationsCard />}
         {founder && <FoundersCard uploadsLeft={founder.uploadsLeft} bookingUrl={process.env.NEXT_PUBLIC_FOUNDERS_BOOKING_URL || undefined} />}
 
         <ProfileForm

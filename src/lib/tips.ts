@@ -1,14 +1,13 @@
-import { conditionMet } from "@/lib/conditions";
-
 // The re-engagement tips (specs/reengagement-contract.md, agreed v3, 10-29): a doctor's
 // "Dicas e lembretes do SolvyMed" switches (push / e-mail) in Configurações → Notificações,
 // and the e-mails' one-click "stop tips by e-mail" link. Both read 276's RPCs
-// (tips_prefs_get / tips_prefs_set / tips_email_optout_confirm), so everything here waits
-// for tips-toggles-live (276 live). The privacy text that names them merges after (§0).
-
-export function tipsTogglesLive(): boolean {
-  return conditionMet("tips-toggles-live");
-}
+// (tips_prefs_get / tips_prefs_set / tips_email_optout_confirm).
+// The switches wait for the server flag tips_toggles (280; get_server_flags as the doctor, so
+// the testers' allowlist applies), the same row the app reads: one write flips both (01).
+// The unsubscribe page and route are never gated (01, 10-30): a sent e-mail's link must keep
+// working, and without a real token they change nothing. Help and the App Map wait for the
+// tips-toggles-live condition, flipped with the flag.
+export const TIPS_TOGGLES_FLAG = "tips_toggles";
 
 export type TipsPrefs = { push: boolean; email: boolean };
 

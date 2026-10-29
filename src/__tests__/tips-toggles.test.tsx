@@ -3,19 +3,18 @@ import { NextRequest } from "next/server";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import pt from "@/messages/pt-BR.json";
-import { isWellFormedTipsToken, toTipsPrefs } from "@/lib/tips";
+import { isWellFormedTipsToken, toTipsPrefs, TIPS_TOGGLES_FLAG } from "@/lib/tips";
 
 // The re-engagement contract (agreed v3): the doctor's "Dicas e lembretes do SolvyMed"
-// switches in Configurações → Notificações, and the e-mails' one-click unsubscribe
+// switches in Configurações → Notificações (behind the server flag tips_toggles, as the app),
+// and the e-mails' one-click unsubscribe (never gated)
 // (/api/tips/unsubscribe: the page's JSON button and RFC 8058's form POST). 276's RPCs.
 
 const TOKEN = "abcdefghijklmnopqrstuvwxyz012345"; // 32 url-safe characters
 const h = vi.hoisted(() => ({
-  live: true,
   calls: [] as { fn: string; args: unknown }[],
   answers: [] as { data: unknown; error: null | { message: string } }[],
 }));
-vi.mock("@/lib/tips", async (orig) => ({ ...(await orig<typeof import("@/lib/tips")>()), tipsTogglesLive: () => h.live }));
 vi.mock("@supabase/supabase-js", () => ({
   createClient: () => ({ rpc: async (fn: string, args: unknown) => { h.calls.push({ fn, args }); return h.answers.shift() ?? { data: true, error: null }; } }),
 }));
@@ -30,16 +29,20 @@ const post = (url: string, init: { body: string; headers: Record<string, string>
   POST(new NextRequest(url, { method: "POST", body: init.body, headers: { "x-forwarded-for": `10.0.0.${++ip}`, ...init.headers } }));
 
 afterEach(() => {
-  h.live = true;
   h.calls = [];
   h.answers = [];
 });
 
 describe("/api/tips/unsubscribe", () => {
-  it("dark until tips-toggles-live: 404, no RPC", async () => {
-    h.live = false;
-    expect((await post("https://www.solvymed.com/api/tips/unsubscribe", { body: JSON.stringify({ t: TOKEN }), headers: { "content-type": "application/json" } })).status).toBe(404);
-    expect(h.calls).toEqual([]);
+  it("never gated (01, 10-30): no flag is read; a sent e-mail's link keeps working", async () => {
+    const src = (await import("node:fs")).readFileSync("src/app/api/tips/unsubscribe/route.ts", "utf8");
+    expect(src).not.toMatch(/serverFlag|conditionMet|tips_toggles/);
+    const layout = (await import("node:fs")).readFileSync("src/app/[locale]/(site)/tips/unsubscribe/layout.tsx", "utf8");
+    expect(layout).not.toMatch(/serverFlag|conditionMet|notFound/);
+  });
+
+  it("the switches' flag is the app's: tips_toggles", () => {
+    expect(TIPS_TOGGLES_FLAG).toBe("tips_toggles");
   });
 
   it("the page's button: JSON { t } → tips_email_optout_confirm, the same answer for any token", async () => {

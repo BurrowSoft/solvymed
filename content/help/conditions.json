@@ -321,7 +321,7 @@
   },
   "tips-toggles-live": {
     "met": false,
-    "what": "The re-engagement contract (specs/reengagement-contract.md, agreed v3): migration 276 (tips_prefs + tips_prefs_get / tips_prefs_set / tips_email_optout_confirm, and the accept for privacy 2026-10-30) is live. Gates the website's Configurações → Notificações card (Dicas e lembretes do SolvyMed: push / e-mail), the /tips/unsubscribe page and route, Help and the App Map lines. Flip on 01's word after the mobile developer reports 276 live. The privacy text (2026-10-30) merges only after this and the app toggles are live (§0)."
+    "what": "The re-engagement contract (specs/reengagement-contract.md, agreed v3): migration 276 (tips_prefs + tips_prefs_get / tips_prefs_set / tips_email_optout_confirm, and the accept for privacy 2026-10-30) is live. Gates only Help and the App Map lines (01, 10-30). The Configurações → Notificações card (Dicas e lembretes do SolvyMed: push / e-mail) waits for the server flag tips_toggles (280, the app's row too; testers via server_flag_testers), flipped in the same moment as this; the /tips/unsubscribe page and route are never gated (a sent e-mail's link must keep working). Flip on 01's word after the mobile developer reports 276 live. The privacy text (2026-10-30) merges only after this and the app toggles are live (§0)."
   },
   "pc-notify-live": {
     "met": true,
