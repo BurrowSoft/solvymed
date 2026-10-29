@@ -1790,6 +1790,10 @@
             {
               "type": "p",
               "text": "No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número."
+            },
+            {
+              "type": "p",
+              "text": "Na Tailândia, os pacientes que conectam o LINE no app (o cartão **Receba lembretes no LINE** na tela inicial, ou **Configurações → LINE**) recebem pelo LINE a confirmação, um lembrete 24 h antes da consulta e os avisos de mudança; nada é enviado entre 21h e 8h (horário da clínica). Em **Configurações → Lembretes no LINE** (ligado por padrão), você vê quantos pacientes conectaram; o paciente conectado mostra **LINE ✓**."
             }
           ],
           "en": [
@@ -1812,6 +1816,10 @@
             {
               "type": "p",
               "text": "In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number."
+            },
+            {
+              "type": "p",
+              "text": "In Thailand, patients who connect LINE in the app (the **Get reminders on LINE** card on Home, or **Settings → LINE**) get the confirmation, a reminder 24 h before the appointment and change notices on LINE; nothing is sent between 21:00 and 08:00 (practice time). **Settings → LINE reminders** (on by default) shows how many patients connected; a connected patient shows **LINE ✓**."
             }
           ]
         },
