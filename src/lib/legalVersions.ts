@@ -117,7 +117,7 @@
 // accepting migration for ('privacy','2026-10-29') applied FIRST; the app's PRIVACY_VERSION twin
 // and its OTA on both runtimes follow (the standing rule).
 // 2026-10-30 (an id; DRAFT): 6g's re-engagement tips line ("Podemos enviar, de vez em quando,
-// notificações com dicas…"; Vitor's "OK tips privacy", 10-29, via 01; specs/reengagement-push.md).
+// notificações e e-mails com dicas…"; Vitor's final OK, 10-29, via 01; specs/reengagement-push.md).
 // The mobile accept migration for ('privacy','2026-10-30') goes live FIRST, and the app's off switch
 // (Settings → Notificações → "Dicas e lembretes do SolvyMed") exists before this merges (cf).
 export const PRIVACY_VERSION = "2026-10-30";
