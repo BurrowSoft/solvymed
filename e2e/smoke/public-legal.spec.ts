@@ -3,6 +3,7 @@ import { PRIVACY_PUBLISHED, TERMS_PUBLISHED, legalDateLabel } from "../../src/li
 import ptBR from "../../src/messages/pt-BR.json";
 import en from "../../src/messages/en.json";
 import th from "../../src/messages/th.json";
+import conditions from "../../content/help/conditions.json";
 
 // The legal pages show the day their text went live (the PUBLISHED dates,
 // never the version IDs; #531), and the
@@ -11,16 +12,20 @@ import th from "../../src/messages/th.json";
 // test fails if a POST is even attempted.
 
 const MESSAGES = { "pt-BR": ptBR, en, th } as const;
-// The policies exist in pt-BR and en; Thai readers get the English text.
-const docLang = (code: string) => (code === "pt-BR" ? "pt-BR" : "en") as "pt-BR" | "en";
-const updatedPrefix = { "pt-BR": "Última atualização:", en: "Last updated:" } as const;
+// The policies exist in pt-BR and en, and the Privacy Policy in Thai too once
+// privacy-th-live is met (#698; the page's legalLangFor rule); otherwise Thai
+// readers get the English text. Read from the condition, so it can't go stale.
+const thaiPrivacy = conditions["privacy-th-live"].met === true;
+const docLang = (code: string, path: string) =>
+  (code === "pt-BR" ? "pt-BR" : code === "th" && path === "/privacy" && thaiPrivacy ? "th" : "en") as "pt-BR" | "en" | "th";
+const updatedPrefix = { "pt-BR": "Última atualização:", en: "Last updated:", th: "ปรับปรุงล่าสุด:" } as const;
 
 for (const locale of LOCALES) {
   for (const [path, published] of [["/privacy", PRIVACY_PUBLISHED], ["/terms", TERMS_PUBLISHED]] as const) {
     test(`${path} shows its published date ${published} (${locale.code})`, async ({ page }) => {
       const res = await gotoIn(page, locale, path);
       expect(res?.status()).toBeLessThan(400);
-      const lang = docLang(locale.code);
+      const lang = docLang(locale.code, path);
       await expect(page.getByText(`${updatedPrefix[lang]} ${legalDateLabel(lang, published)}`)).toBeVisible();
     });
   }
