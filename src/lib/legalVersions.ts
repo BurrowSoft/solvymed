@@ -116,7 +116,11 @@
 // cf: the old line didn't cover a per-item count; Vitor's "OK resolved privacy", 10-29). Mobile's
 // accepting migration for ('privacy','2026-10-29') applied FIRST; the app's PRIVACY_VERSION twin
 // and its OTA on both runtimes follow (the standing rule).
-export const PRIVACY_VERSION = "2026-10-29";
+// 2026-10-30 (an id; DRAFT): 6g's re-engagement tips line ("Podemos enviar, de vez em quando,
+// notificações com dicas…"; Vitor's "OK tips privacy", 10-29, via 01; specs/reengagement-push.md).
+// The mobile accept migration for ('privacy','2026-10-30') goes live FIRST, and the app's off switch
+// (Settings → Notificações → "Dicas e lembretes do SolvyMed") exists before this merges (cf).
+export const PRIVACY_VERSION = "2026-10-30";
 export const TERMS_VERSION = "2026-10-01";
 
 // The versions above are IDs (what consents and the accepting migrations
@@ -128,7 +132,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-29"; // the line-live PR's merge day (UTC; fix it on the day if the merge slips): LINE + item 43's per-item count
+export const PRIVACY_PUBLISHED = "2026-10-29"; // SET TO THE MERGE DAY (UTC) of the 2026-10-30 (tips) PR; 2026-10-29 was LINE + item 43's per-item count
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only

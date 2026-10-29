@@ -208,6 +208,7 @@ export function PrivacyEn({ turnstile, solvyai = false, line = false, notices = 
           {pcNotify && (
             <li>Patient Channel notices wait in their own queue only to deliver them: which request, who it is for, the kind of notice and the channel, the language, when to send it and whether it was sent (with, at most, the provider&rsquo;s error code). It holds no message, name or health information, and each entry is deleted at most 30 days after it was created, whether it was sent or not. Once sent, the message stays in the patient&rsquo;s LINE or WhatsApp chat or mailbox, and LINE, Z-API, WhatsApp (Meta), Resend and Expo keep their own delivery records (see section 5).</li>
           )}
+          <li>We may occasionally send notifications with tips about using your account. You can turn them off in Settings → Notifications.</li>
           <li>You can turn notifications off at any time in your device&rsquo;s settings.</li>
         </ul>
       </Section>

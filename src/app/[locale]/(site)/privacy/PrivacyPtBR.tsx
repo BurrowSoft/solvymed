@@ -207,6 +207,7 @@ export function PrivacyPtBR({ turnstile, solvyai = false, line = false, notices 
           {pcNotify && (
             <li>Os avisos do Canal do Paciente aguardam numa fila própria só para serem entregues: qual solicitação, para quem é, o tipo de aviso e o canal, o idioma, quando enviar e se foi enviado (com, no máximo, o código de erro do provedor). Ela não guarda mensagem, nome nem informação de saúde, e cada registro é apagado no máximo 30 dias depois de criado, tenha sido enviado ou não. Depois de enviada, a mensagem fica na conversa do LINE ou do WhatsApp ou na caixa de e-mail do paciente, e o LINE, a Z-API, o WhatsApp (Meta), a Resend e a Expo mantêm os próprios registros de entrega (veja a seção 5).</li>
           )}
+          <li>Podemos enviar, de vez em quando, notificações com dicas sobre o uso da sua conta. Você pode desligá-las em Configurações → Notificações.</li>
           <li>Você pode desativar as notificações a qualquer momento nas configurações do seu aparelho.</li>
         </ul>
       </Section>
