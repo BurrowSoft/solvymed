@@ -46,12 +46,12 @@ describe("greetingFirstName", () => {
   });
   // Two Thai titles: only the last one is against the name (b9; the app's
   // #517 line 88: "ดร. นพ.สมชาย").
-  it("stacked Thai titles stay space-separated", () => {
-    expect(doctorDisplayName("ดร. นพ. สมชาย ดี")).toBe("ดร. นพ.สมชาย ดี");
-    expect(doctorDisplayName("ดร.นพ.สมชาย ดี", { firstOnly: true })).toBe("ดร. นพ.สมชาย");
-    expect(shortDoctorName("ดร. นพ. สมชาย ใจ ดี")).toBe("ดร. นพ.สมชาย ดี");
-    expect(greetingName("ดร. นพ. สมชาย ดี")).toEqual({ title: "ดร. นพ.", first: "สมชาย" });
-    expect(greetingFirstName("ดร นพ สมชาย ดี", "x@y.com")).toBe("ดร. นพ.สมชาย");
+  it("stacked Thai titles are written together (01, option A, 10-29)", () => {
+    expect(doctorDisplayName("ดร. นพ. สมชาย ดี")).toBe("ดร.นพ.สมชาย ดี");
+    expect(doctorDisplayName("ดร.นพ.สมชาย ดี", { firstOnly: true })).toBe("ดร.นพ.สมชาย");
+    expect(shortDoctorName("ดร. นพ. สมชาย ใจ ดี")).toBe("ดร.นพ.สมชาย ดี");
+    expect(greetingName("ดร. นพ. สมชาย ดี")).toEqual({ title: "ดร.นพ.", first: "สมชาย" });
+    expect(greetingFirstName("ดร นพ สมชาย ดี", "x@y.com")).toBe("ดร.นพ.สมชาย");
   });
   it("none when empty or the email's local part", () => {
     expect(greetingFirstName("", "a@b.com")).toBe("");
