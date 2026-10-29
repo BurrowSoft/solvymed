@@ -19,9 +19,26 @@ describe("privacy policy: SolvyAI / LINE blocks follow their conditions", () => 
     }
   });
 
-  it("today: SolvyAI is live, LINE isn't", () => {
+  it("today: SolvyAI and LINE are live (line-live, Vitor 10-28)", () => {
     expect(conditionMet("solvyai-live")).toBe(true);
-    expect(conditionMet("line-live")).toBe(false);
+    expect(conditionMet("line-live")).toBe(true);
+  });
+
+  it("§6c's second bullet names the Patient Channel notice only with pc-notify-live, in all three languages", async () => {
+    const { PrivacyTh } = await import("@/app/[locale]/(site)/privacy/PrivacyTh");
+    const cases = [
+      [PrivacyEn, ", plus, for the Patient Channel, a fixed sentence that the clinic replied and a link: never clinical information."],
+      [PrivacyPtBR, " e, no Canal do Paciente, uma frase fixa avisando que a clínica respondeu, com um link: nunca informações clínicas."],
+      [PrivacyTh, " และสำหรับช่องทางผู้ป่วย ประโยคคงที่ว่าคลินิกตอบกลับแล้วพร้อมลิงก์ ไม่มีข้อมูลทางคลินิกใดๆ"],
+    ] as const;
+    for (const [Doc, clause] of cases) {
+      let r = render(<Doc turnstile={false} line pcNotify />);
+      expect(r.container.textContent).toContain(clause);
+      r.unmount();
+      r = render(<Doc turnstile={false} line />);
+      expect(r.container.textContent).not.toContain(clause.split(":")[0].split(" ไม่มี")[0]);
+      r.unmount();
+    }
   });
 
   it("each block shows with its own flag only", () => {
