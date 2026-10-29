@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { AnswerKey, Band, ChannelConfig } from "@/lib/patientChannel/score";
 import {
@@ -125,6 +125,16 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
   // Pinned = the app's rulesBarPinned (#624): a conflict or an error stays pinned, so Reload stays in reach.
   const saveBarActive = dirty || state === "saving" || state === "conflict" || state === "invalid" || state === "error";
+  // The dashboard's <main> (the scroller) has bottom room for SolvyAI's button (pb-24 with the
+  // panel on), and a sticky bar stops above a scroller's padding: offset the pinned bar by it,
+  // so it sits on the real bottom edge with nothing showing below (WT2 on #697). <main> stays as is.
+  const saveBarRef = useRef<HTMLDivElement>(null);
+  const [saveBarOffset, setSaveBarOffset] = useState(0);
+  useLayoutEffect(() => {
+    if (!saveBarActive) return;
+    const main = saveBarRef.current?.closest("main");
+    setSaveBarOffset(main ? parseFloat(getComputedStyle(main).paddingBottom) || 0 : 0);
+  }, [saveBarActive]);
 
   return (
     <>
@@ -185,7 +195,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
           to save (or a save is running / failed): solid, a top border and a soft shadow, as wide
           as the rules, clear of SolvyAI's opener. With nothing to save, a plain row at the end of
           the form, so no band slices through the cards. */}
-      <div data-testid={saveBarActive ? "pc-save-bar" : "pc-save-row"} data-sticky={saveBarActive ? "true" : "false"}
+      <div ref={saveBarRef} data-testid={saveBarActive ? "pc-save-bar" : "pc-save-row"} data-sticky={saveBarActive ? "true" : "false"}
+        style={saveBarActive && saveBarOffset ? { bottom: -saveBarOffset } : undefined}
         className={saveBarActive
           ? "sticky bottom-0 z-20 mt-6 rounded-t-2xl border-t border-slate-200 bg-white px-4 py-1.5 pr-20 shadow-[0_-6px_16px_-8px_rgba(15,23,42,0.25)] sm:px-5 sm:py-3 sm:pr-20"
           : "mt-6 py-1.5 sm:py-3"}>

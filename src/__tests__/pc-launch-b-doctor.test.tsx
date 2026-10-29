@@ -156,6 +156,21 @@ describe("12-14: the editor's small things", () => {
     expect(screen.getByTestId("pc-save").className.split(" ")).toEqual(expect.arrayContaining(["py-1.5", "sm:py-2"]));
   });
 
+  it("pinned on the real bottom edge: offset by <main>'s bottom padding, nothing showing below (WT2 on #697)", () => {
+    render(
+      <main style={{ paddingBottom: "96px" }}>
+        <NextIntlClientProvider locale="pt-BR" messages={pt}>
+          <PatientChannelSettings {...EXTRA} templateId="general-side-effects-br" initialRules={withSymptom} initialVersion={2} emergencyNumber="192" />
+        </NextIntlClientProvider>
+      </main>,
+    );
+    expect(screen.getByTestId("pc-save-row").style.bottom).toBe("");
+    fireEvent.click(screen.getByRole("checkbox", { name: P.symptoms.immediate, checked: false }));
+    expect(screen.getByTestId("pc-save-bar").style.bottom).toBe("-96px");
+    // Still clear of SolvyAI's opener (fixed bottom-5 right-5): the buttons keep the right padding.
+    expect(screen.getByTestId("pc-save-bar").className.split(" ")).toEqual(expect.arrayContaining(["pr-20", "sm:pr-20"]));
+  });
+
   it("the save bar sticks only while there's something to save; solid, never translucent (01, 10-29)", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ version: 3, rescored: 0 }) })));
     show(withSymptom);
