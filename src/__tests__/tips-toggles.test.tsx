@@ -26,8 +26,8 @@ vi.mock("@/lib/supabase/client", () => ({
 const { POST } = await import("@/app/api/tips/unsubscribe/route");
 const { NotificationsCard } = await import("@/app/[locale]/(site)/dashboard/settings/NotificationsCard");
 let ip = 0;
-const post = (url: string, init: RequestInit) =>
-  POST(new NextRequest(url, { method: "POST", ...init, headers: { "x-forwarded-for": `10.0.0.${++ip}`, ...(init.headers as Record<string, string>) } }));
+const post = (url: string, init: { body: string; headers: Record<string, string> }) =>
+  POST(new NextRequest(url, { method: "POST", body: init.body, headers: { "x-forwarded-for": `10.0.0.${++ip}`, ...init.headers } }));
 
 afterEach(() => {
   h.live = true;
