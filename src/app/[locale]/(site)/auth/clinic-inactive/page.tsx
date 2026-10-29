@@ -7,7 +7,7 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { OpenActivePractice, SwitchDoctorList } from "@/components/PracticeSwitcher";
 import { actingPracticeFor, myPractices } from "@/lib/effectiveProfId";
 import { isLapsed } from "@/lib/actingPractice";
-import { withBrandTitle } from "@/lib/doctorName";
+import { doctorDisplayName, withBrandTitle } from "@/lib/doctorName";
 import { liveFeatures } from "@/lib/liveFeatures";
 
 type MyClinic = { professional_name: string | null; subscription_active: boolean | null };
@@ -46,7 +46,7 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
     // her others; and on load, open an active one if there is one.
     const tp = await getTranslations({ locale, namespace: "secretaryPractices" });
     const lapsed = practices.find((p) => p.professional_id === acting);
-    const doctor = (lapsed ? withBrandTitle(lapsed.title, lapsed.display_name) : "") || clinic?.professional_name || "";
+    const doctor = doctorDisplayName((lapsed ? withBrandTitle(lapsed.title, lapsed.display_name) : "") || clinic?.professional_name);
     const active = practices.find((p) => p.professional_id !== acting && !isLapsed(p));
     const home = `${prefix}/dashboard`;
     return (
@@ -69,7 +69,7 @@ export default async function ClinicInactivePage({ params }: { params: Promise<{
         <h1 className="auth-heading">{t("clinicInactiveTitle")}</h1>
         <p className="mb-8 text-slate-500">
           {clinic?.professional_name
-            ? t("clinicInactiveBody", { name: clinic.professional_name })
+            ? t("clinicInactiveBody", { name: doctorDisplayName(clinic.professional_name) })
             : t("clinicInactiveBodyGeneric")}
         </p>
         <SignOutButton label={t("signOut")} />

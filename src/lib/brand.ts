@@ -8,7 +8,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { BrandImageTooLarge, BrandNotAnImage, renderBrandImage, type BrandImageKind } from "./brandImage";
 import { brandInitials, isAccentHex, readableAccent } from "./readableAccent";
-import { withBrandTitle } from "./doctorName";
+import { doctorDisplayName, withBrandTitle } from "./doctorName";
 import type { DocTemplate } from "./prescriptionDoc";
 
 export const BRAND_BUCKET = "brand-assets";
@@ -95,7 +95,8 @@ export type PublicBrand = {
 export function publicFromPractice(b: Brand | null, fallback: { name: string; specialty: string }): PublicBrand | null {
   if (!b) return null;
   return {
-    name: withBrandTitle(b.title, b.displayName || fallback.name),
+    // A Thai title against the name, Latin titles tidied, as every page (lib/doctorName; 01, #695).
+    name: doctorDisplayName(withBrandTitle(b.title, b.displayName || fallback.name)),
     specialty: b.specialty.trim() || fallback.specialty,
     accentColor: b.accentColor,
     logoUrl: b.own.logo_square ? b.logoSquareUrl : null,

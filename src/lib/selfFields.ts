@@ -4,6 +4,7 @@
 // The patient never sees the record's values; the server writes only
 // required + still-empty fields (all or nothing) and logs the keys.
 import type { FieldKey } from "@/lib/patientFields";
+import { doctorDisplayName } from "@/lib/doctorName";
 
 // 212's keys, in its form order (notes are never self-filled).
 export const SELF_KEYS: readonly FieldKey[] = [
@@ -30,7 +31,7 @@ export async function loadSelfFieldPrompts(db: Rpc, doctors: { id: string; name:
       const prefill: Record<string, string> = Object.fromEntries(Object.entries(raw).filter(([, v]) => typeof v === "string")) as Record<string, string>;
       const nid = raw.national_id;
       if (nid && typeof nid === "object") for (const [k, v] of Object.entries(nid as Record<string, unknown>)) if (typeof v === "string") prefill[k] = v;
-      out.push({ doctorId: d.id, doctorName: d.name, country: r.country ?? "", keys, prefill });
+      out.push({ doctorId: d.id, doctorName: doctorDisplayName(d.name), country: r.country ?? "", keys, prefill });
     } catch {
       // No card for this doctor.
     }

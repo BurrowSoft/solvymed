@@ -100,6 +100,13 @@ export function shortDoctorName(name: string | null | undefined): string {
   return joinTitles(titles, names.join(" "));
 }
 
+// A name placed straight after Thai text ("ติดต่อ{doctor}", Thai's no-space style): a Thai name
+// stays attached ("ติดต่อพญ.ณัฐธิดา"); any other (a Latin "Dra. Ana Lima") gets a space, so it
+// doesn't run into the Thai word. Other languages: as is. The app's #628 rule.
+export function afterThai(locale: string, name: string): string {
+  return locale === "th" && name && !/^[\u0E00-\u0E7F]/.test(name) ? ` ${name}` : name;
+}
+
 // The avatar letter: the name's, never a title's ("Dra. Beatriz" → "B",
 // "Prof. Dr. carlos" → "C"); a bare title keeps its own letter. The Thai
 // honorific หมอ / คุณหมอ (typed with the name, "หมอสมชาย") is skipped too, as
