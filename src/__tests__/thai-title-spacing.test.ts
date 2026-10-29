@@ -32,3 +32,26 @@ describe("Thai title spacing", () => {
     expect(out[0].doctorName).toBe("พญ.ณัฐธิดา ใจดี");
   });
 });
+
+// WT1's finding on #695: the public booking page's brand header (publicFromPractice) and the
+// "connected" banner (OnboardingCard) showed the name as typed.
+describe("Thai title spacing: the brand header and the connected banner", () => {
+  it("publicFromPractice: My brand's title once, a Thai title against the name", async () => {
+    const { publicFromPractice } = await import("@/lib/brand");
+    const brand = { displayName: "พญ. ณัฐธิดา ใจดี", title: "", specialty: "", registrationLine: "", accentColor: null, logoSquareUrl: null, logoWideUrl: null, photoUrl: null, own: { logo_square: false, logo_wide: false, photo: false }, saved: true };
+    expect(publicFromPractice(brand as never, { name: "", specialty: "" })?.name).toBe("พญ.ณัฐธิดา ใจดี");
+    expect(publicFromPractice({ ...brand, displayName: "ณัฐธิดา ใจดี", title: "พญ." } as never, { name: "", specialty: "" })?.name).toBe("พญ.ณัฐธิดา ใจดี");
+    expect(publicFromPractice({ ...brand, displayName: "Ana Lima", title: "Dra." } as never, { name: "", specialty: "" })?.name).toBe("Dra. Ana Lima");
+  });
+});
+
+// The app's #628 (01's OTA A nits): "ติดต่อ{doctor}" ran a Latin name into the Thai verb.
+describe("afterThai: a name straight after Thai text", () => {
+  it("th: a Latin name gets a space, a Thai name stays attached; other languages as is", async () => {
+    const { afterThai } = await import("@/lib/doctorName");
+    expect(afterThai("th", "Dra. Teste A")).toBe(" Dra. Teste A");
+    expect(afterThai("th", "พญ.ทดสอบ OTA")).toBe("พญ.ทดสอบ OTA");
+    expect(afterThai("pt-BR", "Dra. Teste A")).toBe("Dra. Teste A");
+    expect(afterThai("th", "")).toBe("");
+  });
+});

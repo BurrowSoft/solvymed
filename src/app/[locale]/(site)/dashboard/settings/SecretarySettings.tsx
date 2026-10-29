@@ -4,6 +4,7 @@ import { Card, InviteCodeCard, BlockedPatientsPanel } from "./SettingsClient";
 import { LeaveClinicButton } from "./LeaveClinicButton";
 import { formatMoney } from "@/lib/money";
 import { countryProfile } from "@/lib/country";
+import { doctorDisplayName } from "@/lib/doctorName";
 
 type Supabase = Awaited<ReturnType<typeof createClient>>;
 type MyClinic = {
@@ -44,7 +45,7 @@ export async function SecretarySettings({ supabase, doctorId, locale }: { supaba
   const hours = (hoursResult.data ?? null) as Record<string, DayHours> | null;
   const procedures = ((procsResult.data ?? []) as { id: string; name: string; duration_minutes: number; price: number | null }[]);
   const blocked = (blockedResult.data ?? []) as { id: string; full_name: string; email?: string; phone?: string }[];
-  const doctorName = clinic?.professional_name ?? null;
+  const doctorName = doctorDisplayName(clinic?.professional_name) || null;
 
   return (
     <div className="space-y-6">

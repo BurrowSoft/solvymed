@@ -21,7 +21,7 @@ import { getDayHours, type WorkingHours } from "@/lib/slots";
 import { countryProfile } from "@/lib/country";
 import { ConsultTypeLabel } from "@/components/ConsultTypeLabel";
 import { whoLine } from "@/lib/whoLine";
-import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
+import { afterThai, doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { MyDoctors } from "./MyDoctors";
 import { OneDoctorDisconnect } from "./OneDoctorDisconnect";
 import { PastPracticeLinks } from "@/components/patientChannel/PastPracticeLinks";
@@ -563,7 +563,7 @@ export function MyAppointmentsClient({
               <a href={`${prefix}/my-appointments/channel/${myProfessionalId}`} data-testid="pc-entry"
                 className="mt-3 inline-block rounded-xl border-2 border-teal-600 px-4 py-1.5 text-center text-sm font-bold text-teal-700 hover:bg-teal-50">
                 {/* The doctor's own name when known (launch polish 17). */}
-                {doctorDisplayName(doctorName) ? tChannel("entryButtonNamed", { doctor: doctorDisplayName(doctorName) }) : tChannel("entryButton")}
+                {doctorDisplayName(doctorName) ? tChannel("entryButtonNamed", { doctor: afterThai(locale, doctorDisplayName(doctorName)) }) : tChannel("entryButton")}
               </a>
             )}
             {primaryChannelView && myProfessionalId && (
