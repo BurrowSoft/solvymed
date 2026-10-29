@@ -801,7 +801,14 @@
     "google": {
       "continue": "使用 Google 继续",
       "or": "或",
-      "failed": "无法打开 Google 登录，请重试。"
+      "failed": "无法打开 Google 登录，请重试。",
+      "exchangeFailed": "无法完成 Google 登录。请再次点按“使用 Google 继续”，或使用电子邮件和密码。",
+      "inApp": {
+        "title": "请在浏览器中打开",
+        "body": "Google 不允许在此应用的内置浏览器中登录。请点按屏幕角落的 ⋯ 并选择“在浏览器中打开”，或复制链接并粘贴到 Chrome 或 Safari 中。",
+        "copy": "复制链接",
+        "copied": "链接已复制。"
+      }
     },
     "completeAccount": {
       "title": "完成账户设置",
@@ -962,7 +969,8 @@
       "continue": "继续",
       "expiredTitle": "此链接已过期",
       "expiredBody": "请在登录页面重新获取链接。",
-      "goToSignIn": "前往登录"
+      "goToSignIn": "前往登录",
+      "resendHint": "还没有确认账户？输入你的电子邮件，我们会发送新的链接。"
     },
     "captchaFailed": "请完成验证后重试。",
     "errors": {
@@ -985,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "确认您的电子邮件",
-      "sentTo": "我们已向 {email} 发送确认链接。",
+      "sentTo": "我们已向 <b>{email}</b> 发送确认链接。",
       "openMail": "打开邮箱",
       "wrongEmail": "邮箱填错了？更正",
       "forgotQuestion": "还没有确认邮箱？",
-      "sentToWithCode": "我们已向 {email} 发送链接和验证码。",
+      "sentToWithCode": "我们已向 <b>{email}</b> 发送链接和验证码。",
       "codeLabel": "或输入邮件中的 8 位验证码",
       "codeConfirm": "确认",
-      "codeInvalid": "验证码无效或已过期。请重新发送邮件以获取新验证码。"
+      "codeInvalid": "验证码无效或已过期。请重新发送邮件以获取新验证码。",
+      "resendEmail": "重新发送邮件",
+      "spamHint": "没收到？请同时查看垃圾邮件和推广邮件文件夹。"
     },
     "signupExisting": {
       "title": "请查看您的邮箱",
@@ -2667,6 +2677,7 @@
       "stillTakingQ": "您还在服用该药物吗？",
       "stillTaking0": "是",
       "stillTaking1": "我自行停药了",
+      "stillTakingShort": "仍在服药",
       "choose": "请选择…",
       "notAnswered": "未回答"
     },

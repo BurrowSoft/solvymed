@@ -801,7 +801,14 @@
     "google": {
       "continue": "使用 Google 繼續",
       "or": "或",
-      "failed": "無法開啟 Google 登入，請再試一次。"
+      "failed": "無法開啟 Google 登入，請再試一次。",
+      "exchangeFailed": "無法完成 Google 登入。請再次點按「使用 Google 繼續」，或使用電子郵件和密碼。",
+      "inApp": {
+        "title": "請在瀏覽器中開啟",
+        "body": "Google 不允許在此應用程式的內建瀏覽器中登入。請點按畫面角落的 ⋯ 並選擇「在瀏覽器中開啟」，或複製連結並貼到 Chrome 或 Safari。",
+        "copy": "複製連結",
+        "copied": "已複製連結。"
+      }
     },
     "completeAccount": {
       "title": "完成帳戶設定",
@@ -962,7 +969,8 @@
       "continue": "繼續",
       "expiredTitle": "此連結已過期",
       "expiredBody": "請在登入頁面重新取得連結。",
-      "goToSignIn": "前往登入"
+      "goToSignIn": "前往登入",
+      "resendHint": "還沒有確認帳戶？輸入你的電子郵件，我們會寄送新的連結。"
     },
     "captchaFailed": "請完成驗證後再試一次。",
     "errors": {
@@ -985,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "確認您的電子郵件",
-      "sentTo": "我們已將確認連結寄至 {email}。",
+      "sentTo": "我們已將確認連結寄至 <b>{email}</b>。",
       "openMail": "開啟信箱",
       "wrongEmail": "信箱填錯了？更正",
       "forgotQuestion": "還沒有確認信箱？",
-      "sentToWithCode": "我們已將連結和驗證碼寄至 {email}。",
+      "sentToWithCode": "我們已將連結和驗證碼寄至 <b>{email}</b>。",
       "codeLabel": "或輸入郵件中的 8 位數驗證碼",
       "codeConfirm": "確認",
-      "codeInvalid": "驗證碼無效或已過期。請重新寄送郵件以取得新驗證碼。"
+      "codeInvalid": "驗證碼無效或已過期。請重新寄送郵件以取得新驗證碼。",
+      "resendEmail": "重新寄送電子郵件",
+      "spamHint": "沒收到嗎？請一併查看垃圾郵件和促銷內容資料夾。"
     },
     "signupExisting": {
       "title": "請查看您的信箱",
@@ -2667,6 +2677,7 @@
       "stillTakingQ": "您還在服用這個藥物嗎？",
       "stillTaking0": "是",
       "stillTaking1": "我自行停藥了",
+      "stillTakingShort": "仍在服藥",
       "choose": "請選擇…",
       "notAnswered": "未回答"
     },

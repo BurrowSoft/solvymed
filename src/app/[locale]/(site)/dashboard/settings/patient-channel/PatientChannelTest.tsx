@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { findTerms, scoreRequest, type AnswerKey, type Answers, type ChannelConfig, type ScoreLine } from "@/lib/patientChannel/score";
+import { answerText } from "@/lib/patientChannel/inbox";
 import { BandTag } from "./BandTag";
 import { PcPageFrame } from "@/components/patientChannel/PcPageFrame";
 import type { PageLook } from "@/lib/patientChannel/pageLook";
@@ -198,5 +199,5 @@ export function lineLabel(rules: ChannelConfig, line: ScoreLine, t: (key: string
   }
   if (line.source === "ai") base = `${t("lines.ai")} · ${base}`;
   const { answerKey, answerIndex } = line.label;
-  return answerKey !== undefined && answerIndex !== undefined ? `${base} · ${t(`answers.${answerKey}${answerIndex}`)}` : base;
+  return answerKey !== undefined && answerIndex !== undefined ? `${base} · ${answerText(t, answerKey, answerIndex)}` : base;
 }

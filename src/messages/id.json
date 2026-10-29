@@ -801,7 +801,14 @@
     "google": {
       "continue": "Lanjutkan dengan Google",
       "or": "atau",
-      "failed": "Tidak dapat membuka login Google. Coba lagi."
+      "failed": "Tidak dapat membuka login Google. Coba lagi.",
+      "exchangeFailed": "Kami tidak dapat menyelesaikan masuk dengan Google. Ketuk 'Lanjutkan dengan Google' lagi atau gunakan e-mail dan kata sandi.",
+      "inApp": {
+        "title": "Buka di browser",
+        "body": "Google tidak mengizinkan masuk dari browser aplikasi ini. Ketuk ⋯ (di sudut layar) lalu pilih 'Buka di browser', atau salin tautan dan tempel di Chrome atau Safari.",
+        "copy": "Salin tautan",
+        "copied": "Tautan disalin."
+      }
     },
     "completeAccount": {
       "title": "Lengkapi akun Anda",
@@ -962,7 +969,8 @@
       "continue": "Lanjutkan",
       "expiredTitle": "Tautan ini sudah kedaluwarsa",
       "expiredBody": "Minta tautan baru dari halaman masuk.",
-      "goToSignIn": "Ke halaman masuk"
+      "goToSignIn": "Ke halaman masuk",
+      "resendHint": "Belum mengonfirmasi akun? Masukkan e-mail Anda dan kami akan mengirim tautan baru."
     },
     "captchaFailed": "Selesaikan verifikasi lalu coba lagi.",
     "errors": {
@@ -985,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Konfirmasi email Anda",
-      "sentTo": "Kami mengirim tautan konfirmasi ke {email}.",
+      "sentTo": "Kami mengirim tautan konfirmasi ke <b>{email}</b>.",
       "openMail": "Buka email",
       "wrongEmail": "Email salah? Perbaiki",
       "forgotQuestion": "Belum mengonfirmasi email Anda?",
-      "sentToWithCode": "Kami mengirim tautan dan kode ke {email}.",
+      "sentToWithCode": "Kami mengirim tautan dan kode ke <b>{email}</b>.",
       "codeLabel": "Atau masukkan kode 8 digit dari email",
       "codeConfirm": "Konfirmasi",
-      "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru."
+      "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru.",
+      "resendEmail": "Kirim ulang email",
+      "spamHint": "Belum menerima? Periksa juga folder Spam dan Promosi."
     },
     "signupExisting": {
       "title": "Periksa email Anda",
@@ -2667,6 +2677,7 @@
       "stillTakingQ": "Apakah Anda masih minum obatnya?",
       "stillTaking0": "Ya",
       "stillTaking1": "Saya berhenti sendiri",
+      "stillTakingShort": "Masih minum obat",
       "choose": "Pilih…",
       "notAnswered": "Tidak dijawab"
     },

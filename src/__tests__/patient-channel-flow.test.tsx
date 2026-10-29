@@ -31,6 +31,12 @@ const choose = (label: string, option: string) => {
   fireEvent.change(select, { target: { value: within(select).getByRole("option", { name: option }).getAttribute("value") } });
 };
 const A = pt.patientChannel.answers;
+// Opens an FAQ answer (<details>), as a tap does: "Isso resolveu" shows only after one (01, 10-29).
+const openFaq = (i = 0) => {
+  const d = document.querySelectorAll("details")[i] as HTMLDetailsElement;
+  d.open = true;
+  fireEvent(d, new Event("toggle"));
+};
 
 describe("the patient's flow", () => {
   it("entry: the practice country's emergency number, the rules; the FAQ can resolve it with nothing sent", () => {
@@ -38,6 +44,7 @@ describe("the patient's flow", () => {
     expect(screen.getByText(P.entryEmergency.replace("{number}", "192"))).toBeInTheDocument();
     expect(screen.getByText("2 dias úteis")).toBeInTheDocument();
     fireEvent.click(screen.getByTestId("pc-start"));
+    openFaq();
     fireEvent.click(screen.getByTestId("pc-faq-solved"));
     expect(screen.getByTestId("pc-resolved")).toHaveTextContent(P.resolved);
   });
@@ -186,10 +193,29 @@ describe("the patient's flow", () => {
     await waitFor(async () => expect(await screen.findByTestId("pc-replace")).toHaveTextContent(P.openTextSecretary));
   });
 
+  it("FAQ: \"Isso resolveu\" only after an answer was opened; before, hidden in place and nothing counts (01, 10-29)", () => {
+    const onSelfServe = vi.fn();
+    render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={sampleSubmit()} onSelfServe={onSelfServe} />));
+    fireEvent.click(screen.getByTestId("pc-start"));
+    const solved = screen.getByTestId("pc-faq-solved");
+    expect(solved).toBeDisabled();
+    expect(solved).toHaveClass("invisible");
+    expect(solved).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByTestId("pc-faq-continue")).not.toBeDisabled();
+    fireEvent.click(solved);
+    expect(onSelfServe).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("pc-resolved")).toBeNull();
+    openFaq();
+    expect(solved).not.toBeDisabled();
+    expect(solved).toHaveClass("visible");
+    expect(solved).not.toHaveAttribute("aria-hidden");
+  });
+
   it("M4b: the FAQ and the skip are counted for the doctor (no content)", async () => {
     const onSelfServe = vi.fn();
     render(wrap(<PatientChannelFlow page={SAMPLE_PAGE} preview={samplePreview()} submit={sampleSubmit()} onSelfServe={onSelfServe} />));
     fireEvent.click(screen.getByTestId("pc-start"));
+    openFaq();
     fireEvent.click(screen.getByTestId("pc-faq-solved"));
     expect(onSelfServe).toHaveBeenCalledWith("faq_resolved");
   });

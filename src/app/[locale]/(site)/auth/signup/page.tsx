@@ -342,10 +342,24 @@ export default function SignupPage() {
           </IconBadge>
           {/* "Confirme seu e-mail" (01's spec: never lose a user here): the
               address, its mailbox, the resend, and a way back to fix a
-              mistyped address (sign up again; no server edit of the account). */}
+              mistyped address (sign up again; no server edit of the account).
+              The funnel contract's (a), one layout with the app (#615): the
+              address in bold with "Fix it" right under it, Open e-mail, the
+              8-cell code, the spam callout, then "Reenviar e-mail". */}
           <h1 className="auth-heading">{t("confirmEmail.title")}</h1>
-          <p className="mb-6 text-slate-500" data-testid="confirm-email-sent-to">{t(byCode ? "confirmEmail.sentToWithCode" : "confirmEmail.sentTo", { email: sentTo })}</p>
-          {byCode && sentTo && <ConfirmByCode email={sentTo} locale={locale} />}
+          <p className={`${lockedEmail ? "mb-6" : "mb-1"} text-slate-500`} data-testid="confirm-email-sent-to">
+            {t.rich(byCode ? "confirmEmail.sentToWithCode" : "confirmEmail.sentTo", { email: sentTo, b: (chunks) => <strong className="break-all text-slate-800">{chunks}</strong> })}
+          </p>
+          {!lockedEmail && (
+            <button
+              type="button"
+              data-testid="confirm-email-fix"
+              onClick={() => setSuccess(false)}
+              className="mb-6 block w-full text-sm font-semibold text-teal-700 hover:underline"
+            >
+              {t("confirmEmail.wrongEmail")}
+            </button>
+          )}
           {mailbox && (
             <a
               href={mailbox}
@@ -357,17 +371,8 @@ export default function SignupPage() {
               {t("confirmEmail.openMail")}
             </a>
           )}
-          {sentTo && <div className="mb-4 text-left"><ResendConfirmation email={sentTo} locale={locale} justSent /></div>}
-          {!lockedEmail && (
-            <button
-              type="button"
-              data-testid="confirm-email-fix"
-              onClick={() => setSuccess(false)}
-              className="mb-6 block w-full text-sm font-semibold text-teal-700 hover:underline"
-            >
-              {t("confirmEmail.wrongEmail")}
-            </button>
-          )}
+          {byCode && sentTo && <ConfirmByCode email={sentTo} locale={locale} />}
+          {sentTo && <div className="mb-6 text-left"><ResendConfirmation email={sentTo} locale={locale} justSent confirmScreen /></div>}
           <Link href={localePath("/")} className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-teal-600 transition-colors">
             {t("backToHome")}
           </Link>

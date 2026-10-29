@@ -1790,6 +1790,10 @@
             {
               "type": "p",
               "text": "No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número."
+            },
+            {
+              "type": "p",
+              "text": "Na Tailândia, os pacientes que conectam o LINE no app (o cartão **Receba lembretes no LINE** na tela inicial, ou **Configurações → LINE**) recebem pelo LINE a confirmação, um lembrete 24 h antes da consulta e os avisos de mudança; nada é enviado entre 21h e 8h (horário da clínica). Em **Configurações → Lembretes no LINE** (ligado por padrão), você vê quantos pacientes conectaram; o paciente conectado mostra **LINE ✓**."
             }
           ],
           "en": [
@@ -1812,6 +1816,10 @@
             {
               "type": "p",
               "text": "In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number."
+            },
+            {
+              "type": "p",
+              "text": "In Thailand, patients who connect LINE in the app (the **Get reminders on LINE** card on Home, or **Settings → LINE**) get the confirmation, a reminder 24 h before the appointment and change notices on LINE; nothing is sent between 21:00 and 08:00 (practice time). **Settings → LINE reminders** (on by default) shows how many patients connected; a connected patient shows **LINE ✓**."
             }
           ]
         },
@@ -2354,6 +2362,10 @@
             },
             {
               "type": "p",
+              "text": "No app, o Canal do Paciente precisa da versão 1.9.1 (Play Store). O paciente com o app 1.9.0 (Android) vê na tela inicial **Atualize o app para ter as novidades, como o Canal do Paciente**, com **Atualizar** (abre a Play Store) e **Agora não** (o aviso volta em 7 dias). Mesmo com o app atualizado, o canal só aparece depois que o consultório o ativa."
+            },
+            {
+              "type": "p",
               "text": "Quando a clínica responde, o paciente recebe uma notificação push e, no máximo, um aviso fora do app (pelo LINE, pelo WhatsApp da clínica ou por e-mail) que diz só \"Você recebeu uma resposta no Canal do Paciente.\", com o link para o canal. Os e-mails têm o link **Não quero receber estes e-mails**; as respostas continuam no app e no site."
             },
             {
@@ -2401,6 +2413,10 @@
             {
               "type": "p",
               "text": "**What the patient sees**: in **My appointments**, a connected patient opens the channel: the emergency warning, the response time, the hours when you read messages (with your note) and the rules; the FAQ; the reason for contact (and who it goes to); and the form, with the boxes, the three questions and a free text that suggests your terms as they type. They never see the score or the band. The emergency warning shows at once for a warning sign or when the score reaches Urgent; after sending, the confirmation repeats the emergency number. If it appears off-screen while the patient is typing, a red bar with the warning stays at the top of the screen without hiding the text box; tapping it goes to the full warning. They have one open request at a time with you and another with the front desk: an administrative request never replaces a clinical question. Sending another to the same place shows which one is open (the reason and the date) and asks whether to update it; after updating, the confirmation says \"Replaced your previous message.\" The three questions start unanswered, and an unanswered question adds no points (the request shows \"Not answered\"). They open it with **Contact** and your name (or **Contact the doctor**) on your card in **My appointments**, shown only while the channel is on. If the practice is closed or the patient is archived, they see \"This channel isn't available. Please contact the practice directly.\", with the emergency warning; the requests they already sent there stay readable, read-only. In **Your messages**, at the start of the channel, they see their requests, the state of each one (waiting for a reply, answered, will call, replaced) and **The practice's reply**. If they ticked symptoms, \"You ticked:\" lists their names as they are in your list today. If you turn the channel off (or they're no longer connected to you), patients who already have messages see **View my messages** on your card: their messages and replies stay visible, without sending new ones. After they disconnect from a doctor (or the practice closes), **See earlier messages with {doctor}** shows in **My appointments** and on the **Connect to your doctor** screen, once for each practice where they have messages, and opens those messages read-only."
+            },
+            {
+              "type": "p",
+              "text": "In the app, the Patient Channel needs version 1.9.1 (Play Store). A patient on app 1.9.0 (Android) sees **Update the app to get what's new, like the Patient Channel** on their home screen, with **Update** (opens the Play Store) and **Not now** (the notice comes back in 7 days). Even with the updated app, the channel only appears once the practice turns it on."
             },
             {
               "type": "p",
@@ -2540,11 +2556,23 @@
             },
             {
               "type": "p",
+              "text": "No site, se a entrada com o Google não terminar, a tela de entrada mostra **Não conseguimos concluir a entrada com o Google.**: toque em **Continuar com Google** de novo ou use e-mail e senha. Dentro do Instagram, do Facebook ou do LINE, o Google não deixa entrar: no lugar do botão aparece **Abra no navegador**, com como abrir a página no navegador do celular e **Copiar link**."
+            },
+            {
+              "type": "p",
+              "text": "No site, se o link de confirmação expirou ou já foi usado, a página **Este link expirou** permite digitar o e-mail e tocar em **Reenviar e-mail de confirmação**; a resposta é a mesma para qualquer endereço."
+            },
+            {
+              "type": "p",
               "text": "No app para Android, a tela de entrada também tem **Continuar com Google**, com a mesma tela **Complete sua conta** na primeira vez."
             },
             {
               "type": "p",
               "text": "Logo após o cadastro no app, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (abre o app de e-mail do celular), o reenvio e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo)."
+            },
+            {
+              "type": "p",
+              "text": "No app (versão 1.9.1 ou mais recente), a tela **Confirme seu e-mail** segue a mesma ordem do site: o endereço em negrito com **E-mail errado? Corrigir** logo abaixo, **Abrir e-mail**, o código em 8 caixas (enviado sozinho no último dígito), o aviso **Não chegou? Veja também as pastas Spam e Promoções.** e **Reenviar e-mail**, com a contagem no próprio botão."
             },
             {
               "type": "p",
@@ -2578,11 +2606,23 @@
             },
             {
               "type": "p",
+              "text": "On the website, if signing in with Google doesn't finish, the sign-in screen shows **We couldn't finish signing in with Google.**: tap **Continue with Google** again or use e-mail and password. Inside Instagram, Facebook or LINE, Google doesn't allow signing in: instead of the button you see **Open in your browser**, with how to open the page in your phone's browser and **Copy link**."
+            },
+            {
+              "type": "p",
+              "text": "On the website, if the confirmation link expired or was already used, the **This link has expired** page lets you type your e-mail and tap **Resend confirmation e-mail**; the answer is the same for any address."
+            },
+            {
+              "type": "p",
               "text": "In the Android app, the sign-in screen also has **Continue with Google**, with the same **Complete your account** screen the first time."
             },
             {
               "type": "p",
               "text": "Right after signing up in the app, the **Confirm your e-mail** screen shows the address, **Open e-mail** (opens your phone's mail app), the resend and **Wrong e-mail? Fix it** (to sign up again with the right address)."
+            },
+            {
+              "type": "p",
+              "text": "In the app (version 1.9.1 or later), the **Confirm your e-mail** screen follows the website's order: the address in bold with **Wrong e-mail? Fix it** right under it, **Open e-mail**, the code in 8 boxes (sent as soon as the last digit is in), the note **Didn't get it? Check your Spam and Promotions folders too.** and **Resend e-mail**, with the countdown on the button itself."
             },
             {
               "type": "p",
@@ -2595,8 +2635,8 @@
           ]
         },
         "web": {
-          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela. Logo após o cadastro, a tela **Confirme seu e-mail** mostra o endereço, **Abrir e-mail** (para endereços Gmail, Outlook, Yahoo e iCloud) e **E-mail errado? Corrigir** (para se cadastrar de novo com o endereço certo). O e-mail de confirmação também traz um código de 8 dígitos: digite-o em **Confirme seu e-mail** se o link não abrir.",
-          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen. Right after signing up, the **Confirm your e-mail** screen shows the address, **Open e-mail** (for Gmail, Outlook, Yahoo and iCloud addresses) and **Wrong e-mail? Fix it** (to sign up again with the right address). The confirmation e-mail also has an 8-digit code: type it on **Confirm your e-mail** if the link doesn't open."
+          "pt": "Na tela de entrada, clique em **Esqueceu a senha?**, digite seu e-mail e clique em **Enviar link**. Se o e-mail ainda não foi confirmado, a tela de entrada mostra **Reenviar e-mail de confirmação** (um reenvio por minuto); se não chegar, verifique a pasta de spam. Se aparecer **Código de convite não encontrado. Peça o código à sua clínica.**, digite o código da clínica nessa mesma tela. Logo após o cadastro, a tela **Confirme seu e-mail** mostra o endereço em negrito com **E-mail errado? Corrigir** logo abaixo (para se cadastrar de novo com o endereço certo), **Abrir e-mail** (para endereços Gmail, Outlook, Yahoo e iCloud), o aviso **Não chegou? Veja também as pastas Spam e Promoções.** e **Reenviar e-mail**, com a contagem no próprio botão (um reenvio por minuto). O e-mail de confirmação também traz um código de 8 dígitos: digite-o nas 8 caixas de **Confirme seu e-mail** se o link não abrir (ele é enviado sozinho no último dígito).",
+          "en": "On the sign-in screen, click **Forgot password?**, enter your email and click **Send reset link**. If your e-mail isn't confirmed yet, the sign-in screen shows **Resend confirmation e-mail** (one resend per minute); if it doesn't arrive, check your spam folder. If you see **Invite code not found. Ask your clinic for the code.**, enter your clinic's code on that same screen. Right after signing up, the **Confirm your e-mail** screen shows the address in bold with **Wrong e-mail? Fix it** right under it (to sign up again with the right address), **Open e-mail** (for Gmail, Outlook, Yahoo and iCloud addresses), the note **Didn't get it? Check your Spam and Promotions folders too.** and **Resend e-mail**, with the countdown on the button itself (one resend per minute). The confirmation e-mail also has an 8-digit code: type it into the 8 boxes on **Confirm your e-mail** if the link doesn't open (it's sent as soon as the last digit is in)."
         },
         "webUnavailable": false,
         "open": null,

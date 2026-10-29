@@ -801,7 +801,14 @@
     "google": {
       "continue": "Continuar com Google",
       "or": "ou",
-      "failed": "Não foi possível abrir o login do Google. Tente novamente."
+      "failed": "Não foi possível abrir o login do Google. Tente novamente.",
+      "exchangeFailed": "Não conseguimos concluir a entrada com o Google. Toque em 'Continuar com Google' de novo ou use e-mail e senha.",
+      "inApp": {
+        "title": "Abra no navegador",
+        "body": "O Google não permite entrar pelo navegador deste app. Toque em ⋯ (em um canto da tela) e escolha 'Abrir no navegador', ou copie o link e cole no Chrome ou no Safari.",
+        "copy": "Copiar link",
+        "copied": "Link copiado."
+      }
     },
     "completeAccount": {
       "title": "Complete sua conta",
@@ -962,7 +969,8 @@
       "continue": "Continuar",
       "expiredTitle": "Este link expirou",
       "expiredBody": "Este link já foi usado ou expirou. Entre com seu e-mail e senha.",
-      "goToSignIn": "Ir para o login"
+      "goToSignIn": "Ir para o login",
+      "resendHint": "Ainda não confirmou sua conta? Digite seu e-mail e enviamos um novo link."
     },
     "captchaFailed": "Conclua a verificação e tente novamente.",
     "errors": {
@@ -985,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Confirme seu e-mail",
-      "sentTo": "Enviamos um link de confirmação para {email}.",
+      "sentTo": "Enviamos um link de confirmação para <b>{email}</b>.",
       "openMail": "Abrir e-mail",
       "wrongEmail": "E-mail errado? Corrigir",
       "forgotQuestion": "Ainda não confirmou o e-mail?",
-      "sentToWithCode": "Enviamos um link e um código para {email}.",
+      "sentToWithCode": "Enviamos um link e um código para <b>{email}</b>.",
       "codeLabel": "Ou digite o código de 8 dígitos do e-mail",
       "codeConfirm": "Confirmar",
-      "codeInvalid": "Código inválido ou expirado. Reenvie o e-mail para receber um novo."
+      "codeInvalid": "Código inválido ou expirado. Reenvie o e-mail para receber um novo.",
+      "resendEmail": "Reenviar e-mail",
+      "spamHint": "Não chegou? Veja também as pastas Spam e Promoções."
     },
     "signupExisting": {
       "title": "Verifique seu e-mail",
@@ -2667,6 +2677,7 @@
       "stillTakingQ": "Continua tomando o remédio?",
       "stillTaking0": "Sim",
       "stillTaking1": "Parei por conta própria",
+      "stillTakingShort": "Ainda toma o remédio",
       "choose": "Escolha…",
       "notAnswered": "Sem resposta"
     },
