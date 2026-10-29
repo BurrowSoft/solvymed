@@ -123,6 +123,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       : state === "saved" ? (rescored > 0 ? t("settings.saved") : t("settings.savedOnly"))
       : "";
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
+  // Pinned = the app's rulesBarPinned (#624): a conflict or an error stays pinned, so Reload stays in reach.
   const saveBarActive = dirty || state === "saving" || state === "conflict" || state === "invalid" || state === "error";
 
   return (
@@ -184,7 +185,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
           to save (or a save is running / failed): solid, a top border and a soft shadow, as wide
           as the rules, clear of SolvyAI's opener. With nothing to save, a plain row at the end of
           the form, so no band slices through the cards. */}
-      <div data-testid="pc-save-bar" data-sticky={saveBarActive ? "true" : "false"}
+      <div data-testid={saveBarActive ? "pc-save-bar" : "pc-save-row"} data-sticky={saveBarActive ? "true" : "false"}
         className={saveBarActive
           ? "sticky bottom-0 z-20 mt-6 rounded-t-2xl border-t border-slate-200 bg-white px-4 py-1.5 pr-20 shadow-[0_-6px_16px_-8px_rgba(15,23,42,0.25)] sm:px-5 sm:py-3 sm:pr-20"
           : "mt-6 py-1.5 sm:py-3"}>

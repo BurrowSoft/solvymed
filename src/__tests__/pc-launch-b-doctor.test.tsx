@@ -160,9 +160,10 @@ describe("12-14: the editor's small things", () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ version: 3, rescored: 0 }) })));
     show(withSymptom);
     const bar = () => screen.getByTestId("pc-save-bar");
-    // Nothing changed: a plain row at the end of the form, the button there but off.
-    expect(bar()).toHaveAttribute("data-sticky", "false");
-    expect(bar().className.split(" ")).not.toContain("sticky");
+    // Nothing changed: a plain row at the end of the form (pc-save-row, as the app), the button there but off.
+    expect(screen.queryByTestId("pc-save-bar")).toBeNull();
+    expect(screen.getByTestId("pc-save-row")).toHaveAttribute("data-sticky", "false");
+    expect(screen.getByTestId("pc-save-row").className.split(" ")).not.toContain("sticky");
     expect(screen.getByTestId("pc-save")).toBeDisabled();
     // A change: stuck to the bottom, solid white with a border and a shadow, not bleeding past the content.
     fireEvent.click(screen.getByRole("checkbox", { name: P.symptoms.immediate, checked: false }));
@@ -173,7 +174,7 @@ describe("12-14: the editor's small things", () => {
     expect(cls.some((c) => c.includes("bg-white/") || c.includes("backdrop-blur") || /^-mx-|:-mx-/.test(c))).toBe(false);
     // Saved: back to the plain row.
     fireEvent.click(screen.getByTestId("pc-save"));
-    await waitFor(() => expect(bar()).toHaveAttribute("data-sticky", "false"));
+    await waitFor(() => expect(screen.getByTestId("pc-save-row")).toHaveAttribute("data-sticky", "false"));
     vi.unstubAllGlobals();
   });
 });
