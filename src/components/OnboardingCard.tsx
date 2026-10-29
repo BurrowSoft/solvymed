@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { dismissOnboardingCard } from "@/lib/setupActions";
 import { safeCall,  } from "@/lib/netError";
 
@@ -29,9 +30,11 @@ export function OnboardingCard({ kind, clinicName, bookHref, bookLabel }: {
     });
   }
 
+  // The practice's name is often the doctor's ("พญ. ณัฐธิดา"): shown as every name is (#695).
+  const shownName = doctorDisplayName(clinicName) || clinicName;
   const text = kind === "secretary_welcome"
-    ? t("secretaryWelcome", { clinic: clinicName })
-    : t("patientConnected", { clinic: clinicName });
+    ? t("secretaryWelcome", { clinic: shownName })
+    : t("patientConnected", { clinic: shownName });
 
   return (
     // data-tour-block: the guided tour waits until this one-time card is gone.

@@ -14,6 +14,8 @@ import { countryProfile } from "@/lib/country";
 import { loadMyDoctors, serverFlag } from "@/lib/myDoctors";
 import { loadSelfFieldPrompts } from "@/lib/selfFields";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { patientChannelEnabled } from "@/lib/patientChannel/live";
 import { channelEntry } from "@/lib/patientChannel/practice";
 import { loadMyDocumentDoctors } from "./document-actions";
@@ -129,10 +131,14 @@ export default async function MyAppointmentsPage({
       practiceCountry = profRow.country ?? null;
     }
     if (profRow) {
+      const fullName = (profRow.full_name as string | null)?.trim() ?? "";
+      // The brand's Título once + display name when the doctor has one (as /book and the doctors
+      // list; WT1 on #695, BR).
+      const brand = liveFeatures.myBrand && fullName ? publicFromPractice(await loadPracticeBrand(supabase, myProfessionalId), { name: fullName, specialty: "" }) : null;
       myProfessionalMeta = {
         // No hard-coded English "Doctor": /book resolves the name itself and
         // has a translated fallback.
-        name: (profRow.full_name as string | null)?.trim() ?? "",
+        name: brand?.name || fullName,
         specialty: (profRow.specialty as string | null) ?? "",
         clinicName: (profRow.clinic_name as string | null) ?? undefined,
       };
@@ -195,7 +201,11 @@ export default async function MyAppointmentsPage({
   const canAddDoctor = multiDoctor ? await serverFlag(supabase, "multi_doctor_patient") : false;
   // 1.8.0 A: empty unless the server's switch is on for this patient (190).
   const docDoctors = await loadMyDocumentDoctors();
-  const connectedClinicName = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
+  const connectedRaw = flags && !flags.patient_connected_seen && flags.clinic_professional_id ? flags.clinic_name : null;
+  // 103's clinic_name falls back to the doctor's full_name when the practice has no clinic name:
+  // then the banner names the doctor as the doctor card does (the brand's Título once + the
+  // display name; WT1 on #695, BR). A real clinic name stays as it is.
+  const connectedClinicName = connectedRaw ? await connectedName(supabase, flags!.clinic_professional_id!, connectedRaw) : null;
   // A newer privacy policy than this account accepted (migration 204).
   // 1.8.0 C2: the doctors asking for details still empty (212; their switch).
   const selfDoctors = [
@@ -230,4 +240,13 @@ export default async function MyAppointmentsPage({
     />
     </>
   );
+}
+
+async function connectedName(supabase: Awaited<ReturnType<typeof createClient>>, profId: string, raw: string): Promise<string> {
+  const { data } = await supabase.rpc("get_professional_public_info", { p_professional_id: profId }).maybeSingle();
+  const info = data as { full_name?: string | null; clinic_name?: string | null } | null;
+  if (info?.clinic_name?.trim()) return raw;
+  const fullName = info?.full_name?.trim() || raw;
+  const brand = liveFeatures.myBrand ? publicFromPractice(await loadPracticeBrand(supabase, profId), { name: fullName, specialty: "" }) : null;
+  return brand?.name || doctorDisplayName(fullName) || raw;
 }

@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Xác nhận email của bạn",
-      "sentTo": "Chúng tôi đã gửi liên kết xác nhận đến {email}.",
+      "sentTo": "Chúng tôi đã gửi liên kết xác nhận đến <b>{email}</b>.",
       "openMail": "Mở email",
       "wrongEmail": "Sai email? Sửa lại",
       "forgotQuestion": "Bạn chưa xác nhận email?",
-      "sentToWithCode": "Chúng tôi đã gửi liên kết và mã đến {email}.",
+      "sentToWithCode": "Chúng tôi đã gửi liên kết và mã đến <b>{email}</b>.",
       "codeLabel": "Hoặc nhập mã 8 chữ số trong email",
       "codeConfirm": "Xác nhận",
-      "codeInvalid": "Mã không hợp lệ hoặc đã hết hạn. Hãy gửi lại email để nhận mã mới."
+      "codeInvalid": "Mã không hợp lệ hoặc đã hết hạn. Hãy gửi lại email để nhận mã mới.",
+      "resendEmail": "Gửi lại email",
+      "spamHint": "Chưa nhận được? Hãy kiểm tra cả thư mục Spam và Quảng cáo."
     },
     "signupExisting": {
       "title": "Kiểm tra email của bạn",
@@ -2675,6 +2677,7 @@
       "stillTakingQ": "Bạn vẫn đang dùng thuốc chứ?",
       "stillTaking0": "Có",
       "stillTaking1": "Tôi đã tự ngừng",
+      "stillTakingShort": "Vẫn đang dùng thuốc",
       "choose": "Chọn…",
       "notAnswered": "Không trả lời"
     },

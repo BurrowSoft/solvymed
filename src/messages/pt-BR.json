@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Confirme seu e-mail",
-      "sentTo": "Enviamos um link de confirmação para {email}.",
+      "sentTo": "Enviamos um link de confirmação para <b>{email}</b>.",
       "openMail": "Abrir e-mail",
       "wrongEmail": "E-mail errado? Corrigir",
       "forgotQuestion": "Ainda não confirmou o e-mail?",
-      "sentToWithCode": "Enviamos um link e um código para {email}.",
+      "sentToWithCode": "Enviamos um link e um código para <b>{email}</b>.",
       "codeLabel": "Ou digite o código de 8 dígitos do e-mail",
       "codeConfirm": "Confirmar",
-      "codeInvalid": "Código inválido ou expirado. Reenvie o e-mail para receber um novo."
+      "codeInvalid": "Código inválido ou expirado. Reenvie o e-mail para receber um novo.",
+      "resendEmail": "Reenviar e-mail",
+      "spamHint": "Não chegou? Veja também as pastas Spam e Promoções."
     },
     "signupExisting": {
       "title": "Verifique seu e-mail",
@@ -2675,6 +2677,7 @@
       "stillTakingQ": "Continua tomando o remédio?",
       "stillTaking0": "Sim",
       "stillTaking1": "Parei por conta própria",
+      "stillTakingShort": "Ainda toma o remédio",
       "choose": "Escolha…",
       "notAnswered": "Sem resposta"
     },

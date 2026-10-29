@@ -1,6 +1,7 @@
 "use client";
 
 import { myAppointments } from "@/lib/myAppointments";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -182,7 +183,7 @@ export default function PendingConfirmationPage() {
         <h1 className="auth-heading">{t("pendingConfirmation.heading")}</h1>
         <p className="mb-1 text-slate-500">
           {professional?.name
-            ? t("pendingConfirmation.bodyWithDoctor", { name: professional.name })
+            ? t("pendingConfirmation.bodyWithDoctor", { name: doctorDisplayName(professional.name) })
             : t("pendingConfirmation.body")}
         </p>
         {professional?.clinicName && (

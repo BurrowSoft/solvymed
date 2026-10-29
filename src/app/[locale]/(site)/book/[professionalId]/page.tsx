@@ -6,6 +6,7 @@ import { BookingClient } from "./BookingClient";
 import { countryProfile } from "@/lib/country";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { OfflineGuard } from "@/components/OfflineGuard";
 import { ClockSkewGuard } from "@/components/ClockSkewGuard";
 
@@ -59,7 +60,7 @@ export default async function BookPage({
   // locations: 1.8.0 F (migration 200, UX Q4): every location with its days,
   // only with the switch on and 2+ (else null).
   const prof = profRaw as { full_name: string | null; specialty: string | null; clinic_name: string | null; country?: string | null; time_zone?: string | null; locations?: PublicLocation[] | null } | null;
-  const displayName = prof?.full_name?.trim() || name?.trim() || t("professionalFallback");
+  const displayName = doctorDisplayName(prof?.full_name?.trim() || name) || t("professionalFallback");
   const displaySpecialty = prof?.specialty?.trim() || specialty || "";
   const displayClinic = prof?.clinic_name?.trim() || clinicName || undefined;
 
@@ -97,7 +98,9 @@ export default async function BookPage({
     <BookingClient
       brand={brand}
       professionalId={professionalId}
-      professionalName={displayName}
+      // The brand's name when there is one (its Título once + the doctor's display name, as the
+      // card below), so the top bar and the success line match it (WT1 on #695, BR).
+      professionalName={brand?.name || displayName}
       specialty={displaySpecialty}
       clinicName={displayClinic}
       patientAuthId={user.id}

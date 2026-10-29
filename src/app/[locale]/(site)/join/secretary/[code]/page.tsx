@@ -8,6 +8,7 @@ import { InviteDecision } from "./InviteDecision";
 import { InviteHint } from "./InviteHint";
 import { withCountryHint } from "@/lib/signupCountry";
 import { canJoinAnotherPractice } from "@/lib/secretaryJoin";
+import { doctorDisplayName } from "@/lib/doctorName";
 
 type InvitePreview = { professional_name: string | null; clinic_name: string | null };
 
@@ -86,7 +87,7 @@ export default async function SecretaryInvitePage({
   const secondPractice = roleRow?.role === "secretary" && !!roleRow.invited_by_professional_id;
   if (secondPractice && !(await canJoinAnotherPractice(supabase))) {
     const { data: clinicRows } = await supabase.rpc("get_my_clinic");
-    const name = (Array.isArray(clinicRows) ? clinicRows[0]?.professional_name : null) as string | null;
+    const name = doctorDisplayName((Array.isArray(clinicRows) ? clinicRows[0]?.professional_name : null) as string | null) || null;
     return message(
       t("cannotAcceptTitle"),
       name ? t("alreadyInClinicNamed", { name }) : t("alreadyInClinic"),
@@ -104,8 +105,8 @@ export default async function SecretaryInvitePage({
         <h1 className="auth-heading">{t("inviteTitle")}</h1>
         <p className="mb-8 text-slate-500">
           {invite.clinic_name
-            ? t("inviteBody", { name: invite.professional_name ?? "", clinic: invite.clinic_name })
-            : t("inviteBodyNoClinic", { name: invite.professional_name ?? "" })}
+            ? t("inviteBody", { name: doctorDisplayName(invite.professional_name), clinic: invite.clinic_name })
+            : t("inviteBodyNoClinic", { name: doctorDisplayName(invite.professional_name) })}
         </p>
         <InviteDecision code={code} locale={locale} secondPractice={secondPractice} />
       </AuthCard>

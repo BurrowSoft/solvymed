@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import type { MyDoctor } from "@/lib/myDoctors";
-import { doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
+import { afterThai, doctorDisplayName, shortDoctorName } from "@/lib/doctorName";
 import { brandAccent, brandInitials, readableAccent } from "@/lib/readableAccent";
 import { connectDoctor, disconnectDoctor } from "./doctor-actions";
 import { safeCall, NETWORK_FAILURE } from "@/lib/netError";
@@ -90,7 +90,7 @@ function DoctorCard({ doctor, onNote }: { doctor: MyDoctor; onNote: (n: { kind: 
         {doctor.channel && (
           <a href={`${prefix}/my-appointments/channel/${doctor.id}`} data-testid="pc-entry" className="rounded-xl border-2 px-4 py-1.5 text-center text-sm font-bold" style={{ borderColor: accent, color: accent }}>
             {/* The doctor's own name when known (launch polish 17), as the booking button. */}
-            {shortDoctorName(doctor.name) ? tChannel("entryButtonNamed", { doctor: shortDoctorName(doctor.name) }) : tChannel("entryButton")}
+            {shortDoctorName(doctor.name) ? tChannel("entryButtonNamed", { doctor: afterThai(locale, shortDoctorName(doctor.name)) }) : tChannel("entryButton")}
           </a>
         )}
         {doctor.channelView && (

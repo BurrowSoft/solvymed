@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Konfirmasi email Anda",
-      "sentTo": "Kami mengirim tautan konfirmasi ke {email}.",
+      "sentTo": "Kami mengirim tautan konfirmasi ke <b>{email}</b>.",
       "openMail": "Buka email",
       "wrongEmail": "Email salah? Perbaiki",
       "forgotQuestion": "Belum mengonfirmasi email Anda?",
-      "sentToWithCode": "Kami mengirim tautan dan kode ke {email}.",
+      "sentToWithCode": "Kami mengirim tautan dan kode ke <b>{email}</b>.",
       "codeLabel": "Atau masukkan kode 8 digit dari email",
       "codeConfirm": "Konfirmasi",
-      "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru."
+      "codeInvalid": "Kode tidak valid atau kedaluwarsa. Kirim ulang email untuk kode baru.",
+      "resendEmail": "Kirim ulang email",
+      "spamHint": "Belum menerima? Periksa juga folder Spam dan Promosi."
     },
     "signupExisting": {
       "title": "Periksa email Anda",
@@ -2675,6 +2677,7 @@
       "stillTakingQ": "Apakah Anda masih minum obatnya?",
       "stillTaking0": "Ya",
       "stillTaking1": "Saya berhenti sendiri",
+      "stillTakingShort": "Masih minum obat",
       "choose": "Pilih…",
       "notAnswered": "Tidak dijawab"
     },

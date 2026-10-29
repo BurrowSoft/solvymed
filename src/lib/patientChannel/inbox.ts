@@ -1,4 +1,4 @@
-import type { Band, ChannelConfig, Match, ScoreLine } from "./score";
+import type { AnswerKey, Band, ChannelConfig, Match, ScoreLine } from "./score";
 import { findTerms, toVocabulary } from "./score";
 
 // Patient Channel M5: the doctor's / secretary's inbox (specs/patient-contact-tech.md §6).
@@ -170,6 +170,19 @@ export function toLines(raw: unknown): ScoreLine[] {
   return Array.isArray(raw) ? (raw.filter((l) => l && typeof l === "object" && (l as Raw).label) as ScoreLine[]) : [];
 }
 
+// An answer as a short label in a breakdown line or a rule summary (01's general yes/no
+// rule, 10-28; here so both repos share it): a yes/no answer alone ("Sim") says nothing
+// out of its question, so it gets the question's short label ("Ainda toma o remédio: Sim").
+// Every other answer stands on its own ("Hoje", "Forte"). Typed by AnswerKey, so a new
+// question doesn't compile until it lists its yes/no answers here (and then needs
+// answers.<key>Short in every locale).
+export const YES_NO: Record<AnswerKey, number[]> = { when: [], intensity: [], stillTaking: [0] };
+
+export function answerText(t: (key: string) => string, key: AnswerKey, index: number): string {
+  const answer = t(`answers.${key}${index}`);
+  return YES_NO[key].includes(index) ? `${t(`answers.${key}Short`)}: ${answer}` : answer;
+}
+
 // A line in the viewer's language from the names above (the test mode's lineLabel, with
 // names instead of the rules). A name the rules no longer have (renamed or removed after
 // the snapshot) shows as "?" rather than a wrong one.
@@ -184,7 +197,7 @@ export function detailLineLabel(names: DetailNames, line: ScoreLine, t: (key: st
   }
   if (line.source === "ai") base = `${t("lines.ai")} · ${base}`;
   const { answerKey, answerIndex } = line.label;
-  return answerKey !== undefined && answerIndex !== undefined ? `${base} · ${t(`answers.${answerKey}${answerIndex}`)}` : base;
+  return answerKey !== undefined && answerIndex !== undefined ? `${base} · ${answerText(t, answerKey, answerIndex)}` : base;
 }
 
 // Text split into plain and highlighted parts (longest match first; findTerms already

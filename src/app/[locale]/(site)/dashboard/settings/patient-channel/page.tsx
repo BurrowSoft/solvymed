@@ -10,6 +10,7 @@ import { EMPTY_RULES, fromStoredRules } from "@/lib/patientChannel/rules";
 import { settingsFromRow, type PcFaqRow, type PcReasonRow } from "@/lib/patientChannel/channel";
 import { serverFlag } from "@/lib/myDoctors";
 import { liveFeatures } from "@/lib/liveFeatures";
+import { doctorDisplayName } from "@/lib/doctorName";
 import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
 import { coverUrl } from "@/lib/patientChannel/cover";
 import { pageLook } from "@/lib/patientChannel/pageLook";
@@ -65,7 +66,7 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
   const brand = liveFeatures.myBrand ? publicFromPractice(brandRow, { name: prof?.full_name ?? "", specialty: prof?.specialty ?? "" }) : null;
   const look = settings.data as { page_bg?: string | null; cover_path?: string | null } | null;
   const patientView = {
-    doctorName: brand?.name || prof?.full_name?.trim() || "",
+    doctorName: doctorDisplayName(brand?.name || prof?.full_name),
     practiceLine: [prof?.clinic_name, brand?.specialty || prof?.specialty].filter(Boolean).join(" · "),
     look: pageLook(look?.page_bg, { color: brand?.accentColor ?? brandRow?.accentColor, logoUrl: brand?.logoUrl ?? null, coverUrl: coverUrl(supabase, look?.cover_path), coverAlt: prof?.clinic_name?.trim() || brand?.name || "" }),
   };

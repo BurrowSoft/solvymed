@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "Confirm your e-mail",
-      "sentTo": "We sent a confirmation link to {email}.",
+      "sentTo": "We sent a confirmation link to <b>{email}</b>.",
       "openMail": "Open e-mail",
       "wrongEmail": "Wrong e-mail? Fix it",
       "forgotQuestion": "Haven't confirmed your e-mail yet?",
-      "sentToWithCode": "We sent a link and a code to {email}.",
+      "sentToWithCode": "We sent a link and a code to <b>{email}</b>.",
       "codeLabel": "Or enter the 8-digit code from the e-mail",
       "codeConfirm": "Confirm",
-      "codeInvalid": "Code invalid or expired. Resend the e-mail for a new one."
+      "codeInvalid": "Code invalid or expired. Resend the e-mail for a new one.",
+      "resendEmail": "Resend e-mail",
+      "spamHint": "Didn't get it? Check your Spam and Promotions folders too."
     },
     "signupExisting": {
       "title": "Check your e-mail",
@@ -2705,6 +2707,7 @@
       "stillTakingQ": "Are you still taking the medicine?",
       "stillTaking0": "Yes",
       "stillTaking1": "I stopped on my own",
+      "stillTakingShort": "Still taking the medicine",
       "choose": "Choose…",
       "notAnswered": "Not answered"
     },
