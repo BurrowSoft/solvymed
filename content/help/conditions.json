@@ -44,8 +44,8 @@
     "what": "Appointments of a linked patient carry their account however they were made (migration 119, mobile #117: a trigger filling patient_auth_id from the linked record, the backfill and the fill on later linking) applied on production: until then pushes only reach patients on appointments they booked in the app."
   },
   "line-live": {
-    "met": false,
-    "what": "LINE notices for Thai clinics are live in production: migrations 114, 122 (the 90-day delivery-history purge), 124 and 125 (notices in the recipient's saved language) applied, the LINE channel secret in Vault, the flag and webhook on, and the app's connect/disconnect flow released. Gates the privacy policy's LINE row (§5), the §6 sentence and §6c."
+    "met": true,
+    "what": "LINE notices for Thai clinics are live in production: migrations 114, 122 (the 90-day delivery-history purge), 124 and 125 (notices in the recipient's saved language) applied, the LINE channel secret in Vault, the flag and webhook on, and the app's connect/disconnect flow released. Gates the privacy policy's LINE row (§5), the §6 sentence and §6c, the App Map's LINE rules and Help C7's LINE paragraph. Needs PRIVACY_VERSION 2026-10-29 (the mobile privacy-accept migration applied first). Met in the LINE window (Vitor, 10-28): server flags 'line' and 'pc_notice_line' on together, like WhatsApp."
   },
   "founders-upload-live": {
     "met": false,
@@ -156,8 +156,8 @@
     "what": "The WhatsApp opt-out is live (contract v2, specs/whatsapp-optout-contract.md): every automatic WhatsApp message TO A PATIENT (appointment messages and Patient Channel notices; not the messages to the practice's own phone) ends with a stop link; the web page /<locale>/whatsapp/stop opts out only on its button POST to the whatsapp-optout edge function; only opted-out numbers are stored, re-checked before each patient-facing send, and deleted when the practice closes (the close path) or is deleted. Privacy §6e PC-W1′ and PC-N3's Z-API clause (with whatsapp-auto-live). Before it is met: the endpoint, the senders and the close-path deletion live on prod, and PC-W1′ + PC-N3 (en/pt) on master. Needs PRIVACY_VERSION 2026-10-28."
   },
   "privacy-th-live": {
-    "met": false,
-    "what": "The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text. The Thai page carries Vitor's 10-27 lines too (#664: PC-8′, PC-10′/b/c/d, PC-N1′/N2′/N3, PC-W1, §3.6 / §6g) as Thai drafts; BEFORE flipping: Vitor's single Thai read-through (plus the address and the \"English prevails\" answer)."
+    "met": true,
+    "what": "LIVE 2026-10-29: Vitor's \"OK Thai privacy page live\" (via 01), after the 2026-10-29 version (#691) went live; the same content as pt/en, so no version bump. The Thai Privacy Policy (PrivacyTh, a translation of the English page with the same conditional parts) is shown on /th/privacy: after Vitor's first pass and his OK (native / lawyer polish later, not a gate). Until then /th/privacy shows the English page with the 'English only' note. Flip only together with a check that PrivacyTh matches PrivacyEn's current text. The Thai page carries Vitor's 10-27 lines too (#664: PC-8′, PC-10′/b/c/d, PC-N1′/N2′/N3, PC-W1, §3.6 / §6g) as Thai drafts; BEFORE flipping: Vitor's single Thai read-through (plus the address and the \"English prevails\" answer)."
   },
   "help-th-live": {
     "met": false,
@@ -302,6 +302,10 @@
   "app-1-9-1-live": {
     "met": true,
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
+  },
+  "app-190-update-banner-live": {
+    "met": true,
+    "what": "LIVE 2026-10-29 07:41:12Z: OTA B on production runtime 1.9.0 (01). Mobile #617 (1.9.0 line only, JS-only): its OTA is live on production runtime 1.9.0, so patients on app 1.9.0 (Android) see \"Atualize o app para ter as novidades, como o Canal do Paciente\" on their home with \"Atualizar\" (Play Store) and \"Agora não\" (back after 7 days). Flip only on 01's word after the mobile developer reports the production OTA. Gates Help C18's line and the App Map rule."
   },
   "pc-notify-live": {
     "met": true,
