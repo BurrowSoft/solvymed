@@ -111,7 +111,9 @@
 // PC-N1′/N2′ in §6g, PC-N3 in the rows) flips in the same release step, so users re-accept once.
 // 2026-10-29 (an id; LINE for Thailand, Vitor 10-28, via 01): line-live reveals §5's LY Corporation
 // (LINE) row, §6's "and LINE notices by LY Corporation" and §6c, whose second bullet now names
-// the Patient Channel notice (01's drafts, with pc_notice_line on in the same window). Mobile's
+// the Patient Channel notice (01's drafts, with pc_notice_line on in the same window), and §PC's
+// "resolved without a message" line now says which FAQ answer or automatic message helped (item 43;
+// cf: the old line didn't cover a per-item count; Vitor's "OK resolved privacy", 10-29). Mobile's
 // accepting migration for ('privacy','2026-10-29') applied FIRST; the app's PRIVACY_VERSION twin
 // and its OTA on both runtimes follow (the standing rule).
 export const PRIVACY_VERSION = "2026-10-29";
@@ -126,7 +128,7 @@ export const TERMS_VERSION = "2026-10-01";
 // changes what /privacy or /terms shows (ec); a test fails if one is in the
 // future (02, 10-13: the banner and the page said 17 October on 9 October).
 // SET TO THE MERGE DAY (UTC) when this PR merges.
-export const PRIVACY_PUBLISHED = "2026-10-28"; // SET TO THE MERGE DAY (UTC) of the line-live PR (2026-10-29's text); 2026-10-28 was automatic WhatsApp + retention A + the Patient Channel
+export const PRIVACY_PUBLISHED = "2026-10-29"; // the line-live PR's merge day (UTC; fix it on the day if the merge slips): LINE + item 43's per-item count
 export const TERMS_PUBLISHED = "2026-09-30"; // 2026-10-01 went live 09:04 UTC
 
 // Sent with every web signup (the checkbox is required, so it's sent only

@@ -38,6 +38,12 @@ describe("the App Map states the corrected facts", () => {
     expect(text).not.toContain("LINE once it's live");
     expect(text).toContain("LINE in Thailand (patients who connect it in the app)");
     expect(text).toContain("\"LINE conectado ✓\" / \"LINE connected ✓\"");
+    // The flag is on (whatsapp-auto-on, met in the WhatsApp window, W3): the map says
+    // automatic WhatsApp never includes reminders, and no longer that it's off.
+    expect(text).not.toContain("automatic WhatsApp messages are off");
+    // With LINE live too (line-live), rule 294 words it for Brazilian practices that turned it on.
+    expect(text).toContain("automatic WhatsApp messages, where a Brazilian practice turned them on, never include reminders");
+    expect(text).toContain("Brazilian practices can turn on automatic WhatsApp messages");
   });
 
   it("the auto-WhatsApp rules follow whatsapp-auto-on (the flag), not the privacy text's whatsapp-auto-live", () => {
