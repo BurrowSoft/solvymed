@@ -4,6 +4,7 @@ import { staffContext } from "@/lib/patientChannel/staff";
 import { INBOX_COLUMNS, INBOX_FILTERS, filterInbox, parseFilter, sortInbox, toCounts, toInboxRow, type InboxFilter } from "@/lib/patientChannel/inbox";
 import { BandTag } from "../../settings/patient-channel/BandTag";
 import { isUnscored } from "@/lib/patientChannel/unscored";
+import { resolvedReportLive } from "@/lib/patientChannel/resolvedReport";
 
 // Patient Channel M5 (specs/patient-contact-tech.md §6): the doctor's / secretary's inbox.
 // KPI tiles from 237's pc_inbox_counts (the open ones per band; FAQ- and automatic-message-
@@ -42,6 +43,10 @@ export default async function PatientChannelInboxPage({
       .order("created_at", { ascending: false }).limit(100),
     supabase.rpc("pc_inbox_counts", { p_prof: profId }),
   ]);
+  // Item 43: "12 resolvidas esta semana" → the report, for whoever may read it (272: the
+  // doctor, or a secretary with "sees all"; 237 lets staff read that column).
+  const reportLink = resolvedReportLive() && (!isSecretary
+    || (await supabase.from("pc_settings").select("secretary_sees_all").eq("professional_id", profId).maybeSingle()).data?.secretary_sees_all === true);
   const kpi = toCounts(counts.data);
   const failed = !!(open.error || closed.error || counts.error || !kpi);
 
@@ -63,6 +68,11 @@ export default async function PatientChannelInboxPage({
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-5xl" data-testid="pc-inbox">
       <h1 className="text-2xl font-extrabold text-slate-900">{t("inbox.title")}</h1>
+      {reportLink && kpi && (
+        <Link href={`${prefix}/dashboard/patient-channel/resolved`} className="mt-1 inline-block text-sm font-semibold text-teal-700 hover:underline" data-testid="pc-inbox-resolved-link">
+          {t("report.inboxLink", { n: kpi.faqResolved7d + kpi.autoResolved7d })}
+        </Link>
+      )}
       {failed && <div className="error-banner mt-6">{tSettings("loadError")}</div>}
 
       {/* Phones: one compact row of the open counts, so the list starts on the first screen

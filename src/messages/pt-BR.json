@@ -3000,6 +3000,22 @@
         "none": "A IA não encontrou outros sintomas da sua lista.",
         "error": "Não foi possível salvar. Tente de novo."
       }
+    },
+    "report": {
+      "title": "Resolvidas sem mensagem",
+      "intro": "O que resolveu a dúvida dos seus pacientes sem que uma mensagem fosse enviada. Sem nomes e sem o que escreveram.",
+      "period": "Período",
+      "days": "{n} dias",
+      "faq": "Pergunta frequente: {label}",
+      "auto": "Mensagem automática: {label}",
+      "archived": "{label} (arquivada)",
+      "faqRemoved": "Pergunta frequente: (item removido)",
+      "autoRemoved": "Mensagem automática: (item removido)",
+      "unattributed": "Sem item específico",
+      "totals": "Total no período: {total} · Mensagens enviadas: {sent}",
+      "empty": "Ainda não há dados. Quando um paciente resolver a dúvida sem enviar, aparece aqui.",
+      "loadError": "Não foi possível carregar o relatório.",
+      "inboxLink": "{n, plural, one {# resolvida sem mensagem esta semana} other {# resolvidas sem mensagem esta semana}}"
     }
   },
   "noticesUnsubscribe": {

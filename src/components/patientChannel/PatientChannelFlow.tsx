@@ -58,6 +58,8 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
   const locale = useLocale();
   const [step, setStep] = useState<Step>("entry");
   const [reason, setReason] = useState<PcReason | null>(null);
+  // The FAQ question the patient opened last (item 43: "Isso resolveu" counts for it).
+  const [lastFaq, setLastFaq] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Answers>(START);
   const [option, setOption] = useState(0);
   const [check, setCheck] = useState<PcPreview>({ warning: false, autoMessages: [], canSkip: false });
@@ -239,12 +241,17 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
         {back("entry")}
         <h2 className="text-lg font-extrabold text-slate-900">{t("faqTitle")}</h2>
         {page.faq.map((f) => (
-          <details key={f.id} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
+          <details key={f.id} onToggle={(e) => { if (e.currentTarget.open) setLastFaq(f.id); }} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2">
             <summary className="cursor-pointer text-sm font-bold">{f.question}</summary>
             <p className="mt-1.5 whitespace-pre-line text-sm text-slate-600">{f.answer}</p>
           </details>
         ))}
-        <button type="button" data-testid="pc-faq-solved" onClick={() => { onSelfServe?.("faq_resolved"); setStep("resolved"); }} className="mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700">{t("faqSolved")}</button>
+        {/* "Isso resolveu" only once an answer was opened (01, 10-29: an honest count, and every
+            FAQ-solved event has its question); until then only "Ainda preciso enviar". It keeps
+            its place, hidden, and fades in, so nothing jumps. */}
+        <button type="button" data-testid="pc-faq-solved" disabled={!lastFaq} aria-hidden={!lastFaq || undefined}
+          onClick={() => { if (!lastFaq) return; onSelfServe?.("faq_resolved", { kind: "faq", id: lastFaq }); setStep("resolved"); }}
+          className={`mt-2 rounded-xl border border-teal-600 px-4 py-3 text-sm font-bold text-teal-700 transition-[opacity,visibility] duration-300 motion-reduce:transition-none ${lastFaq ? "visible opacity-100" : "invisible opacity-0"}`}>{t("faqSolved")}</button>
         <button type="button" data-testid="pc-faq-continue" onClick={() => setStep("reason")} className="rounded-xl bg-[var(--pc-brand)] px-4 py-3 text-sm font-bold text-[var(--pc-ink)]">{t("faqContinue")}</button>
       </>
     );
@@ -334,7 +341,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
                 ))}
                 {canSkip ? (
                   <>
-                    <button type="button" data-testid="pc-skip" onClick={() => { onSelfServe?.("auto_resolved"); setStep("resolved"); }} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("skip")}</button>
+                    <button type="button" data-testid="pc-skip" onClick={() => { const last = autoShown[autoShown.length - 1]; onSelfServe?.("auto_resolved", last ? { kind: "auto_message", id: last.id } : undefined); setStep("resolved"); }} className="rounded-xl border border-teal-600 px-4 py-2.5 text-sm font-bold text-teal-700">{t("skip")}</button>
                     <p className="text-xs text-slate-500">{t("general")}</p>
                   </>
                 ) : (

@@ -3000,6 +3000,22 @@
         "none": "AI 未從您的清單中找到其他症狀。",
         "error": "無法儲存，請再試一次。"
       }
+    },
+    "report": {
+      "title": "無需留言即已解決",
+      "intro": "無需傳送留言就解答了病患疑問的內容。不含姓名，也不含病患寫的內容。",
+      "period": "期間",
+      "days": "{n} 天",
+      "faq": "常見問題：{label}",
+      "auto": "自動訊息：{label}",
+      "archived": "{label}（已封存）",
+      "faqRemoved": "常見問題：（已刪除的項目）",
+      "autoRemoved": "自動訊息：（已刪除的項目）",
+      "unattributed": "無特定項目",
+      "totals": "期間合計：{total} · 已傳送留言：{sent}",
+      "empty": "尚無資料。病患無需傳送即解決疑問後，會顯示在這裡。",
+      "loadError": "無法載入報告。",
+      "inboxLink": "{n, plural, other {本週無需留言已解決 # 個}}"
     }
   },
   "noticesUnsubscribe": {

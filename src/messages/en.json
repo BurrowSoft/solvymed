@@ -3030,6 +3030,22 @@
         "none": "The AI found no other symptoms from your list.",
         "error": "Couldn't save. Try again."
       }
+    },
+    "report": {
+      "title": "Resolved without a message",
+      "intro": "What answered your patients' questions without a message being sent. No names, nothing they wrote.",
+      "period": "Period",
+      "days": "{n} days",
+      "faq": "FAQ: {label}",
+      "auto": "Automatic message: {label}",
+      "archived": "{label} (archived)",
+      "faqRemoved": "FAQ: (item removed)",
+      "autoRemoved": "Automatic message: (item removed)",
+      "unattributed": "No specific item",
+      "totals": "Total in the period: {total} · Messages sent: {sent}",
+      "empty": "No data yet. When a patient resolves their question without sending, it shows here.",
+      "loadError": "Couldn't load the report.",
+      "inboxLink": "{n, plural, one {# resolved without a message this week} other {# resolved without a message this week}}"
     }
   },
   "noticesUnsubscribe": {

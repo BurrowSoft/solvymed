@@ -99,7 +99,9 @@ export function toMyRequests(raw: unknown, onUnknown?: (status: string) => void)
 }
 // shownIds: the automatic messages the patient saw (kept with the request, as shown).
 export type PcSubmitFn = (reasonId: string, answers: Answers | { option: string }, replace: boolean, shownIds: string[]) => Promise<PcSubmitResult>;
-export type PcSelfServeFn = (kind: "faq_resolved" | "auto_resolved") => void;
+// item: the FAQ question opened last / the automatic message shown last (item 43; the route
+// passes it on only while pc-resolved-items-live).
+export type PcSelfServeFn = (kind: "faq_resolved" | "auto_resolved", item?: { kind: "faq" | "auto_message"; id: string }) => void;
 
 export const PC_TEXT_MAX = 500;
 

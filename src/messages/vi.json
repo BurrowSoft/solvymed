@@ -3000,6 +3000,22 @@
         "none": "AI không tìm thấy triệu chứng nào khác trong danh sách của bạn.",
         "error": "Không lưu được. Hãy thử lại."
       }
+    },
+    "report": {
+      "title": "Giải quyết không cần tin nhắn",
+      "intro": "Những gì đã trả lời câu hỏi của bệnh nhân mà không cần gửi tin nhắn. Không có tên và không có nội dung họ viết.",
+      "period": "Khoảng thời gian",
+      "days": "{n} ngày",
+      "faq": "Câu hỏi thường gặp: {label}",
+      "auto": "Tin nhắn tự động: {label}",
+      "archived": "{label} (đã lưu trữ)",
+      "faqRemoved": "Câu hỏi thường gặp: (mục đã xóa)",
+      "autoRemoved": "Tin nhắn tự động: (mục đã xóa)",
+      "unattributed": "Không có mục cụ thể",
+      "totals": "Tổng trong kỳ: {total} · Tin nhắn đã gửi: {sent}",
+      "empty": "Chưa có dữ liệu. Khi bệnh nhân giải quyết thắc mắc mà không gửi tin nhắn, mục đó sẽ hiện ở đây.",
+      "loadError": "Không tải được báo cáo.",
+      "inboxLink": "{n, plural, other {# được giải quyết không cần tin nhắn tuần này}}"
     }
   },
   "noticesUnsubscribe": {

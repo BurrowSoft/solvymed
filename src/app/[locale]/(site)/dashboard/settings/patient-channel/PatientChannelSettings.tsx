@@ -33,6 +33,7 @@ import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
 import { TemplateReset, TemplateStart } from "./TemplateStart";
 import type { PcFaqRow, PcReasonRow, PcSettings } from "@/lib/patientChannel/channel";
+import { ResolvedReport } from "@/components/patientChannel/ResolvedReport";
 
 // The doctor's Patient Channel rules (M3a; the prototype v17's tab 3): phone first,
 // one card per section, no tables. Saved through PUT /api/patient-channel/config (M3b-1).
@@ -55,7 +56,7 @@ const ANSWERS: { key: AnswerKey; n: number }[] = [
 
 type SaveState = "idle" | "saving" | "saved" | "conflict" | "invalid" | "error";
 
-export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, patientView, templateId }: {
+export function PatientChannelSettings({ initialRules, initialVersion, emergencyNumber, professionalId, channel, brandHref, patientView, templateId, report = false }: {
   initialRules: ChannelConfig;
   // pc_settings.rules_version; 0 = no row yet (the first save of either part creates it).
   initialVersion: number;
@@ -67,6 +68,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
   // The practice country's starting template (pc_templates), or null.
   templateId?: string | null;
   brandHref: string;
+  // Item 43's "Resolvidas sem mensagem" card (pc-resolved-items-live).
+  report?: boolean;
 }) {
   const t = useTranslations("patientChannel");
   const [rules, setRules] = useState(initialRules);
@@ -164,6 +167,8 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         cover={channel.cover}
         ai={channel.ai}
       />
+
+      {report && <div id="resolved"><ResolvedReport profId={professionalId} className="mt-6" /></div>}
 
       <h2 className="mt-8 text-lg font-extrabold text-slate-900">{t("settings.rulesTitle")}</h2>
       <p className="max-w-prose text-sm text-slate-500">{t("settings.rulesHelp")}</p>

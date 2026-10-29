@@ -6,6 +6,7 @@ import { getPracticeCountry } from "@/lib/practiceCountry";
 import { countryProfile } from "@/lib/country";
 import { isPatientChannelTester, patientChannelEnabled } from "@/lib/patientChannel/live";
 import { conditionMet } from "@/lib/conditions";
+import { resolvedReportLive } from "@/lib/patientChannel/resolvedReport";
 import { EMPTY_RULES, fromStoredRules } from "@/lib/patientChannel/rules";
 import { settingsFromRow, type PcFaqRow, type PcReasonRow } from "@/lib/patientChannel/channel";
 import { serverFlag } from "@/lib/myDoctors";
@@ -84,6 +85,7 @@ export default async function PatientChannelSettingsPage({ params }: { params: P
         ai: aiShown ? { on: aiOn } : null,
       }}
       brandHref={`${prefix}/dashboard/settings#brand`}
+      report={resolvedReportLive()}
       patientView={patientView}
       templateId={(template.data as { id?: string } | null)?.id ?? null}
     />

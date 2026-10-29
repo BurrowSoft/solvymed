@@ -303,6 +303,10 @@
     "met": true,
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
   },
+  "pc-resolved-items-live": {
+    "met": false,
+    "what": "Item 43, \"Resolved without a message\" (specs/pc-resolved-report.md + its contract, cf's OK 10-29). Gates the per-item count (the /selfserve route passes the FAQ question or automatic message on to 272's pc_count_selfserve_item; while off it counts the kind only, as before), the report card (Settings → Canal do Paciente) and page (/dashboard/patient-channel/resolved), the inbox link, Help C18's line and the App Map rule. Binding order: 266 live → #691 live (privacy 2026-10-29 with the per-item counting line, Vitor's OK) → 272 applied → flip, on 01's word."
+  },
   "pc-notify-live": {
     "met": true,
     "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (the mobile privacy-accept migration accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule. BEFORE flipping (cf, #664 B1): the mobile fix that stops storing the doctor's name in pc_notice_outbox.prefix (computed at claim time instead) is live, so PC-N2′ (\"holds no message, name or health information\") is true."

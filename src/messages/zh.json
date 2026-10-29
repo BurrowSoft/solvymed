@@ -3000,6 +3000,22 @@
         "none": "AI 未从您的列表中找到其他症状。",
         "error": "保存失败，请重试。"
       }
+    },
+    "report": {
+      "title": "无需留言即已解决",
+      "intro": "无需发送留言就解答了患者疑问的内容。不含姓名，也不含患者写的内容。",
+      "period": "时间段",
+      "days": "{n} 天",
+      "faq": "常见问题：{label}",
+      "auto": "自动消息：{label}",
+      "archived": "{label}（已归档）",
+      "faqRemoved": "常见问题：（已删除的项目）",
+      "autoRemoved": "自动消息：（已删除的项目）",
+      "unattributed": "无具体项目",
+      "totals": "期间合计：{total} · 已发送留言：{sent}",
+      "empty": "暂无数据。患者无需发送即解决疑问后，会显示在这里。",
+      "loadError": "无法加载报告。",
+      "inboxLink": "{n, plural, other {本周无需留言已解决 # 个}}"
     }
   },
   "noticesUnsubscribe": {
