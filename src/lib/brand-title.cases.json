@@ -1,5 +1,5 @@
 {
-  "rule": "withBrandTitle(title, name): trim + collapse spaces; no Título -> the name; else drop up to 3 leading titles (Latin dott.ssa|dott|dra|dr|profa|prof|pr + dot/ª/space/end; Thai นพ พญ ทพ ทญ ทพญ ภก ภญ ดร + dot or space) then prefix the Título once; a Thai Título ending in . is attached",
+  "rule": "withBrandTitle(title, name): trim + collapse spaces; no Título -> the name; else drop up to 3 leading titles (Latin dott.ssa|dott|dra|dr|profa|prof|pr + dot/ª/space/end; Thai นพ พญ ทพ ทญ ทพญ ภก ภญ ดร ศ รศ ผศ + dot or space) then prefix the Título once; a Thai Título ending in . is attached",
   "cases": [
     {
       "title": "Dra.",
@@ -105,6 +105,80 @@
       "title": "Dr.",
       "name": "Dr. Dr. Dr. Dr. Carlos",
       "expected": "Dr. Dr. Carlos"
+    },
+    {
+      "title": "ศ.นพ.",
+      "name": "สมชาย ใจดี",
+      "expected": "ศ.นพ.สมชาย ใจดี"
+    },
+    {
+      "title": "ศ.นพ.",
+      "name": "ศ.นพ. สมชาย ใจดี",
+      "expected": "ศ.นพ.สมชาย ใจดี"
+    },
+    {
+      "title": "รศ.พญ.",
+      "name": "พญ.สุดา มณี",
+      "expected": "รศ.พญ.สุดา มณี"
+    },
+    {
+      "title": "ผศ.ดร.",
+      "name": "ผศ ดร สมศักดิ์",
+      "expected": "ผศ.ดร.สมศักดิ์"
+    },
+    {
+      "title": null,
+      "name": "ศ. นพ. สมชาย",
+      "expected": "ศ. นพ. สมชาย"
+    },
+    {
+      "title": "Prof. Dr.",
+      "name": "Prof. Dr. Carlos Melo",
+      "expected": "Prof. Dr. Carlos Melo"
+    },
+    {
+      "title": "Profa. Dra.",
+      "name": "Ana Lima",
+      "expected": "Profa. Dra. Ana Lima"
+    }
+  ],
+  "displayRule": "doctorDisplayName(name): up to 3 leading titles kept in the doctor's spelling (case tidied; a Thai one with its dot); two Thai titles in a row written together, any other pair with a space; the last against the name when Thai, else a space (01, option A, 10-29)",
+  "display": [
+    {
+      "name": "ศ. นพ. สมชาย ใจดี",
+      "expected": "ศ.นพ.สมชาย ใจดี"
+    },
+    {
+      "name": "รศ. พญ. สุดา ใจดี",
+      "expected": "รศ.พญ.สุดา ใจดี"
+    },
+    {
+      "name": "ผศ สมศรี ดีใจ",
+      "expected": "ผศ.สมศรี ดีใจ"
+    },
+    {
+      "name": "ศ. ดร. นพ. สมชาย",
+      "expected": "ศ.ดร.นพ.สมชาย"
+    },
+    {
+      "name": "ดร. นพ.สมชาย",
+      "expected": "ดร.นพ.สมชาย"
+    },
+    {
+      "name": "นพ. สมชาย ใจดี",
+      "expected": "นพ.สมชาย ใจดี"
+    },
+    {
+      "name": "ศรีสุดา ใจดี",
+      "expected": "ศรีสุดา ใจดี"
+    },
+    {
+      "name": "prof. dr. carlos alberto melo",
+      "expected": "Prof. Dr. carlos alberto melo"
+    },
+    {
+      "name": "Dr.ª Ana Souza",
+      "expected": "Dr.ª Ana Souza"
     }
   ]
 }

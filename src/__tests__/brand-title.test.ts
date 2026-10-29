@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import shared from "@/lib/brand-title.cases.json";
-import { withBrandTitle } from "@/lib/doctorName";
+import { doctorDisplayName, withBrandTitle } from "@/lib/doctorName";
 
 // e7 (both platforms): with a Título set, a title the name already starts
 // with is dropped, then the Título is prefixed once. The cases are the
@@ -9,5 +9,13 @@ import { withBrandTitle } from "@/lib/doctorName";
 describe("withBrandTitle (shared cases)", () => {
   it.each(shared.cases)("$title + $name → $expected", ({ title, name, expected }) => {
     expect(withBrandTitle(title, name)).toBe(expected);
+  });
+});
+
+// The same file's "display" section (01, option A, 10-29): doctorDisplayName, two Thai titles in a
+// row written together ("ศ.นพ.สมชาย ใจดี"); app and SQL run the same rows.
+describe("doctorDisplayName (shared display cases)", () => {
+  it.each(shared.display)("$name → $expected", ({ name, expected }) => {
+    expect(doctorDisplayName(name)).toBe(expected);
   });
 });

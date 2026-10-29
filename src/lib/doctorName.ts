@@ -33,10 +33,12 @@ function splitTitles(name: string | null | undefined): { titles: Title[]; rest: 
   return { titles, rest: rest.trim() };
 }
 
-// Titles then the name: the titles space-separated; the last one against
-// the name when it's Thai ("ดร. นพ.สมชาย", the app's #517), else a space.
+// Titles then the name: two Thai titles in a row written together, any other
+// pair with a space; the last one against the name when it's Thai, else a
+// space ("ศ.นพ.สมชาย ใจดี", "Prof. Dr. Carlos"; 01's option A, 10-29, as the
+// app and SQL; the shared cases' "display" section).
 function joinTitles(titles: Title[], name: string): string {
-  const head = titles.map((t) => t.text).join(" ");
+  const head = titles.map((t, i) => (i > 0 && t.attached && titles[i - 1].attached ? "" : i > 0 ? " " : "") + t.text).join("");
   if (!name) return head;
   if (!head) return name;
   return `${head}${titles[titles.length - 1].attached ? "" : " "}${name}`;
@@ -49,13 +51,14 @@ export function doctorDisplayName(name: string | null | undefined, opts: { first
 }
 
 // Thai professional titles: the ones the practice-country examples suggest
-// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. At the start of
+// (lib/country THAI_TITLES, one list; 9a), plus ภก./ภญ./ดร. and the academic
+// ranks ศ./รศ./ผศ. (01, 10-29; "ศรีสุดา" never matches: no dot or space). At the start of
 // a name, with its dot or, without one, followed by a space ("นพ.สมชาย",
 // "พญ. สุดา", "นพ สมชาย"; never "ดร" inside "ดรุณี"). Longest first, so
 // "ทพญ." isn't read as "ทพ." + "ญ." (app #309's list). The one Thai-title
 // rule here: splitTitles, then every function above and below.
 const THAI_TITLE_LOOSE = new RegExp(
-  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
+  `^(${[...THAI_TITLES, "ทพญ.", "ภก.", "ภญ.", "ดร.", "ศ.", "รศ.", "ผศ."].map((s) => s.replace(/\.$/, "")).sort((a, b) => b.length - a.length).join("|")})(?:\\.\\s*|\\s+)`,
 );
 
 // The brand's name with its chosen title (1.5.0 My brand; e7, both
