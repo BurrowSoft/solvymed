@@ -29,6 +29,7 @@ import {
 import { termAllowed } from "@/lib/patientChannel/score";
 import { useLeaveGuard } from "@/components/DiscardGuard";
 import { PatientChannelTest, type PatientView } from "./PatientChannelTest";
+import { answerText } from "@/lib/patientChannel/inbox";
 import { BandTag } from "./BandTag";
 import { ChannelSettings } from "./ChannelSettings";
 import { TemplateReset, TemplateStart } from "./TemplateStart";
@@ -511,7 +512,7 @@ function AutoMessages({ rules, setRules }: SectionProps) {
     ...rules.symptoms.map((s) => ({ term: s.name, kind: "symptom" as const })),
     ...rules.medicines.map((m) => ({ term: m, kind: "medicine" as const })),
   ];
-  const condition = (key: AnswerKey, v: number) => (v < 0 ? null : t(`answers.${key}${v}`));
+  const condition = (key: AnswerKey, v: number) => (v < 0 ? null : answerText((k) => t(k as never), key, v));
   const save = () => {
     const r = saveAutoMessage(rules, draft, editId);
     if (typeof r === "string") { setError(t(`auto.${r}`)); return; }

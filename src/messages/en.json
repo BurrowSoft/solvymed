@@ -2707,6 +2707,7 @@
       "stillTakingQ": "Are you still taking the medicine?",
       "stillTaking0": "Yes",
       "stillTaking1": "I stopped on my own",
+      "stillTakingShort": "Still taking the medicine",
       "choose": "Choose…",
       "notAnswered": "Not answered"
     },
