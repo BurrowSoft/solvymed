@@ -3045,5 +3045,22 @@
     "done": "Selesai. Anda tidak akan lagi menerima pesan WhatsApp otomatis dari praktik ini.",
     "invalid": "Tautan ini tidak berfungsi. Pastikan Anda membuka tautan lengkap dari pesan WhatsApp.",
     "error": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "notificationsSettings": {
+    "title": "Notifikasi",
+    "tipsTitle": "Tips dan pengingat dari SolvyMed",
+    "tipsHint": "Sesekali, tips tentang penggunaan akun Anda. Pemberitahuan janji temu dan Kanal Pasien tidak berubah.",
+    "push": "Notifikasi push",
+    "email": "Email",
+    "loadError": "Preferensi Anda tidak dapat dimuat.",
+    "saveError": "Gagal menyimpan. Coba lagi."
+  },
+  "tipsUnsubscribe": {
+    "title": "Tips melalui email",
+    "lead": "Setelah dikonfirmasi, Anda tidak akan lagi menerima tips penggunaan akun melalui email.",
+    "button": "Saya tidak ingin menerima tips melalui email lagi",
+    "done": "Selesai. Anda tidak akan lagi menerima tips melalui email. Pemberitahuan janji temu dan Kanal Pasien tetap berlanjut.",
+    "incomplete": "Tautan ini tidak lengkap. Buka lagi tautan dari email.",
+    "error": "Terjadi kesalahan. Silakan coba lagi."
   }
 }

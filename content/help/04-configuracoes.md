@@ -159,6 +159,8 @@ Thai title: "ล็อกแอป"
 {pending:invite-joined-push-live,clinic-push-no-name-live} O aviso de que um novo paciente entrou com seu código de convite também não mostra o nome.
 {pending:whatsapp-auto-on,whatsapp-optout-live} No Brasil, cada mensagem automática pelo WhatsApp para o paciente tem um link para parar de recebê-las. Depois que alguém usa o link, o seu consultório não envia mais mensagens automáticas pelo WhatsApp para esse número.
 {pending:line-live} Na Tailândia, os pacientes que conectam o LINE no app (o cartão **Receba lembretes no LINE** na tela inicial, ou **Configurações → LINE**) recebem pelo LINE a confirmação, um lembrete 24 h antes da consulta e os avisos de mudança; nada é enviado entre 21h e 8h (horário da clínica). Em **Configurações → Lembretes no LINE** (ligado por padrão), você vê quantos pacientes conectaram; o paciente conectado mostra **LINE ✓**.
+{pending:tips-toggles-live} **Dicas e lembretes do SolvyMed**: de vez em quando, enviamos dicas sobre o uso da sua conta por notificação push e por e-mail. Desligue cada um em **Configurações → Notificações** (no site e no app), ou pelo link **Não quero mais receber dicas por e-mail** no próprio e-mail. Os avisos de consultas e do Canal do Paciente não mudam.
+
 **en**
 **Settings → Notifications**: turn on appointment reminders, choose how early (15 min, 1 h, 2 h or 24 h), and the daily summary.
 {pending:app-reminder-no-name-live} Appointment reminders don't show the patient's name; open the app to see who the visit is with.
@@ -166,9 +168,11 @@ Thai title: "ล็อกแอป"
 {pending:invite-joined-push-live,clinic-push-no-name-live} The notice that a new patient joined with your invite code doesn't show the name either.
 {pending:whatsapp-auto-on,whatsapp-optout-live} In Brazil, each automatic WhatsApp message to a patient has a link to stop them. After someone uses it, your practice no longer sends automatic WhatsApp messages to that phone number.
 {pending:line-live} In Thailand, patients who connect LINE in the app (the **Get reminders on LINE** card on Home, or **Settings → LINE**) get the confirmation, a reminder 24 h before the appointment and change notices on LINE; nothing is sent between 21:00 and 08:00 (practice time). **Settings → LINE reminders** (on by default) shows how many patients connected; a connected patient shows **LINE ✓**.
+{pending:tips-toggles-live} **Tips and reminders from SolvyMed**: occasionally we send tips about using your account by push notification and by e-mail. Turn each off in **Settings → Notifications** (on the website and in the app), or with the **I don't want tips by e-mail anymore** link in the e-mail itself. Appointment and Patient Channel notices don't change.
 **No site:** Os lembretes e notificações são do app; o site não envia notificações.
 **On the website:** Reminders and notifications are app features; the website doesn't send notifications.
 Thai title: "การเตือนและการแจ้งเตือน"
+
 **th**
 ใน **การตั้งค่า** ส่วนการแจ้งเตือน เปิดการเตือนนัดหมาย เลือกว่าจะเตือนล่วงหน้าเท่าใด (15 นาที 1 ชั่วโมง 2 ชั่วโมง หรือ 24 ชั่วโมง) และสรุปประจำวัน
 {pending:app-reminder-no-name-live} การเตือนนัดหมายจะไม่แสดงชื่อผู้ป่วย เปิดแอปเพื่อดูว่านัดกับใคร
@@ -176,10 +180,12 @@ Thai title: "การเตือนและการแจ้งเตือ�
 {pending:invite-joined-push-live,clinic-push-no-name-live} การแจ้งเตือนว่ามีผู้ป่วยใหม่เข้าร่วมด้วยรหัสคำเชิญของคุณก็ไม่แสดงชื่อเช่นกัน
 {pending:whatsapp-auto-on,whatsapp-optout-live} ในบราซิล ข้อความ WhatsApp อัตโนมัติที่ส่งถึงผู้ป่วยแต่ละข้อความมีลิงก์สำหรับหยุดรับข้อความ หลังจากมีผู้ใช้ลิงก์นี้ คลินิกของคุณจะไม่ส่งข้อความ WhatsApp อัตโนมัติไปยังหมายเลขโทรศัพท์นั้นอีก
 {pending:line-live} ในประเทศไทย ผู้ป่วยที่เชื่อมต่อ LINE ในแอป (การ์ด **รับการแจ้งเตือนทาง LINE** ที่หน้าแรก หรือ **การตั้งค่า → LINE**) จะได้รับการยืนยันนัด การเตือน 24 ชั่วโมงก่อนนัด และการแจ้งเมื่อมีการเปลี่ยนแปลงทาง LINE โดยไม่มีการส่งระหว่าง 21:00 ถึง 08:00 (เวลาของคลินิก) ใน **การตั้งค่า → แจ้งเตือนทาง LINE** (เปิดใช้งานเป็นค่าเริ่มต้น) คุณจะเห็นจำนวนผู้ป่วยที่เชื่อมต่อแล้ว และผู้ป่วยที่เชื่อมต่อแล้วจะแสดง **LINE ✓**
+{pending:tips-toggles-live} **คำแนะนำและการเตือนจาก SolvyMed**: เราส่งคำแนะนำเกี่ยวกับการใช้บัญชีของคุณเป็นครั้งคราวทางการแจ้งเตือนแบบพุชและทางอีเมล ปิดแต่ละช่องทางได้ที่ **การตั้งค่า → การแจ้งเตือน** (ทั้งบนเว็บไซต์และในแอป) หรือจากลิงก์ **ไม่ต้องการรับคำแนะนำทางอีเมลอีกต่อไป** ในอีเมล การแจ้งเตือนเรื่องนัดหมายและช่องทางผู้ป่วยไม่เปลี่ยนแปลง
 **ในเว็บไซต์:** การเตือนและการแจ้งเตือนเป็นฟีเจอร์ของแอป เว็บไซต์ไม่ส่งการแจ้งเตือน
 `open:settings-notifications`
 
 ---
+
 ## C8. Idioma e tema / Language and theme
 **pt-BR**
 **Configurações → Idioma** e **Tema** (claro, escuro ou do sistema). Algumas partes mudam de idioma depois de reabrir o app.

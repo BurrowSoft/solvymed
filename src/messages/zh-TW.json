@@ -3045,5 +3045,22 @@
     "done": "完成。您將不再收到此診所的 WhatsApp 自動訊息。",
     "invalid": "此連結無效。請確認您開啟的是 WhatsApp 訊息中的完整連結。",
     "error": "發生問題，請重試。"
+  },
+  "notificationsSettings": {
+    "title": "通知",
+    "tipsTitle": "SolvyMed 的提示與提醒",
+    "tipsHint": "偶爾傳送關於帳戶使用的提示。預約和病患管道的通知不受影響。",
+    "push": "推播通知",
+    "email": "電子郵件",
+    "loadError": "無法載入你的偏好設定。",
+    "saveError": "無法儲存，請再試一次。"
+  },
+  "tipsUnsubscribe": {
+    "title": "郵件提示",
+    "lead": "確認後，你將不再透過郵件收到關於帳戶使用的提示。",
+    "button": "我不想再透過郵件接收提示",
+    "done": "完成。你將不再透過郵件收到提示。預約和病患管道的通知照常傳送。",
+    "incomplete": "此連結不完整。請再次開啟電子郵件中的連結。",
+    "error": "發生問題，請重試。"
   }
 }

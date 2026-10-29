@@ -3075,5 +3075,22 @@
     "done": "Done. You won't get automatic WhatsApp messages from this practice anymore.",
     "invalid": "This link didn't work. Check that you opened the full link from the WhatsApp message.",
     "error": "Something went wrong. Please try again."
+  },
+  "notificationsSettings": {
+    "title": "Notifications",
+    "tipsTitle": "Tips and reminders from SolvyMed",
+    "tipsHint": "Occasional tips about using your account. Appointment and Patient Channel notices don't change.",
+    "push": "Push notifications",
+    "email": "E-mails",
+    "loadError": "Couldn't load your preferences.",
+    "saveError": "Couldn't save. Try again."
+  },
+  "tipsUnsubscribe": {
+    "title": "Tips by e-mail",
+    "lead": "Once you confirm, you'll stop getting tips about using your account by e-mail.",
+    "button": "I don't want tips by e-mail anymore",
+    "done": "Done. You won't get tips by e-mail anymore. Appointment and Patient Channel notices continue.",
+    "incomplete": "This link is incomplete. Open the link in the e-mail again.",
+    "error": "Something went wrong. Please try again."
   }
 }
