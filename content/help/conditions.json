@@ -304,8 +304,8 @@
     "what": "LIVE 2026-10-17/18: app 1.9.1 (versionCode 33) published on Play by Vitor, 100% rollout (13's ping). The app 1.9.1 store build (13's mobile #526) is released: \"Abrir e-mail\" on the app's \"Confirme seu e-mail\" opens the phone's mail app for ANY address (Android: the system mail-app launcher, a chooser if several; the provider's web inbox by domain only when there's no mail app; iOS later: Apple Mail). Until then (1.9.0) it opens the web inbox for Gmail / Outlook / Yahoo / iCloud addresses only. Gates Help K3's two app sentence versions and the App Map's two app rules; the website's lines are unchanged (the web keeps the domain map). 13 pings on promotion."
   },
   "pc-resolved-items-live": {
-    "met": false,
-    "what": "Item 43, \"Resolved without a message\" (specs/pc-resolved-report.md + its contract, cf's OK 10-29). Gates the per-item count (the /selfserve route passes the FAQ question or automatic message on to 272's pc_count_selfserve_item; while off it counts the kind only, as before), the report card (Settings → Canal do Paciente) and page (/dashboard/patient-channel/resolved), the inbox link, Help C18's line and the App Map rule. Binding order: 266 live → #691 live (privacy 2026-10-29 with the per-item counting line, Vitor's OK) → 272 applied → flip, on 01's word."
+    "met": true,
+    "what": "LIVE 2026-10-29: 272 live, #702 merged (dark), app #632 live in production (1.9.1 bundle 433505f2; 2.0.0 vc34), Vitor's th OK, WT1 🟢 on the lit preview (01). Item 43, \"Resolved without a message\" (specs/pc-resolved-report.md + its contract, cf's OK 10-29). Gates the per-item count (the /selfserve route passes the FAQ question or automatic message on to 272's pc_count_selfserve_item; while off it counts the kind only, as before), the report card (Settings → Canal do Paciente) and page (/dashboard/patient-channel/resolved), the inbox link, Help C18's line and the App Map rule. Binding order: 266 live → #691 live (privacy 2026-10-29 with the per-item counting line, Vitor's OK) → 272 applied → flip, on 01's word."
   },
   "app-confirm-clearer-live": {
     "met": true,
@@ -316,8 +316,8 @@
     "what": "LIVE 2026-10-29 07:41:12Z: OTA B on production runtime 1.9.0 (01). Mobile #617 (1.9.0 line only, JS-only): its OTA is live on production runtime 1.9.0, so patients on app 1.9.0 (Android) see \"Atualize o app para ter as novidades, como o Canal do Paciente\" on their home with \"Atualizar\" (Play Store) and \"Agora não\" (back after 7 days). Flip only on 01's word after the mobile developer reports the production OTA. Gates Help C18's line and the App Map rule."
   },
   "app-code-hint-live": {
-    "met": false,
-    "what": "Mobile #625 (01 + Vitor, 10-29) is live on production: after 2 refused patient codes (invite_not_found / code_unavailable) the app's Google complete-account step and patient code gate show \"Esse código não funcionou. Peça um código novo ao seu consultório.\" (+ \"Sou profissional de saúde\" on complete-account). Flip on 01's word after the mobile developer reports the OTA. Gates Help K3's \"No app também\" and the App Map's app half; the website's lines show from the web twin's merge."
+    "met": true,
+    "what": "LIVE 2026-10-29 15:03:04Z: mobile #625 on production runtime 1.9.1 (group 433505f2; 01); not on 1.9.0, so the user-facing lines say \"version 1.9.1 or later\". Mobile #625 (01 + Vitor, 10-29) is live on production: after 2 refused patient codes (invite_not_found / code_unavailable) the app's Google complete-account step and patient code gate show \"Esse código não funcionou. Peça um código novo ao seu consultório.\" (+ \"Sou profissional de saúde\" on complete-account). Flip on 01's word after the mobile developer reports the OTA. Gates Help K3's \"No app também\" and the App Map's app half; the website's lines show from the web twin's merge."
   },
   "tips-toggles-live": {
     "met": false,

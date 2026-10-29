@@ -2371,6 +2371,10 @@
             {
               "type": "p",
               "text": "**Modelo pronto**: enquanto suas regras estão vazias (nenhum sintoma, remédio ou mensagem automática salvos), aparece **Comece com o modelo pronto: Geral / efeitos colaterais** (o modelo do país da sua clínica), no topo da página. **Usar o modelo** preenche os sintomas, as combinações, as faixas de urgência, os remédios e as mensagens automáticas, e acrescenta os motivos e as perguntas frequentes do modelo; depois você ajusta tudo. Enquanto houver uma solicitação aberta, não dá para usar o modelo: responda ou feche as solicitações antes. Depois, **Voltar ao modelo inicial** (abaixo do texto das regras) pergunta antes e substitui só as regras (sintomas, combinações, faixas de urgência, remédios e mensagens automáticas) pelas do modelo; seus motivos e perguntas frequentes ficam como estão. Depois a página mostra \"Modelo restaurado. Seus motivos e perguntas frequentes foram mantidos.\""
+            },
+            {
+              "type": "p",
+              "text": "**Resolvidas sem mensagem**: em **Configurações → Canal do Paciente** (e pelo link no topo de **Mensagens**), veja quais perguntas frequentes e mensagens automáticas resolveram a dúvida dos pacientes sem que uma mensagem fosse enviada, em **7 dias**, **30 dias** ou **90 dias**: da mais usada para a menos usada, com o total e quantas mensagens foram enviadas no mesmo período. Conta só o item que o paciente viu por último; os números são por dia, nunca quem perguntou nem o que escreveu. Uma pergunta arquivada aparece com **(arquivada)**; um item apagado, como **(item removido)**; **Sem item específico** reúne o que não tem item (por exemplo, de uma versão anterior do app). A secretaria vê o relatório só se você deixar que ela veja todas as mensagens."
             }
           ],
           "en": [
@@ -2425,6 +2429,10 @@
             {
               "type": "p",
               "text": "**Ready-made template**: while your rules are empty (no symptoms, medicines or automatic messages saved), **Start with the ready-made template: General / side effects** shows (your practice country's template), at the top of the page. **Use the template** fills in the symptoms, combinations, urgency bands, medicines and automatic messages, and adds the template's reasons and FAQ; you can adjust everything afterwards. While a request is open, the template can't be used: answer or close the open requests first. Later, **Back to the starting template** (under the rules text) asks first, then replaces only the rules (symptoms, combinations, urgency bands, medicines and automatic messages) with the template's; your reasons and FAQ stay as they are. The page then shows \"Template restored. Your reasons and FAQ were kept.\""
+            },
+            {
+              "type": "p",
+              "text": "**Resolved without a message**: in **Settings → Patient Channel** (and from the link at the top of **Messages**), see which FAQ answers and automatic messages solved patients' questions without a message being sent, over **7 days**, **30 days** or **90 days**: most used first, with the total and how many messages were sent in the same period. Only the item the patient saw last is counted; the numbers are per day, never who asked or what they wrote. An archived question shows **(archived)**; a deleted item, **(item removed)**; **No specific item** gathers what has no item (e.g. from an older version of the app). Your secretary sees the report only if they can see all messages."
             }
           ]
         },
@@ -2552,6 +2560,10 @@
             },
             {
               "type": "p",
+              "text": "No app (versão 1.9.1 ou mais recente), depois de dois códigos recusados, aparece o mesmo aviso (com **Sou profissional de saúde** na etapa da conta Google)."
+            },
+            {
+              "type": "p",
               "text": "Se você é profissional de saúde e se cadastrou como paciente por engano, na tela do código de convite toque em **Sou profissional de saúde** e confirme o país do consultório: a conta passa a ser de profissional e seu teste gratuito começa."
             },
             {
@@ -2603,6 +2615,10 @@
             {
               "type": "p",
               "text": "On the website, after two refused invite codes (not found, or no longer accepted), you see **That code didn't work. Ask your practice for a new code.**; on the **Complete your account** screen, with **I'm a health professional**, which switches the sign-up to a professional one."
+            },
+            {
+              "type": "p",
+              "text": "In the app (version 1.9.1 or later), after two refused codes, you see the same line (with **I'm a health professional** on the Google account step)."
             },
             {
               "type": "p",
