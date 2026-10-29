@@ -20,6 +20,8 @@ import { addedByLine, type CreatedByKind } from "@/lib/patientCreatedBy";
 import { DateInput } from "@/components/DateInput";
 import { FilesTab } from "./FilesTab";
 import { DocumentsTab } from "./DocumentsTab";
+import { PatientChannelTab } from "./PatientChannelTab";
+import type { RecordTab } from "@/lib/patientChannel/recordTab";
 import { DocumentDialog, downloadPdf, makeDocumentPdf, type DocDialogState, type MedDoc } from "./MedicalDocuments";
 import { printPdf } from "@/lib/printPdf";
 import { shareDocumentSnapshot, shareRxSnapshot } from "./snapshots";
@@ -118,7 +120,7 @@ function statusBadge(status: string) {
   }
 }
 
-export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false, medicalDocs = null, fieldRules = null }: {
+export function PatientTabs({ patient, records, prescriptions, appointments, locale, isSecretary = false, isArchived = false, canDelete = false, hasAppointments = false, canMerge = false, mergeWith = null, currentUserId, idKind = "BR", accessLog = null, addressLive = false, timeZone, recordTemplates = null, documentsOn = false, medicalDocs = null, fieldRules = null, patientChannel = null }: {
   patient: Patient;
   records: MedRecord[];
   prescriptions: Rx[];
@@ -155,11 +157,13 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
   medicalDocs?: { list: MedDoc[]; country: string; hasPatientId: boolean } | null;
   // 1.8.0 C1: the practice's registration rules (null = today's form).
   fieldRules?: PatientFieldRules | null;
+  // The "Canal do Paciente" tab (pc-record-tab-live; lib/patientChannel/recordTab): null = no tab.
+  patientChannel?: RecordTab | null;
 }) {
   const t = useTranslations("patientDetail");
   const td = useTranslations("docs");
   const tDocs = useTranslations("documents");
-  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "documents" | "appointments" | "access">("info");
+  const [tab, setTab] = useState<"info" | "records" | "prescriptions" | "exams" | "files" | "documents" | "appointments" | "channel" | "access">("info");
   const ALL_TABS = [
     { key: "info" as const, label: t("tabInfo") },
     { key: "records" as const, label: t("tabRecords", { n: records.length }) },
@@ -168,6 +172,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
       ? [{ key: "documents" as const, label: td("tab") }]
       : [{ key: "exams" as const, label: t("tabExams") }, { key: "files" as const, label: t("tabFiles") }]),
     { key: "appointments" as const, label: t("tabAppointments", { n: appointments.length }) },
+    ...(patientChannel ? [{ key: "channel" as const, label: t("tabPatientChannel") }] : []),
     { key: "access" as const, label: t("tabAccessLog") },
   ];
   const TABS = ALL_TABS.filter(tb =>
@@ -208,6 +213,7 @@ export function PatientTabs({ patient, records, prescriptions, appointments, loc
         <DocumentsTab patientId={patient.id} doctorId={currentUserId} isArchived={isArchived} locale={locale} />
       )}
       {tab === "appointments" && <AppointmentsTab appointments={appointments} locale={locale} />}
+      {tab === "channel" && patientChannel && <PatientChannelTab tab={patientChannel} locale={locale} isSecretary={isSecretary} />}
       {tab === "access" && accessLog != null && (
         <AccessLogTab patientId={patient.id} initial={accessLog} records={records} prescriptions={prescriptions} locale={locale} documentsOn={documentsOn && !isSecretary} medicalDocs={medicalDocs?.list ?? null} />
       )}

@@ -358,5 +358,9 @@
   "migration-244": {
     "met": true,
     "what": "LIVE 2026-10-26: applied 18:12:36–18:14:28Z and live-checked (prod suites + web tester 1's end-to-end pair: status → removed_by_practice, the route → 409), per the mobile developer. Migration 244 is applied on production and live-checked: close_my_account refuses a patient a practice removed with 'removed_by_practice', and the app's Settings → Excluir Conta then offers the request form (the website's route answers the code since #644; the app maps it in #554). Flip when the mobile developer reports 244 live. Gates Help K4's line and the App Map rule for that refusal."
+  },
+  "pc-record-tab-live": {
+    "met": false,
+    "what": "The patient record's \"Canal do Paciente\" tab (specs/pc-patient-record-tab.md, 01 + Vitor 10-30). The tab itself (web and app #641) is dark behind the server flag pc_record_tab (migration 279, mobile #640; testers via server_flag_testers), so one write flips both. This condition gates only Help C18's line and the App Map rule: flip it with the server flag, on 01's word. The tab: the patient's Patient Channel requests (pc_requests under 237's RLS, by patient; no new RPC), newest first, each opening the inbox detail; the doctor, or a secretary with \"sees all\"; hidden when the practice never set the channel up and the patient sent nothing."
   }
 }
