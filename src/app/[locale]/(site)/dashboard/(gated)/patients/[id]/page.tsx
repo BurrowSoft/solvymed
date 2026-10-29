@@ -20,6 +20,8 @@ import { AutoRefresh } from "@/components/AutoRefresh";
 import { actingPracticeFor } from "@/lib/effectiveProfId";
 import { serverFlag } from "@/lib/myDoctors";
 import { readCreatedByKind } from "@/lib/patientCreatedBy";
+import { loadRecordTab } from "@/lib/patientChannel/recordTab";
+import { whenShortFormatter } from "@/lib/whenShort";
 import { currentRecordSections, parseTemplateSections, type RecordTemplate } from "@/lib/recordTemplates";
 
 export default async function PatientDetailPage({
@@ -102,6 +104,11 @@ export default async function PatientDetailPage({
   };
   const isArchived = !!patient.archived_at;
   const practiceCountry = await getPracticeCountry(supabase, user.id, effectiveProfId);
+  // The "Canal do Paciente" tab: the doctor, or a secretary with "sees all" (null = no tab).
+  const patientChannel = await loadRecordTab(supabase, {
+    userId: user.id, profId: effectiveProfId, patientId: id, isSecretary,
+    formatWhen: whenShortFormatter(locale, countryProfile(practiceCountry).calendar, timeZone),
+  });
   // 1.8.0 B (flag 'clinical_documents'): the doctor's documents for this
   // patient, in "Receitas e documentos". Never read for a secretary.
   const docsOn = !isSecretary && (await serverFlag(supabase, "clinical_documents"));
@@ -215,6 +222,7 @@ export default async function PatientDetailPage({
           } : null}
           documentsOn={!isSecretary && (await serverFlag(supabase, "patient_documents"))}
           addressLive={conditionMet("patient-address-live")}
+          patientChannel={patientChannel}
         />
       </div>
       {/* The app's "Dados importados": doctor only (the RPC refuses a
