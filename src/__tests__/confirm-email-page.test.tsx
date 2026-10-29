@@ -79,8 +79,28 @@ describe("Confirme seu e-mail (after sign-up)", () => {
 
   it("right after sign-up the resend is already counting down (an e-mail just went out)", async () => {
     await signUp("ana@gmail.com");
+    // The countdown inside the button, as the app (cf's B2 on #615): no separate wait line.
     expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled();
-    expect(screen.getByTestId("resend-wait")).toHaveTextContent("60");
+    expect(screen.getByTestId("resend-confirmation-button")).toHaveTextContent(`${pt.auth.confirmEmail.resendEmail} (1:00)`);
+    expect(screen.queryByTestId("resend-wait")).toBeNull();
+  });
+
+  it("the countdown ticks inside the button; at zero the plain label, enabled", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await signUp("ana@gmail.com");
+      const { act } = await import("@testing-library/react");
+      const button = screen.getByTestId("resend-confirmation-button");
+      for (let i = 0; i < 18; i++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+      // m:ss (shouldAdvanceTime may add a real second or so: 0:4x).
+      expect(button.textContent).toMatch(new RegExp(`^${pt.auth.confirmEmail.resendEmail} \\(0:4\\d\\)$`));
+      expect(button).toBeDisabled();
+      for (let i = 0; i < 45; i++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+      expect(button).toHaveTextContent(new RegExp(`^${pt.auth.confirmEmail.resendEmail}$`));
+      expect(button).not.toBeDisabled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("an unknown provider: no 'Abrir e-mail'", async () => {
@@ -193,13 +213,15 @@ describe("Confirme seu e-mail: the code (confirm_by_code)", () => {
 
   it("exactly 8 digits (the app's parity): fewer can't be sent, more are cut", async () => {
     h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
-    h.verifyOtp.mockReset();
+    h.verifyOtp.mockReset().mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
     await signUp("ana@gmail.com");
     await screen.findByTestId("confirm-by-code");
     fireEvent.change(byId("confirm-code"), { target: { value: "123456" } });
     expect(screen.getByTestId("confirm-code-submit")).toBeDisabled();
+    expect(h.verifyOtp).not.toHaveBeenCalled();
     fireEvent.change(byId("confirm-code"), { target: { value: "1234567890" } });
     expect(byId("confirm-code").value).toBe("12345678");
+    await screen.findByText(pt.auth.confirmEmail.codeInvalid);
     expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled();
     h.flags = { data: null, error: null };
   });
@@ -248,5 +270,78 @@ describe("sign-up with an already registered address: the neutral screen", () =>
   it("while the code switch is off, it doesn't promise a code", async () => {
     await signUpExisting({ data: null, error: null });
     expect(screen.getByTestId("signup-existing")).toHaveTextContent(pt.auth.signupExisting.body);
+  });
+});
+
+// The funnel contract's (a) (one layout with the app's #615): the address in
+// bold with "Corrigir" right under it, Abrir e-mail, the 8-cell code sent on
+// its 8th digit once per code, the Spam + Promoções callout, "Reenviar e-mail".
+describe("Confirme seu e-mail: the clearer layout (funnel (a))", () => {
+  const before = (a: Element, b: Element) => expect(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+  it("in the contract's order, the address in bold", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    const sentTo = screen.getByTestId("confirm-email-sent-to");
+    expect(sentTo.querySelector("strong")).toHaveTextContent("ana@gmail.com");
+    expect(sentTo.nextElementSibling).toBe(screen.getByTestId("confirm-email-fix"));
+    const order = ["confirm-email-fix", "confirm-email-open", "confirm-by-code", "confirm-spam-callout", "resend-confirmation-button"].map((id) => screen.getByTestId(id));
+    for (let i = 1; i < order.length; i++) before(order[i - 1], order[i]);
+    expect(screen.getByTestId("confirm-code-cells").children).toHaveLength(8);
+    expect(screen.getByTestId("confirm-spam-callout")).toHaveTextContent(pt.auth.confirmEmail.spamHint);
+    expect(screen.getByTestId("resend-confirmation-button")).toHaveTextContent(pt.auth.confirmEmail.resendEmail);
+    expect(screen.queryByText(pt.auth.resendConfirmation.spamHint)).toBeNull();
+    h.flags = { data: null, error: null };
+  });
+
+  it("the 8th digit sends once per code; Confirmar retries; a corrected code sends by itself", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    h.verifyOtp.mockReset().mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    await screen.findByText(pt.auth.confirmEmail.codeInvalid);
+    expect(h.verifyOtp).toHaveBeenCalledTimes(1);
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    expect(h.verifyOtp).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByTestId("confirm-code-submit"));
+    await waitFor(() => expect(h.verifyOtp).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled());
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345679" } });
+    await waitFor(() => expect(h.verifyOtp).toHaveBeenCalledTimes(3));
+    expect(h.verifyOtp).toHaveBeenLastCalledWith({ email: "ana@gmail.com", token: "12345679", type: "signup" });
+    h.flags = { data: null, error: null };
+  });
+
+  it("a code completed while a check is in flight isn't marked sent: its 8th digit typed again sends it", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    let finish: (v: unknown) => void = () => {};
+    h.verifyOtp.mockReset()
+      .mockImplementationOnce(() => new Promise((r) => { finish = r; }))
+      .mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345679" } });
+    expect(h.verifyOtp).toHaveBeenCalledTimes(1);
+    finish({ error: { code: "otp_expired", status: 403 } });
+    await waitFor(() => expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled());
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345679" } });
+    await waitFor(() => expect(h.verifyOtp).toHaveBeenCalledTimes(2));
+    expect(h.verifyOtp).toHaveBeenLastCalledWith({ email: "ana@gmail.com", token: "12345679", type: "signup" });
+    h.flags = { data: null, error: null };
+  });
+
+  it("the other resend lines (sign-in, forgot password, the expired link) keep their label and small spam hint", async () => {
+    const { ResendConfirmation } = await import("@/components/ResendConfirmation");
+    wrap(<ResendConfirmation email="ana@gmail.com" locale="pt-BR" neutral />);
+    expect(screen.getByTestId("resend-confirmation-button")).toHaveTextContent(pt.auth.resendConfirmation.button);
+    expect(screen.getByText(pt.auth.resendConfirmation.spamHint)).toBeInTheDocument();
+    expect(screen.queryByTestId("confirm-spam-callout")).toBeNull();
   });
 });
