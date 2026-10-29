@@ -81,6 +81,11 @@ describe("Configurações → Notificações (the tips switches)", () => {
     expect(document.getElementById("notifications")).not.toBeNull();
     await waitFor(() => expect(screen.getByTestId("tips-push")).toBeChecked());
     expect(screen.getByTestId("tips-email")).not.toBeChecked();
+    // The app's track/knob switch (as "Notificações por médico"; 01): named, aria-checked, teal when on.
+    const push = screen.getByRole("switch", { name: pt.notificationsSettings.push });
+    expect(push).toHaveAttribute("aria-checked", "true");
+    expect(push.className.split(" ")).toEqual(expect.arrayContaining(["rounded-full", "bg-teal-600"]));
+    expect(screen.getByRole("switch", { name: pt.notificationsSettings.email })).toHaveAttribute("aria-checked", "false");
     fireEvent.click(screen.getByTestId("tips-push"));
     await waitFor(() => expect(h.calls.at(-1)).toEqual({ fn: "tips_prefs_set", args: { p_push: false, p_email: null } }));
     expect(screen.getByTestId("tips-push")).not.toBeChecked();

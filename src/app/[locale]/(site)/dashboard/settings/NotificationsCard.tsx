@@ -49,20 +49,27 @@ export function NotificationsCard() {
       <div data-testid="tips-prefs">
         <h3 className="text-sm font-bold text-slate-900">{t("tipsTitle")}</h3>
         <p className="mb-3 text-sm text-slate-500">{t("tipsHint")}</p>
-        {(["push", "email"] as const).map((key) => (
-          <label key={key} className="flex items-center justify-between gap-3 py-2">
-            <span className="text-sm text-slate-800">{t(key)}</span>
-            <input
-              type="checkbox"
-              role="switch"
-              data-testid={`tips-${key}`}
-              className="h-5 w-9 cursor-pointer accent-teal-600"
-              checked={prefs?.[key] ?? true}
-              disabled={!prefs}
-              onChange={() => void toggle(key)}
-            />
-          </label>
-        ))}
+        {/* The same track/knob switch as "Notificações por médico" (NotifyPrefsCard; 01). */}
+        {(["push", "email"] as const).map((key) => {
+          const on = prefs?.[key] ?? true;
+          return (
+            <div key={key} className="flex items-center justify-between gap-3 py-2">
+              <span id={`tips-${key}-label`} className="text-sm text-slate-800">{t(key)}</span>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={on}
+                aria-labelledby={`tips-${key}-label`}
+                data-testid={`tips-${key}`}
+                disabled={!prefs}
+                onClick={() => void toggle(key)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-60 ${on ? "bg-teal-600" : "bg-slate-300"}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${on ? "left-[22px]" : "left-0.5"}`} />
+              </button>
+            </div>
+          );
+        })}
         {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
       </div>
     </Card>
