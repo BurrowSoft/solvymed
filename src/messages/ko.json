@@ -3012,6 +3012,22 @@
         "none": "AI가 목록에서 다른 증상을 찾지 못했습니다.",
         "error": "저장하지 못했습니다. 다시 시도하세요."
       }
+    },
+    "report": {
+      "title": "메시지 없이 해결",
+      "intro": "메시지를 보내지 않고 환자의 궁금증을 해결한 항목입니다. 이름이나 작성한 내용은 없습니다.",
+      "period": "기간",
+      "days": "{n}일",
+      "faq": "자주 묻는 질문: {label}",
+      "auto": "자동 메시지: {label}",
+      "archived": "{label} (보관됨)",
+      "faqRemoved": "자주 묻는 질문: (삭제된 항목)",
+      "autoRemoved": "자동 메시지: (삭제된 항목)",
+      "unattributed": "특정 항목 없음",
+      "totals": "기간 내 합계: {total} · 보낸 메시지: {sent}",
+      "empty": "아직 데이터가 없습니다. 환자가 메시지를 보내지 않고 궁금증을 해결하면 여기에 표시됩니다.",
+      "loadError": "보고서를 불러올 수 없습니다.",
+      "inboxLink": "{n, plural, other {이번 주 메시지 없이 #건 해결}}"
     }
   },
   "noticesUnsubscribe": {

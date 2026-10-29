@@ -37,9 +37,9 @@ export function RealChannel({ page, profId }: { page: PcPatientPage; profId: str
     return { status: "error" };
   }, [profId]);
 
-  const onSelfServe = useMemo<PcSelfServeFn>(() => (kind) => {
-    // A count only; never blocks the patient.
-    void postJson("/api/patient-channel/selfserve", { profId, kind }).catch(() => undefined);
+  const onSelfServe = useMemo<PcSelfServeFn>(() => (kind, item) => {
+    // A count only; never blocks the patient. The item (item 43) is used only once it's live.
+    void postJson("/api/patient-channel/selfserve", item ? { profId, kind, item } : { profId, kind }).catch(() => undefined);
   }, [profId]);
 
   // The patient's requests with this practice (237's pc_my_requests: their own, newest

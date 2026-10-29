@@ -3012,6 +3012,22 @@
         "none": "The AI found no other symptoms from your list.",
         "error": "Couldn't save. Try again."
       }
+    },
+    "report": {
+      "title": "Risolte senza messaggio",
+      "intro": "Cosa ha risposto alle domande dei tuoi pazienti senza che venisse inviato un messaggio. Senza nomi né ciò che hanno scritto.",
+      "period": "Periodo",
+      "days": "{n} giorni",
+      "faq": "Domanda frequente: {label}",
+      "auto": "Messaggio automatico: {label}",
+      "archived": "{label} (archiviata)",
+      "faqRemoved": "Domanda frequente: (elemento rimosso)",
+      "autoRemoved": "Messaggio automatico: (elemento rimosso)",
+      "unattributed": "Nessun elemento specifico",
+      "totals": "Totale nel periodo: {total} · Messaggi inviati: {sent}",
+      "empty": "Ancora nessun dato. Quando un paziente risolve il dubbio senza inviare, appare qui.",
+      "loadError": "Impossibile caricare il report.",
+      "inboxLink": "{n, plural, one {# risolta senza messaggio questa settimana} other {# risolte senza messaggio questa settimana}}"
     }
   },
   "noticesUnsubscribe": {

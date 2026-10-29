@@ -3012,6 +3012,22 @@
         "none": "AI tidak menemukan gejala lain dari daftar Anda.",
         "error": "Gagal menyimpan. Coba lagi."
       }
+    },
+    "report": {
+      "title": "Terselesaikan tanpa pesan",
+      "intro": "Apa yang menjawab pertanyaan pasien Anda tanpa pesan dikirim. Tanpa nama dan tanpa apa yang mereka tulis.",
+      "period": "Periode",
+      "days": "{n} hari",
+      "faq": "Pertanyaan umum: {label}",
+      "auto": "Pesan otomatis: {label}",
+      "archived": "{label} (diarsipkan)",
+      "faqRemoved": "Pertanyaan umum: (item dihapus)",
+      "autoRemoved": "Pesan otomatis: (item dihapus)",
+      "unattributed": "Tanpa item tertentu",
+      "totals": "Total dalam periode: {total} · Pesan terkirim: {sent}",
+      "empty": "Belum ada data. Saat pasien menyelesaikan pertanyaannya tanpa mengirim, akan muncul di sini.",
+      "loadError": "Laporan tidak dapat dimuat.",
+      "inboxLink": "{n, plural, other {# terselesaikan tanpa pesan minggu ini}}"
     }
   },
   "noticesUnsubscribe": {
