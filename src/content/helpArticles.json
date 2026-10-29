@@ -2362,6 +2362,10 @@
             },
             {
               "type": "p",
+              "text": "No app, o Canal do Paciente precisa da versão 1.9.1 (Play Store). O paciente com o app 1.9.0 (Android) vê na tela inicial **Atualize o app para ter as novidades, como o Canal do Paciente**, com **Atualizar** (abre a Play Store) e **Agora não** (o aviso volta em 7 dias). Mesmo com o app atualizado, o canal só aparece depois que o consultório o ativa."
+            },
+            {
+              "type": "p",
               "text": "Quando a clínica responde, o paciente recebe uma notificação push e, no máximo, um aviso fora do app (pelo LINE, pelo WhatsApp da clínica ou por e-mail) que diz só \"Você recebeu uma resposta no Canal do Paciente.\", com o link para o canal. Os e-mails têm o link **Não quero receber estes e-mails**; as respostas continuam no app e no site."
             },
             {
@@ -2409,6 +2413,10 @@
             {
               "type": "p",
               "text": "**What the patient sees**: in **My appointments**, a connected patient opens the channel: the emergency warning, the response time, the hours when you read messages (with your note) and the rules; the FAQ; the reason for contact (and who it goes to); and the form, with the boxes, the three questions and a free text that suggests your terms as they type. They never see the score or the band. The emergency warning shows at once for a warning sign or when the score reaches Urgent; after sending, the confirmation repeats the emergency number. If it appears off-screen while the patient is typing, a red bar with the warning stays at the top of the screen without hiding the text box; tapping it goes to the full warning. They have one open request at a time with you and another with the front desk: an administrative request never replaces a clinical question. Sending another to the same place shows which one is open (the reason and the date) and asks whether to update it; after updating, the confirmation says \"Replaced your previous message.\" The three questions start unanswered, and an unanswered question adds no points (the request shows \"Not answered\"). They open it with **Contact** and your name (or **Contact the doctor**) on your card in **My appointments**, shown only while the channel is on. If the practice is closed or the patient is archived, they see \"This channel isn't available. Please contact the practice directly.\", with the emergency warning; the requests they already sent there stay readable, read-only. In **Your messages**, at the start of the channel, they see their requests, the state of each one (waiting for a reply, answered, will call, replaced) and **The practice's reply**. If they ticked symptoms, \"You ticked:\" lists their names as they are in your list today. If you turn the channel off (or they're no longer connected to you), patients who already have messages see **View my messages** on your card: their messages and replies stay visible, without sending new ones. After they disconnect from a doctor (or the practice closes), **See earlier messages with {doctor}** shows in **My appointments** and on the **Connect to your doctor** screen, once for each practice where they have messages, and opens those messages read-only."
+            },
+            {
+              "type": "p",
+              "text": "In the app, the Patient Channel needs version 1.9.1 (Play Store). A patient on app 1.9.0 (Android) sees **Update the app to get what's new, like the Patient Channel** on their home screen, with **Update** (opens the Play Store) and **Not now** (the notice comes back in 7 days). Even with the updated app, the channel only appears once the practice turns it on."
             },
             {
               "type": "p",
