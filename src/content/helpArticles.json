@@ -2572,6 +2572,10 @@
             },
             {
               "type": "p",
+              "text": "No app (versão 1.9.1 ou mais recente), a tela **Confirme seu e-mail** segue a mesma ordem do site: o endereço em negrito com **E-mail errado? Corrigir** logo abaixo, **Abrir e-mail**, o código em 8 caixas (enviado sozinho no último dígito), o aviso **Não chegou? Veja também as pastas Spam e Promoções.** e **Reenviar e-mail**, com a contagem no próprio botão."
+            },
+            {
+              "type": "p",
               "text": "No app, depois de pedir o link em **Esqueceu sua senha?**, **Ainda não confirmou o e-mail?** reenvia o e-mail de confirmação."
             },
             {
@@ -2615,6 +2619,10 @@
             {
               "type": "p",
               "text": "Right after signing up in the app, the **Confirm your e-mail** screen shows the address, **Open e-mail** (opens your phone's mail app), the resend and **Wrong e-mail? Fix it** (to sign up again with the right address)."
+            },
+            {
+              "type": "p",
+              "text": "In the app (version 1.9.1 or later), the **Confirm your e-mail** screen follows the website's order: the address in bold with **Wrong e-mail? Fix it** right under it, **Open e-mail**, the code in 8 boxes (sent as soon as the last digit is in), the note **Didn't get it? Check your Spam and Promotions folders too.** and **Resend e-mail**, with the countdown on the button itself."
             },
             {
               "type": "p",
