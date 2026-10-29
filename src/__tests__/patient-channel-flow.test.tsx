@@ -217,7 +217,8 @@ describe("the patient's flow", () => {
     fireEvent.click(screen.getByTestId("pc-start"));
     openFaq();
     fireEvent.click(screen.getByTestId("pc-faq-solved"));
-    expect(onSelfServe).toHaveBeenCalledWith("faq_resolved");
+    // Item 43: with the question opened last (the route uses it only once pc-resolved-items-live).
+    expect(onSelfServe).toHaveBeenCalledWith("faq_resolved", { kind: "faq", id: SAMPLE_PAGE.faq[0].id });
   });
 
   it("M4b: the practice closed or the patient archived at send → not available, the emergency notice stays", async () => {
