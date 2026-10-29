@@ -31,11 +31,19 @@ describe("the App Map states the corrected facts", () => {
   const text = appMapText();
   it("no automatic patient reminders; the reminders are the clinic's own phone", () => {
     expect(text).toContain("Patients get NO automatic appointment reminders");
-    // The privacy text is live (whatsapp-auto-live) but the flag isn't (whatsapp-auto-on, 01 + cf,
-    // 10-28): the map still says automatic WhatsApp is off, and offers no way to turn it on.
-    expect(text).toContain("automatic WhatsApp messages are off");
-    expect(text).not.toContain("automatic WhatsApp messages never include reminders");
-    expect(text).not.toContain("about a minute after the practice books (confirms) or cancels their appointment");
+    // LINE is live (line-live, Vitor 10-28): the one exception, Thai patients who connected LINE.
+    expect(text).toContain("The one exception is LINE in Thailand");
+    expect(text).toContain("a reminder 24 hours before the appointment (none when it was booked less than 20 hours ahead)");
+    expect(text).not.toContain("LINE isn't live");
+    expect(text).not.toContain("LINE once it's live");
+    expect(text).toContain("LINE in Thailand (patients who connect it in the app)");
+    expect(text).toContain("\"LINE conectado ✓\" / \"LINE connected ✓\"");
+    // The flag is on (whatsapp-auto-on, met in the WhatsApp window, W3): the map says
+    // automatic WhatsApp never includes reminders, and no longer that it's off.
+    expect(text).not.toContain("automatic WhatsApp messages are off");
+    // With LINE live too (line-live), rule 294 words it for Brazilian practices that turned it on.
+    expect(text).toContain("automatic WhatsApp messages, where a Brazilian practice turned them on, never include reminders");
+    expect(text).toContain("Brazilian practices can turn on automatic WhatsApp messages");
   });
 
   it("the auto-WhatsApp rules follow whatsapp-auto-on (the flag), not the privacy text's whatsapp-auto-live", () => {
@@ -43,8 +51,10 @@ describe("the App Map states the corrected facts", () => {
       const r = GENERAL.find((g) => ruleText(g.rule).includes(needle))?.rule;
       return typeof r === "string" || !r ? null : { pending: r.pending, until: r.until ?? [] };
     };
-    expect(gate("automatic WhatsApp messages are off")).toEqual({ pending: [], until: ["whatsapp-auto-on"] });
-    expect(gate("automatic WhatsApp messages never include reminders")).toEqual({ pending: ["whatsapp-auto-on"], until: [] });
+    // The reminder rule per channel state: neither on, WhatsApp only, then LINE (whatever WhatsApp is).
+    expect(gate("automatic WhatsApp messages are off")).toEqual({ pending: [], until: ["whatsapp-auto-on", "line-live"] });
+    expect(gate("automatic WhatsApp messages never include reminders")).toEqual({ pending: ["whatsapp-auto-on"], until: ["line-live"] });
+    expect(gate("The one exception is LINE in Thailand")).toEqual({ pending: ["line-live"], until: [] });
     expect(gate("Brazilian practices can turn on automatic WhatsApp messages")).toEqual({ pending: ["whatsapp-auto-on"], until: [] });
     expect(gate("Automatic WhatsApp messages to patients (Brazilian practices) end with")).toEqual({ pending: ["whatsapp-auto-on", "whatsapp-optout-live"], until: [] });
     for (const g of GENERAL) {

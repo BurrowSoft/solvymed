@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { createServerClient } from "@supabase/ssr";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
@@ -8,6 +9,8 @@ import { parseCountryChoice } from "@/lib/signupCountry";
 import { OAUTH_SIGN_IN } from "@/lib/firstConfirmation";
 import { demoCountServer } from "@/lib/demoMetricsServer";
 import { RETURN_COOKIE, returnFromCookie, withReturn } from "@/lib/authReturn";
+import { GOOGLE_FAILED_PARAM, GOOGLE_FAILED_VALUE } from "@/lib/authFunnel";
+import { authFunnelCount } from "@/lib/authFunnelServer";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
@@ -42,8 +45,33 @@ export async function GET(request: NextRequest) {
     return res;
   };
 
+  // Back from our Google button (232): ?google=signup|login.
+  const fromGoogle = searchParams.get("google") === "signup" || searchParams.get("google") === "login";
+  // A Google round trip that didn't finish (no session at the end): the sign-in page
+  // says so and offers both ways again (funnel fix (a), 01's line), instead of an
+  // empty sign-in page. Reported by its code only (never the person), and counted
+  // as a daily total (lib/authFunnel).
+  const googleFailed = async (code: string) => {
+    Sentry.captureMessage("google_exchange_failed", { level: "warning", tags: { code: code.slice(0, 40) } });
+    await authFunnelCount("google_exchange_failed", parseCountryChoice(searchParams.get("c")), locale);
+    const url = new URL(`${localePrefix}/auth/login`, origin);
+    url.searchParams.set(GOOGLE_FAILED_PARAM, GOOGLE_FAILED_VALUE);
+    // A Patient Channel notice's page (lib/authReturn) stays the sign-in page's ?next=, so
+    // trying again (either way) still returns there.
+    const back = returnFromCookie(request.cookies.get(RETURN_COOKIE)?.value);
+    if (back) url.searchParams.set("next", back);
+    return url;
+  };
+
   // Must have either a PKCE code or an OTP token_hash
   if (!code && !tokenHash) {
+    // Google (or Supabase) sent the visitor back with ?error= instead of a code.
+    const oauthError = searchParams.get("error");
+    if (fromGoogle && oauthError) {
+      const res = NextResponse.redirect(await googleFailed(oauthError));
+      if (request.cookies.has(RETURN_COOKIE)) res.cookies.delete(RETURN_COOKIE);
+      return pinLocale(res);
+    }
     return pinLocale(NextResponse.redirect(new URL(localePrefix || "/", origin)));
   }
 
@@ -92,7 +120,6 @@ export async function GET(request: NextRequest) {
     // Back from our Google button (232): a new Google account completes it
     // first ("Complete your account", with the country and role the page
     // had); an existing one goes where a sign-in goes. gr= reports which.
-    const fromGoogle = searchParams.get("google") === "signup" || searchParams.get("google") === "login";
     // Fail safe: an error is "not pending" (the usual routing).
     if (fromGoogle && (await onboardingPending(supabase))) {
       redirectUrl = new URL(`${localePrefix}/auth/complete-account`, origin);
@@ -114,6 +141,10 @@ export async function GET(request: NextRequest) {
       redirectUrl = new URL(back, origin);
       if (fromGoogle && back === dest) redirectUrl.searchParams.set(GOOGLE_RETURN_PARAM, "existing");
     }
+  } else if (fromGoogle) {
+    // E.g. the code verifier cookie is missing (the round trip ended in another
+    // browser or app) or the code was already used.
+    redirectUrl = await googleFailed((error as { code?: string } | null)?.code ?? (error ? "exchange_error" : "no_session"));
   }
 
   const response = NextResponse.redirect(redirectUrl);

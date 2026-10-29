@@ -20,7 +20,8 @@ export const RESEND_COOLDOWN_S = 60;
 // justSent (the sign-up's own screen): an e-mail went out a moment ago, so
 // the countdown starts at once; an early tap would only meet Supabase's
 // per-address limit (ca on the app; 01).
-export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean }) {
+// onSend: told of each resend request (the verify page's funnel total; nothing about the address).
+export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false, onSend }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean; onSend?: () => void }) {
   const t = useTranslations("auth.resendConfirmation");
   const authErrorText = useAuthErrorText();
   const [sending, setSending] = useState(false);
@@ -38,6 +39,7 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
     if (sending || wait > 0 || !email) return;
     setSending(true);
     setError("");
+    onSend?.();
     const { error: e } = await createClient().auth.resend({
       type: "signup",
       email,

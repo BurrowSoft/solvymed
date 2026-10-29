@@ -801,7 +801,14 @@
     "google": {
       "continue": "使用 Google 繼續",
       "or": "或",
-      "failed": "無法開啟 Google 登入，請再試一次。"
+      "failed": "無法開啟 Google 登入，請再試一次。",
+      "exchangeFailed": "無法完成 Google 登入。請再次點按「使用 Google 繼續」，或使用電子郵件和密碼。",
+      "inApp": {
+        "title": "請在瀏覽器中開啟",
+        "body": "Google 不允許在此應用程式的內建瀏覽器中登入。請點按畫面角落的 ⋯ 並選擇「在瀏覽器中開啟」，或複製連結並貼到 Chrome 或 Safari。",
+        "copy": "複製連結",
+        "copied": "已複製連結。"
+      }
     },
     "completeAccount": {
       "title": "完成帳戶設定",
@@ -962,7 +969,8 @@
       "continue": "繼續",
       "expiredTitle": "此連結已過期",
       "expiredBody": "請在登入頁面重新取得連結。",
-      "goToSignIn": "前往登入"
+      "goToSignIn": "前往登入",
+      "resendHint": "還沒有確認帳戶？輸入你的電子郵件，我們會寄送新的連結。"
     },
     "captchaFailed": "請完成驗證後再試一次。",
     "errors": {
