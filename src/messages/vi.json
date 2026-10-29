@@ -801,7 +801,14 @@
     "google": {
       "continue": "Tiếp tục với Google",
       "or": "hoặc",
-      "failed": "Không mở được đăng nhập Google. Vui lòng thử lại."
+      "failed": "Không mở được đăng nhập Google. Vui lòng thử lại.",
+      "exchangeFailed": "Không thể hoàn tất đăng nhập bằng Google. Hãy nhấn 'Tiếp tục với Google' lần nữa hoặc dùng e-mail và mật khẩu.",
+      "inApp": {
+        "title": "Mở trong trình duyệt",
+        "body": "Google không cho phép đăng nhập từ trình duyệt của ứng dụng này. Nhấn ⋯ (ở góc màn hình) và chọn 'Mở trong trình duyệt', hoặc sao chép liên kết và dán vào Chrome hoặc Safari.",
+        "copy": "Sao chép liên kết",
+        "copied": "Đã sao chép liên kết."
+      }
     },
     "completeAccount": {
       "title": "Hoàn tất tài khoản",
@@ -962,7 +969,8 @@
       "continue": "Tiếp tục",
       "expiredTitle": "Liên kết này đã hết hạn",
       "expiredBody": "Hãy yêu cầu liên kết mới từ trang đăng nhập.",
-      "goToSignIn": "Đến trang đăng nhập"
+      "goToSignIn": "Đến trang đăng nhập",
+      "resendHint": "Bạn chưa xác nhận tài khoản? Nhập e-mail và chúng tôi sẽ gửi liên kết mới."
     },
     "captchaFailed": "Vui lòng hoàn tất bước xác minh rồi thử lại.",
     "errors": {

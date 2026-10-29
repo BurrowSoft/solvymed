@@ -801,7 +801,14 @@
     "google": {
       "continue": "Continue with Google",
       "or": "or",
-      "failed": "Couldn't open Google sign-in. Please try again."
+      "failed": "Couldn't open Google sign-in. Please try again.",
+      "exchangeFailed": "We couldn't finish signing in with Google. Tap 'Continue with Google' again or use e-mail and password.",
+      "inApp": {
+        "title": "Open in your browser",
+        "body": "Google doesn't allow signing in from this app's browser. Tap ⋯ (in a corner of the screen) and choose 'Open in browser', or copy the link and paste it into Chrome or Safari.",
+        "copy": "Copy link",
+        "copied": "Link copied."
+      }
     },
     "completeAccount": {
       "title": "Complete your account",
@@ -962,7 +969,8 @@
       "continue": "Weiter",
       "expiredTitle": "Dieser Link ist abgelaufen",
       "expiredBody": "Fordern Sie auf der Anmeldeseite einen neuen an.",
-      "goToSignIn": "Zur Anmeldung"
+      "goToSignIn": "Zur Anmeldung",
+      "resendHint": "Noch nicht bestätigt? Geben Sie Ihre E-Mail-Adresse ein, und wir senden einen neuen Link."
     },
     "captchaFailed": "Bitte schließen Sie die Überprüfung ab und versuchen Sie es erneut.",
     "errors": {
