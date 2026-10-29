@@ -22,7 +22,8 @@ export const RESEND_COOLDOWN_S = 60;
 // per-address limit (ca on the app; 01).
 // onSend: told of each resend request (the verify page's funnel total; nothing about the address).
 // confirmScreen ("Confirme seu e-mail"; the funnel contract's (a), as the app's #615):
-// the spam hint as a callout above the button (Spam and Promotions), and "Reenviar e-mail".
+// the spam hint as a callout above the button (Spam and Promotions), and "Reenviar e-mail"
+// with the countdown inside it, "Reenviar e-mail (0:42)", disabled until zero (cf's B2 on #615).
 export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false, onSend, confirmScreen = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean; onSend?: () => void; confirmScreen?: boolean }) {
   const t = useTranslations("auth.resendConfirmation");
   const tc = useTranslations("auth.confirmEmail");
@@ -85,12 +86,12 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
         data-testid="resend-confirmation-button"
         className="w-full rounded-xl border border-teal-200 bg-white px-4 py-2.5 font-semibold text-teal-700 transition hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {confirmScreen ? tc("resendEmail") : t("button")}
+        {confirmScreen ? (wait > 0 ? `${tc("resendEmail")} (${Math.floor(wait / 60)}:${String(wait % 60).padStart(2, "0")})` : tc("resendEmail")) : t("button")}
       </button>
       <p role="status" aria-live="polite" className="text-slate-600">
         {sent ? t(neutral ? "neutralSent" : "sent") : ""}
       </p>
-      {wait > 0 && <p data-testid="resend-wait" className="text-slate-500">{t("wait", { seconds: wait })}</p>}
+      {wait > 0 && !confirmScreen && <p data-testid="resend-wait" className="text-slate-500">{t("wait", { seconds: wait })}</p>}
       {error && <p role="alert" className="text-red-600">{error}</p>}
       {!confirmScreen && <p className="text-xs text-slate-500">{t("spamHint")}</p>}
     </div>

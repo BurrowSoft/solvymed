@@ -79,8 +79,28 @@ describe("Confirme seu e-mail (after sign-up)", () => {
 
   it("right after sign-up the resend is already counting down (an e-mail just went out)", async () => {
     await signUp("ana@gmail.com");
+    // The countdown inside the button, as the app (cf's B2 on #615): no separate wait line.
     expect(screen.getByTestId("resend-confirmation-button")).toBeDisabled();
-    expect(screen.getByTestId("resend-wait")).toHaveTextContent("60");
+    expect(screen.getByTestId("resend-confirmation-button")).toHaveTextContent(`${pt.auth.confirmEmail.resendEmail} (1:00)`);
+    expect(screen.queryByTestId("resend-wait")).toBeNull();
+  });
+
+  it("the countdown ticks inside the button; at zero the plain label, enabled", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await signUp("ana@gmail.com");
+      const { act } = await import("@testing-library/react");
+      const button = screen.getByTestId("resend-confirmation-button");
+      for (let i = 0; i < 18; i++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+      // m:ss (shouldAdvanceTime may add a real second or so: 0:4x).
+      expect(button.textContent).toMatch(new RegExp(`^${pt.auth.confirmEmail.resendEmail} \\(0:4\\d\\)$`));
+      expect(button).toBeDisabled();
+      for (let i = 0; i < 45; i++) await act(async () => { await vi.advanceTimersByTimeAsync(1000); });
+      expect(button).toHaveTextContent(new RegExp(`^${pt.auth.confirmEmail.resendEmail}$`));
+      expect(button).not.toBeDisabled();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("an unknown provider: no 'Abrir e-mail'", async () => {
