@@ -3048,5 +3048,22 @@
     "done": "Done. You won't get automatic WhatsApp messages from this practice anymore.",
     "invalid": "This link didn't work. Check that you opened the full link from the WhatsApp message.",
     "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "notificationsSettings": {
+    "title": "Benachrichtigungen",
+    "tipsTitle": "Tipps und Erinnerungen von SolvyMed",
+    "tipsHint": "Gelegentlich Tipps zur Nutzung Ihres Kontos. Termin- und Patientenkanal-Hinweise bleiben unverändert.",
+    "push": "Push-Benachrichtigungen",
+    "email": "E-Mails",
+    "loadError": "Ihre Einstellungen konnten nicht geladen werden.",
+    "saveError": "Speichern fehlgeschlagen. Bitte erneut versuchen."
+  },
+  "tipsUnsubscribe": {
+    "title": "Tipps per E-Mail",
+    "lead": "Nach der Bestätigung erhalten Sie keine Tipps zur Nutzung Ihres Kontos mehr per E-Mail.",
+    "button": "Ich möchte keine Tipps mehr per E-Mail",
+    "done": "Erledigt. Sie erhalten keine Tipps mehr per E-Mail. Termin- und Patientenkanal-Hinweise gehen weiter.",
+    "incomplete": "This link is incomplete. Open the link in the e-mail again.",
+    "error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   }
 }

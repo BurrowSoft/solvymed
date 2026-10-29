@@ -3048,5 +3048,22 @@
     "done": "Xong. Bạn sẽ không nhận tin nhắn WhatsApp tự động từ phòng khám này nữa.",
     "invalid": "Liên kết này không hoạt động. Hãy kiểm tra xem bạn đã mở đầy đủ liên kết trong tin nhắn WhatsApp chưa.",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "notificationsSettings": {
+    "title": "Thông báo",
+    "tipsTitle": "Mẹo và lời nhắc từ SolvyMed",
+    "tipsHint": "Thỉnh thoảng, mẹo về cách dùng tài khoản của bạn. Thông báo về lịch hẹn và Kênh Bệnh nhân không thay đổi.",
+    "push": "Thông báo đẩy",
+    "email": "Email",
+    "loadError": "Không tải được tùy chọn của bạn.",
+    "saveError": "Không lưu được. Hãy thử lại."
+  },
+  "tipsUnsubscribe": {
+    "title": "Mẹo qua email",
+    "lead": "Khi xác nhận, bạn sẽ không nhận mẹo về cách dùng tài khoản qua email nữa.",
+    "button": "Tôi không muốn nhận mẹo qua email nữa",
+    "done": "Xong. Bạn sẽ không nhận mẹo qua email nữa. Thông báo về lịch hẹn và Kênh Bệnh nhân vẫn tiếp tục.",
+    "incomplete": "Liên kết này không đầy đủ. Hãy mở lại liên kết trong email.",
+    "error": "Đã xảy ra lỗi. Vui lòng thử lại."
   }
 }

@@ -3048,5 +3048,22 @@
     "done": "Done. You won't get automatic WhatsApp messages from this practice anymore.",
     "invalid": "This link didn't work. Check that you opened the full link from the WhatsApp message.",
     "error": "Qualcosa è andato storto. Riprova."
+  },
+  "notificationsSettings": {
+    "title": "Notifiche",
+    "tipsTitle": "Consigli e promemoria di SolvyMed",
+    "tipsHint": "Di tanto in tanto, consigli sull'uso del tuo account. Gli avvisi degli appuntamenti e del Canale Paziente non cambiano.",
+    "push": "Notifiche push",
+    "email": "E-mail",
+    "loadError": "Impossibile caricare le tue preferenze.",
+    "saveError": "Impossibile salvare. Riprova."
+  },
+  "tipsUnsubscribe": {
+    "title": "Consigli via e-mail",
+    "lead": "Confermando, non riceverai più via e-mail consigli sull'uso del tuo account.",
+    "button": "Non voglio più ricevere consigli via e-mail",
+    "done": "Fatto. Non riceverai più consigli via e-mail. Gli avvisi degli appuntamenti e del Canale Paziente continuano.",
+    "incomplete": "This link is incomplete. Open the link in the e-mail again.",
+    "error": "Qualcosa è andato storto. Riprova."
   }
 }

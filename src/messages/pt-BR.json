@@ -3048,5 +3048,22 @@
     "done": "Pronto. Você não vai mais receber mensagens automáticas deste consultório pelo WhatsApp.",
     "invalid": "Este link não funcionou. Confira se você abriu o link completo da mensagem do WhatsApp.",
     "error": "Algo deu errado. Tente novamente."
+  },
+  "notificationsSettings": {
+    "title": "Notificações",
+    "tipsTitle": "Dicas e lembretes do SolvyMed",
+    "tipsHint": "De vez em quando, dicas sobre o uso da sua conta. Os avisos de consultas e do Canal do Paciente não mudam.",
+    "push": "Notificações push",
+    "email": "E-mails",
+    "loadError": "Não foi possível carregar suas preferências.",
+    "saveError": "Não foi possível salvar. Tente novamente."
+  },
+  "tipsUnsubscribe": {
+    "title": "Dicas por e-mail",
+    "lead": "Ao confirmar, você deixa de receber por e-mail dicas sobre o uso da sua conta.",
+    "button": "Não quero mais receber dicas por e-mail",
+    "done": "Pronto. Você não vai mais receber dicas por e-mail. Os avisos de consultas e do Canal do Paciente continuam.",
+    "incomplete": "Este link está incompleto. Abra o link do e-mail novamente.",
+    "error": "Algo deu errado. Tente novamente."
   }
 }

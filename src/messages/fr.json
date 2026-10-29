@@ -3048,5 +3048,22 @@
     "done": "Done. You won't get automatic WhatsApp messages from this practice anymore.",
     "invalid": "This link didn't work. Check that you opened the full link from the WhatsApp message.",
     "error": "Une erreur s'est produite. Réessayez."
+  },
+  "notificationsSettings": {
+    "title": "Notifications",
+    "tipsTitle": "Conseils et rappels de SolvyMed",
+    "tipsHint": "De temps en temps, des conseils sur l'utilisation de votre compte. Les avis de rendez-vous et du Canal Patient ne changent pas.",
+    "push": "Notifications push",
+    "email": "E-mails",
+    "loadError": "Impossible de charger vos préférences.",
+    "saveError": "Impossible d'enregistrer. Réessayez."
+  },
+  "tipsUnsubscribe": {
+    "title": "Conseils par e-mail",
+    "lead": "En confirmant, vous ne recevrez plus par e-mail de conseils sur l'utilisation de votre compte.",
+    "button": "Je ne veux plus recevoir de conseils par e-mail",
+    "done": "C'est fait. Vous ne recevrez plus de conseils par e-mail. Les avis de rendez-vous et du Canal Patient continuent.",
+    "incomplete": "This link is incomplete. Open the link in the e-mail again.",
+    "error": "Une erreur s'est produite. Réessayez."
   }
 }
