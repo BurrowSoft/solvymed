@@ -223,6 +223,15 @@ describe("privacy 2026-10-23: §6h Demo mode (234 + #596–#598; text = enforcem
   });
 });
 
+describe("privacy 2026-10-29: LINE for Thailand (line-live; Vitor, 10-28)", () => {
+  it("line-live met needs PRIVACY_VERSION 2026-10-29 or later (the mobile privacy-accept migration applied first)", async () => {
+    const fs = await import("node:fs");
+    const conditions = JSON.parse(fs.readFileSync("content/help/conditions.json", "utf8"));
+    expect(conditions["line-live"]).toBeDefined();
+    if (conditions["line-live"].met) expect(PRIVACY_VERSION >= "2026-10-29").toBe(true);
+  });
+});
+
 describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo, automatic WhatsApp (Vitor's OKs, 10-27)", () => {
   const CONDITIONS = ["patient-channel-live", "pc-cover-live", "pc-ai-live", "reminders-live", "app-referrer-live", "app-demo-live", "whatsapp-auto-live", "pc-notify-live", "whatsapp-optout-live"];
   const render = async (props: Record<string, boolean>) => {
