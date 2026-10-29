@@ -2552,7 +2552,7 @@
             },
             {
               "type": "p",
-              "text": "No app, depois de dois códigos recusados, aparece o mesmo aviso (com **Sou profissional de saúde** na etapa da conta Google)."
+              "text": "No app (versão 1.9.1 ou mais recente), depois de dois códigos recusados, aparece o mesmo aviso (com **Sou profissional de saúde** na etapa da conta Google)."
             },
             {
               "type": "p",
@@ -2610,7 +2610,7 @@
             },
             {
               "type": "p",
-              "text": "In the app, after two refused codes, you see the same line (with **I'm a health professional** on the Google account step)."
+              "text": "In the app (version 1.9.1 or later), after two refused codes, you see the same line (with **I'm a health professional** on the Google account step)."
             },
             {
               "type": "p",
