@@ -9,6 +9,7 @@ import { coverUrl } from "@/lib/patientChannel/cover";
 import { pageLook } from "@/lib/patientChannel/pageLook";
 import { liveFeatures } from "@/lib/liveFeatures";
 import { loadPracticeBrand, publicFromPractice } from "@/lib/brand";
+import { doctorDisplayName, withBrandTitle } from "@/lib/doctorName";
 import { SampleChannel } from "./SampleChannel";
 import { RealChannel } from "./RealChannel";
 import { UnavailableChannel } from "./UnavailableChannel";
@@ -69,7 +70,7 @@ export default async function PatientChannelPage({
     const country = own?.country ?? null;
     return (
       <ReadOnlyChannel
-        doctorName={pub?.full_name?.trim() || own?.full_name?.trim() || ""}
+        doctorName={doctorDisplayName(pub?.full_name?.trim() || own?.full_name)}
         practiceLine={[pub?.clinic_name, pub?.specialty].filter(Boolean).join(" · ")}
         emergencyNumber={countryProfile(country).emergencyNumber}
         requests={requests}
@@ -87,9 +88,12 @@ export default async function PatientChannelPage({
   const brand = liveFeatures.myBrand
     ? publicFromPractice(await loadPracticeBrand(supabase, professionalId), { name: pub?.full_name ?? "", specialty: pub?.specialty ?? "" })
     : null;
+  // The brand's title in front of the name, once, and a Thai title against it ("พญ.ณัฐธิดา",
+  // the app's doctorLabel + lib/doctorName); the title is never the practice line's specialty.
+  const pcName = p.brand?.displayName?.trim() || pub?.full_name?.trim() || "";
   const page: PcPatientPage = {
-    doctorName: p.brand?.displayName?.trim() || pub?.full_name?.trim() || "",
-    practiceLine: [pub?.clinic_name, p.brand?.title?.trim() || pub?.specialty].filter(Boolean).join(" · "),
+    doctorName: pcName ? doctorDisplayName(withBrandTitle(p.brand?.title, pcName)) : "",
+    practiceLine: [pub?.clinic_name, brand?.specialty || pub?.specialty].filter(Boolean).join(" · "),
     emergencyNumber: countryProfile(p.country).emergencyNumber,
     slaBusinessDays: p.slaBusinessDays,
     welcome: p.welcome ?? "",
