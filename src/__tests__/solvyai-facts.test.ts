@@ -31,11 +31,11 @@ describe("the App Map states the corrected facts", () => {
   const text = appMapText();
   it("no automatic patient reminders; the reminders are the clinic's own phone", () => {
     expect(text).toContain("Patients get NO automatic appointment reminders");
-    // The privacy text is live (whatsapp-auto-live) but the flag isn't (whatsapp-auto-on, 01 + cf,
-    // 10-28): the map still says automatic WhatsApp is off, and offers no way to turn it on.
-    expect(text).toContain("automatic WhatsApp messages are off");
-    expect(text).not.toContain("automatic WhatsApp messages never include reminders");
-    expect(text).not.toContain("about a minute after the practice books (confirms) or cancels their appointment");
+    // The flag is on (whatsapp-auto-on, met in the WhatsApp window, W3): the map says
+    // automatic WhatsApp never includes reminders, and no longer that it's off.
+    expect(text).not.toContain("automatic WhatsApp messages are off");
+    expect(text).toContain("automatic WhatsApp messages never include reminders");
+    expect(text).toContain("Brazilian practices can turn on automatic WhatsApp messages");
   });
 
   it("the auto-WhatsApp rules follow whatsapp-auto-on (the flag), not the privacy text's whatsapp-auto-live", () => {
