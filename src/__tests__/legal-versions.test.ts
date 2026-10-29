@@ -290,13 +290,14 @@ describe("privacy 2026-10-28: Patient Channel, reminders, app referrer, app demo
     expect((await render({ pcCover: true, pcAi: true })).en).not.toMatch(/cover image|SolvyAI reads the patient/);
 
     const rem = await render({ reminders: true });
-    expect(rem.en).toContain("To send, at most once, a reminder to finish your sign-up or to set up your practice (by e-mail, and as a push notification if you use the app). Every reminder has a link to stop them.");
-    expect(rem.pt).toContain("Para enviar, no máximo uma vez, um lembrete para concluir o cadastro ou configurar sua clínica (por e-mail e, se você usa o app, por notificação push). Todo lembrete tem um link para não recebê-los mais.");
-    expect(rem.en).toContain("password resets, one-time account reminders)");
-    expect(rem.pt).toContain("redefinição de senha, lembretes únicos sobre a conta)");
+    // 2026-10-30 (cf MUST 1, Vitor 10-29): the reminders and the occasional tips, no "at most once".
+    expect(rem.en).toContain("To send reminders to finish your sign-up or set up your practice and, occasionally, tips about using your account (by e-mail, and as a push notification if you use the app). Every e-mail has a link to stop them, and tips can also be turned off in Settings → Notifications.");
+    expect(rem.pt).toContain("Para enviar lembretes para concluir o cadastro ou configurar sua clínica e, de vez em quando, dicas sobre o uso da sua conta (por e-mail e, se você usa o app, por notificação push). Todo e-mail tem um link para não recebê-los mais, e as dicas também podem ser desligadas em Configurações → Notificações.");
+    expect(rem.en).toContain("password resets, account reminders, tips about using your account (which you can turn off))");
+    expect(rem.pt).toContain("redefinição de senha, lembretes sobre a conta, dicas sobre o uso da conta (que você pode desligar))");
     // cf's §6g rewording (Vitor, 10-27): the setup reminder is its own sentence.
-    expect(rem.en).toContain("changes and cancellations. At most once, we also send a push reminder to set up your practice. A professional can also send");
-    expect(rem.pt).toContain("alterações e cancelamentos. No máximo uma vez, também enviamos uma notificação push lembrando de configurar sua clínica. O profissional também pode");
+    expect(rem.en).toContain("changes and cancellations. We also send push notifications reminding you to set up your practice and, occasionally, with tips about using your account (see below). A professional can also send");
+    expect(rem.pt).toContain("alterações e cancelamentos. Também enviamos notificações push lembrando de configurar sua clínica e, de vez em quando, com dicas sobre o uso da sua conta (veja abaixo). O profissional também pode");
     expect((await render({})).en).toContain("changes and cancellations. A professional can also send");
 
     // cf's §3.6 rewording (Vitor, 10-27): the app's own optional consent, not the cookie banner's.
