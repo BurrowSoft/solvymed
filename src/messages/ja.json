@@ -938,7 +938,8 @@
       "deleteConfirm": "アカウントが削除されます。いつでも再登録できます。",
       "deletedNotice": "アカウントを削除しました。",
       "requestDeletion": "アカウント削除を依頼",
-      "notConnected": "現在、どの医療機関にも接続されていません。"
+      "notConnected": "現在、どの医療機関にも接続されていません。",
+      "codeHint": "そのコードは使えませんでした。クリニックに新しいコードを依頼してください。"
     },
     "pendingConfirmation": {
       "loading": "状況を確認しています…",

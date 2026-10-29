@@ -938,7 +938,8 @@
       "deleteConfirm": "Thao tác này xóa tài khoản của bạn. Bạn có thể đăng ký lại bất cứ lúc nào.",
       "deletedNotice": "Đã xóa tài khoản.",
       "requestDeletion": "Yêu cầu xóa tài khoản",
-      "notConnected": "Hiện bạn chưa kết nối với phòng khám nào."
+      "notConnected": "Hiện bạn chưa kết nối với phòng khám nào.",
+      "codeHint": "Mã đó không dùng được. Hãy xin phòng khám một mã mới."
     },
     "pendingConfirmation": {
       "loading": "Đang kiểm tra trạng thái của bạn…",

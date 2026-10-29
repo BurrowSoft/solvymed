@@ -938,7 +938,8 @@
       "deleteConfirm": "This deletes your account. You can sign up again anytime.",
       "deletedNotice": "Account deleted.",
       "requestDeletion": "Request account deletion",
-      "notConnected": "You're not connected to any practice right now."
+      "notConnected": "You're not connected to any practice right now.",
+      "codeHint": "Dieser Code hat nicht funktioniert. Bitten Sie Ihre Praxis um einen neuen Code."
     },
     "pendingConfirmation": {
       "loading": "Status wird geprüft…",
