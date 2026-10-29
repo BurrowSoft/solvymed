@@ -1,7 +1,7 @@
 import "server-only";
-import { conditionMet } from "@/lib/conditions";
 import { shortDoctorName, withBrandTitle } from "@/lib/doctorName";
 import { myPractices } from "@/lib/effectiveProfId";
+import { serverFlag } from "@/lib/myDoctors";
 import type { createClient } from "@/lib/supabase/server";
 import type { Band } from "./score";
 import { isUnscored } from "./unscored";
@@ -15,10 +15,10 @@ import type { InboxStatus } from "./inbox";
 // the page doesn't even ask: RLS would still give her the front desk's requests, which her
 // inbox already shows, so the hidden tab is the spec's rule, not a data boundary.
 // Hidden too when the practice never set the channel up and the patient sent nothing.
-
-export function pcRecordTabLive(): boolean {
-  return conditionMet("pc-record-tab-live");
-}
+// Dark behind the server flag pc_record_tab (279; get_server_flags as the caller, so the
+// testers' allowlist applies): the app's tab reads the same row, so one write flips both
+// (01). Help C18's line and the App Map rule wait for the pc-record-tab-live condition.
+export const RECORD_TAB_FLAG = "pc_record_tab";
 
 export type RecordTabRow = {
   id: string;
@@ -61,7 +61,7 @@ export async function loadRecordTab(
     userId: string; profId: string; patientId: string; isSecretary: boolean; formatWhen: (iso: string) => string;
   },
 ): Promise<RecordTab | null> {
-  if (!pcRecordTabLive()) return null;
+  if (!(await serverFlag(supabase, RECORD_TAB_FLAG))) return null;
   const settings = await supabase.from("pc_settings").select("secretary_sees_all").eq("professional_id", profId).maybeSingle();
   if (isSecretary && settings.data?.secretary_sees_all !== true) return null;
   const { data, error } = await supabase.from("pc_requests").select(COLUMNS)

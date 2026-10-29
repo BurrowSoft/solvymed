@@ -6,7 +6,7 @@ import pt from "@/messages/pt-BR.json";
 // The patient record's "Canal do Paciente" tab (specs/pc-patient-record-tab.md, 01 + Vitor
 // 10-30): the patient's requests from pc_requests under 237's RLS (no new RPC), newest first;
 // the doctor, or a secretary with "sees all"; hidden when the practice never set the channel
-// up and the patient sent nothing; dark until pc-record-tab-live.
+// up and the patient sent nothing; dark until the server flag pc_record_tab (the app's too).
 const h = vi.hoisted(() => ({
   live: true,
   settings: { data: null, error: null } as { data: { secretary_sees_all: boolean } | null; error: null | { message: string } },
@@ -14,10 +14,7 @@ const h = vi.hoisted(() => ({
   queries: [] as { table: string; eq: [string, unknown][]; order?: string }[],
 }));
 vi.mock("server-only", () => ({}));
-vi.mock("@/lib/conditions", async (orig) => {
-  const real = await orig<typeof import("@/lib/conditions")>();
-  return { ...real, conditionMet: (k: string) => (k === "pc-record-tab-live" ? h.live : real.conditionMet(k)) };
-});
+vi.mock("@/lib/myDoctors", () => ({ serverFlag: async (_db: unknown, key: string) => key === "pc_record_tab" && h.live }));
 vi.mock("@/lib/effectiveProfId", () => ({
   myPractices: async () => [{ professional_id: "doc1", title: "Dra.", display_name: "Ana Lima" }],
 }));
@@ -57,7 +54,7 @@ afterEach(() => {
 });
 
 describe("loadRecordTab", () => {
-  it("dark until pc-record-tab-live: no tab, no query", async () => {
+  it("dark until the pc_record_tab server flag: no tab, no query", async () => {
     h.live = false;
     expect(await load()).toBeNull();
     expect(h.queries).toEqual([]);
