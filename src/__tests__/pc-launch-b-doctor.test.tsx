@@ -150,8 +150,30 @@ describe("12-14: the editor's small things", () => {
 
   it("14: the save bar is compact on phones and full from sm up", () => {
     show(withSymptom);
+    fireEvent.click(screen.getByRole("checkbox", { name: P.symptoms.immediate, checked: false }));
     const bar = screen.getByTestId("pc-save-bar").className.split(" ");
     expect(bar).toEqual(expect.arrayContaining(["py-1.5", "sm:py-3", "pr-20"]));
     expect(screen.getByTestId("pc-save").className.split(" ")).toEqual(expect.arrayContaining(["py-1.5", "sm:py-2"]));
+  });
+
+  it("the save bar sticks only while there's something to save; solid, never translucent (01, 10-29)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ version: 3, rescored: 0 }) })));
+    show(withSymptom);
+    const bar = () => screen.getByTestId("pc-save-bar");
+    // Nothing changed: a plain row at the end of the form, the button there but off.
+    expect(bar()).toHaveAttribute("data-sticky", "false");
+    expect(bar().className.split(" ")).not.toContain("sticky");
+    expect(screen.getByTestId("pc-save")).toBeDisabled();
+    // A change: stuck to the bottom, solid white with a border and a shadow, not bleeding past the content.
+    fireEvent.click(screen.getByRole("checkbox", { name: P.symptoms.immediate, checked: false }));
+    expect(bar()).toHaveAttribute("data-sticky", "true");
+    const cls = bar().className.split(" ");
+    expect(cls).toEqual(expect.arrayContaining(["sticky", "bottom-0", "bg-white", "border-t"]));
+    expect(cls.some((c) => c.startsWith("shadow-"))).toBe(true);
+    expect(cls.some((c) => c.includes("bg-white/") || c.includes("backdrop-blur") || /^-mx-|:-mx-/.test(c))).toBe(false);
+    // Saved: back to the plain row.
+    fireEvent.click(screen.getByTestId("pc-save"));
+    await waitFor(() => expect(bar()).toHaveAttribute("data-sticky", "false"));
+    vi.unstubAllGlobals();
   });
 });

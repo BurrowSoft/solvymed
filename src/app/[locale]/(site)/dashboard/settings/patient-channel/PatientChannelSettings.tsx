@@ -123,6 +123,7 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
       : state === "saved" ? (rescored > 0 ? t("settings.saved") : t("settings.savedOnly"))
       : "";
   const bad = state === "conflict" || state === "invalid" || state === "error" || (dirty && problems.length > 0);
+  const saveBarActive = dirty || state === "saving" || state === "conflict" || state === "invalid" || state === "error";
 
   return (
     <>
@@ -179,9 +180,15 @@ export function PatientChannelSettings({ initialRules, initialVersion, emergency
         <Adjustments rules={rules} setRules={setRules} />
         <AutoMessages rules={rules} setRules={setRules} />
       </div>
-      {/* The save bar: stuck to the bottom of the page while scrolling, clear of SolvyAI's opener. */}
-      <div data-testid="pc-save-bar" className="sticky bottom-0 z-20 -mx-4 mt-6 border-t border-slate-200 bg-white/95 px-4 py-1.5 pr-20 backdrop-blur sm:py-3 sm:-mx-6 sm:px-6 sm:pr-20 lg:-mx-8 lg:px-8 lg:pr-20">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 sm:flex-wrap">
+      {/* The save bar (01, 10-29, Vitor's catch): stuck to the bottom only while there's something
+          to save (or a save is running / failed): solid, a top border and a soft shadow, as wide
+          as the rules, clear of SolvyAI's opener. With nothing to save, a plain row at the end of
+          the form, so no band slices through the cards. */}
+      <div data-testid="pc-save-bar" data-sticky={saveBarActive ? "true" : "false"}
+        className={saveBarActive
+          ? "sticky bottom-0 z-20 mt-6 rounded-t-2xl border-t border-slate-200 bg-white px-4 py-1.5 pr-20 shadow-[0_-6px_16px_-8px_rgba(15,23,42,0.25)] sm:px-5 sm:py-3 sm:pr-20"
+          : "mt-6 py-1.5 sm:py-3"}>
+        <div className="flex items-center justify-between gap-2 sm:flex-wrap">
           <p role="status" aria-live="polite" className={`min-w-0 text-xs leading-snug sm:text-sm ${bad ? "font-semibold text-red-700" : "text-slate-600"}`}>{status}</p>
           <div className="flex shrink-0 gap-2">
             {state === "conflict" && (
