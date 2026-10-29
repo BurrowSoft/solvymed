@@ -31,10 +31,10 @@ const thShape = (html: string) => { const s = shape(html); return { ...s, paragr
 // so the two have the same shape again for every flag, the 10-27 ones included.
 
 describe("Thai Privacy Policy (privacy-th-live)", () => {
-  it("is hidden today: /th gets the English page", () => {
-    expect(conditionMet("privacy-th-live")).toBe(false);
+  it("is live (Vitor, 10-29): /th gets the Thai page; without the switch it would be English", () => {
+    expect(conditionMet("privacy-th-live")).toBe(true);
+    expect(legalLangFor("th", conditionMet("privacy-th-live"))).toBe("th");
     expect(legalLangFor("th")).toBe("en");
-    expect(legalLangFor("th", conditionMet("privacy-th-live"))).toBe("en");
   });
 
   it("once met, only /th switches to Thai (pt-BR and en unchanged)", () => {
