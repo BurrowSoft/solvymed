@@ -63,6 +63,6 @@ it("the approved labels (en/pt-BR/th)", () => {
   const shown = (l: string) => answerText((k) => messages(l)[k.replace(/^answers\./, "")], "stillTaking", 0);
   expect(shown("en")).toBe("Still taking the medicine: Yes");
   expect(shown("pt-BR")).toBe("Ainda toma o remédio: Sim");
-  expect(shown("th")).toBe("ยังกินยาอยู่: ใช่");
+  expect(shown("th")).toBe("ยังใช้ยาอยู่: ใช่");
   expect(answerText((k) => messages("pt-BR")[k.replace(/^answers\./, "")], "stillTaking", 1)).toBe("Parei por conta própria");
 });
