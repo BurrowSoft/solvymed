@@ -98,7 +98,9 @@ export default async function BookPage({
     <BookingClient
       brand={brand}
       professionalId={professionalId}
-      professionalName={displayName}
+      // The brand's name when there is one (its Título once + the doctor's display name, as the
+      // card below), so the top bar and the success line match it (WT1 on #695, BR).
+      professionalName={brand?.name || displayName}
       specialty={displaySpecialty}
       clinicName={displayClinic}
       patientAuthId={user.id}
