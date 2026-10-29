@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import { routeAfterAuth } from "@/lib/authRouting";
 import { claimSignupAttribution, recordSignupAttribution } from "@/lib/recordAttribution";
 import { ATTRIBUTION_COOKIE, ATTRIBUTION_MAX_AGE_S, ATTRIBUTION_SENT } from "@/lib/attribution";
+import { authFunnelCount } from "@/lib/authFunnelServer";
 
 // Called by /auth/verify after the user clicked Continue and the browser
 // verified the one-time token (which set the session cookies). Runs the
@@ -31,6 +32,8 @@ export async function POST(request: NextRequest) {
   // opened in another browser; after the cookie's row, which wins. Always
   // called, so the pending row is deleted either way.
   if (isSignup) await claimSignupAttribution(supabase as unknown as SupabaseClient);
+  // The funnel's "Continuar worked" total (lib/authFunnel; a daily count, nothing about the account).
+  if (isSignup) await authFunnelCount("verify_continue_ok", null, locale);
 
   const redirect = await routeAfterAuth(supabase as unknown as SupabaseClient, user, localePrefix, linkType);
   const response = NextResponse.json({ redirect });

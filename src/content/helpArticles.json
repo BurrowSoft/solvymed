@@ -2548,6 +2548,14 @@
             },
             {
               "type": "p",
+              "text": "No site, se a entrada com o Google não terminar, a tela de entrada mostra **Não conseguimos concluir a entrada com o Google.**: toque em **Continuar com Google** de novo ou use e-mail e senha. Dentro do Instagram, do Facebook ou do LINE, o Google não deixa entrar: no lugar do botão aparece **Abra no navegador**, com como abrir a página no navegador do celular e **Copiar link**."
+            },
+            {
+              "type": "p",
+              "text": "No site, se o link de confirmação expirou ou já foi usado, a página **Este link expirou** permite digitar o e-mail e tocar em **Reenviar e-mail de confirmação**; a resposta é a mesma para qualquer endereço."
+            },
+            {
+              "type": "p",
               "text": "No app para Android, a tela de entrada também tem **Continuar com Google**, com a mesma tela **Complete sua conta** na primeira vez."
             },
             {
@@ -2583,6 +2591,14 @@
             {
               "type": "p",
               "text": "On the website, sign-up and the sign-in screen have **Continue with Google**: you sign in with your Google account, with no password or confirmation e-mail. The first time, the **Complete your account** screen asks whether you are a health professional (with your practice's country) or a patient (with your clinic's invite code), your name, and that you accept the Terms of Use and the Privacy Policy. If you already have an account with the same e-mail, you sign in to it. If that screen can't open (for example, with no connection), it says so and shows **Try again**. The screen shows which Google account you signed in with; **Use another account** signs out and goes back to the sign-in screen. A patient without a code: **I don't have a code** explains that you get in through the practice's invite link. **Cancel sign-up** deletes that unfinished sign-in; you can sign up again anytime."
+            },
+            {
+              "type": "p",
+              "text": "On the website, if signing in with Google doesn't finish, the sign-in screen shows **We couldn't finish signing in with Google.**: tap **Continue with Google** again or use e-mail and password. Inside Instagram, Facebook or LINE, Google doesn't allow signing in: instead of the button you see **Open in your browser**, with how to open the page in your phone's browser and **Copy link**."
+            },
+            {
+              "type": "p",
+              "text": "On the website, if the confirmation link expired or was already used, the **This link has expired** page lets you type your e-mail and tap **Resend confirmation e-mail**; the answer is the same for any address."
             },
             {
               "type": "p",
