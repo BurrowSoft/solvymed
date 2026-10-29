@@ -1,10 +1,10 @@
 import { Mail, Section, Table } from "@/components/LegalDoc";
 import { CookieSettingsButton } from "@/components/CookieSettingsButton";
 
-// Thai Privacy Policy: a DRAFT translation of PrivacyEn (Vitor's YES to a
-// Thai page, 10-27), shown only once privacy-th-live is met (Vitor's first
-// pass; native / lawyer polish later). Same props and the same conditional
-// parts as PrivacyEn, so it never says more than the English does.
+// Thai Privacy Policy: the translation of PrivacyEn (Vitor's YES to a Thai page,
+// 10-27; his OK to put it live, 10-29), shown on /th since privacy-th-live (native /
+// lawyer polish later, not a gate). Same props and the same conditional parts as
+// PrivacyEn, so it never says more than the English does: change all three together.
 export function PrivacyTh({ turnstile, solvyai = false, line = false, notices = false, whatsapp = false, address = false, founders = false, founderUploads = false, secretaryInvites = false, closureNotices = false, whatsappAuto = false, referrals = false, clinicalDocs = false, patientDocs = false, selfFields = false, demo = false, appDemo = false, patientChannel = false, pcCover = false, pcAi = false, reminders = false, appReferrer = false, pcNotify = false, whatsappOptout = false }: { turnstile: boolean; demo?: boolean; appDemo?: boolean; patientChannel?: boolean; pcCover?: boolean; pcAi?: boolean; reminders?: boolean; appReferrer?: boolean; pcNotify?: boolean; whatsappOptout?: boolean; whatsappAuto?: boolean; referrals?: boolean; clinicalDocs?: boolean; patientDocs?: boolean; selfFields?: boolean; secretaryInvites?: boolean; closureNotices?: boolean; solvyai?: boolean; line?: boolean; notices?: boolean; whatsapp?: boolean; address?: boolean; founders?: boolean; founderUploads?: boolean }) {
   return (
     <>
@@ -164,7 +164,7 @@ export function PrivacyTh({ turnstile, solvyai = false, line = false, notices = 
       {founders && (
         <Section title="6d. ใบสมัครโครงการผู้ร่วมก่อตั้ง">
           <p>โครงการผู้ร่วมก่อตั้ง: หากคุณสมัคร เราจะประมวลผลชื่อ อีเมล เบอร์โทรศัพท์ อาชีพและเลขทะเบียน ระบบคลินิกที่คุณใช้ ขนาดคลินิก และช่องทางที่คุณรู้จักเรา เพื่อพิจารณาใบสมัครและติดต่อคุณ ใบสมัครที่ไม่ได้รับการคัดเลือกจะถูกลบ 12 เดือนหลังจากสถานะเปลี่ยนครั้งล่าสุด ใบสมัครของผู้ร่วมก่อตั้งที่ได้รับการคัดเลือกจะเก็บไว้ตลอดเวลาที่บัญชียังอยู่ (หรือลบ 12 เดือนหลังได้รับการคัดเลือก หากไม่เคยเชื่อมกับบัญชีใด)</p>
-          <p className="mt-2">เพื่อป้องกันการใช้งานในทางที่ผิด เราเก็บที่อยู่ IP ของคุณในรูปแบบที่ถูกเข้ารหัสแบบสุ่ม (แฮชพร้อมค่าซอลต์) ไว้ 2 วัน ไม่เก็บที่อยู่จริง หากต้องการให้ลบใบสมัครเร็วกว่านั้น เขียนถึง support@solvymed.com</p>
+          <p className="mt-2">เพื่อป้องกันการใช้งานในทางที่ผิด เราเก็บที่อยู่ IP ของคุณในรูปแบบที่ถูกแปลงให้อ่านไม่ออก (แฮชพร้อมค่าซอลต์) ไว้ 2 วัน ไม่เก็บที่อยู่จริง หากต้องการให้ลบใบสมัครเร็วกว่านั้น เขียนถึง support@solvymed.com</p>
           {founderUploads && <p className="mt-2">ไฟล์ส่งออกข้อมูลทดสอบ: ผู้ร่วมก่อตั้งที่ได้รับการคัดเลือกสามารถอัปโหลดไฟล์ส่งออกข้อมูลทดสอบ (CSV, Excel หรือ ZIP) จากระบบที่ใช้อยู่ได้ในการตั้งค่า เพื่อให้เราสร้างระบบนำเข้า ก่อนอัปโหลดแต่ละครั้ง ผู้ร่วมก่อตั้งต้องยืนยันว่าไฟล์มีเฉพาะผู้ป่วยทดสอบที่ตนสร้างขึ้น เราไม่ตรวจเนื้อหาก่อนจัดเก็บ ไฟล์จะถูกเก็บในที่ส่วนตัวที่มีเพียงทีม SolvyMed เข้าถึงได้ พร้อมบันทึกว่าใครอัปโหลดและเมื่อใด และจะถูกลบ 180 วันหลังอัปโหลด หรือเร็วกว่านั้น: เมื่อระบบนำเข้าของระบบนั้นพร้อมใช้งาน เมื่อผู้ร่วมก่อตั้งไม่ได้รับการคัดเลือกอีกต่อไป หรือเมื่อบัญชีถูกลบ</p>}
         </Section>
       )}
@@ -211,11 +211,11 @@ export function PrivacyTh({ turnstile, solvyai = false, line = false, notices = 
         <Section title="6h. โหมดเดโม">
           <ul className="list-disc space-y-1 pl-5">
             <li>คุณลองใช้ SolvyMed ได้โดยไม่ต้องมีบัญชีที่ solvymed.com/demo{appDemo && " หรือในแอป Android"} เราสร้างเซสชันชั่วคราวแบบไม่ระบุตัวตน (รหัสสุ่ม ไม่มีชื่อ อีเมล หรือรหัสผ่าน) และคลินิกตัวอย่างที่มีผู้ป่วยและนัดหมายสมมติ</li>
-            <li>ก่อนเริ่มเดโม Cloudflare Turnstile จะตรวจสอบว่าคุณเป็นบุคคล ไม่ใช่บอต Cloudflare ได้รับที่อยู่ IP และข้อมูลทางเทคนิคจากเบราว์เซอร์ของคุณเพื่อการตรวจสอบนี้ (ดูหัวข้อ 5) เราเก็บเพียงที่อยู่ IP ในรูปแบบที่เข้ารหัสตามที่อธิบายด้านล่าง</li>
+            <li>ก่อนเริ่มเดโม Cloudflare Turnstile จะตรวจสอบว่าคุณเป็นบุคคล ไม่ใช่บอต Cloudflare ได้รับที่อยู่ IP และข้อมูลทางเทคนิคจากเบราว์เซอร์ของคุณเพื่อการตรวจสอบนี้ (ดูหัวข้อ 5) เราเก็บเพียงที่อยู่ IP ในรูปแบบที่ถูกแปลงให้อ่านไม่ออกตามที่อธิบายด้านล่าง</li>
             <li><strong>อย่าใส่ข้อมูลผู้ป่วยจริงในเดโม</strong> สิ่งที่คุณพิมพ์จะอยู่ในเซสชันชั่วคราวนั้น และมีเพียงคุณที่เห็น</li>
             <li>เดโมไม่ติดต่อใคร: ไม่ส่งการแจ้งเตือน อีเมล หรือข้อความ WhatsApp/LINE ไม่รับชำระเงิน อัปโหลดไฟล์ไม่ได้ และเชื่อมต่อหรือนัดหมายกับบุคลากรทางการแพทย์หรือผู้ป่วยจริงไม่ได้</li>
             <li>SolvyAI ใช้ได้ในเดโมไม่เกิน 5 ข้อความ ภายใต้กฎเดียวกับหัวข้อ 6b: สิ่งที่คุณพิมพ์จะถูกส่งไปยัง Anthropic เพื่อรับคำตอบ (ดูหัวข้อ 5) และ SolvyMed ไม่เก็บข้อความนั้น เราเก็บเพียงจำนวนการใช้ SolvyAI แบบไม่ระบุตัวตน โดยไม่มีข้อความใดๆ</li>
-            <li>เพื่อป้องกันการใช้งานในทางที่ผิด เราเก็บที่อยู่ IP ของคุณในรูปแบบที่เข้ารหัส (แฮชพร้อมค่าซอลต์) ไว้กับเซสชันเดโม ไม่เก็บที่อยู่จริง</li>
+            <li>เพื่อป้องกันการใช้งานในทางที่ผิด เราเก็บที่อยู่ IP ของคุณในรูปแบบที่ถูกแปลงให้อ่านไม่ออก (แฮชพร้อมค่าซอลต์) ไว้กับเซสชันเดโม ไม่เก็บที่อยู่จริง</li>
             <li>เซสชันเดโมและทุกอย่างในนั้นจะถูกลบภายใน 24 ชั่วโมงหลังเริ่ม หรือทันทีเมื่อคุณออกจากเดโมหรือสร้างบัญชี ไม่มีสิ่งใดจากเดโมถูกคัดลอกไปยังบัญชีจริง</li>
             <li>เรานับจำนวนเดโมที่ถูกเปิดและขั้นตอนที่ใช้ โดยไม่ระบุตัวตนของใคร ตัวเลขเป็นยอดรวมรายวันแยกตามประเทศและภาษา โดยไม่เก็บบัญชี ที่อยู่ IP หรือรหัสอุปกรณ์ไว้ด้วย เพื่อให้นับแต่ละเดโมเพียงครั้งเดียว จะมีบันทึกเก็บไว้กับเดโมและลบไปพร้อมกัน</li>
             <li>สถิติการใช้งานเว็บไซต์ในเดโมเป็นไปตามหัวข้อ 3.6 และแบนเนอร์คุกกี้: เฉพาะเมื่อได้รับความยินยอมจากคุณ</li>
