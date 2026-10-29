@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocale, useTranslations } from "next-intl";
+import { afterThai } from "@/lib/doctorName";
 import { immediateWarning, type AnswerKey, type Answers } from "@/lib/patientChannel/score";
 import { PC_TEXT_MAX, type PcMyRequest, type PcMyRequestsFn, type PcPatientPage, type PcPreview, type PcPreviewFn, type PcReason, type PcSelfServeFn, type PcSubmitFn } from "@/lib/patientChannel/patientPage";
 import { dateLocale } from "@/lib/dateLabels";
@@ -213,7 +214,7 @@ export function PatientChannelFlow({ page, preview, submit, banner, onSelfServe,
     body = (
       <>
         <p className="rounded-xl border border-red-600 bg-red-50 px-3 py-2 text-sm text-red-900">{t("entryEmergency", { number })}</p>
-        <h2 className="text-lg font-extrabold text-slate-900">{t("talkTo", { doctor: page.doctorName })}</h2>
+        <h2 className="text-lg font-extrabold text-slate-900">{t("talkTo", { doctor: afterThai(locale, page.doctorName) })}</h2>
         {page.welcome && <p className="whitespace-pre-line text-sm text-slate-600">{page.welcome}</p>}
         <ul className="grid grid-cols-2 gap-2 text-sm">
           <li className="rounded-xl bg-teal-50 px-3 py-2"><b className="block text-teal-800">{t("sla", { n: page.slaBusinessDays })}</b>{t("slaLabel")}</li>
