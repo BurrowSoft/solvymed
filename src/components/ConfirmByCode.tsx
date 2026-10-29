@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { authErrorKey } from "@/lib/authErrors";
@@ -12,7 +12,11 @@ import { useAuthErrorText } from "@/lib/useAuthErrorText";
 // the session is set here, then the server routes as for a clicked link
 // (/api/auth/after-verify: role linking, the invite code, the welcome).
 // The code is 8 digits (Supabase's mailer_otp_length; the app's field too).
-const CODE_LENGTH = 8;
+// Shown as 8 cells over one real input (typing, paste and the one-time-code
+// autofill), sent on the 8th digit once per code, as the app (#615; the
+// funnel contract's (a)): the same 8 digits never go out twice on their own,
+// Confirm still retries.
+export const CODE_LENGTH = 8;
 
 export function ConfirmByCode({ email, locale }: { email: string; locale: string }) {
   const t = useTranslations("auth.confirmEmail");
@@ -20,14 +24,29 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
   const [code, setCode] = useState("");
   const [working, setWorking] = useState(false);
   const [error, setError] = useState("");
+  const [focused, setFocused] = useState(false);
+  const autoSent = useRef("");
 
-  async function confirm(e: React.FormEvent) {
+  function onChange(value: string) {
+    const next = value.replace(/\D/g, "").slice(0, CODE_LENGTH);
+    setCode(next);
+    if (next.length === CODE_LENGTH && next !== autoSent.current) {
+      autoSent.current = next;
+      void send(next);
+    }
+  }
+
+  function confirm(e: React.FormEvent) {
     e.preventDefault();
-    if (working || code.length !== CODE_LENGTH) return;
+    void send(code);
+  }
+
+  async function send(token: string) {
+    if (working || token.length !== CODE_LENGTH) return;
     setWorking(true);
     setError("");
     const supabase = createClient();
-    const { error: verifyError } = await supabase.auth.verifyOtp({ email, token: code, type: "signup" });
+    const { error: verifyError } = await supabase.auth.verifyOtp({ email, token, type: "signup" });
     if (verifyError) {
       setWorking(false);
       // Too many tries or no connection: their usual texts (nothing was
@@ -48,24 +67,36 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
   return (
     <form onSubmit={confirm} data-testid="confirm-by-code" className="mb-4 space-y-2 text-left">
       <label htmlFor="confirm-code" className="field-label">{t("codeLabel")}</label>
-      <div className="flex gap-2">
+      <div className="relative">
+        <div aria-hidden="true" data-testid="confirm-code-cells" className="grid grid-cols-8 gap-1.5">
+          {Array.from({ length: CODE_LENGTH }, (_, i) => (
+            <div
+              key={i}
+              className={`flex h-12 items-center justify-center rounded-lg border-2 bg-white font-mono text-xl font-bold text-slate-800 ${focused && i === Math.min(code.length, CODE_LENGTH - 1) ? "border-teal-600" : "border-slate-200"}`}
+            >
+              {code[i] ?? ""}
+            </div>
+          ))}
+        </div>
         <input
           id="confirm-code"
           inputMode="numeric"
           autoComplete="one-time-code"
           value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, CODE_LENGTH))}
-          className="text-input font-mono tracking-widest"
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          className="absolute inset-0 h-full w-full cursor-text opacity-0"
         />
-        <button
-          type="submit"
-          disabled={working || code.length !== CODE_LENGTH}
-          data-testid="confirm-code-submit"
-          className="shrink-0 rounded-xl bg-teal-600 px-5 py-3 font-bold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {working ? <span className="spinner-white" aria-hidden="true" /> : t("codeConfirm")}
-        </button>
       </div>
+      <button
+        type="submit"
+        disabled={working || code.length !== CODE_LENGTH}
+        data-testid="confirm-code-submit"
+        className="w-full rounded-xl bg-teal-600 px-5 py-3 font-bold text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {working ? <span className="spinner-white" aria-hidden="true" /> : t("codeConfirm")}
+      </button>
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
     </form>
   );

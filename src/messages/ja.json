@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "メールアドレスを確認してください",
-      "sentTo": "{email} に確認リンクを送信しました。",
+      "sentTo": "<b>{email}</b> に確認リンクを送信しました。",
       "openMail": "メールを開く",
       "wrongEmail": "メールアドレスが違う場合は修正",
       "forgotQuestion": "まだメールアドレスを確認していませんか？",
-      "sentToWithCode": "{email} にリンクとコードを送信しました。",
+      "sentToWithCode": "<b>{email}</b> にリンクとコードを送信しました。",
       "codeLabel": "またはメールに記載の8桁のコードを入力",
       "codeConfirm": "確認",
-      "codeInvalid": "コードが無効か期限切れです。メールを再送信して新しいコードを受け取ってください。"
+      "codeInvalid": "コードが無効か期限切れです。メールを再送信して新しいコードを受け取ってください。",
+      "resendEmail": "メールを再送信",
+      "spamHint": "届きませんか？迷惑メールとプロモーションのフォルダもご確認ください。"
     },
     "signupExisting": {
       "title": "メールを確認してください",

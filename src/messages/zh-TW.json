@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "確認您的電子郵件",
-      "sentTo": "我們已將確認連結寄至 {email}。",
+      "sentTo": "我們已將確認連結寄至 <b>{email}</b>。",
       "openMail": "開啟信箱",
       "wrongEmail": "信箱填錯了？更正",
       "forgotQuestion": "還沒有確認信箱？",
-      "sentToWithCode": "我們已將連結和驗證碼寄至 {email}。",
+      "sentToWithCode": "我們已將連結和驗證碼寄至 <b>{email}</b>。",
       "codeLabel": "或輸入郵件中的 8 位數驗證碼",
       "codeConfirm": "確認",
-      "codeInvalid": "驗證碼無效或已過期。請重新寄送郵件以取得新驗證碼。"
+      "codeInvalid": "驗證碼無效或已過期。請重新寄送郵件以取得新驗證碼。",
+      "resendEmail": "重新寄送電子郵件",
+      "spamHint": "沒收到嗎？請一併查看垃圾郵件和促銷內容資料夾。"
     },
     "signupExisting": {
       "title": "請查看您的信箱",

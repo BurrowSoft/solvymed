@@ -21,8 +21,11 @@ export const RESEND_COOLDOWN_S = 60;
 // the countdown starts at once; an early tap would only meet Supabase's
 // per-address limit (ca on the app; 01).
 // onSend: told of each resend request (the verify page's funnel total; nothing about the address).
-export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false, onSend }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean; onSend?: () => void }) {
+// confirmScreen ("Confirme seu e-mail"; the funnel contract's (a), as the app's #615):
+// the spam hint as a callout above the button (Spam and Promotions), and "Reenviar e-mail".
+export function ResendConfirmation({ email, locale, captchaToken, neutral = false, justSent = false, onSend, confirmScreen = false }: { email: string; locale: string; captchaToken?: string | null; neutral?: boolean; justSent?: boolean; onSend?: () => void; confirmScreen?: boolean }) {
   const t = useTranslations("auth.resendConfirmation");
+  const tc = useTranslations("auth.confirmEmail");
   const authErrorText = useAuthErrorText();
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -65,6 +68,16 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
 
   return (
     <div data-testid="resend-confirmation" className="mt-3 space-y-2 text-sm">
+      {confirmScreen && (
+        <div data-testid="confirm-spam-callout" className="flex items-start gap-2 rounded-xl border border-teal-200 bg-teal-50 px-3 py-2.5 text-slate-800">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 h-4 w-4 shrink-0 text-teal-700" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <p>{tc("spamHint")}</p>
+        </div>
+      )}
       <button
         type="button"
         onClick={resend}
@@ -72,14 +85,14 @@ export function ResendConfirmation({ email, locale, captchaToken, neutral = fals
         data-testid="resend-confirmation-button"
         className="w-full rounded-xl border border-teal-200 bg-white px-4 py-2.5 font-semibold text-teal-700 transition hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {t("button")}
+        {confirmScreen ? tc("resendEmail") : t("button")}
       </button>
       <p role="status" aria-live="polite" className="text-slate-600">
         {sent ? t(neutral ? "neutralSent" : "sent") : ""}
       </p>
       {wait > 0 && <p data-testid="resend-wait" className="text-slate-500">{t("wait", { seconds: wait })}</p>}
       {error && <p role="alert" className="text-red-600">{error}</p>}
-      <p className="text-xs text-slate-500">{t("spamHint")}</p>
+      {!confirmScreen && <p className="text-xs text-slate-500">{t("spamHint")}</p>}
     </div>
   );
 }

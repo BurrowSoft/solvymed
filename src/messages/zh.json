@@ -993,14 +993,16 @@
     },
     "confirmEmail": {
       "title": "确认您的电子邮件",
-      "sentTo": "我们已向 {email} 发送确认链接。",
+      "sentTo": "我们已向 <b>{email}</b> 发送确认链接。",
       "openMail": "打开邮箱",
       "wrongEmail": "邮箱填错了？更正",
       "forgotQuestion": "还没有确认邮箱？",
-      "sentToWithCode": "我们已向 {email} 发送链接和验证码。",
+      "sentToWithCode": "我们已向 <b>{email}</b> 发送链接和验证码。",
       "codeLabel": "或输入邮件中的 8 位验证码",
       "codeConfirm": "确认",
-      "codeInvalid": "验证码无效或已过期。请重新发送邮件以获取新验证码。"
+      "codeInvalid": "验证码无效或已过期。请重新发送邮件以获取新验证码。",
+      "resendEmail": "重新发送邮件",
+      "spamHint": "没收到？请同时查看垃圾邮件和推广邮件文件夹。"
     },
     "signupExisting": {
       "title": "请查看您的邮箱",
