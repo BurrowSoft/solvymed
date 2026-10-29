@@ -316,6 +316,27 @@ describe("Confirme seu e-mail: the clearer layout (funnel (a))", () => {
     h.flags = { data: null, error: null };
   });
 
+  it("a code completed while a check is in flight isn't marked sent: its 8th digit typed again sends it", async () => {
+    h.flags = { data: [{ key: "confirm_by_code", enabled: true }], error: null };
+    let finish: (v: unknown) => void = () => {};
+    h.verifyOtp.mockReset()
+      .mockImplementationOnce(() => new Promise((r) => { finish = r; }))
+      .mockResolvedValue({ error: { code: "otp_expired", status: 403 } });
+    await signUp("ana@gmail.com");
+    await screen.findByTestId("confirm-by-code");
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345678" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345679" } });
+    expect(h.verifyOtp).toHaveBeenCalledTimes(1);
+    finish({ error: { code: "otp_expired", status: 403 } });
+    await waitFor(() => expect(screen.getByTestId("confirm-code-submit")).not.toBeDisabled());
+    fireEvent.change(byId("confirm-code"), { target: { value: "1234567" } });
+    fireEvent.change(byId("confirm-code"), { target: { value: "12345679" } });
+    await waitFor(() => expect(h.verifyOtp).toHaveBeenCalledTimes(2));
+    expect(h.verifyOtp).toHaveBeenLastCalledWith({ email: "ana@gmail.com", token: "12345679", type: "signup" });
+    h.flags = { data: null, error: null };
+  });
+
   it("the other resend lines (sign-in, forgot password, the expired link) keep their label and small spam hint", async () => {
     const { ResendConfirmation } = await import("@/components/ResendConfirmation");
     wrap(<ResendConfirmation email="ana@gmail.com" locale="pt-BR" neutral />);

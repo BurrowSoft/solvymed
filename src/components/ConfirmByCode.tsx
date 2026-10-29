@@ -30,7 +30,9 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
   function onChange(value: string) {
     const next = value.replace(/\D/g, "").slice(0, CODE_LENGTH);
     setCode(next);
-    if (next.length === CODE_LENGTH && next !== autoSent.current) {
+    // Not while a check is in flight (as the app's !verifying): that code stays
+    // unmarked, so Confirmar, or the 8th digit typed again, sends it.
+    if (next.length === CODE_LENGTH && !working && next !== autoSent.current) {
       autoSent.current = next;
       void send(next);
     }
@@ -86,7 +88,7 @@ export function ConfirmByCode({ email, locale }: { email: string; locale: string
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="absolute inset-0 h-full w-full cursor-text opacity-0"
+          className="absolute inset-0 h-full w-full cursor-text text-base opacity-0"
         />
       </div>
       <button
