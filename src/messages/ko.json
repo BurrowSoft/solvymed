@@ -938,7 +938,8 @@
       "deleteConfirm": "계정이 삭제됩니다. 언제든지 다시 가입할 수 있습니다.",
       "deletedNotice": "계정이 삭제되었습니다.",
       "requestDeletion": "계정 삭제 요청",
-      "notConnected": "현재 어떤 진료소에도 연결되어 있지 않습니다."
+      "notConnected": "현재 어떤 진료소에도 연결되어 있지 않습니다.",
+      "codeHint": "그 코드는 사용할 수 없었습니다. 진료소에 새 코드를 요청하세요."
     },
     "pendingConfirmation": {
       "loading": "상태 확인 중…",

@@ -938,7 +938,8 @@
       "deleteConfirm": "Isso apaga sua conta. Você pode se cadastrar de novo quando quiser.",
       "deletedNotice": "Conta excluída.",
       "requestDeletion": "Pedir exclusão da conta",
-      "notConnected": "Você não está conectado a nenhum consultório no momento."
+      "notConnected": "Você não está conectado a nenhum consultório no momento.",
+      "codeHint": "Esse código não funcionou. Peça um código novo ao seu consultório."
     },
     "pendingConfirmation": {
       "loading": "Verificando seu status…",

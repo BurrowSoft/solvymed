@@ -938,7 +938,8 @@
       "deleteConfirm": "這將刪除您的帳號。您隨時可以重新註冊。",
       "deletedNotice": "帳號已刪除。",
       "requestDeletion": "申請刪除帳號",
-      "notConnected": "您目前未連結任何診所。"
+      "notConnected": "您目前未連結任何診所。",
+      "codeHint": "此代碼無效。請向您的診所索取新的代碼。"
     },
     "pendingConfirmation": {
       "loading": "正在檢查您的狀態…",

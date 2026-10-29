@@ -178,3 +178,34 @@ describe("after a voluntary disconnect (launch polish 23)", () => {
     unmount();
   });
 });
+
+// 01 + Vitor (10-29; the app's #625): after 2 refused codes (matched nothing / no longer
+// admits), "Esse código não funcionou. Peça um código novo ao seu consultório."
+describe("the code hint after 2 refused codes", () => {
+  it("a miss, then an unavailable code: the hint; one miss alone: no hint", async () => {
+    h.connectLive = true;
+    h.role = "patient";
+    h.connect = { data: null, error: null };
+    const unmount = await submit();
+    await screen.findByText(pt.auth.inviteRequired.codeInvalid);
+    expect(screen.queryByTestId("invite-code-hint")).toBeNull();
+    h.connect = { data: "unavailable", error: null };
+    fireEvent.click(screen.getByRole("button", { name: pt.auth.inviteRequired.submit }));
+    expect(await screen.findByTestId("invite-code-hint")).toHaveTextContent(pt.auth.inviteRequired.codeHint);
+    unmount();
+    h.connectLive = false;
+  });
+
+  it("too many attempts never counts", async () => {
+    h.connectLive = true;
+    h.role = "patient";
+    h.connect = { data: null, error: { message: "too_many_attempts" } };
+    const unmount = await submit();
+    await screen.findByText(pt.auth.inviteRequired.tooManyAttempts);
+    fireEvent.click(screen.getByRole("button", { name: pt.auth.inviteRequired.submit }));
+    await waitFor(() => expect(h.rpcs.filter((f) => f === "connect_with_code")).toHaveLength(2));
+    expect(screen.queryByTestId("invite-code-hint")).toBeNull();
+    unmount();
+    h.connectLive = false;
+  });
+});

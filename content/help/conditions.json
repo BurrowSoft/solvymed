@@ -311,6 +311,10 @@
     "met": true,
     "what": "LIVE 2026-10-29 07:41:12Z: OTA B on production runtime 1.9.0 (01). Mobile #617 (1.9.0 line only, JS-only): its OTA is live on production runtime 1.9.0, so patients on app 1.9.0 (Android) see \"Atualize o app para ter as novidades, como o Canal do Paciente\" on their home with \"Atualizar\" (Play Store) and \"Agora não\" (back after 7 days). Flip only on 01's word after the mobile developer reports the production OTA. Gates Help C18's line and the App Map rule."
   },
+  "app-code-hint-live": {
+    "met": false,
+    "what": "Mobile #625 (01 + Vitor, 10-29) is live on production: after 2 refused patient codes (invite_not_found / code_unavailable) the app's Google complete-account step and patient code gate show \"Esse código não funcionou. Peça um código novo ao seu consultório.\" (+ \"Sou profissional de saúde\" on complete-account). Flip on 01's word after the mobile developer reports the OTA. Gates Help K3's \"No app também\" and the App Map's app half; the website's lines show from the web twin's merge."
+  },
   "pc-notify-live": {
     "met": true,
     "what": "Patient Channel notices (247) are on: the server flag pc_notice_enqueue (default OFF; 247 queues nothing before it) and then the per-channel pc_notice_* flags. Needs first: privacy PC-N1′/PC-N2′/PC-N3 (Vitor's OK) live with PRIVACY_VERSION 2026-10-28 or later (the mobile privacy-accept migration accepting it), the /notices/unsubscribe page and the e-mail footer live, and 247's claim re-checking the e-mail opt-out. Gates Help C18's notices line and the App Map rule. BEFORE flipping (cf, #664 B1): the mobile fix that stops storing the doctor's name in pc_notice_outbox.prefix (computed at claim time instead) is live, so PC-N2′ (\"holds no message, name or health information\") is true."

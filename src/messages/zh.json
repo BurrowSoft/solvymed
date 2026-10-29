@@ -938,7 +938,8 @@
       "deleteConfirm": "这将删除您的账号。您随时可以重新注册。",
       "deletedNotice": "账号已删除。",
       "requestDeletion": "申请删除账号",
-      "notConnected": "您目前未连接任何诊所。"
+      "notConnected": "您目前未连接任何诊所。",
+      "codeHint": "该代码无效。请向您的诊所索取新代码。"
     },
     "pendingConfirmation": {
       "loading": "正在检查您的状态…",

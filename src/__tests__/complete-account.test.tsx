@@ -298,6 +298,31 @@ describe("Complete your account", () => {
       expect(h.track).toHaveBeenCalledWith("complete_account_error", { code: status });
     });
 
+    it("after 2 refused codes: the hint + 'Sou profissional de saúde', which switches the role (01 + Vitor, the app's #625)", async () => {
+      h.rpc.mockResolvedValue({ data: { status: "invite_not_found" }, error: null });
+      await submitPatient();
+      await screen.findByTestId("complete-error-code");
+      expect(screen.queryByTestId("complete-code-hint")).toBeNull();
+      h.rpc.mockResolvedValue({ data: { status: "code_unavailable" }, error: null });
+      await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+      fireEvent.click(screen.getByTestId("complete-submit"));
+      const hint = await screen.findByTestId("complete-code-hint");
+      expect(hint).toHaveTextContent(pt.auth.inviteRequired.codeHint);
+      fireEvent.click(screen.getByTestId("complete-code-hint-pro"));
+      await waitFor(() => expect(screen.queryByTestId("complete-invite-code")).toBeNull());
+      expect(screen.queryByTestId("complete-code-hint")).toBeNull();
+    });
+
+    it("too many attempts doesn't count toward the hint", async () => {
+      h.rpc.mockResolvedValue({ data: { status: "too_many_attempts" }, error: null });
+      await submitPatient();
+      await screen.findByTestId("complete-error-code");
+      await waitFor(() => expect(screen.getByTestId("complete-submit")).toBeEnabled());
+      fireEvent.click(screen.getByTestId("complete-submit"));
+      await waitFor(() => expect(h.rpc).toHaveBeenCalledTimes(2));
+      expect(screen.queryByTestId("complete-code-hint")).toBeNull();
+    });
+
     it("an unknown status: the generic error, never a silent success", async () => {
       h.rpc.mockResolvedValue({ data: { status: "something_new" }, error: null });
       await submitPatient();

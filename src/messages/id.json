@@ -938,7 +938,8 @@
       "deleteConfirm": "Ini menghapus akun Anda. Anda dapat mendaftar lagi kapan saja.",
       "deletedNotice": "Akun dihapus.",
       "requestDeletion": "Minta penghapusan akun",
-      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini."
+      "notConnected": "Anda belum terhubung ke praktik mana pun saat ini.",
+      "codeHint": "Kode itu tidak berhasil. Minta kode baru ke klinik Anda."
     },
     "pendingConfirmation": {
       "loading": "Memeriksa status Anda…",

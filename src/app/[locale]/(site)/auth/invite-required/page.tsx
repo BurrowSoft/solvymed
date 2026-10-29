@@ -28,6 +28,9 @@ export default function InviteRequiredPage() {
     reason === "notfound" ? t("inviteRequired.storedCodeNotFound") : reason === "unavailable" ? t("inviteRequired.codeUnavailable") : "",
   );
   const [loading, setLoading] = useState(false);
+  // Refused codes from this gate's Connect (matched nothing / no longer admits): from 2, "ask your
+  // practice for a new code"; "Sou profissional de saúde" is below (01 + Vitor, 10-29; the app's #625).
+  const [refusals, setRefusals] = useState(0);
   // A patient who was connected and left (or was removed) keeps the patient role: "Sua conta foi
   // criada…" is wrong for them, so they read that they're not connected now (launch polish 23).
   const [wasPatient, setWasPatient] = useState(false);
@@ -149,6 +152,7 @@ export default function InviteRequiredPage() {
           ? t("inviteRequired.notPendingPatient")
           : t("inviteRequired.linkFailed");
         setLoading(false);
+        if (m.includes("patient_archived")) setRefusals((n) => n + 1);
         setError(text);
         return;
       }
@@ -164,10 +168,12 @@ export default function InviteRequiredPage() {
       // result, not an error, so the attempt still counts (38).
       if (kind === "unavailable") {
         setLoading(false);
+        setRefusals((n) => n + 1);
         setError(t("inviteRequired.codeUnavailable"));
         return;
       }
       setLoading(false);
+      setRefusals((n) => n + 1);
       setError(t("inviteRequired.codeInvalid"));
       return;
     }
@@ -265,6 +271,7 @@ export default function InviteRequiredPage() {
           </div>
 
           {error && <div className="error-banner">{error}</div>}
+          {refusals >= 2 && <p data-testid="invite-code-hint" className="text-sm font-medium text-slate-700">{t("inviteRequired.codeHint")}</p>}
 
           <button
             type="submit"

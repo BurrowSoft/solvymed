@@ -44,6 +44,9 @@ export default function CompleteAccountPage() {
   const localePath = (path: string) => (locale === "en" ? path : `/${locale}${path}`);
 
   const [role, setRole] = useState<GoogleRole>(parseGoogleRole(searchParams.get("role")) ?? "professional");
+  // Refused patient codes in a row (not found / unavailable): from 2, "ask your practice for a new
+  // code" + "Sou profissional de saúde", which switches the role (01 + Vitor, 10-29; the app's #625).
+  const [codeRefusals, setCodeRefusals] = useState(0);
   const [country, setCountry] = useState<CountryChoice | null>(parseCountryChoice(searchParams.get("c")));
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -213,6 +216,7 @@ export default function CompleteAccountPage() {
     if (status !== undefined && status !== null && status !== "done") {
       setWorking(false);
       track("complete_account_error", { code: typeof status === "string" && MISS_STATUS.includes(status) ? status : "unknown_status" });
+      if (status === "invite_not_found" || status === "code_unavailable") setCodeRefusals((n) => n + 1);
       if (status === "invite_not_found") showFieldError("code", t("inviteRequired.storedCodeNotFound"));
       else if (status === "code_unavailable") showFieldError("code", t("inviteRequired.codeUnavailable"));
       else if (status === "too_many_attempts") showFieldError("code", t("inviteRequired.tooManyAttempts"));
@@ -306,6 +310,16 @@ export default function CompleteAccountPage() {
                   aria-invalid={errorFor("code") ? true : undefined} aria-describedby={errorFor("code") ? "complete-error-code" : undefined}
                   placeholder={t("signup.inviteCodePlaceholder")} className="text-input" />
                 {errorFor("code") && <p id="complete-error-code" role="alert" data-testid="complete-error-code" className="mt-1.5 text-sm text-red-600">{errorFor("code")}</p>}
+                {codeRefusals >= 2 && (
+                  <div data-testid="complete-code-hint" className="mt-2 rounded-xl bg-amber-50 p-3 text-sm text-slate-800">
+                    <p>{t("inviteRequired.codeHint")}</p>
+                    <button type="button" data-testid="complete-code-hint-pro"
+                      onClick={() => { setRole("professional"); setCodeRefusals(0); setFieldError(null); }}
+                      className="mt-1 font-semibold text-teal-700 underline hover:text-teal-800">
+                      {t("becomeProfessional.link")}
+                    </button>
+                  </div>
+                )}
                 <p className="mt-1.5 text-xs text-slate-500">{t("signup.inviteCodeHint")}</p>
                 <button type="button" data-testid="complete-no-code" aria-expanded={noCode} onClick={() => setNoCode((v) => !v)}
                   className="mt-2 text-sm font-semibold text-teal-700 underline hover:text-teal-800">
